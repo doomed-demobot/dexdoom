@@ -1,0 +1,224 @@
+
+Sprite "PIFDA0", 57, 62
+{
+	Offset -134, -106
+	Patch "PISGA0", 0, 0
+	{
+		FlipX
+	}
+}
+
+Sprite "PIFDB0", 79, 82
+{
+	Offset -112, -86
+	Patch "PISGB0", 0, 0
+	{
+		FlipX
+	}
+}
+
+Sprite "PIFDC0", 66, 81
+{
+	Offset -127, -87
+	Patch "PISGC0", 0, 0
+	{
+		FlipX
+	}
+}
+
+Sprite "PISGA0", 57, 62
+{
+	Offset -130, -106
+	Patch "PISGA0", 0, 0
+	{
+		FlipX
+	}
+}
+
+Sprite "PISGB0", 79, 82
+{
+	Offset -130, -86
+	Patch "PISGB0", 0, 0
+	{
+		FlipX
+	}
+}
+
+Sprite "PISGC0", 66, 81
+{
+	Offset -129, -87
+	Patch "PISGC0", 0, 0
+	{
+		FlipX
+	}
+}
+//pistol reload twohand
+Sprite "PISDF0", 66, 81
+{
+	Offset -127, -95
+	Patch "PIFDC0", 0, 0
+}
+Sprite "PISDG0", 66, 81
+{
+	Offset -127, -99
+	Patch "PIFDC0", 0, 0
+}
+Sprite "PISDH0", 87, 82
+{
+	Offset -124, -96
+	Patch "PISDB0", 0, 0
+}
+Sprite "PISDI0", 66, 62
+{
+	Offset -124, -110
+	Patch "PISDA0", 0, 0
+}
+Sprite "PISDJ0", 66, 62
+{
+	Offset -124, -106
+	Patch "PISDA0", 0, 0
+}
+//pistol reload left
+Sprite "PISGF0", 66, 81
+{
+	Offset -129, -96
+	Patch "PISGC0", 0, 0
+}
+Sprite "PISGG0", 66, 81
+{
+	Offset -129, -100
+	Patch "PISGC0", 0, 0
+}
+Sprite "PISGH0", 79, 82
+{
+	Offset -130, -99
+	Patch "PISGB0", 0, 0
+}
+Sprite "PISGI0", 57, 62
+{
+	Offset -130, -119
+	Patch "PISGA0", 0, 0
+}
+Sprite "PISGJ0", 57, 62
+{
+	Offset -130, -109
+	Patch "PISGA0", 0, 0
+}
+//pistol reload right
+Sprite "PIFDF0", 66, 81
+{
+	Offset -133, -96
+	Patch "PISGC0", 0, 0
+	{
+		FlipX
+	}
+}
+
+Sprite "PIFDG0", 66, 81
+{
+	Offset -133, -100
+	Patch "PISGC0", 0, 0
+	{
+		FlipX
+	}
+}
+
+Sprite "PIFDH0", 79, 82
+{
+	Offset -138, -99
+	Patch "PISGB0", 0, 0
+	{
+		FlipX
+	}
+}
+
+Sprite "PIFDI0", 57, 62
+{
+	Offset -138, -119
+	Patch "PISGA0", 0, 0
+	{
+		FlipX
+	}
+}
+
+Sprite "PIFDJ0", 57, 62
+{
+	Offset -138, -109
+	Patch "PISGA0", 0, 0
+	{
+		FlipX
+	}
+}
+
+//plasma rifle
+Sprite "PLGFB0", 150, 77
+{
+	Offset -117, -116
+	Patch "PLSGB0", 0, 0
+}
+
+Sprite "PUNGA0", 63, 30
+{
+	Offset -100, -138
+	Patch "PUNGA0", 0, 0 { FlipX }
+}
+
+Sprite "PUNGB0", 139, 91
+{
+	Offset 15, -125
+	Patch "PUNGC0", 0, 0
+}
+
+Sprite "PUNGC0", 139, 91
+{
+	Offset 5, -115
+	Patch "PUNGC0", 0, 0 { FlipX }
+}
+
+Sprite "PUNGD0", 195, 106
+{
+	Offset -10, -110
+	Patch "PUNGD0", 0, 0 { FlipX }
+}
+
+Sprite "PLSGC0", 150, 77
+{
+	Offset -117, -116
+	Patch "PLSGA0", 0, 0
+}
+
+Sprite "PLSRA0", 150, 86
+{
+	Offset -117, -107
+	Patch "POSRA0", 0, 0
+}
+
+Sprite "PLSRB0", 150, 86
+{
+	Offset -117, -107
+	Patch "POSRB0", 0, 0
+}
+
+Sprite "PLSRC0", 150, 86
+{
+	Offset -117, -107
+	Patch "POSRC0", 0, 0
+}
+
+Sprite "PLSRD0", 150, 86
+{
+	Offset -117, -107
+	Patch "POSRD0", 0, 0
+}
+
+Sprite "PLSRE0", 150, 86
+{
+	Offset -117, -107
+	Patch "POSRE0", 0, 0
+}
+
+Sprite "PLSRF0", 150, 86
+{
+	Offset -117, -107
+	Patch "POSRF0", 0, 0
+}
