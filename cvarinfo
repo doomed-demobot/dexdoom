@@ -1,0 +1,16 @@
+//display debug info
+user noarchive cheat bool pl_debug = false;
+user noarchive int pl_dmode = 0;
+//sort inventory after weapon acquisition
+user bool pl_autosort = true;
+//set bweaponready to true to escape stuck sequences [deprecated]
+user noarchive bool pl_unstuck;
+//true to use wolfenstein style controls
+user bool pl_wolfen = false;
+user bool pl_wolfcontrols = false;
+//disable stuff TODO: make it actually blocked by sv_cheats 0
+user noarchive cheat bool pl_phyrecoil = true;
+user noarchive cheat bool pl_visrecoil = true;
+//other stuff
+user bool pl_givehelp = false;
+user bool pl_autoreload = false;

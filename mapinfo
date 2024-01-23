@@ -1,0 +1,60 @@
+episode TESTING { name="DDTESTMAP" noskillmenu }
+
+map TESTING "ddTesting Center"
+{
+	AllowRespawn
+	ResetInventory
+	Next = "MAP01"
+}
+
+
+gameinfo
+{
+	PlayerClasses="ddPlayerNormal","ddPlayerClassic"
+	StatusBarClass="ddStats"
+	EventHandlers="ddHandlers"
+	NoRandomPlayerClass=true
+}
+
+spawnnums
+{
+	4200 = "ddPistol"
+	4201 = "ddShotgun"
+	4202 = "ddSuperShotgun"
+	4203 = "ddChaingun"
+	4204 = "ddPlasmaRifle"
+	4205 = "ddRocketLauncher"
+	4206 = "ddBFG9000"
+	//4207 = "ddCattleman"
+	4208 = "ddBerserk"
+	4209 = "ESOA"
+	4210 = "ddTactPack"
+	4211 = "Backpacke" //normal backpack
+	4212 = "ddChainsaw"
+	4213 = "PowerFist"
+	4214 = "Knife"
+	4215 = "d9Mil"
+}
+
+DoomEdNums
+{
+//ddweapons
+	4200 = "ddPistol"
+	4201 = "ddShotgun"
+	4202 = "ddSuperShotgun"
+	4203 = "ddChaingun"
+	4204 = "ddPlasmaRifle"
+	4205 = "ddRocketLauncher"
+	4206 = "ddBFG9000"
+	//4207 = "ddCattleman"
+//ddaccessories
+	4208 = "ddBerserk"
+	4209 = "ESOA"
+	4210 = "ddTactPack"
+	4211 = "Backpacke"
+//ddweapons again
+	4212 = "ddChainsaw"
+	4213 = "PowerFist"
+	4214 = "Knife"
+	4215 = "d9Mil"
+}

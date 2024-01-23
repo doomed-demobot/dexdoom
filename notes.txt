@@ -1,0 +1,57 @@
+-weapon types:
+onehander: easily cross wieldable, never requires lowering
+	fists : melee used in empty weapon slots.
+	handguns : easily handled guns that vary in damage and fire rate.
+	handcannons : high damage and dual wieldable, usually at a cost.
+	submachine guns : high fire rates with variable versatility.
+	sawnoffs : short varients of twohanders that are better suited for dual wielding.
+twohander: better used in twoHanded mode, may require lowering
+	shotguns : high damage, usually with low fire rates or low mag size.
+	rifle : moderate damage with high versatility and variety.
+	dmr : high accuracy with respectable fire rates, usually poor for dual wielding.
+	ultra dmr : weighty and slow, but stable enough to fire dual wielded.
+	lmg : high fire rates with bad accuracy, especially when dual wielded.
+	launchers : projectile weapons, usually explosive that have long reload times.
+twohanderstrict: can only be used in twoHanded mode
+	hmg : high damage with respectable accuracy with high variety.
+	cannons : destructive full-sized launchers with high variety that cause massive instability.
+	chainsaws : huge volley of close range damage.
+
+language notes:
+	group 1 = keywords
+	group 2 = classes
+	group 3 = actor members/properties
+	group 4 = zscript functions
+	group 5 = acs functions
+	group 6 = constants (zs and dd)
+	group 7 = dexdoom functions
+	group 8 = dd members/properties
+
+combo reserves:
+	common (1-10)
+	ddfist (11-20)
+	ddknife (21-20)
+
+members to be removed:
+	lWeap [m, d]
+	rWeap [m, d]
+	cooldown [f, d]
+	selectedfists [f, d]
+bugs/annoyances:
+	insttimer greater than 25 bugs visrecoil
+todo:
+	add limit to insttimer to prevent visrecoil from going above 5.0
+	check if ddsupershotgun really needs boom and blam for each side
+	make weapons change properties based on owner class
+	find alternative to lower swap left
+	create a doom 64 skin file as poc
+	integrate angled sprites for dual wieliding 
+	redo ddhook sprite; properly align it for twohanding
+	redo classic ddfist states
+notes:
+	playattacking() must be called during successful passes in dd_condition; no longer called per attack call in modes
+	changing readyweapon (caller) resets psprite info (coordinates, flags, and/or sprite?) (of all linked by caller?)
+	changing psp_weapon runs new state once then finishes rest of function
+	psprites are depended on their pointers towards actors for states (e.g. if rw isn't the same rw after a weapon switch, it is empty);
+	changing psprite states-including to null- retains psprite info
+	clearinventory() and givedefaultinventory() are called before intermission screen

@@ -1,0 +1,29 @@
+[X == LEFT/RIGHT]
+action setModeReady: set bModeReady to true;
+virtual getParentType(): return weapon name without left/right suffix.
+virtual getSprites(): called by A_ChangeSpriteX; return sprite name.
+action A_ChangeSpriteX(): call getSprites(); change PSprite sprite for side.
+action A_ChangeState(statelabel st): change state for PSprite PSP_WEAPON. Only useful for weapon modes (DW/TH)
+action A_XWeaponReady(): set ddWeaponState flags to true for side. Also set weapon statuses to ready.
+virtual primaryattack(): wrapper for weapon's primary attack.
+virtual alternativeattack(): wrapper for weapon's alternative attack.
+action A_FireXWeapon(); call primaryattack() or alternativeattack().
+virtual getFlashState(): return flash state to use.
+action A_FlashX(): call getFlashState(). Set PSP_XWF to returned flash state.
+virtual onRefire(): functionality after a successful refire check.
+virtual getRefireState(): return state to jump to after a successful refire check.
+action A_ddRefireX(): call getRefireState() and onRefire(); change PSprite on successful refire
+virtual getAmmoJumpCondition(): return state or "DoNotJump" condition state.
+action A_JumpIfNoAmmoX(): call getAmmoJumpCondition(). change PSprite state when CountInv(Ammo) < AmmoUse. If "DoNotJump" is returned, exit function.
+virtual getJumpCondition(): return state or "DoNotJump" condition state.
+action A_JumpIfConditionX(): call getJumpCondition(). change PSprite state if weapon exists. If "DoNotJump" is returned, exit function.
+virtual getDualWieldState(): return state or "DoNotJump" or "LowerToReload" condition states.
+action A_JumpIfDWX(): call getDualWieldState(). change PSprite state if weapon mode is "dualWielding". If "DoNotJump" is returned, exit function. If "LowerToReload" is returned, set PSP_WEAPON to "CheckX" states.
+virtual getTwoHandState(): return state or "DoNotJump" condition state.
+action A_JumpIfTHX(): call getTwoHandState(). change PSprite state if weapon mode is "twoHanding". If "DoNotJump" is returned, exit function.
+virtual clearscope getWeaponSprite(): return weapon sprite name. Mainly used in HUD elements
+action ddShot(bool accurate, Class<Actor> pufftype, int damage, double eAngle = 0, double ePitch = 0): LineAttack function for dexdoom. eAngle and ePitch are added to angle and pitch respectively.
+action A_SwitchToInv(): change readyweapon to "playerinventory" and PSP_WEAPON to "playerinventory" states.
+virtual wannaReload(): return state or "DoNotJump" condition state.
+action A_ChangeXWeaponMag(): call wannaReload(). change PSprite state if mag isn't full and both sides are ready. If weapon isn't centered (mode is "dualWielding") and bNoLower == false, set PSP_WEAPON to "LowerToReloadX".
+

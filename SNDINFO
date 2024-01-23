@@ -1,0 +1,54 @@
+weapons/powfist1 "dsmetal"
+weapons/powfist2 "dshoof"
+weapons/pistolnew "dspiston"
+weapons/preload1 "dsdbopn"
+weapons/preload2 "dsdbload"
+weapons/preload3 "dsdbcls"
+$limit weapons/pistolnew 0
+$limit weapons/chngun 0
+weapons/chaingunspin "dschains"
+$limit weapons/chaingunspin 0
+weapons/shotgf "dsshots"
+$limit weapons/shotgf 0
+weapons/shotgp "dsshotp" $volume weapons/shotgp 0.5
+weapons/shotgp1 "dsshotp1" $volume weapons/shotgp1 0.5
+weapons/shotgp2 "dsshotp2" $volume weapons/shotgp2 0.5
+$limit weapons/pistol 0
+$limit weapons/sshotf 0
+$limit weapons/pistol 0
+$limit weapons/shotgf 0
+$limit weapons/shotgr 0
+$limit weapons/sshotf 0
+$limit weapons/sshoto 0
+$limit weapons/sshotc 0
+$limit weapons/sshotl 0
+$limit weapons/chngun 0
+$limit weapons/rocklx 0
+$limit weapons/rocklf 0
+weapons/grenade "dsgrena" 
+weapons/grenadeb "dsgrenb" $volume weapons/grenadeb 0.6
+weapons/rocketload "dsrkld" $volume weapons/rocketload 0.3
+weapons/pboltlaunch "dsboltln" 
+$limit weapons/pboltlaunch 0
+$limit weapons/plasma 0
+$limit weapons/plasma 0
+$limit weapons/bfgf   0
+weapons/10kmodeg "10KSTART" 	$volume weapons/10kmodeg 0.7
+weapons/10kmodef "10KFIRE" 		$volume weapons/10kmodef 0.7
+weapons/10kmodes "10KSTOP" 		$volume weapons/10kmodes 0.7
+				
+$limit weapons/bfgx	  0
+$limit weapons/railgf 0
+$limit weapons/grbnce 0
+$limit weapons/grenlx  0
+$limit weapons/grenlf  0
+
+weapons/berserkget "dsbersk"
+weapons/berserkfade "dsberfad"
+
+weapons/dualup 	"DSDWUP" $volume weapon/dualup 0.2
+weapons/twohup 	"DSTHUP" $volume weapon/twohup 0.4
+weapons/nofire	"DSEMPT"
+
+misc/boowomp	"DSWOMP" $volume misc/boowomp  0.6
+misc/woosh      "DSFWOOSH" 

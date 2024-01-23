@@ -1,0 +1,20 @@
+addkeysection "Mod controls" DexDoomControls
+
+addmenukey "Left Primary Fire" +user1
+defaultbind q +user1
+addmenukey "Left Alternative Fire" +user2
+defaultbind f +user2
+addmenukey "Quickswap Righthand" +user3
+defaultbind c +user3
+addmenukey "Quickswap Lefthand" +user4
+defaultbind z +user4
+addmenukey "Open Inventory" "use inventoryOpener"
+defaultbind i "use inventoryOpener"
+addmenukey "Toggle ESOA" "use esoaActivator"
+defaultbind j "use esoaActivator"
+addmenukey "Drop weapon" weapdrop
+defaultbind h weapdrop
+addmenukey "Unload Left Weapon (Hold use for right)" "use unloadActivator"
+defaultbind u "use unloadActivator"
+addmenukey "Sort Inventory" +zoom
+defaultbind mouse3 +zoom

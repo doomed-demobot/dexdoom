@@ -1,0 +1,17 @@
+AddOptionMenu "OptionsMenu"
+{
+	StaticText ""
+	Submenu "Mod Options", "Mod Options"
+}
+
+
+OptionMenu "Mod Options"
+{
+	Title "Mod Options"
+	StaticText ""
+	Option "Automatically sort inventory on weapon pickup", "pl_autosort", "OnOff"
+	Option "Use Wolfenstein-style weapon controls", "pl_wolfen", "OnOff"
+	Option "Reverse dual-wield firing controls", "pl_wolfcontrols", "OnOff", "pl_wolfen"
+	Option "Enable inventory controls help text", "pl_givehelp", "OnOff"
+	Option "Automatically reload weapons on map completion", "pl_autoreload", "OnOff"
+}

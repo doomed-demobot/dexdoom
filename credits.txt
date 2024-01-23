@@ -1,0 +1,3 @@
+	TheDoomedArchvile for the Impactor Gauntlet sprites edited for Powerfists. (Realm667)
+	Josh Ge (Grid Sage Games) for Plasma rifle altfire sound from Cogmind.
+	id Software for Quake powerup sounds used for berserk.
