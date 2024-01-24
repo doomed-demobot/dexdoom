@@ -14,7 +14,7 @@ class ddSuperShotgun : ddWeapon
 		ddWeapon.ClassicAmmoType1 "Shell";
 		ddWeapon.ClassicAmmoType2 "Shell";
 		ddWeapon.rating 5;
-		ddWeapon.SwitchSpeed 1.2;
+		ddWeapon.SwitchSpeed 1.4;
 		ddWeapon.initialmag 2;
 		ddWeapon.MagUse 1;
 		ddWeapon.WeaponType "Shotgun";
