@@ -221,13 +221,11 @@ class ddShotgunLeft : ddShotgun
 			#### A 7 A_ddRefireLeft;
 			Goto Ready;
 		ReloadOneHanded:
-			SHOH ABC 2;
-			SHOH DE 4;
+			SHOH ABCDE 2;
 			SHOH F 1 A_DDActionLeft;
-			SHOH F 18 A_RackShotgun;
-			SHOH E 12 A_SlideShotgun;
-			SHOH D 4;
-			SHOH CBA 3;
+			SHOH F 14 A_RackShotgun;
+			SHOH E 6 A_SlideShotgun;
+			SHOH DCBA 3;
 			SHOH A 7 A_ddRefireLeftHeavy;
 			Goto Ready;			
 		UnloadP:		
@@ -276,13 +274,11 @@ class ddShotgunRight : ddShotgun
 			#### A 7 A_ddRefireRight;
 			Goto Ready;
 		ReloadOneHanded:
-			SHOH GHI 2;
-			SHOH JK 4;
+			SHOH GHIJK 2;
 			SHOH l 1 A_DDActionRight;
-			SHOH l 18 A_RackShotgun;
-			SHOH K 12 A_SlideShotgun;
-			SHOH J 4;
-			SHOH IHG 3;
+			SHOH l 14 A_RackShotgun;
+			SHOH K 6 A_SlideShotgun;
+			SHOH JIHG 3;
 			SHOH A 7 A_ddRefireRightHeavy;
 			Goto Ready;		
 		UnloadP:		

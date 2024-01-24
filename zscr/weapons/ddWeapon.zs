@@ -105,9 +105,6 @@ class ddWeapon : Weapon
 	{
 		let ddp = ddPlayer(user);
 		if(ddp.waitToPickup > 0) { if(ddp.dddebug & DBG_INVENTORY) { ddp.A_Log("WAIT!"); } return false; }
-		//FTranslatedLineTarget t;
-		//ddp.AimLineAttack(ddp.angle, 64, t, 0., ALF_CHECK3D | ALF_CHECKNONSHOOTABLE);
-		//if(t.linetarget != self) { if(ddp.dddebug & DBG_INVENTORY) { ddp.A_Log("ya missed!"); } return false; }
 		if(ddp.desire != self) { if(ddp.dddebug & DBG_INVENTORY) { ddp.A_Log("ya missed!"); } return false; }
 		else 
 		{ 
