@@ -320,13 +320,21 @@ class ddStats : BaseStatusBar
 			DrawString(fa, "tim:"..FormatNumber(dPlay.instTimer), (-70, 80), DI_SCREEN_RIGHT_TOP);
 		}
 		if(dPlay.dddebug & DBG_WEAPONS)
-		{		
+		{				
+			int lwfs, rwfs;
+			String lwfs2, rwfs2;
+			lwfs = lw.ddweaponflags;
+			while(lwfs > 0) { lwfs2 = (lwfs % 2)..lwfs2; lwfs >>= 1; }
+			rwfs = rw.ddweaponflags;
+			while(rwfs > 0) { rwfs2 = (rwfs % 2)..rwfs2; rwfs >>= 1; }
 			String lws, rws;
 			int lwc, rwc;
 			[rws, rwc] = GetddWeaponStatus(rw.weaponstatus);
 			[lws, lwc] = GetddWeaponStatus(lw.weaponstatus);
 			DrawString(fa, rws, (-50, -115), DI_SCREEN_RIGHT_BOTTOM | DI_TEXT_ALIGN_CENTER, rwc);
+			DrawString(fa, rwfs2, (-50, -106), DI_SCREEN_RIGHT_BOTTOM | DI_TEXT_ALIGN_CENTER, FONT.CR_RED);
 			DrawString(fa, lws, (50, -115), DI_SCREEN_LEFT_BOTTOM | DI_TEXT_ALIGN_CENTER, lwc);
+			DrawString(fa, lwfs2, (50, -106), DI_SCREEN_LEFT_BOTTOM | DI_TEXT_ALIGN_CENTER, FONT.CR_RED);
 		}
 		if(dPlay.dddebug & DBG_WEAPSEQUENCE)
 		{

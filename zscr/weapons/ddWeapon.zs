@@ -30,6 +30,7 @@ class ddWeapon : Weapon
 	//owner cvars
 	bool debuggin, wolfen, swapc, altModeL, altModeR;
 	//weapon stuff
+	uint8 ddweaponflags;
 	bool leftheld, rightheld;
 	ddWeapon companionpiece; 
 	Name weaponType; //general classification for some weapon relations
@@ -64,6 +65,7 @@ class ddWeapon : Weapon
 	property CellUse1 : CellUse1;
 	property CellUse2 : CellUse2;
 	property xOffset : xOffset;
+	property initialddWFlags : ddWeaponFlags;
 	//flags
 	int prFlags;
 	flagdef modeReady	 : prFlags, 0; //twohanding/dual wielding can fire
@@ -88,6 +90,7 @@ class ddWeapon : Weapon
 		ddWeapon.CellUse2 1;
 		ddWeapon.costMulti 1;
 		ddWeapon.xOffset 0;
+		ddweapon.initialddWFlags 2<<6;
 		BloodType "NoBlood";
 		Decal "BulletChip"; //todo: see if this respects a ddWeapon's custom decals
 		+NOBLOODDECALS;

@@ -1,5 +1,11 @@
 // #Class ddPistol : ddWeapon replaces Pistol()
 //Doom Pistol. Fires as fast as you can pull the trigger. Altfire is a 3-round burst.
+enum pistolFlags
+{
+	PIS_RSEQ = 2,
+};
+
+
 class ddPistol : ddWeapon replaces Pistol
 {
 	int burstcounter;
@@ -107,7 +113,7 @@ class ddPistol : ddWeapon replaces Pistol
 	{
 		let ddp = ddPlayer(owner);
 		if(weaponstatus == DDW_UNLOADING) { SetCaseNumber(4); return FindState("UnloadP"); }
-		if(mag < default.mag) { weaponstatus = DDW_RELOADING; SetCaseNumber(3); return FindState("ReloadP"); }
+		if(mag < default.mag) { weaponstatus = DDW_RELOADING; SetCaseNumber(5); return FindState("ReloadP"); }
 		else { return FindState("DoNotJump"); }
 	}
 	override String GetWeaponSprite()
@@ -169,6 +175,7 @@ class ddPistol : ddWeapon replaces Pistol
 	{
 		int caseno = cn;
 		let ddp = ddPlayer(owner);
+		let me = ddWeapon(self);
 		let type = (ddp.FindInventory("ClassicModeToken")) ?
 		((!bAltFire) ? ClassicAmmoType1 : ClassicAmmoType2) :
 		((!bAltFire) ? AmmoType1 : AmmoType2);
@@ -207,12 +214,17 @@ class ddPistol : ddWeapon replaces Pistol
 				else { ChangeState("Burst", myside); SetCaseNumber(2); }
 				break;
 			case 3: //reload ")
+				me.ddweaponflags &= ~PIS_RSEQ;
 				ReloadWeaponMag(((mag > 0) ? 16 : 15), 1); 
 				SetCaseNumber(0);
 				break;
 			case 4:
 				UnloadWeaponMag();
 				SetCaseNumber(0);
+				break;
+			case 5:
+				me.ddweaponflags |= PIS_RSEQ;
+				SetCaseNumber(3);
 				break;
 			default: break;
 		}
@@ -303,6 +315,7 @@ class ddPistolLeft : ddPistol
 		ReloadP:
 			#### F 5;
 			#### G 5 A_PistolReload1;
+			#### G 0 A_DDActionLeft;
 			#### G 6 A_PistolReload2;
 			#### H 10 A_PistolReload3;
 			#### H 1 A_ddActionLeft;
@@ -364,6 +377,7 @@ class ddPistolRight : ddPistol
 		ReloadP:
 			#### F 5;
 			#### G 5 A_PistolReload1;
+			#### G 0 A_DDActionRight;
 			#### G 6 A_PistolReload2;
 			#### H 10 A_PistolReload3;
 			#### H 1 A_ddActionRight;
