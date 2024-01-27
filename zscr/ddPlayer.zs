@@ -170,7 +170,9 @@ class ddPlayer : DoomPlayer
 			}
 			else
 			{	
-				if((ddWeaponState & DDW_RIGHTREADY) && (ddWeaponState & DDW_LEFTREADY)) { CheckQuickSwap();	}
+				//if((ddWeaponState & DDW_RIGHTREADY) && (ddWeaponState & DDW_LEFTREADY)) { 
+					CheckQuickSwap();	
+				//}
 				if(weap.bmodeReady) 
 				{ 
 					CheckWeaponChange();
@@ -697,6 +699,8 @@ class ddPlayer : DoomPlayer
 		swapdown = false;
 		ddWeapon(player.readyweapon).lswaptarget = lwx;
 		ddWeapon(player.readyweapon).rswaptarget = rwx;
+		dualWielding(player.readyweapon).blraised = false;
+		dualWielding(player.readyweapon).brraised = false;
 		ddWeaponState |= DDW_LEFTNOBOBBING;
 		ddWeaponState |= DDW_RIGHTNOBOBBING;
 		if(lWeap.RetItem(lwx).bTwoHander) { ddWeaponState |= DDW_LEFTISTH; }

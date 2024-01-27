@@ -30,7 +30,6 @@ class ddWeapon : Weapon
 	//owner cvars
 	bool debuggin, wolfen, swapc, altModeL, altModeR;
 	//weapon stuff
-	uint8 ddweaponflags;
 	bool leftheld, rightheld;
 	ddWeapon companionpiece; 
 	Name weaponType; //general classification for some weapon relations
@@ -67,6 +66,7 @@ class ddWeapon : Weapon
 	property xOffset : xOffset;
 	property initialddWFlags : ddWeaponFlags;
 	//flags
+	uint8 ddweaponflags;
 	int prFlags;
 	flagdef modeReady	 : prFlags, 0; //twohanding/dual wielding can fire
 	flagdef noLower		 : prFlags, 1; //weapon never needs to lower to center to reload

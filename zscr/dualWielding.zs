@@ -3,6 +3,9 @@
 class dualWielding : ddWeapon
 {
 	int dropTimer, dropChoice;
+	int dwgflags;
+	flagdef lRaised	: dwgFlags, 0;
+	flagdef rRaised	: dwgFlags, 1;
 	Default
 	{
 		Weapon.SlotNumber 2;
@@ -19,6 +22,8 @@ class dualWielding : ddWeapon
 		+WEAPON.NODEATHDESELECT;
 		+WEAPON.NODEATHINPUT;
 		+INVENTORY.UNDROPPABLE;
+		-DUALWIELDING.LRAISED;
+		-DUALWIELDING.RRAISED;
 	}
 	
 	override void PostBeginPlay()

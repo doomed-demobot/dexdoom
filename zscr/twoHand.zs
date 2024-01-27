@@ -287,13 +287,10 @@ class twoHanding : ddWeapon
 					pspr.y = 0; psprf.y = 0;
 					if(lw) { rw.companionpiece = lw; lw.companionpiece = rw; }
 					player.SetPSprite(PSP_RIGHTW, rw.GetReadyState());
+					invoker.bModeReady = true;
+					invoker.weaponStatus = DDW_READY;
+					A_ChangeState('Ready');
 				}
-			}
-			if(ddp.ddWeaponState & DDW_RIGHTREADY) //alt delete
-			{
-				invoker.bModeReady = true;
-				invoker.weaponStatus = DDW_READY;
-				A_ChangeState('Ready');
 			}
 		}
 		

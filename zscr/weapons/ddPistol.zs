@@ -98,14 +98,14 @@ class ddPistol : ddWeapon replaces Pistol
 		{
 			if(ddp.player.readyweapon is "dualWielding" || ddp.player.pendingweapon is "dualWielding" || ddp.lastmode is "dualWielding") {
 				String sp = (weaponside) ? "PISGA0" : "PIFDA0";
-				return sp, -1; 
+				return sp, ((ddweaponflags & PIS_RSEQ) ? 5 : 0); 
 			}
-			else if(ddp.player.readyweapon is "twoHanding" || ddp.player.pendingweapon is "twoHanding" || ddp.lastmode is "twoHanding")  { return "PISDA0", -1; }
+			else if(ddp.player.readyweapon is "twoHanding" || ddp.player.pendingweapon is "twoHanding" || ddp.lastmode is "twoHanding")  { return "PISDA0", ((ddweaponflags & PIS_RSEQ) ? 5 : 0); }
 			else { 
 				return "TNT1A0"; }
 		}
-		else if(forcemode == 2) { return "PISGA0", -1; }
-		else if(forcemode == 1) { return "PISDA0", -1; }
+		else if(forcemode == 2) { return "PISGA0", ((ddweaponflags & PIS_RSEQ) ? 5 : 0); }
+		else if(forcemode == 1) { return "PISDA0", ((ddweaponflags & PIS_RSEQ) ? 5 : 0); }
 		else { return "TNT1A0", -1; }
 	}
 		
@@ -124,6 +124,12 @@ class ddPistol : ddWeapon replaces Pistol
 	override String getParentType()
 	{
 		return "ddPistol";
+	}
+	
+	override State GetReadyState()
+	{
+		if(ddweaponflags & PIS_RSEQ && owner.player.readyweapon is "twohanding") { SetCaseNumber(3); return FindState("Reload2"); }
+		else { return FindState("Ready"); }
 	}
 	
 	override State GetAttackState()
@@ -199,14 +205,14 @@ class ddPistol : ddWeapon replaces Pistol
 					ChangeState("NoAmmo", myside);
 					break;
 				}
-				if((res == RES_TWOHAND || res == RES_HASESOA)) { if(mag < 1) { weaponstatus = DDW_RELOADING; SetCaseNumber(3); ChangeState("ReloadP", myside); break; } }
-				if(res == RES_DUALWLD) { if(mag < 1) { SetCaseNumber(3); LowerToReloadWeapon(); break; } }				
+				if((res == RES_TWOHAND || res == RES_HASESOA)) { if(mag < 1) { weaponstatus = DDW_RELOADING; SetCaseNumber(5); ChangeState("ReloadP", myside); break; } }
+				if(res == RES_DUALWLD) { if(mag < 1) { SetCaseNumber(5); LowerToReloadWeapon(); break; } }				
 				ddp.PlayAttacking(); 
 				SetCaseNumber(((bAltFire) ? 2 : 1));
 				break;
 			case 1: //primary
 				SetCaseNumber(0);
-				if((res == RES_TWOHAND || res == RES_HASESOA) && ddp.CountInv(type) > 1 && mag < 1) { weaponstatus = DDW_RELOADING; SetCaseNumber(3); ChangeState("ReloadP", myside); }				
+				if((res == RES_TWOHAND || res == RES_HASESOA) && ddp.CountInv(type) > 1 && mag < 1) { weaponstatus = DDW_RELOADING; SetCaseNumber(5); ChangeState("ReloadP", myside); }				
 				break;
 			case 2: //alt burstcounter check
 				if((res == RES_TWOHAND || res == RES_HASESOA) && ddp.CountInv(type) > 1 && mag < 1) { weaponstatus = DDW_RELOADING; self.burstcounter = 3; SetCaseNumber(3); ChangeState("ReloadP", myside); break; }
@@ -278,7 +284,7 @@ class ddPistolLeft : ddPistol
 			#### A 10;
 		Ready:
 			PISD A 0 A_ChangeSpriteLeft;
-			#### A 1 A_LeftWeaponReady;
+			#### # 1 A_LeftWeaponReady;
 			Loop;
 		Fire:
 			#### A 0 A_DDActionLeft;
@@ -316,6 +322,7 @@ class ddPistolLeft : ddPistol
 			#### F 5;
 			#### G 5 A_PistolReload1;
 			#### G 0 A_DDActionLeft;
+		Reload2:
 			#### G 6 A_PistolReload2;
 			#### H 10 A_PistolReload3;
 			#### H 1 A_ddActionLeft;
@@ -339,8 +346,8 @@ class ddPistolRight : ddPistol
 		NoAmmo:
 			#### A 10;
 		Ready:
-			PISD A 0 A_ChangeSpriteRight;
-			#### A 1 A_RightWeaponReady;
+			#### A 0 A_ChangeSpriteRight;
+			#### # 1 A_RightWeaponReady;
 			Loop;
 		Select:
 			#### # 0 A_ChangeSpriteRight;
@@ -378,6 +385,7 @@ class ddPistolRight : ddPistol
 			#### F 5;
 			#### G 5 A_PistolReload1;
 			#### G 0 A_DDActionRight;
+		Reload2:
 			#### G 6 A_PistolReload2;
 			#### H 10 A_PistolReload3;
 			#### H 1 A_ddActionRight;
