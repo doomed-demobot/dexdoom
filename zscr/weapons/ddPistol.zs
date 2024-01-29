@@ -113,6 +113,7 @@ class ddPistol : ddWeapon replaces Pistol
 	{
 		let ddp = ddPlayer(owner);
 		if(weaponstatus == DDW_UNLOADING) { SetCaseNumber(4); return FindState("UnloadP"); }
+		if(ddWeaponFlags & PIS_RSEQ) { weaponstatus = DDW_RELOADING; SetCaseNumber(3); return FindState("Reload2"); }
 		if(mag < default.mag) { weaponstatus = DDW_RELOADING; SetCaseNumber(5); return FindState("ReloadP"); }
 		else { return FindState("DoNotJump"); }
 	}
@@ -128,7 +129,7 @@ class ddPistol : ddWeapon replaces Pistol
 	
 	override State GetReadyState()
 	{
-		if(ddweaponflags & PIS_RSEQ && owner.player.readyweapon is "twohanding") { SetCaseNumber(3); return FindState("Reload2"); }
+		if(ddweaponflags & PIS_RSEQ && (ModeCheck(4) == (RES_TWOHAND || RES_HASESOA))) { ddPlayer(owner).ddWeaponState |= DDW_RIGHTNOBOBBING; SetCaseNumber(3); return FindState("Reload2"); }
 		else { return FindState("Ready"); }
 	}
 	
@@ -205,8 +206,8 @@ class ddPistol : ddWeapon replaces Pistol
 					ChangeState("NoAmmo", myside);
 					break;
 				}
-				if((res == RES_TWOHAND || res == RES_HASESOA)) { if(mag < 1) { weaponstatus = DDW_RELOADING; SetCaseNumber(5); ChangeState("ReloadP", myside); break; } }
-				if(res == RES_DUALWLD) { if(mag < 1) { SetCaseNumber(5); LowerToReloadWeapon(); break; } }				
+				if((res == RES_TWOHAND || res == RES_HASESOA)) { if(mag < 1 || ddWeaponFlags & PIS_RSEQ) { weaponstatus = DDW_RELOADING; SetCaseNumber(5); ChangeState("ReloadP", myside); break; } }
+				if(res == RES_DUALWLD) { if(mag < 1 || ddWeaponFlags & PIS_RSEQ) { SetCaseNumber(5); LowerToReloadWeapon(); break; } }				
 				ddp.PlayAttacking(); 
 				SetCaseNumber(((bAltFire) ? 2 : 1));
 				break;

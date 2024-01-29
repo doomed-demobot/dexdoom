@@ -1,6 +1,11 @@
 // Doom 2 Super Shotgun. 2 mag, reloads automatically in two hands. Must lower other
 // weapon to reload. Single-fire alternative fire
 // #Class ddSuperShotgun : ddWeapon()
+enum ddSShotgunFlags{
+	SST_RSEQ1 = 2,
+	SST_RSEQ2 = 3,
+};
+
 class ddSuperShotgun : ddWeapon
 {
 	Default
@@ -161,10 +166,18 @@ class ddSuperShotgun : ddWeapon
 				else { SetCaseNumber(0); }
 				break;	
 			case 2:
-				if(mag < 1) { ReloadWeaponMag(2); SetCaseNumber(0); break; }
-				else { ReloadWeaponMag(2); SetCaseNumber(0); break; }
+				if(mag < 1) { ddWeaponFlags |= SST_RSEQ2; ReloadWeaponMag(2); SetCaseNumber(5); break; }
+				else { ReloadWeaponMag(2); SetCaseNumber(5); break; }
 			case 3:
 				UnloadWeaponMag();
+				SetCaseNumber(0);
+				break;
+			case 4: //eject
+				ddWeaponFlags |= SST_RSEQ1;
+				SetCaseNumber(2);
+				break;
+			case 5: //close
+				ddWeaponFlags &= SST_RSEQ2;
 				SetCaseNumber(0);
 				break;
 			default: break;
@@ -318,12 +331,16 @@ class ddSuperShotgunRight : ddSuperShotgun
 		ReloadP:		
 			#### B 7;
 			#### C 7;
-			#### D 7 A_OpenShotgun2;
+			#### D 1 A_DDActionRight; //4
+		Reload2:
+			#### D 6 A_OpenShotgun2;
 			#### E 7;
 			#### F 0 A_LoadShotgun2;
-			#### F 1 A_DDActionRight;
+			#### F 1 A_DDActionRight; //2
+		Reload3:
 			#### F 6;
-			#### G 6;
+			#### G 5;
+			#### G 1 A_DDActionRight //5
 			#### H 0 A_CloseShotgun2;
 			#### H 6 A_ddRefireRight;
 			#### A 5;
