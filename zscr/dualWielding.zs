@@ -96,6 +96,8 @@ class dualWielding : ddWeapon
 							ddp.ddWeaponState &= ~DDW_LEFTREADY;
 							pspl.y = 128;
 							psplf.y = 128;	
+							self.blraised = false;
+							self.brraised = false;
 							ddp.player.SetPSprite(PSP_WEAPON, FindState('QuickSwapDW'));
 							rWeap.RetItem(ddp.rwx).companionpiece = lWeap.RetItem(ddp.lwx);
 							lWeap.RetItem(ddp.lwx).companionpiece = rWeap.RetItem(ddp.rwx);	
@@ -117,6 +119,8 @@ class dualWielding : ddWeapon
 					bModeReady = false;
 					pspl.y = 128;
 					psplf.y = 128;	
+					self.blraised = false;
+					self.brraised = false;
 					ddp.player.SetPSprite(PSP_WEAPON, FindState('QuickSwapDW'));
 					rWeap.RetItem(ddp.rwx).companionpiece = lWeap.RetItem(ddp.lwx);
 					lWeap.RetItem(ddp.lwx).companionpiece = rWeap.RetItem(ddp.rwx);	
@@ -143,6 +147,8 @@ class dualWielding : ddWeapon
 							bModeReady = false;
 							pspr.y = 128;
 							psprf.y = 128;	
+							self.blraised = false;
+							self.brraised = false;
 							ddp.player.SetPSprite(PSP_WEAPON, FindState('QuickSwapDW'));
 							rWeap.RetItem(ddp.rwx).companionpiece = lWeap.RetItem(ddp.lwx);
 							lWeap.RetItem(ddp.lwx).companionpiece = rWeap.RetItem(ddp.rwx);
@@ -164,6 +170,8 @@ class dualWielding : ddWeapon
 					bModeReady = false;
 					pspr.y = 128;
 					psprf.y = 128;	
+					self.blraised = false;
+					self.brraised = false;
 					ddp.player.SetPSprite(PSP_WEAPON, FindState('QuickSwapDW'));
 					rWeap.RetItem(ddp.rwx).companionpiece = lWeap.RetItem(ddp.lwx);
 					lWeap.RetItem(ddp.lwx).companionpiece = rWeap.RetItem(ddp.rwx);
@@ -492,6 +500,7 @@ class dualWielding : ddWeapon
 	action void A_QuickSwapDW()
 	{
 		let ddp = ddPlayer(self);		
+		let mode = dualWielding(player.readyweapon);
 		let lWeap = ddp.GetLeftWeapons();
 		let rWeap = ddp.GetRightWeapons();
 		let lw = ddp.GetLeftWeapon(ddp.lwx);
@@ -506,6 +515,7 @@ class dualWielding : ddWeapon
 			sFactor = ((lw.sFactor + rw.sFactor) / 2) * 6;
 			if(ddp.lwx != invoker.lSwapTarget) //lower left weapon
 			{
+				mode.blraised = false;
 				ddp.ddWeaponState &= ~DDW_LEFTREADY;
 				pspl.y += sFactor; psplf.y += sFactor;
 				if(pspl.y < WEAPONBOTTOM) { /* ") */ }
@@ -533,11 +543,13 @@ class dualWielding : ddWeapon
 					pspl.y = 0; psplf.y = 0;
 					if(rw) { lw.companionpiece = rw; rw.companionpiece = rw; }
 					player.SetPSprite(PSP_LEFTW, lw.GetReadyState());
+					mode.blraised = true;
 				}
 			}
 			
 			if(ddp.rwx != invoker.rSwapTarget) //lower right weapon
 			{
+				mode.brraised = false;
 				ddp.ddWeaponState &= ~DDW_RIGHTREADY;
 				pspr.y += sFactor; psprf.y += sFactor;
 				if(pspr.y < WEAPONBOTTOM) {  }
@@ -565,10 +577,11 @@ class dualWielding : ddWeapon
 					pspr.y = 0; psprf.y = 0;
 					if(lw) { rw.companionpiece = lw; lw.companionpiece = rw; }
 					player.SetPSprite(PSP_RIGHTW, rw.GetReadyState());
+					mode.brraised = true;
 				}
 			}
 			
-			if(ddp.ddWeaponState & DDW_LEFTREADY && ddp.ddWeaponState & DDW_RIGHTREADY) //alt delete
+			if(mode.bLRaised && mode.bRRaised) //alt delete
 			{
 				invoker.bModeReady = true;
 				invoker.weaponStatus = DDW_READY;

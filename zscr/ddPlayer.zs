@@ -579,6 +579,8 @@ class ddPlayer : DoomPlayer
 				player.SetPSprite(PSP_RIGHTW, rw.GetUpState());
 				ddWeaponState &= ~DDW_LEFTREADY;
 				ddWeaponState &= ~DDW_RIGHTREADY;
+				dualWielding(weap).blraised = false;
+				dualWielding(weap).brraised = false;
 				weap.bmodeready = false;
 				weap.weaponStatus = DDM_SWAPPING;
 				waittopickup++;
