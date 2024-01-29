@@ -516,7 +516,7 @@ class ddWeapon : Weapon
 		if(owner) { owner.A_Log("This weapon has no sounds to play"); }
 	}
 	
-	int ModeCheck()
+	int ModeCheck(int esoaCost = -1)
 	{
 		let ddp = ddPlayer(owner);
 		let mode = ddWeapon(ddp.player.readyweapon);
@@ -526,6 +526,7 @@ class ddWeapon : Weapon
 		else if(mode is "dualWielding") 
 		{
 			let cost = (bAltFire) ? CellUse2 : CellUse1;
+			if(esoaCost > -1) { cost = esoaCost; }
 			let am = (bAltFire) ? AmmoType2 : AmmoType1;
 			let au = (bAltFire) ? AmmoUse2 : AmmoUse1;
 			if(!cpiece.weaponready) { au += ((cpiece.bAltFire) ? AmmoUse2 : AmmoUse1); }
