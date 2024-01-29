@@ -118,8 +118,10 @@ class ddSuperShotgun : ddWeapon
 	override State wannaReload()
 	{
 		if(weaponstatus == DDW_UNLOADING) { SetCaseNumber(3); return FindState('UnloadP'); }
-		if(mag == 1) { SetCaseNumber(2); weaponStatus = DDW_RELOADING; return FindState('ReloadA'); }
-		else if(mag == 0) { SetCaseNumber(2); weaponStatus = DDW_RELOADING; return FindState('ReloadP'); }
+		if(ddWeaponFlags & SST_RSEQ1) { SetCaseNumber(2); weaponStatus = DDW_RELOADING; return FindState('Reload2'); }
+		if(ddWeaponFlags & SST_RSEQ2) { SetCaseNumber(5); weaponStatus = DDW_RELOADING; return FindState('Reload3'); }
+		if(mag == 1) { SetCaseNumber(4); weaponStatus = DDW_RELOADING; return FindState('ReloadA'); }
+		else if(mag == 0) { SetCaseNumber(4); weaponStatus = DDW_RELOADING; return FindState('ReloadP'); }
 		else { return FindState('DoNotJump'); }
 	}
 	
@@ -332,8 +334,9 @@ class ddSuperShotgunRight : ddSuperShotgun
 			#### B 7;
 			#### C 7;
 			#### D 1 A_DDActionRight; //4
+			#### D 1 A_OpenShotgun2;
 		Reload2:
-			#### D 6 A_OpenShotgun2;
+			#### D 5;
 			#### E 7;
 			#### F 0 A_LoadShotgun2;
 			#### F 1 A_DDActionRight; //2
