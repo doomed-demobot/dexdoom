@@ -641,6 +641,7 @@ class ddWeapon : Weapon
 		}
 		ddp.ddWeaponState |= DDW_RIGHTREADY;
 		ddp.ddWeaponState |= DDW_RIGHTBOBBING;
+		ddp.ddWeaponState &= ~DDW_RIGHTNOBOBBING;
 		rw.weaponStatus = DDW_READY;
 		rw.weaponready = true;
 		rw.caseno = 0;

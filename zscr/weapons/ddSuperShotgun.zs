@@ -156,15 +156,22 @@ class ddSuperShotgun : ddWeapon
 				if(res == RES_CLASSIC && (ddp.CountInv("Shell") < 2)) { ChangeState("NoAmmo", myside); break; }
 				if(mag < 1 && ddp.CountInv("BFS") < 1) { ChangeState("NoAmmo", myside); break; }
 				if(res == RES_DUALWLD) { //lower to reload
-					if(mag < 1) { LowerToReloadWeapon(); }
+					if(mag < 1 || (ddWeaponFlags & 2)) { LowerToReloadWeapon(); }
 					SetCaseNumber(1);
 					break;
 				}
-				else if(res == RES_HASESOA) { if(mag < 1) { weaponstatus = DDW_RELOADING; SetCaseNumber(2); ChangeState("ReloadP", myside); break; } ddp.PlayAttacking(); SetCaseNumber(1); break; } //jump to reload 
+				else if(ddWeaponFlags & SST_RSEQ1) { SetCaseNumber(2); ChangeState("Reload2", myside); break; }
+				else if(ddWeaponFlags & SST_RSEQ2) { SetCaseNumber(5); ChangeState("Reload3", myside); break; }
+				else if(res == RES_HASESOA) 
+				{ 
+					if(mag < 1) 
+					{ weaponstatus = DDW_RELOADING; SetCaseNumber(4); ChangeState("ReloadP", myside); break; } 
+					ddp.PlayAttacking(); SetCaseNumber(1); break; 
+				}
 				else { if(mag < 1) { weaponstatus = DDW_RELOADING; SetCaseNumber(2); ChangeState("ReloadP", myside); break; } else { ddp.PlayAttacking(); SetCaseNumber(1); } break; } 
 			case 1: //jump to reload if twohanding
 				if(res == RES_CLASSIC && ddp.CountInv("Shell") >= 1) { ChangeState("ReloadP", myside); SetCaseNumber(2); break; }
-				if((res == RES_TWOHAND || res == RES_HASESOA) && ddp.CountInv("BFS") >= 1 && mag < 1) { weaponstatus = DDW_RELOADING; ChangeState("ReloadP", myside); SetCaseNumber(2); }
+				if((res == RES_TWOHAND || res == RES_HASESOA) && ddp.CountInv("BFS") >= 1 && mag < 1) { weaponstatus = DDW_RELOADING; ChangeState("ReloadP", myside); SetCaseNumber(4); }
 				else { SetCaseNumber(0); }
 				break;	
 			case 2:
@@ -179,7 +186,7 @@ class ddSuperShotgun : ddWeapon
 				SetCaseNumber(2);
 				break;
 			case 5: //close
-				ddWeaponFlags &= SST_RSEQ2;
+				ddWeaponFlags &= ~SST_RSEQ2;
 				SetCaseNumber(0);
 				break;
 			default: break;
@@ -343,7 +350,7 @@ class ddSuperShotgunRight : ddSuperShotgun
 		Reload3:
 			#### F 6;
 			#### G 5;
-			#### G 1 A_DDActionRight //5
+			#### G 1 A_DDActionRight; //5
 			#### H 0 A_CloseShotgun2;
 			#### H 6 A_ddRefireRight;
 			#### A 5;
