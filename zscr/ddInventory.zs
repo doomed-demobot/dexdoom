@@ -112,11 +112,11 @@ class playerInventory : ddWeapon
 		ix = 0;
 		let pW = inventoryWeapon(Spawn("inventoryWeapon"));
 		pW.BecomeItem();
-		pW.construct("", 0, "", 0, false);
+		pW.construct("", 0, "", 0, 0, false);
 		sW = pW;
 		let pT = inventoryWeapon(Spawn("inventoryWeapon"));
 		pT.BecomeItem();
-		pT.construct("", 0, "", 0, false);
+		pT.construct("", 0, "", 0, 0, false);
 		tW = pT;
 		lowerL = -1;
 		lowerR = -1;
@@ -600,6 +600,7 @@ class playerInventory : ddWeapon
 		invoker.inInventory = !invoker.inInventory;
 	}
 	
+	//TODO: import stored weaponflags into inventory
 	action void A_InvSelect()
 	{
 		let ddp = ddPlayer(self);
@@ -618,11 +619,11 @@ class playerInventory : ddWeapon
 			if(weap is "ddWeapon") { 
 				let sel = ddWeapon(weap);
 				String nam = (sel is "ddFist") ? "emptie" : sel.GetParentType();
-				i.sW.construct(nam, sel.rating, sel.GetWeaponSprite(), sel.mag, false);
+				i.sW.construct(nam, sel.rating, sel.GetWeaponSprite(), sel.mag, sel.ddWeaponFlags, false);
 			}
 			else { 
 				let sel = inventoryWeapon(weap);
-				i.sW.construct(sel.weaponName, sel.rating, sel.weaponSprite, sel.mag, false); 
+				i.sW.construct(sel.weaponName, sel.rating, sel.weaponSprite, sel.mag, sel.ddWeaponFlags, false); 
 			}
 			if(ddp.dddebug & DBG_INVENTORY) {
 				A_Log("Weapon "..i.sW.weaponname.." selected from "..((i.storedSide == -1) ? "inventory slot " : ((i.storedside) ? "right slot " : "left slot "))..
@@ -639,17 +640,17 @@ class playerInventory : ddWeapon
 			if(weap2 is "ddWeapon") { 
 				let sel = ddWeapon(weap2);
 				String nam = (sel is "ddFist") ? "emptie" : sel.GetParentType();
-				i.tW.construct(nam, sel.rating, sel.GetWeaponSprite(), sel.mag, false);
+				i.tW.construct(nam, sel.rating, sel.GetWeaponSprite(), sel.mag, sel.ddWeaponFlags, false);
 			}
 			else { 
 				let sel = inventoryWeapon(weap2);
-				i.tW.construct(sel.weaponName, sel.rating, sel.weaponSprite, sel.mag, false); 
+				i.tW.construct(sel.weaponName, sel.rating, sel.weaponSprite, sel.mag, sel.ddWeaponFlags, false); 
 			}
 			
 			if(i.storedSpot is "weaponsInventory")
 			{
 				let sts = weaponsInventory(i.storedSpot);
-				sts.RetItem(i.storedIndex).construct(i.tW.weaponname, i.tW.rating, i.tW.weaponsprite, i.tW.mag);
+				sts.RetItem(i.storedIndex).construct(i.tW.weaponname, i.tW.rating, i.tW.weaponsprite, i.tW.ddWeaponFlags, i.tW.mag);
 				if(ddp.dddebug & DBG_INVENTORY) {
 					A_Log("Weapon \cq"..i.tW.weaponname.."\c- placed in inventory slot "..i.StoredIndex..", replacing \ci"..i.sW.weaponname);
 				}
@@ -659,6 +660,7 @@ class playerInventory : ddWeapon
 				String new = (i.tW.weaponName == "emptie") ? ddp.GetFists().GetClassName() : i.tW.weaponName;
 				new = (i.storedside) ? new.."left" : new.."right";
 				let newWeap = ddWeapon(Spawn(new));
+				newWeap.ddWeaponFlags = i.tW.ddWeaponFlags;
 				newWeap.mag = i.tW.mag;
 				newWeap.AmmoGive1 = 0;
 				newWeap.AmmoGive2 = 0;
@@ -695,7 +697,7 @@ class playerInventory : ddWeapon
 			if(i.targetSpot is "weaponsInventory")
 			{
 				let tgs = weaponsInventory(i.targetSpot);
-				tgs.RetItem(i.targetIndex).construct(i.sW.weaponname, i.sW.rating, i.sW.weaponsprite, i.sW.mag);
+				tgs.RetItem(i.targetIndex).construct(i.sW.weaponname, i.sW.rating, i.sW.weaponsprite, i.sW.mag, i.sW.ddWeaponFlags);
 				if(ddp.dddebug & DBG_INVENTORY) {
 					A_Log("Weapon \ci"..i.sW.weaponname.."\c- placed in inventory slot "..i.TargetIndex..", replacing \cq"..i.tW.weaponname);
 				}
@@ -705,6 +707,7 @@ class playerInventory : ddWeapon
 				String old = (i.sW.weaponName == "emptie") ? ddp.GetFists().GetClassName() : i.sW.weaponName;
 				old = (i.weapside) ? old.."left" : old.."right";
 				let oldWeap = ddWeapon(Spawn(old));
+				oldWeap.ddWeaponFlags = i.sW.ddWeaponFlags;
 				oldWeap.mag = i.sW.mag;
 				oldWeap.AmmoGive1 = 0;
 				oldWeap.AmmoGive2 = 0;

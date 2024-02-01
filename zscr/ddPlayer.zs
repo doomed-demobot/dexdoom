@@ -121,7 +121,7 @@ class ddPlayer : DoomPlayer
 				rWeap.additem(FindInventory("emptie"));
 			}
 		}
-		invtemp.construct("", 0, "", 0, false);
+		invtemp.construct("", 0, "", 0, 0, false);
 		FillInv();
 	}
 	override void ClearInventory()
@@ -271,7 +271,7 @@ class ddPlayer : DoomPlayer
 				let inw = pInv.RetItem(x);
 				if(inw.ref == null) 
 				{
-					inw.construct(inw.weaponname, inw.rating, inw.weaponsprite, inw.mag);
+					inw.construct(inw.weaponname, inw.rating, inw.weaponsprite, inw.mag, inw.ddWeaponFlags, true);
 				}
 			}
 			if(autoreload)

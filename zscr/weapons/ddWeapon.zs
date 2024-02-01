@@ -66,7 +66,7 @@ class ddWeapon : Weapon
 	property xOffset : xOffset;
 	property initialddWFlags : ddWeaponFlags;
 	//flags
-	uint8 ddweaponflags;
+	int ddweaponflags;
 	int prFlags;
 	flagdef modeReady	 : prFlags, 0; //twohanding/dual wielding can fire
 	flagdef noLower		 : prFlags, 1; //weapon never needs to lower to center to reload
@@ -1726,7 +1726,7 @@ class WeaponsInventory : Pocket
 			if(inventoryWeapon(items[x]).weaponname == "emptie")
 			{
 				ddWeapon nu = ddWeapon(it);
-				inventoryWeapon(items[x]).construct(nu.GetParentType(), nu.rating, nu.GetWeaponSprite(), nu.mag);
+				inventoryWeapon(items[x]).construct(nu.GetParentType(), nu.rating, nu.GetWeaponSprite(), nu.mag, nu.ddWeaponFlags, true);
 				return true;
 			}
 		}
@@ -1776,11 +1776,14 @@ class inventoryWeapon : Inventory
 	int rating;
 	String weaponSprite;
 	int mag;
+	int ddWeaponFlags;
 	ddWeapon ref; //copy of parent type for getting attributes
+	
 	Property weaponName : weaponName;
 	Property rating : rating;
 	Property weaponSprite : weaponSprite;
 	Property Mag : mag;
+	Property ddWeaponFlags : ddWeaponFlags;
 	
 	Default
 	{
@@ -1790,19 +1793,22 @@ class inventoryWeapon : Inventory
 		inventoryWeapon.rating	 	0;
 		inventoryWeapon.weaponSprite	"";
 		inventoryWeapon.mag	1;
+		//inventoryWeapon.ddWeaponFlags 0;
 	}
 	
 	//give inventoryWeapon identifiers
-	void construct(Name wName, int wRating, String wSprite, int ma, bool storeReference = true)
+	void construct(Name wName, int wRating, String wSprite, int ma, int wflags = 0, bool storeReference = true)
 	{
 		weaponName = wName;
 		if(storeReference)
 		{
 			let wip = ddWeapon(Spawn(wName));
 			wip.mag = ma;
+			wip.ddWeaponFlags = wFlags;
 			ref = wip;
 			wip.BecomeItem();
 		}
+		ddWeaponFlags = wFlags;
 		rating = wRating;		
 		weaponSprite = wSprite;
 		mag = ma;
