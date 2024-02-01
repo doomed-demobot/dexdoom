@@ -2,8 +2,10 @@
 // weapon to reload. Single-fire alternative fire
 // #Class ddSuperShotgun : ddWeapon()
 enum ddSShotgunFlags{
-	SST_RSEQ1 = 2,
-	SST_RSEQ2 = 3,
+	SST_RSEQA = 1,
+	SST_RSEQ1 = 4,
+	SST_RSEQ2 = 6,
+	SST_RALL = 7,
 };
 
 class ddSuperShotgun : ddWeapon
@@ -115,6 +117,22 @@ class ddSuperShotgun : ddWeapon
 		}
 	}
 	
+	override State GetReadyState()
+	{
+		if(ModeCheck(4) == (RES_TWOHAND || RES_HASESOA)) 
+		{ 
+			ddPlayer(owner).ddWeaponState |= DDW_RIGHTNOBOBBING; 
+			weaponStatus = DDW_RELOADING;
+			
+			if(ddWeaponFlags & 4) { SetCaseNumber(2); return FindState("Reload2"); }
+			else if(ddWeaponFlags & 5) { SetCaseNumber(5); return FindState("Reload3"); }
+			else if(ddWeaponFlags & 6) { SetCaseNumber(2); return FindState("Reload2A"); }
+			else if(ddWeaponFlags & 7) { SetCaseNumber(5); return FindState("Reload3A"); }
+			else { return FindState("Ready"); }
+		}
+		else { return FindState("Ready"); }
+	}
+	
 	override State wannaReload()
 	{
 		if(weaponstatus == DDW_UNLOADING) { SetCaseNumber(3); return FindState('UnloadP'); }
@@ -139,7 +157,7 @@ class ddSuperShotgun : ddWeapon
 		if(mag > 0) { mag--; A_FireDDSShotgunSingle(); }
 		else { }
 	}
-	
+	//todo: fix jump to reload issues
 	override void DD_Condition(int cn)
 	{
 		int caseno = cn;
@@ -175,18 +193,19 @@ class ddSuperShotgun : ddWeapon
 				else { SetCaseNumber(0); }
 				break;	
 			case 2:
-				if(mag < 1) { ddWeaponFlags |= SST_RSEQ2; ReloadWeaponMag(2); SetCaseNumber(5); break; }
+				if(mag < 1) { ddWeaponFlags |= SST_RSEQA; ReloadWeaponMag(2); SetCaseNumber(5); break; }
 				else { ReloadWeaponMag(2); SetCaseNumber(5); break; }
 			case 3:
 				UnloadWeaponMag();
 				SetCaseNumber(0);
 				break;
 			case 4: //eject
-				ddWeaponFlags |= SST_RSEQ1;
+				if(mag < 1) { ddWeaponFlags |= SST_RSEQ1; }
+				else { ddWeaponFlags |= SST_RSEQ2; }
 				SetCaseNumber(2);
 				break;
 			case 5: //close
-				ddWeaponFlags &= ~SST_RSEQ2;
+				ddWeaponFlags &= ~SST_RALL;
 				SetCaseNumber(0);
 				break;
 			default: break;
@@ -340,8 +359,8 @@ class ddSuperShotgunRight : ddSuperShotgun
 		ReloadP:		
 			#### B 7;
 			#### C 7;
-			#### D 1 A_DDActionRight; //4
-			#### D 1 A_OpenShotgun2;
+			#### D 1 A_OpenShotgun2; //4
+			#### D 1 A_DDActionRight;
 		Reload2:
 			#### D 5;
 			#### E 7;
@@ -350,8 +369,8 @@ class ddSuperShotgunRight : ddSuperShotgun
 		Reload3:
 			#### F 6;
 			#### G 5;
-			#### G 1 A_DDActionRight; //5
-			#### H 0 A_CloseShotgun2;
+			#### G 1 A_CloseShotgun2;
+			#### H 0 A_DDActionRight; //5
 			#### H 6 A_ddRefireRight;
 			#### A 5;
 			Goto Ready;	
@@ -360,16 +379,20 @@ class ddSuperShotgunRight : ddSuperShotgun
 			#### B 7;
 			#### C 7;
 			#### D 7 A_OpenShotgun2;
-			#### F 5 A_LoadShotgun2;
+			#### F 1 A_LoadShotgun2;
+			#### F 4 A_DDActionRight; //4
+		Reload2A:
 			#### E 4;
 			#### D 6;
 			#### E 5;			
 			#### F 0 A_LoadShotgun2;
-			#### F 1 A_DDActionRight;
+			#### F 1 A_DDActionRight; //2
+		Reload3A:
 			#### F 6;
 			#### G 6;
 			#### H 0 A_CloseShotgun2;
-			#### H 6 A_ddRefireRight;
+			#### H 1 A_DDActionRight; //5
+			#### H 5 A_ddRefireRight;
 			#### A 5;
 			Goto Ready;
 		UnloadP:
