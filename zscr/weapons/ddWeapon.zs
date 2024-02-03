@@ -161,12 +161,13 @@ class ddWeapon : Weapon
 						//store
 						if(!(goner is "ddFist")) { 
 							ddp.A_Print("Stored "..goner.GetTag());
-							pInv.RetItem(x).construct(goner.GetParentType(), goner.rating, goner.GetWeaponSprite(), goner.mag); 
+							pInv.RetItem(x).construct(goner.GetParentType(), goner.rating, goner.GetWeaponSprite(), goner.mag, goner.ddWeaponFlags); 
 						}
 						let comer = ddWeapon(Spawn(self.GetClassName().."Left"));
 						if(wanter is "ddPlayerClassic") { comer.sFactor = 1.0; }
 						comer.AmmoGive1 = self.AmmoGive1;
 						comer.mag = self.mag;
+						comer.ddWeaponFlags = self.ddWeaponFlags;
 						comer.AttachToOwner(wanter);
 						if(comer.bTwoHander) { ddp.ddWeaponState |= DDW_LEFTISTH; }
 						else { ddp.ddWeaponState &= ~DDW_LEFTISTH; }
@@ -186,6 +187,7 @@ class ddWeapon : Weapon
 					goner = ddWeapon(Spawn(lWeap.RetItem(ddp.lwx).GetParentType()));
 					goner.AmmoGive1 = 0;
 					goner.mag = ddWeapon(lWeap.RetItem(ddp.lwx)).mag;
+					goner.ddWeaponFlags = ddWeapon(lWeap.RetItem(ddp.lwx)).ddWeaponFlags;
 					goner.AttachToOwner(ddp);
 					ddp.DropInventory(goner);
 					ddp.RemoveInventory(lWeap.RetItem(ddp.lwx));
@@ -195,6 +197,7 @@ class ddWeapon : Weapon
 				if(wanter is "ddPlayerClassic") { comer.sFactor = 1.0; }
 				comer.AmmoGive1 = self.AmmoGive1;
 				comer.mag = self.mag;
+				comer.ddWeaponFlags = self.ddWeaponFlags;
 				comer.AttachToOwner(wanter);
 				if(comer.bTwoHander) { ddp.ddWeaponState |= DDW_LEFTISTH; }
 				else { ddp.ddWeaponState &= ~DDW_LEFTISTH; }
@@ -221,12 +224,13 @@ class ddWeapon : Weapon
 						//store
 						if(!(goner is "ddFist")) {
 							ddp.A_Print("Stored "..goner.GetTag());
-							pInv.RetItem(x).construct(goner.GetParentType(), goner.rating, goner.GetWeaponSprite(), goner.mag);
+							pInv.RetItem(x).construct(goner.GetParentType(), goner.rating, goner.GetWeaponSprite(), goner.mag, goner.ddWeaponFlags);
 						}
 						let comer = ddWeapon(Spawn(self.GetClassName().."Right"));
 						if(wanter is "ddPlayerClassic") { comer.sFactor = 1.0; }
 						comer.AmmoGive1 = self.AmmoGive1;
 						comer.mag = self.mag;
+						comer.ddWeaponFlags = self.ddWeaponFlags;
 						comer.AttachToOwner(wanter);
 						if(comer.bTwoHander) { ddp.ddWeaponState |= DDW_RIGHTISTH; }
 						else { ddp.ddWeaponState &= ~DDW_RIGHTISTH; }
@@ -247,6 +251,7 @@ class ddWeapon : Weapon
 					goner = ddWeapon(Spawn(rWeap.RetItem(ddp.rwx).GetParentType()));
 					goner.AmmoGive1 = 0;
 					goner.mag = ddWeapon(rWeap.RetItem(ddp.rwx)).mag;
+					goner.ddWeaponFlags = ddWeapon(rWeap.RetItem(ddp.rwx)).ddWeaponFlags;
 					goner.AttachToOwner(ddp);
 					ddp.DropInventory(goner);
 					ddp.RemoveInventory(rWeap.RetItem(ddp.rwx));
@@ -256,6 +261,7 @@ class ddWeapon : Weapon
 				if(wanter is "ddPlayerClassic") { comer.sFactor = 1.0; }
 				comer.AmmoGive1 = self.AmmoGive1;
 				comer.mag = self.mag;
+				comer.ddWeaponFlags = self.ddWeaponFlags;
 				comer.AttachToOwner(wanter);
 				if(comer.bTwoHander) { ddp.ddWeaponState |= DDW_RIGHTISTH; }
 				else { ddp.ddWeaponState &= ~DDW_RIGHTISTH; }

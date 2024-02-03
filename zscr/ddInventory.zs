@@ -365,11 +365,11 @@ class playerInventory : ddWeapon
 	{
 		let pW = inventoryWeapon(Spawn("inventoryWeapon"));
 		pW.BecomeItem();
-		pW.construct("", 0, "", 0, false);
+		pW.construct("", 0, "", 0, 0, false);
 		sW = pW;
 		let pT = inventoryWeapon(Spawn("inventoryWeapon"));
 		pT.BecomeItem();
-		pT.construct("", 0, "", 0, false);
+		pT.construct("", 0, "", 0, 0, false);
 		tW = pT;		
 	}
 	

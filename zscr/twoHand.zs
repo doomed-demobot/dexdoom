@@ -129,7 +129,7 @@ class twoHanding : ddWeapon
 			if(pInv.RetItem(x).weaponName == "emptie")
 			{
 				ddp.A_Print("Stored "..weap.GetTag(), 1);
-				pInv.RetItem(x).construct(weap.GetParentType(), weap.rating, weap.GetWeaponSprite(), weap.mag);
+				pInv.RetItem(x).construct(weap.GetParentType(), weap.rating, weap.GetWeaponSprite(), weap.mag, weap.ddWeaponFlags);
 				rWeap.SetItem(ddWeapon(ddp.GetFists(0)), ddp.rwx);
 				if(++ddp.rwx > rWeap.size - 1) { ddp.rwx = 0; }
 				rSwapTarget = ddp.rwx;
@@ -147,6 +147,7 @@ class twoHanding : ddWeapon
 		let tos = ddWeapon(Spawn(weap.GetParentType()));
 		tos.AttachToOwner(owner);
 		tos.mag = weap.mag;
+		tos.ddWeaponFlags = weap.ddWeaponFlags;
 		tos.AmmoGive1 = 0;		
 		rWeap.SetItem(ddWeapon(ddp.GetFists(0)), ddp.rwx);
 		if(++ddp.rwx > rWeap.size - 1) { ddp.rwx = 0; }

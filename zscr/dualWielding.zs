@@ -87,7 +87,7 @@ class dualWielding : ddWeapon
 						if(pInv.RetItem(x).weaponName == "emptie")
 						{
 							ddp.A_Log("Stored "..lw.GetTag());
-							pInv.RetItem(x).construct(lw.GetParentType(), lw.rating, lw.GetWeaponSprite(), lw.mag);
+							pInv.RetItem(x).construct(lw.GetParentType(), lw.rating, lw.GetWeaponSprite(), lw.mag, lw.ddWeaponFlags);
 							ddp.RemoveInventory(lw);
 							lWeap.SetItem(ddWeapon(ddp.GetFists(1)), ddp.lwx);
 							if(++ddp.lwx > lWeap.size - 1) { ddp.lwx = 0; }
@@ -110,6 +110,7 @@ class dualWielding : ddWeapon
 					tos.AmmoGive1 = 0;
 					tos.AttachToOwner(owner);
 					tos.mag = lw.mag;
+					tos.ddWeaponFlags = lw.ddWeaponFlags;
 					ddp.RemoveInventory(lw);				
 					lWeap.SetItem(ddWeapon(ddp.GetFists(1)), ddp.lwx);
 					if(++ddp.lwx > lWeap.size - 1) { ddp.lwx = 0; }
@@ -118,7 +119,7 @@ class dualWielding : ddWeapon
 					ddp.ddWeaponState &= ~DDW_LEFTREADY;
 					bModeReady = false;
 					pspl.y = 128;
-					psplf.y = 128;	
+					psplf.y = 128;
 					self.blraised = false;
 					self.brraised = false;
 					ddp.player.SetPSprite(PSP_WEAPON, FindState('QuickSwapDW'));
@@ -137,7 +138,7 @@ class dualWielding : ddWeapon
 						if(pInv.RetItem(x).weaponName == "emptie")
 						{
 							ddp.A_Log("Stored "..rw.GetTag());
-							pInv.RetItem(x).construct(rw.GetParentType(), rw.rating, rw.GetWeaponSprite(), rw.mag);
+							pInv.RetItem(x).construct(rw.GetParentType(), rw.rating, rw.GetWeaponSprite(), rw.mag, rw.ddWeaponFlags);
 							ddp.RemoveInventory(rw);
 							rWeap.SetItem(ddWeapon(ddp.GetFists(0)), ddp.rwx);
 							if(++ddp.rwx > rWeap.size - 1) { ddp.rwx = 0; }
@@ -161,6 +162,7 @@ class dualWielding : ddWeapon
 					tos.AmmoGive1 = 0;
 					tos.AttachToOwner(owner);
 					tos.mag = rw.mag;
+					tos.ddWeaponFlags = rw.ddWeaponFlags;
 					ddp.RemoveInventory(rw);
 					rWeap.SetItem(ddWeapon(ddp.GetFists(0)), ddp.rwx);
 					if(++ddp.rwx > rWeap.size - 1) { ddp.rwx = 0; }
