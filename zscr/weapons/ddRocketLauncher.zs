@@ -4,7 +4,6 @@
 //TODO: make grenades like tf2
 class ddRocketLauncher : ddWeapon replaces RocketLauncher
 {
-	int grenadeFuse;
 	Default
 	{
 		Weapon.SelectionOrder 2500;
@@ -104,7 +103,7 @@ class ddRocketLauncher : ddWeapon replaces RocketLauncher
 	override void alternativeattack()
 	{
 		let ddp = ddPlayer(owner);
-		if(mag > 0) { mag--; A_FireDDGrenade(grenadeFuse); }
+		if(mag > 0) { mag--; A_FireDDGrenade(); }
 	}
 	
 	override void DD_Condition(int cn)
@@ -137,7 +136,6 @@ class ddRocketLauncher : ddWeapon replaces RocketLauncher
 						weaponstatus = DDW_RELOADING;
 						ChangeState("ReloadP", myside); SetCaseNumber(2); break; 
 					}
-					grenadeFuse = 140; 
 					SetCaseNumber(1);
 					ddp.PlayAttacking();
 					break;
@@ -179,14 +177,6 @@ class ddRocketLauncher : ddWeapon replaces RocketLauncher
 					else { ddp.A_StartSound("weapons/shotgp", CHAN_WEAPON, CHANF_OVERLAP); }
 					break;
 				}
-			case 5: /*countdown timer during altfire
-				grenadeFuse--;
-				ddp.A_Log(""..grenadefuse);
-				bool ret = (myside == PSP_LEFTW) ? (PressingLeftAltFire()) : (PressingRightAltFire());
-				if(ret) { ChangeState("Cook", myside); break; }
-				else { break; }
-				*/
-				break;
 			default: break;
 		}
 	}
@@ -329,7 +319,7 @@ extend class ddWeapon
 		else { AddRecoil(0.0, 0, 1.5); }
 	}
 	
-	action void A_FireDDGrenade(int fuse)
+	action void A_FireDDGrenade()
 	{
 		let ddp = ddPlayer(invoker.owner);
 		if(ddp.player == null) { return; }
@@ -340,8 +330,6 @@ extend class ddWeapon
 		ddp.instTimer = 20;
 		Actor mis1, mis2;
 		[mis1, mis2] = ddp.SpawnPlayerMissile("ddGrenade");
-		//if(mis1) { ddGrenade(mis1).timer = fuse; }
-		//else { ddGrenade(mis2).timer = fuse; }
 		AddRecoil(0.0, 0, 1.5);
 		
 	}
