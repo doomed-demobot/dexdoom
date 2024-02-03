@@ -174,7 +174,7 @@ class ddSuperShotgun : ddWeapon
 				if(res == RES_CLASSIC && (ddp.CountInv("Shell") < 2)) { ChangeState("NoAmmo", myside); break; }
 				if(mag < 1 && ddp.CountInv("BFS") < 1) { ChangeState("NoAmmo", myside); break; }
 				if(res == RES_DUALWLD) { //lower to reload
-					if(mag < 1 || (ddWeaponFlags & 2)) { LowerToReloadWeapon(); }
+					if(mag < 1 || (ddWeaponFlags & 7)) { LowerToReloadWeapon(); }
 					SetCaseNumber(1);
 					break;
 				}
@@ -275,34 +275,43 @@ class ddSuperShotgunLeft : ddSuperShotgun
 			#### A 6;
 			#### A 0 A_DDActionLeft;
 			Goto Ready;
-		ReloadP:		
+		ReloadP:			
 			#### B 7;
 			#### C 7;
-			#### D 7 A_OpenShotgun2;
-			#### E 7;			
+			#### D 1 A_OpenShotgun2; //4
+			#### D 1 A_DDActionLeft;
+		Reload2:
+			#### D 5;
+			#### E 7;
 			#### F 0 A_LoadShotgun2;
-			#### F 1 A_DDActionLeft;
+			#### F 1 A_DDActionLeft; //2
+		Reload3:
 			#### F 6;
-			#### G 6;
-			#### H 0 A_CloseShotgun2;
+			#### G 5;
+			#### G 1 A_CloseShotgun2;
+			#### H 0 A_DDActionLeft; //5
 			#### H 6 A_ddRefireLeft;
 			#### A 5;
 			Goto Ready;	
 		Reload:
-		ReloadA:		
+		ReloadA:
 			#### B 7;
 			#### C 7;
 			#### D 7 A_OpenShotgun2;
-			#### F 5 A_LoadShotgun2;
+			#### F 1 A_LoadShotgun2;
+			#### F 4 A_DDActionLeft; //4
+		Reload2A:
 			#### E 4;
 			#### D 6;
 			#### E 5;			
 			#### F 0 A_LoadShotgun2;
-			#### F 1 A_DDActionLeft;
+			#### F 1 A_DDActionLeft; //2
+		Reload3A:
 			#### F 6;
 			#### G 6;
 			#### H 0 A_CloseShotgun2;
-			#### H 6 A_ddRefireLeft;
+			#### H 1 A_DDActionLeft; //5
+			#### H 5 A_ddRefireLeft;
 			#### A 5;
 			Goto Ready;
 		UnloadP:
@@ -356,7 +365,7 @@ class ddSuperShotgunRight : ddSuperShotgun
 			#### A 6;
 			#### A 0 A_DDActionRight;
 			Goto Ready;
-		ReloadP:		
+		ReloadP:
 			#### B 7;
 			#### C 7;
 			#### D 1 A_OpenShotgun2; //4
@@ -375,7 +384,7 @@ class ddSuperShotgunRight : ddSuperShotgun
 			#### A 5;
 			Goto Ready;	
 		Reload:
-		ReloadA:		
+		ReloadA:
 			#### B 7;
 			#### C 7;
 			#### D 7 A_OpenShotgun2;
