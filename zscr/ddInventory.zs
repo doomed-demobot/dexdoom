@@ -290,6 +290,7 @@ class playerInventory : ddWeapon
 			{
 				let drp = ddWeapon(Spawn(pInv.RetItem(ix).weaponName));
 				drp.mag = pInv.RetItem(ix).mag;
+				drp.ddWeaponFlags = pInv.RetItem(ix).ddWeaponFlags;
 				drp.AmmoGive1 = 0;
 				drp.AttachToOwner(owner);
 				pInv.RetItem(ix).emptify();
@@ -311,6 +312,7 @@ class playerInventory : ddWeapon
 					let lw = lWeap.RetItem(li);
 					let drp = ddWeapon(Spawn(lw.GetParentType()));
 					drp.mag = lw.mag;
+					drp.ddWeaponFlags = lw.ddWeaponFlags;
 					drp.AmmoGive1 = 0;
 					drp.AttachToOwner(owner);
 					if(ddp.dddebug & DBG_INVENTORY && ddp.dddebug & DBG_VERBOSE) { ddp.A_Log("Left weapon replaced with "..ddp.GetFists().GetTag()); }
@@ -338,6 +340,7 @@ class playerInventory : ddWeapon
 					let rw = rWeap.RetItem(ri);
 					let drp = ddWeapon(Spawn(rw.GetParentType()));
 					drp.mag = rw.mag;
+					drp.ddWeaponFlags = rw.ddWeaponFlags;
 					drp.AmmoGive1 = 0;
 					drp.AttachToOwner(owner);
 					if(ddp.dddebug & DBG_INVENTORY && ddp.dddebug & DBG_VERBOSE) { ddp.A_Log("Right weapon replaced with "..ddp.GetFists().GetTag()); }
@@ -650,7 +653,7 @@ class playerInventory : ddWeapon
 			if(i.storedSpot is "weaponsInventory")
 			{
 				let sts = weaponsInventory(i.storedSpot);
-				sts.RetItem(i.storedIndex).construct(i.tW.weaponname, i.tW.rating, i.tW.weaponsprite, i.tW.ddWeaponFlags, i.tW.mag);
+				sts.RetItem(i.storedIndex).construct(i.tW.weaponname, i.tW.rating, i.tW.weaponsprite, i.tW.mag, i.tW.ddWeaponFlags);
 				if(ddp.dddebug & DBG_INVENTORY) {
 					A_Log("Weapon \cq"..i.tW.weaponname.."\c- placed in inventory slot "..i.StoredIndex..", replacing \ci"..i.sW.weaponname);
 				}
