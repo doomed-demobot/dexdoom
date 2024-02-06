@@ -176,8 +176,8 @@ class ddWeapon : Weapon
 						wanter.A_Print(""..goner.GetTag().." stored, replaced with "..comer.GetTag());
 						ddp.ddWeaponState |= DDW_LEFTNOBOBBING;
 						ddp.ddWeaponState &= ~DDW_LEFTREADY;
-						mode.ChangeState("PickupSwapStore");
 						ddp.ddWeaponState &= ~DDW_WANNAREPLACE;
+						mode.ChangeState("PickupSwapStore");
 						return true;
 					}
 				}
@@ -208,9 +208,8 @@ class ddWeapon : Weapon
 				wanter.player.setpsprite(PSP_LEFTW, ddp.GetLeftWeapon(ddp.lwx).GetUpState());
 				if(comer.UpSound) { wanter.A_StartSound(comer.UpSound, CHAN_WEAPON); }
 				ddp.ddWeaponState |= DDW_LEFTNOBOBBING;
-				mode.ChangeState("PickupSwapDrop");
-				
 				ddp.ddWeaponState &= ~DDW_WANNAREPLACE;
+				mode.ChangeState("PickupSwapDrop");
 				return true;
 			}
 			
@@ -239,8 +238,8 @@ class ddWeapon : Weapon
 						wanter.A_Print(""..goner.GetTag().." stored, replaced with "..comer.GetTag());
 						ddp.ddWeaponState &= ~DDW_RIGHTREADY;
 						ddp.ddWeaponState |= DDW_RIGHTNOBOBBING;
-						mode.ChangeState("PickupSwapStore");
 						ddp.ddWeaponState &= ~DDW_WANNAREPLACE;
+						mode.ChangeState("PickupSwapStore");
 						return true;
 					}
 				}
@@ -272,8 +271,8 @@ class ddWeapon : Weapon
 				wanter.player.setpsprite(PSP_RIGHTW, ddp.GetRightWeapon(ddp.rwx).GetUpState());	
 				if(comer.UpSound) { wanter.A_StartSound(comer.UpSound, CHAN_WEAPON); }
 				ddp.ddWeaponState |= DDW_RIGHTNOBOBBING;
-				mode.ChangeState("PickupSwapDrop");				
 				ddp.ddWeaponState &= ~DDW_WANNAREPLACE;
+				mode.ChangeState("PickupSwapDrop");	
 				return true;			
 			}
 			
@@ -632,6 +631,7 @@ class ddWeapon : Weapon
 		}
 		ddp.ddWeaponState |= DDW_LEFTREADY;
 		ddp.ddWeaponState |= DDW_LEFTBOBBING;
+		ddp.ddWeaponState &= ~DDW_LEFTNOBOBBING;
 		lw.weaponStatus = DDW_READY;
 		lw.weaponready = true;
 		lw.caseno = 0;
@@ -1021,7 +1021,7 @@ class ddWeapon : Weapon
 		if(!ddp.CheckESOA(cost) && (!lWeap.bNoLower && ddp.player.readyweapon is "dualWielding")) 
 		{ 
 			if(ddp.dddebug & DBG_WEAPSEQUENCE) { A_Log("Lowering weapons to reload left weapon"); }
-			invoker.bmodeReady = false;
+			//invoker.bmodeReady = false;
 			ddp.player.SetPSprite(PSP_LEFTW, lweap.FindState('Select'));
 			ddp.player.SetPSprite(PSP_RIGHTW, rweap.FindState('Select'));
 			ddp.ddWeaponState |= DDW_LEFTNOBOBBING;
@@ -1099,7 +1099,7 @@ class ddWeapon : Weapon
 		if(!ddp.CheckESOA(cost) && (!rWeap.bNoLower && ddp.player.readyweapon is "dualWielding")) 
 		{ 
 			if(ddp.dddebug & DBG_WEAPSEQUENCE) { A_Log("Lowering weapons to reload right weapon"); }
-			invoker.bmodeReady = false; 
+			//invoker.bmodeReady = false; 
 			ddp.player.SetPSprite(PSP_LEFTW, lweap.FindState('Select'));
 			ddp.player.SetPSprite(PSP_RIGHTW, rweap.FindState('Select'));
 			ddp.ddWeaponState |= DDW_LEFTNOBOBBING;
@@ -1175,7 +1175,7 @@ class ddWeapon : Weapon
 		if(ddp)
 		{
 			let mode = ddWeapon(player.readyweapon);
-			//mode.weaponstatus = DDW_RELOADING;			
+			//mode.weaponstatus = DDW_RELOADING;
 			let lWeap = ddp.GetLeftWeapon(ddp.lwx);
 			let rWeap = ddp.GetRightWeapon(ddp.rwx);
 			let lw = ddp.GetLeftWeapons();
@@ -1186,7 +1186,7 @@ class ddWeapon : Weapon
 			let psprf = player.GetPSprite(PSP_RIGHTWF);
 			int bz = (FindInventory("PowerBerserk")) ? 2 : 1;
 			double sFactor = (12 + ((lWeap.sFactor + rWeap.sFactor) / 2)) * bz;
-			if(lWeap.weaponready) 
+			if(lWeap.weaponready || ddp.lwx != invoker.lSwapTarget) 
 			{
 				player.SetPSprite(PSP_LEFTW, lWeap.GetUpState()); 
 				player.SetPSprite(PSP_RIGHTW, rWeap.GetUpState()); 
@@ -1286,7 +1286,7 @@ class ddWeapon : Weapon
 			let psplf = player.GetPSprite(PSP_LEFTWF);
 			let pspr = player.GetPSprite(PSP_RIGHTW);
 			let psprf = player.GetPSprite(PSP_RIGHTWF);
-			if(rWeap.weaponready) 
+			if(rWeap.weaponready || ddp.rwx != invoker.rSwapTarget) 
 			{
 				player.SetPSprite(PSP_LEFTW, lWeap.GetUpState()); 
 				player.SetPSprite(PSP_RIGHTW, rWeap.GetUpState()); 
@@ -1436,6 +1436,7 @@ class ddWeapon : Weapon
 		
 	}
 	
+	//TODO: either integrate quickswap with addtoddplayer or fix errors with pickupswap/drop
 	action void A_PickupSwapDrop()
 	{
 		let ddp = ddPlayer(invoker.owner);
@@ -1490,39 +1491,29 @@ class ddWeapon : Weapon
 				leftw.RetItem(ddp.lwx).companionpiece = rightw.RetItem(ddp.rwx);
 				pspr.SetState(ddp.GetRightWeapon(ddp.rwx).GetUpState());
 				if(ddp.GetRightWeapon(ddp.rwx).UpSound) { ddp.A_StartSound(ddp.GetRightWeapon(ddp.rwx).UpSound, CHAN_WEAPON); }
+				if(mode is "twoHanding") { A_ChangeState("QuickSwapTH"); }
+				else { dualWielding(mode).brraised = false; A_ChangeState("QuickSwapDW"); }
 			}
 		}
-		else
+		if(ddp.ddWeaponState & DDW_REPLACELEFT)
 		{
-			pspr.y -= 4 * rWeap.sFactor; psprf.y -= 4 * rWeap.sFactor;
-			if(pspr.y < 1) { pspr.y = 0; psprf.y = 0; ddp.ddWeaponState &= ~DDW_RIGHTNOBOBBING; pspr.SetState(rWeap.GetReadyState()); }			
-		}
-		if(mode is "dualWielding")
-		{
-			if(ddp.ddWeaponState & DDW_REPLACELEFT)
-			{
-				pspl.y += 4 * lWeap.sFactor; psplf.y += 4 * lWeap.sFactor;
-				if(pspl.y > 127) 
-				{
-					pspl.y = 128; psplf.y = 128; 
-					ddp.ddWeaponState &= ~DDW_REPLACELEFT; 
-					if(!(leftw.RetItem(ddp.lwx) is "ddFist")) { ddp.RemoveInventory(leftw.RetItem(ddp.lwx)); }
-					leftw.SetItem(invoker.swapHeld, ddp.lwx);
-					rightw.RetItem(ddp.rwx).companionpiece = leftw.RetItem(ddp.lwx);
-					leftw.RetItem(ddp.lwx).companionpiece = rightw.RetItem(ddp.rwx);
-					pspl.SetState(ddp.GetLeftWeapon(ddp.lwx).GetUpState()); }
-					if(ddp.GetLeftWeapon(ddp.lwx).UpSound) { ddp.A_StartSound(ddp.GetLeftWeapon(ddp.lwx).UpSound, CHAN_WEAPON); }
+			pspl.y += 4 * lWeap.sFactor; psplf.y += 4 * lWeap.sFactor;
+			if(pspl.y > 127) 
+			{					
+				pspl.y = 128; psplf.y = 128; 
+				ddp.ddWeaponState &= ~DDW_REPLACELEFT; 
+				if(!(leftw.RetItem(ddp.lwx) is "ddFist")) { ddp.RemoveInventory(leftw.RetItem(ddp.lwx)); }
+				leftw.SetItem(invoker.swapHeld, ddp.lwx);
+				rightw.RetItem(ddp.rwx).companionpiece = leftw.RetItem(ddp.lwx);
+				leftw.RetItem(ddp.lwx).companionpiece = rightw.RetItem(ddp.rwx);
+				pspr.SetState(ddp.GetRightWeapon(ddp.rwx).GetUpState());
+				if(ddp.GetLeftWeapon(ddp.lwx).UpSound) { ddp.A_StartSound(ddp.GetLeftWeapon(ddp.lwx).UpSound, CHAN_WEAPON); }
+				dualWielding(mode).blraised = false;
+				A_ChangeState("QuickSwapDW");
 			}
-			else
-			{
-				pspl.y -= 4 * lWeap.sFactor; psplf.y -= 4 * lWeap.sFactor;
-				if(pspl.y < 1) { pspl.y = 0; psplf.y = 0; ddp.ddWeaponState &= ~DDW_LEFTNOBOBBING; pspl.SetState(lWeap.GetReadyState()); }			
-			}
+			
 		}
-		if((ddp.ddWeaponState & DDW_LEFTREADY) && (ddp.ddWeaponState & DDW_RIGHTREADY))
-		{
-			A_ChangeState("Ready");
-		}
+		
 	}
 	
 	// ##ddWeapon States()

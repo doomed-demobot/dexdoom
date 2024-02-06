@@ -511,6 +511,7 @@ class ddPlayer : DoomPlayer
 		let rWeap = GetRightWeapons();
 		if(!(weap is "playerInventory"))
 		{
+			if(ddWeaponState & (DDW_REPLACERIGHT | DDW_REPLACELEFT)) { return; }
 			if((player.cmd.buttons & BT_USER4))
 			{
 				if(!swapDown)
