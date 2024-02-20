@@ -2,6 +2,12 @@
 // Doom Rocket Launcher. 4 mag, reloads automatically when two handed. Must lower other
 // weapon to reload. Grenade launcher altfire.
 //TODO: make grenades like tf2
+enum ddRLFlags
+{
+	RKL_RSEQ = 1,
+	RKL_RLOD = 2, //for interrupting reload with fire button in tick function
+};
+
 class ddRocketLauncher : ddWeapon replaces RocketLauncher
 {
 	Default
@@ -61,6 +67,24 @@ class ddRocketLauncher : ddWeapon replaces RocketLauncher
 		}
 	}	
 	
+	override void Tick()
+	{
+		Super.Tick();
+		let ddp = ddPlayer(owner);
+		if(!ddp) { return; }
+		let mode = ddWeapon(owner.player.readyweapon);
+		if(ddWeaponFlags & RKL_RLOD)
+		{
+			if(weaponside && ddp.GetLeftWeapon(ddp.lwx) is self.GetClassName()) { 
+				if(PressingLeftFire() && !mode.leftheld) { SetCaseNumber(5); ChangeState("RFinish", PSP_LEFTW); ddWeaponFlags &= ~RKL_RLOD; ddWeaponFlags |= RKL_RSEQ; } 
+			}
+			else if(!weaponside && ddp.GetRightWeapon(ddp.rwx) is self.GetClassName()) {
+				if(PressingRightFire()) { if(mode.rightheld) { return; } SetCaseNumber(5); ChangeState("RFinish", PSP_RIGHTW); ddWeaponFlags &= ~RKL_RLOD; ddWeaponFlags |= RKL_RSEQ; } 
+			}
+			else { return; }
+		}
+	}
+	
 	override String getParentType()
 	{
 		return "ddRocketLauncher";
@@ -82,10 +106,16 @@ class ddRocketLauncher : ddWeapon replaces RocketLauncher
 		else { return FindState('NoFlash'); }  
 	}
 	
+	override State GetReadyState()
+	{
+		if(ddWeaponFlags & RKL_RSEQ) { SetCaseNumber(5); weaponStatus = DDW_RELOADING; return FindState("RFinish"); }
+		else { return FindState("Ready"); }
+	}
+	
 	override State wannaReload()
 	{
 		if(mag > 0 && weaponstatus == DDW_UNLOADING) { SetCaseNumber(4); return FindState("UnloadP"); }
-		if(mag < default.mag) { SetCaseNumber(2); weaponStatus = DDW_RELOADING; return FindState('ReloadP'); }
+		if(mag < default.mag) { ddWeaponFlags |= RKL_RLOD; ddWeaponFlags |= RKL_RSEQ; SetCaseNumber(2); weaponStatus = DDW_RELOADING; return FindState('ReloadP'); }
 		else { return FindState('DoNotJump'); }
 	}
 	
@@ -143,30 +173,28 @@ class ddRocketLauncher : ddWeapon replaces RocketLauncher
 				else { ddp.PlayAttacking(); SetCaseNumber(1); break; }
 			case 1: //auto reload if twohanding
 				if(res == RES_HASESOA || res == RES_TWOHAND) { 
-					if(mag < 1) { weaponstatus = DDW_RELOADING; ChangeState("ReloadP", myside); SetCaseNumber(2); break; } 
+					if(mag < 1) { ddWeaponFlags |= RKL_RLOD; ddWeaponFlags |= RKL_RSEQ; weaponstatus = DDW_RELOADING; ChangeState("ReloadP", myside); SetCaseNumber(2); break; } 
 					else { SetCaseNumber(0); break; } 
 				}
 				else { SetCaseNumber(0); break; }
 			case 2: //reload checks 1
-				if(mag > 0 && PressingFireButton()) { ChangeState("RFinish", myside); ddp.A_StartSound("weapons/shotgp", CHAN_WEAPON, CHANF_OVERLAP); break; }
-				else
-				{
-					if(mag < default.mag && ddp.CountInv("RocketAmmo") > 0) { 
-						mag++; ddp.TakeInventory("RocketAmmo", 1); ddp.A_StartSound("weapons/rocketload", CHAN_WEAPON, CHANF_OVERLAP); SetCaseNumber(3);
-					}
-					else { ChangeState("RFinish", myside); ddp.A_StartSound("weapons/shotgp", CHAN_WEAPON, CHANF_OVERLAP); }
-					break;
+				if(mag < default.mag && ddp.CountInv("RocketAmmo") > 0) { 
+					mag++; ddp.TakeInventory("RocketAmmo", 1); ddp.A_StartSound("weapons/rocketload", CHAN_WEAPON, CHANF_OVERLAP); SetCaseNumber(3);
 				}
+				else { 
+					ddWeaponFlags &= ~RKL_RLOD; ddWeaponFlags |= RKL_RSEQ; 
+					SetCaseNumber(5); ChangeState("RFinish", myside); 
+				}
+				break;
 			case 3: //reload checks 2
-				if(mag > 0 && PressingFireButton()) { ChangeState("RFinish", myside); ddp.A_StartSound("weapons/shotgp", CHAN_WEAPON, CHANF_OVERLAP); break; }
-				else
-				{
-					if(mag < default.mag && ddp.CountInv("RocketAmmo") > 0) { 
-						mag++; ddp.TakeInventory("RocketAmmo", 1); ddp.A_StartSound("weapons/rocketload", CHAN_WEAPON, CHANF_OVERLAP); SetCaseNumber(2); ChangeState("Load", myside); 
-					}
-					else { ChangeState("RFinish", myside); ddp.A_StartSound("weapons/shotgp", CHAN_WEAPON, CHANF_OVERLAP); }
-					break;
+				if(mag < default.mag && ddp.CountInv("RocketAmmo") > 0) { 
+					mag++; ddp.TakeInventory("RocketAmmo", 1); ddp.A_StartSound("weapons/rocketload", CHAN_WEAPON, CHANF_OVERLAP); SetCaseNumber(2); ChangeState("Load", myside); 
 				}
+				else { 
+					ddWeaponFlags &= ~RKL_RLOD; ddWeaponFlags |= RKL_RSEQ; 
+					SetCaseNumber(5); ChangeState("RFinish", myside); 
+				}
+				break;
 			case 4: //checks during unload
 				if(mag > 0 && PressingFireButton()) { ddp.A_StartSound("weapons/shotgp", CHAN_WEAPON, CHANF_OVERLAP); break; }
 				else
@@ -177,6 +205,10 @@ class ddRocketLauncher : ddWeapon replaces RocketLauncher
 					else { ddp.A_StartSound("weapons/shotgp", CHAN_WEAPON, CHANF_OVERLAP); }
 					break;
 				}
+			case 5:
+				ddWeaponFlags &= ~RKL_RSEQ;
+				SetCaseNumber(0);
+				break;
 			default: break;
 		}
 	}
@@ -243,14 +275,16 @@ class ddRocketLauncherLeft : ddRocketLauncher
 			MISG B 5 A_DDActionLeft;
 			MISG B 1 A_DDActionLeft;
 		RFinish:
-			MISG A 2;
+			MISG A 10 A_RLPump1;
+			MISG A 2 A_RLPump2;
+			MISG A 1 A_DDActionLeft;
 			Goto Ready;
 		UnloadP:
 			MISG B 5;
 		Unload:
-			MISG B 10;
-			MISG A 10 A_DDActionLeft;
-			MISG A 10;
+			MISG B 5;
+			MISG A 5 A_DDActionLeft;
+			MISG A 5;
 			Goto Ready;
 			
 	}
@@ -289,14 +323,16 @@ class ddRocketLauncherRight : ddRocketLauncher
 			MISG B 5 A_DDActionRight;
 			MISG B 1 A_DDActionRight;
 		RFinish:
-			MISG A 2;
+			MISG A 10 A_RLPump1;
+			MISG A 2 A_RLPump2;
+			MISG A 1 A_DDActionRight;
 			Goto Ready;
 		UnloadP:
 			MISG B 5;
 		Unload:
-			MISG B 10;
-			MISG A 10 A_DDActionRight;
-			MISG A 10;
+			MISG B 5;
+			MISG A 5 A_DDActionRight;
+			MISG A 5;
 			Goto Ready;
 			
 	}
@@ -332,6 +368,16 @@ extend class ddWeapon
 		[mis1, mis2] = ddp.SpawnPlayerMissile("ddGrenade");
 		AddRecoil(0.0, 0, 1.5);
 		
+	}
+	
+	action void A_RLPump1()
+	{
+		invoker.owner.A_StartSound("weapons/shotgp1", CHAN_WEAPON, CHANF_OVERLAP);
+	}
+	
+	action void A_RLPump2()
+	{
+		invoker.owner.A_StartSound("weapons/shotgp2", CHAN_WEAPON, CHANF_OVERLAP);	
 	}
 }
 //TODO: make it not explode after running out of speed/bounces

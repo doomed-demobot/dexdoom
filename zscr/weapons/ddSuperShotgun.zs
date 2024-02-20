@@ -21,7 +21,7 @@ class ddSuperShotgun : ddWeapon
 		ddWeapon.ClassicAmmoType1 "Shell";
 		ddWeapon.ClassicAmmoType2 "Shell";
 		ddWeapon.rating 5;
-		ddWeapon.SwitchSpeed 1.4;
+		ddWeapon.SwitchSpeed 1.5;
 		ddWeapon.initialmag 2;
 		ddWeapon.MagUse 1;
 		ddWeapon.WeaponType "Shotgun";
@@ -186,7 +186,7 @@ class ddSuperShotgun : ddWeapon
 					{ weaponstatus = DDW_RELOADING; SetCaseNumber(4); ChangeState("ReloadP", myside); break; } 
 					ddp.PlayAttacking(); SetCaseNumber(1); break; 
 				}
-				else { if(mag < 1) { weaponstatus = DDW_RELOADING; SetCaseNumber(2); ChangeState("ReloadP", myside); break; } else { ddp.PlayAttacking(); SetCaseNumber(1); } break; } 
+				else { if(mag < 1) { weaponstatus = DDW_RELOADING; SetCaseNumber(4); ChangeState("ReloadP", myside); break; } else { ddp.PlayAttacking(); SetCaseNumber(1); } break; } 
 			case 1: //jump to reload if twohanding
 				if(res == RES_CLASSIC && ddp.CountInv("Shell") >= 1) { ChangeState("ReloadP", myside); SetCaseNumber(2); break; }
 				if((res == RES_TWOHAND || res == RES_HASESOA) && ddp.CountInv("BFS") >= 1 && mag < 1) { weaponstatus = DDW_RELOADING; ChangeState("ReloadP", myside); SetCaseNumber(4); }

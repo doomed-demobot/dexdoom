@@ -129,7 +129,8 @@ class ddPistol : ddWeapon replaces Pistol
 	
 	override State GetReadyState()
 	{
-		if(ddweaponflags & PIS_RSEQ && (ModeCheck(4) == (RES_TWOHAND || RES_HASESOA))) { ddPlayer(owner).ddWeaponState |= DDW_RIGHTNOBOBBING; SetCaseNumber(3); return FindState("Reload2"); }
+		if(ddweaponflags & PIS_RSEQ && (ModeCheck(4) == (RES_TWOHAND || RES_HASESOA))) 
+			{ ddPlayer(owner).ddWeaponState &= ~DDW_RIGHTREADY; ddPlayer(owner).ddWeaponState |= DDW_RIGHTNOBOBBING; SetCaseNumber(3); return FindState("Reload2"); }
 		else { return FindState("Ready"); }
 	}
 	

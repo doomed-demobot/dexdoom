@@ -204,7 +204,8 @@ class ddPlasmaRifle : ddWeapon replaces PlasmaRifle
 				double pit = 1. * ((mag+0.0)/(default.mag+0.0));
 				ddp.A_StartSound("weapons/plasmax", CHAN_WEAPON, CHANF_OVERLAP, 1., ATTN_NORM, pit);
 				if(mag > 50) { mag = 50; }
-				if(mag < 50 && !(PressingFireButton())) { ChangeState("ReloadP", myside); break; }
+				if(weaponside) { if(mag < 50 && !(PressingLeftFire())) { ChangeState("ReloadP", myside); break; } }
+				else { if(mag < 50 && !(PressingRightFire())) { ChangeState("ReloadP", myside); break; } }
 				break;
 			case 3: //alt charge shot
 				if(mag > 0 && ddp.CountInv("Cell") > 1)

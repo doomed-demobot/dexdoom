@@ -625,10 +625,10 @@ class dualWielding : ddWeapon
 			pspr.x = 64 + rw.xOffset; psprf.x = 64 + rw.xOffset;
 			if(ddp.dddebug & DBG_WEAPONS) { A_Log("mode ready"); }
 			invoker.bmodeReady = true;
-			if(lWeap.items.Size()) { player.setpsprite(PSP_LEFTW, lw.GetReadyState()); }
-			if(rWeap.items.Size()) { player.setpsprite(PSP_RIGHTW, rw.GetReadyState()); }
 			ddp.ddWeaponState &= ~DDW_LEFTNOBOBBING; 
 			ddp.ddWeaponState &= ~DDW_RIGHTNOBOBBING;
+			if(lWeap.items.Size()) { player.setpsprite(PSP_LEFTW, lw.GetReadyState()); }
+			if(rWeap.items.Size()) { player.setpsprite(PSP_RIGHTW, rw.GetReadyState()); }
 			invoker.weaponstatus = DDW_READY;
 			A_ChangeState("Ready");
 		}

@@ -81,7 +81,9 @@ class ddShotgun : ddWeapon
 	
 	override State GetReadyState()
 	{
-		if(ddWeaponFlags & SHT_RSEQ && ModeCheck(4) == (RES_TWOHAND || RES_HASESOA)) { SetCaseNumber(2); return FindState("Reload2"); }
+		if(ddWeaponFlags & SHT_RSEQ && ModeCheck(0) == (RES_TWOHAND || RES_HASESOA)) { 
+			ddPlayer(owner).ddWeaponState |= DDW_RIGHTNOBOBBING; ddPlayer(owner).ddWeaponState &= ~DDW_RIGHTREADY; SetCaseNumber(2); return FindState("Reload2"); 
+		}
 		else { return FindState("Ready"); }
 	}
 	
@@ -112,9 +114,9 @@ class ddShotgun : ddWeapon
 	override State wannaReload()
 	{
 		if(mag > 0 && weaponstatus == DDW_UNLOADING) { SetCaseNumber(3); return FindState('UnloadP'); }
-		if(ddWeaponFlags & SHT_RSEQ) { weaponstatus = DDW_RELOADING; SetCaseNumber(5); return FindState("Reload2");	}
+		if(ddWeaponFlags & SHT_RSEQ) { weaponstatus = DDW_RELOADING; SetCaseNumber(2); return FindState("Reload2");	}
 		if(mag > 0) { return FindState('DoNotJump'); }
-		else { SetCaseNumber(2); weaponStatus = DDW_RELOADING; return FindState('ReloadP'); }
+		else { SetCaseNumber(5); weaponStatus = DDW_RELOADING; return FindState('ReloadP'); }
 	}
 	
 	override void primaryattack()
@@ -155,10 +157,19 @@ class ddShotgun : ddWeapon
 					else { SetCaseNumber(1); }
 					break;
 				}
-				else if(res == RES_HASESOA) { if(mag < 1) { weaponstatus = DDW_RELOADING; SetCaseNumber(5); ChangeState("ReloadP", myside); break; }
+				else if(res == RES_HASESOA) 
+				{ 
+					if(ddWeaponFlags & SHT_RSEQ) { weaponStatus = DDW_RELOADING; SetCaseNumber(2); ChangeState("Reload2", myside); break; }
+					if(mag < 1) { weaponstatus = DDW_RELOADING; SetCaseNumber(5); ChangeState("ReloadP", myside); break; }
 					else { ddp.PlayAttacking(); SetCaseNumber(1); break; } 
 				}
-				else { if(mag < 1 || ddWeaponFlags & SHT_RSEQ) { weaponstatus = DDW_RELOADING; SetCaseNumber(2); ChangeState("ReloadP", myside); break; } else { ddp.PlayAttacking(); SetCaseNumber(1); } break; } 
+				else 
+				{ 
+					if(ddWeaponFlags & SHT_RSEQ) { weaponStatus = DDW_RELOADING; SetCaseNumber(2); ChangeState("Reload2", myside); break; }
+					if(mag < 1) { weaponstatus = DDW_RELOADING; SetCaseNumber(5); ChangeState("ReloadP", myside); break; }
+					else { ddp.PlayAttacking(); SetCaseNumber(1); } 
+					break; 
+				} 
 			case 1: //jump to reload if twohanding
 				if((res == RES_TWOHAND || res == RES_HASESOA || res == RES_CLASSIC) && ddp.CountInv("Shell") > 0) { weaponstatus = DDW_RELOADING; ChangeState("ReloadP", myside); SetCaseNumber(5); }
 				else { SetCaseNumber(0); }
@@ -167,7 +178,7 @@ class ddShotgun : ddWeapon
 				ReloadWeaponMag(1); SetCaseNumber(0); ddWeaponFlags &= ~SHT_RSEQ; break;
 			case 3: //unload mag
 				UnloadWeaponMag(); SetCaseNumber(0); break;
-			case 4: //unload mag
+			case 4: //reload mag onehanded
 				AddRecoil(0.0, 5, 0.0); ReloadWeaponMag(1); SetCaseNumber(0); break;
 			case 5: //reload checkpoint (tm)
 				ddWeaponFlags |= SHT_RSEQ;
@@ -246,7 +257,7 @@ class ddShotgunLeft : ddShotgun
 		ReloadOneHanded:
 			SHOH ABCDE 2;
 			SHOH F 1 A_DDActionLeft;
-			SHOH F 14 A_RackShotgun;
+			SHOH F 12 A_RackShotgun;
 		Reload2B:
 			SHOH E 6 A_SlideShotgun;
 			SHOH D 3 A_DDActionLeft;
@@ -304,7 +315,7 @@ class ddShotgunRight : ddShotgun
 		ReloadOneHanded:
 			SHOH GHIJK 2;
 			SHOH L 1 A_DDActionRight;
-			SHOH L 14 A_RackShotgun;
+			SHOH L 12 A_RackShotgun;
 		Reload2B:
 			SHOH K 6 A_SlideShotgun;
 			SHOH J 3 A_DDActionRight;
