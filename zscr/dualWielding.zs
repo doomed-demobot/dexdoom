@@ -241,10 +241,10 @@ class dualWielding : ddWeapon
 		{
 			let plarm = ddp.FindInventory("BasicArmor");
 			int CurLWAm, CurLWMx, CurRWAm, CurRWMx;
-			double cellam, cellmx;
+			double chargeam, chargemx;
 			[CurLWAm, CurLWMx] = hude.GetAmount(typel);
 			[CurRWAm, CurRWMx] = hude.GetAmount(typer);
-			[cellam, cellmx] = hude.GetAmount("Cell");
+			[chargeam, chargemx] = hude.GetAmount("ESOACharge");
 			let bz = ddp.FindInventory("PowerBerserk");
 			let inv = ((ddp.player.cheats & CF_GODMODE) || ddp.FindInventory("PowerInvulnerable"));
 			let mxl = (CurLWAm == CurLWMx);
@@ -257,9 +257,10 @@ class dualWielding : ddWeapon
 			{				
 				hude.DrawString(hude.fa, "esoa", (0, -25), hude.DI_SCREEN_CENTER_BOTTOM | hude.DI_TEXT_ALIGN_CENTER, 0, (ddp.esoaActive) ? 0.7 : 0.33);
 				hude.DrawString(hude.fa, "[           ]", (0, -15), hude.DI_SCREEN_CENTER_BOTTOM | hude.DI_TEXT_ALIGN_CENTER, 0, (ddp.esoaActive) ? 0.7 : 0.33);
-				double width = (40 * (cellam / cellmx));
+				double width = (20 * (chargeam / chargemx)) * 2;
 				Color cl = (ddp.esoaActive) ? Color(200, 0, 120, 200) : Color(200, 200, 10, 0);
 				hude.Fill(cl, -19, -14, width, 5, hude.DI_SCREEN_CENTER_BOTTOM | hude.DI_TEXT_ALIGN_CENTER);
+				if(ddp.dddebug & DBG_WEAPONS) { hude.DrawString(hude.fa, hude.FormatNumber(ddp.CountInv("ESOACharge")), (0, -30), hude.DI_SCREEN_CENTER_BOTTOM | hude.DI_TEXT_ALIGN_CENTER, 0, (ddp.esoaActive) ? 0.7 : 0.33); }
 			}
 			if(mode.dropChoice > -1)
 			{

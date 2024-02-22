@@ -40,7 +40,7 @@ class ddWeapon : Weapon
 	bool weaponReady;
 	double sFactor;
 	int MagUse1, MagUse2;
-	int CellUse1, CellUse2; //how much cells to ignore dualwield check and pass twohand check
+	int ChargeUse1, ChargeUse2; //how much charge to ignore dualwield check and pass twohand check
 	int costMultiplier; //multiplier for reloadweaponmag
 	int xOffset;
 	uint lswaptarget, rswapTarget;
@@ -60,9 +60,9 @@ class ddWeapon : Weapon
 	property MagUse1 : MagUse1;
 	property MagUse2 : MagUse2;
 	property costMulti : costMultiplier;
-	property CellUse : CellUse1;
-	property CellUse1 : CellUse1;
-	property CellUse2 : CellUse2;
+	property ChargeUse : ChargeUse1;
+	property ChargeUse1 : ChargeUse1;
+	property ChargeUse2 : ChargeUse2;
 	property xOffset : xOffset;
 	property initialddWFlags : ddWeaponFlags;
 	//flags
@@ -86,8 +86,8 @@ class ddWeapon : Weapon
 		ddWeapon.initialMag -1;
 		ddWeapon.MagUse1 0;
 		ddWeapon.MagUse2 0;
-		ddWeapon.CellUse 1;
-		ddWeapon.CellUse2 1;
+		ddWeapon.ChargeUse 1;
+		ddWeapon.ChargeUse2 1;
 		ddWeapon.costMulti 1;
 		ddWeapon.xOffset 0;
 		ddweapon.initialddWFlags 2<<6;
@@ -530,12 +530,12 @@ class ddWeapon : Weapon
 		if(mode is "twoHanding") { return 1; }
 		else if(mode is "dualWielding") 
 		{
-			let cost = (bAltFire) ? CellUse2 : CellUse1;
+			let cost = (bAltFire) ? ChargeUse2 : ChargeUse1;
 			if(esoaCost > -1) { cost = esoaCost; }
 			let am = (bAltFire) ? AmmoType2 : AmmoType1;
 			let au = (bAltFire) ? AmmoUse2 : AmmoUse1;
 			if(!cpiece.weaponready) { au += ((cpiece.bAltFire) ? AmmoUse2 : AmmoUse1); }
-			if(ddp.CheckESOA(cost) && ddp.CountInv(am) >= au) { ddp.TakeInventory("Cell", cost); return 3; }
+			if(ddp.CheckESOA(cost) && ddp.CountInv(am) >= au) { ddp.TakeInventory("ESOACharge", cost); return 3; }
 			else { return 2; }
 		}
 		else { return 0; }		
@@ -1017,7 +1017,7 @@ class ddWeapon : Weapon
 		ddp.ddWeaponState &= ~DDW_LEFTBOBBING;
 		ddp.ddWeaponState &= ~DDW_RIGHTBOBBING;
 		lWeap.weaponready = false;
-		int cost = (lWeap.bAltFire) ? lWeap.CellUse2 : lWeap.CellUse1;
+		int cost = (lWeap.bAltFire) ? lWeap.ChargeUse2 : lWeap.ChargeUse1;
 		if(!ddp.CheckESOA(cost) && (!lWeap.bNoLower && ddp.player.readyweapon is "dualWielding")) 
 		{ 
 			if(ddp.dddebug & DBG_WEAPSEQUENCE) { A_Log("Lowering weapons to reload left weapon"); }
@@ -1095,7 +1095,7 @@ class ddWeapon : Weapon
 		ddp.ddWeaponState &= ~DDW_LEFTBOBBING;
 		ddp.ddWeaponState &= ~DDW_RIGHTBOBBING;
 		rWeap.weaponready = false;
-		int cost = (rWeap.bAltFire) ? rWeap.CellUse2 : rWeap.CellUse1;
+		int cost = (rWeap.bAltFire) ? rWeap.ChargeUse2 : rWeap.ChargeUse1;
 		if(!ddp.CheckESOA(cost) && (!rWeap.bNoLower && ddp.player.readyweapon is "dualWielding")) 
 		{ 
 			if(ddp.dddebug & DBG_WEAPSEQUENCE) { A_Log("Lowering weapons to reload right weapon"); }

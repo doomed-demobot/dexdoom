@@ -196,7 +196,7 @@ class ddPlayer : DoomPlayer
 		let lw = GetLeftWeapon(lwx);
 		let rw = GetRightWeapon(rwx);
 		let mode = ddWeapon(player.readyweapon);
-		if(ddWeaponState & DDW_RIGHTREADY && ddWeaponState & DDW_LEFTREADY)
+		if(1)
 		{
 			if(player.PendingWeapon != WP_NOCHANGE)
 			{
@@ -835,7 +835,7 @@ class ddPlayer : DoomPlayer
 	{
 		if(!FindInventory("ESOA")) { return false; }
 		if(!esoaActive) { return false; }
-		if(cost > CountInv("Cell")) { return false; }
+		if(cost > CountInv("ESOACharge")) { return false; }
 		return true;
 	}
 	
@@ -1156,6 +1156,66 @@ class ESOA : Inventory
 			Stop;
 	}
 }
+class ESOACharge : Ammo
+{	
+	Default
+	{
+		Inventory.PickupMessage "";
+		Inventory.Amount 1;
+		Inventory.MaxAmount 1000;
+		Ammo.BackpackAmount 0;
+		Ammo.BackpackMaxAmount 1000;
+		Inventory.Icon "";
+		Tag "ESOACharge";	
+	}
+	States
+	{
+		Spawn:
+			TNT1 A -1;
+			Stop;
+	}
+}
+
+class CellPacke : CellPack {}
+
+class ESOAPack : ESOACharge
+{
+	Default
+	{
+		Inventory.PickupMessage "Picked up an ESOA charge pack";
+		Inventory.Amount 100;
+	}
+	
+	States
+	{
+		Spawn:
+			CELP A -1;
+			Stop;
+	}
+}
+
+class CellPackSpawner : RandomSpawner replaces CellPack
+{
+	Default
+	{
+		DropItem "CellPacke", 255, 45;
+		DropItem "ESOAPack", 255, 24;
+	}
+	
+	override Name ChooseSpawn()
+	{
+		for(int x = 0; x < 8; x++)
+		{
+			if(players[x].mo is "ddPlayerClassic")
+			{
+				return "CellPacke";
+			}
+		}
+		return Super.ChooseSpawn();
+	}
+	
+}
+
 // #Class esoaActivator : CustomInventory()
 class esoaActivator : CustomInventory
 {

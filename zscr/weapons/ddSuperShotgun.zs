@@ -504,8 +504,7 @@ class ShellBoxSpawner : RandomSpawner replaces ShellBox
 		if(TexMan.CheckForTexture("SGN2A0", TexMan.Type_Sprite).IsValid()) { return Super.ChooseSpawn(); }
 		else { return "ShellBoxe"; }
 		
-	}
-	
+	}	
 }
 
 extend class ddWeapon

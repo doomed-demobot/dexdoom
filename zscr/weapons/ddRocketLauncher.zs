@@ -66,7 +66,7 @@ class ddRocketLauncher : ddWeapon replaces RocketLauncher
 			}
 		}
 	}	
-	
+	/*
 	override void Tick()
 	{
 		Super.Tick();
@@ -84,7 +84,7 @@ class ddRocketLauncher : ddWeapon replaces RocketLauncher
 			else { return; }
 		}
 	}
-	
+	*/
 	override String getParentType()
 	{
 		return "ddRocketLauncher";

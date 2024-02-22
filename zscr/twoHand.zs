@@ -327,7 +327,7 @@ class twoHanding : ddWeapon
 			invoker.bmodeReady = true;
 			ddp.ddWeaponState &= ~DDW_LEFTNOBOBBING;
 			ddp.ddWeaponState &= ~DDW_RIGHTNOBOBBING;
-			if(lWeap.items.Size()) { player.setpsprite(PSP_LEFTW, lw.GetReadyState()); }
+			if(lWeap.items.Size()) { player.setpsprite(PSP_LEFTW, lw.GetUpState()); }
 			if(rWeap.items.Size()) { player.setpsprite(PSP_RIGHTW, rw.GetReadyState()); }
 			invoker.weaponstatus = DDW_READY;
 			A_ChangeState("Ready");

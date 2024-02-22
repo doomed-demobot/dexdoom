@@ -18,8 +18,8 @@ class ddPlasmaRifle : ddWeapon replaces PlasmaRifle
 		ddWeapon.rating 7;
 		ddWeapon.SwitchSpeed 1.25;
 		ddWeapon.InitialMag 50;
-		ddWeapon.CellUse 0;
-		ddWeapon.CellUse2 0;
+		ddWeapon.ChargeUse 0;
+		ddWeapon.ChargeUse2 0;
 		ddWeapon.WeaponType "Rifle";
 		ddWeapon.costMulti 0;
 		+DDWEAPON.NOLOWER;

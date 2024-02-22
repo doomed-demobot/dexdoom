@@ -23,7 +23,7 @@ class ddShotgun : ddWeapon
 		ddWeapon.SwitchSpeed 2.8;
 		ddWeapon.initialMag 1;
 		ddWeapon.MagUse1 1;
-		ddWeapon.CellUse1 2;
+		ddWeapon.ChargeUse1 2;
 		ddWeapon.WeaponType "Shotgun";
 		Inventory.PickupMessage "$GOTSHOTGUN";
 		Obituary "$OB_MPSHOTGUN";
