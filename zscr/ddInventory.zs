@@ -479,6 +479,14 @@ class playerInventory : ddWeapon
 			if(!(ddp.dddebug & DBG_INVENTORY)) { pos++; }
 			hude.DrawString(hude.fa, "I"..hude.FormatNumber(pos)..": ", (12, 45), hude.DI_SCREEN_CENTER | hude.DI_TEXT_ALIGN_LEFT);
 			pInv.RetItem(ix).GetInventoryInfo(hude); 
+			if(ddp.dddebug & DBG_INVENTORY) 
+			{
+				int iwfs;
+				String iwfs2;
+				iwfs = pi.ddweaponflags;
+				while(iwfs > 0) { iwfs2 = (iwfs % 2)..iwfs2; iwfs >>= 1; }	
+				hude.DrawString(hude.fa, iwfs2, (-50, 60), hude.DI_SCREEN_CENTER);
+			}
 			} 
 		}
 		else { if(ddp is "ddPlayerNormal") { 
@@ -487,12 +495,28 @@ class playerInventory : ddWeapon
 					if(!(ddp.dddebug & DBG_INVENTORY)) { pos++; }
 					hude.DrawString(hude.fa, "L"..hude.FormatNumber(pos)..": ", (12, 45), hude.DI_SCREEN_CENTER | hude.DI_TEXT_ALIGN_LEFT);
 					lWeap.RetItem(li).InventoryInfo(hude); 
+					if(ddp.dddebug & DBG_INVENTORY) 
+					{
+						int lwfs;
+						String lwfs2;
+						lwfs = lw.ddweaponflags;
+						while(lwfs > 0) { lwfs2 = (lwfs % 2)..lwfs2; lwfs >>= 1; }	
+						hude.DrawString(hude.fa, lwfs2, (-50, 60), hude.DI_SCREEN_CENTER);
+					}
 				} 
 				else { 
 					pos = ri;
 					if(!(ddp.dddebug & DBG_INVENTORY)) { pos++; }
 					hude.DrawString(hude.fa, "R"..hude.FormatNumber(pos)..": ", (12, 45), hude.DI_SCREEN_CENTER | hude.DI_TEXT_ALIGN_LEFT);
 					rWeap.RetItem(ri).InventoryInfo(hude); 
+					if(ddp.dddebug & DBG_INVENTORY) 
+					{
+						int rwfs;
+						String rwfs2;
+						rwfs = rw.ddweaponflags;
+						while(rwfs > 0) { rwfs2 = (rwfs % 2)..rwfs2; rwfs >>= 1; }	
+						hude.DrawString(hude.fa, rwfs2, (-50, 60), hude.DI_SCREEN_CENTER);
+					}
 				} 
 			}				
 		}			

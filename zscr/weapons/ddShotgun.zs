@@ -41,6 +41,11 @@ class ddShotgun : ddWeapon
 		}
 	}*/
 	
+	override void OnAutoReload()
+	{
+		ddWeaponFlags &= ~SHT_RSEQ;
+	}
+	
 	override void InventoryInfo(ddStats ddhud)
 	{
 		let hud = ddhud;		
@@ -239,7 +244,7 @@ class ddShotgunLeft : ddShotgun
 			#### A 0 A_DDActionLeft;
 			Goto Ready;	
 		Select:
-			#### A 1 A_ChangeSpriteLeft;
+			SHTD A 1 A_ChangeSpriteLeft;
 			Loop;
 		ReloadA:
 		ReloadP:			
@@ -297,7 +302,7 @@ class ddShotgunRight : ddShotgun
 			#### A 0 A_DDActionRight;
 			Goto Ready;	
 		Select:
-			#### A 1 A_ChangeSpriteRight;
+			SHTD A 1 A_ChangeSpriteRight;
 			Loop;
 		ReloadA:
 		ReloadP:		

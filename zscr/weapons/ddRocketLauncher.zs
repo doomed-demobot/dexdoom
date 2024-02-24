@@ -5,7 +5,7 @@
 enum ddRLFlags
 {
 	RKL_RSEQ = 1,
-	RKL_RLOD = 2, //for interrupting reload with fire button in tick function
+	RKL_RLOD = 2, //for interrupting reload with fire button in tick function [unused]
 };
 
 class ddRocketLauncher : ddWeapon replaces RocketLauncher
@@ -35,6 +35,11 @@ class ddRocketLauncher : ddWeapon replaces RocketLauncher
 		hud.DrawString(hud.fa, GetTag(), (30, 45), hud.DI_SCREEN_CENTER | hud.DI_TEXT_ALIGN_LEFT);
 		hud.DrawString(hud.fa, "level "..hud.FormatNumber(rating).." heavy launcher", (30, 55), hud.DI_SCREEN_CENTER | hud.DI_TEXT_ALIGN_LEFT);
 		hud.DrawString(hud.fa, hud.FormatNumber(mag).."/"..hud.FormatNumber(default.mag), (30, 65), hud.DI_SCREEN_CENTER | hud.DI_TEXT_ALIGN_LEFT);
+	}
+	
+	override void OnAutoReload()
+	{
+		ddWeaponFlags &= ~RKL_RSEQ;
 	}
 	
 	override void PreviewInfo(ddStats ddhud)

@@ -79,6 +79,11 @@ class ddPistol : ddWeapon replaces Pistol
 		if(weaponReady) { self.burstcounter = 3; }
 	}
 	
+	override void OnAutoReload()
+	{
+		ddWeaponFlags &= ~PIS_RSEQ;
+	}
+	
 	override void WhileBerserk()
 	{
 		if(owner is "ddPlayerNormal")
@@ -306,8 +311,7 @@ class ddPistolLeft : ddPistol
 			#### B 5 A_ddRefireLeft;
 			Goto Ready;	
 		Select:
-			#### # 0 A_ChangeSpriteLeft;
-			#### # 1;
+			PISD A 1 A_ChangeSpriteLeft;
 			Loop;	
 		AltFire:
 			#### A 0 A_DDActionLeft;
@@ -348,12 +352,11 @@ class ddPistolRight : ddPistol
 		NoAmmo:
 			#### A 10;
 		Ready:
-			#### A 0 A_ChangeSpriteRight;
+			PISD A 0 A_ChangeSpriteRight;
 			#### # 1 A_RightWeaponReady;
 			Loop;
 		Select:
-			#### # 0 A_ChangeSpriteRight;
-			#### # 1;
+			PISD A 1 A_ChangeSpriteRight;
 			Loop;	
 		Fire:
 			#### A 0 A_DDActionRight;

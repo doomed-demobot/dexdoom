@@ -177,6 +177,7 @@ class ddWeapon : Weapon
 						ddp.ddWeaponState |= DDW_LEFTNOBOBBING;
 						ddp.ddWeaponState &= ~DDW_LEFTREADY;
 						ddp.ddWeaponState &= ~DDW_WANNAREPLACE;
+						mode.bmodeready = false;
 						mode.ChangeState("PickupSwapStore");
 						return true;
 					}
@@ -209,6 +210,7 @@ class ddWeapon : Weapon
 				if(comer.UpSound) { wanter.A_StartSound(comer.UpSound, CHAN_WEAPON); }
 				ddp.ddWeaponState |= DDW_LEFTNOBOBBING;
 				ddp.ddWeaponState &= ~DDW_WANNAREPLACE;
+				mode.bmodeready = false;
 				mode.ChangeState("PickupSwapDrop");
 				return true;
 			}
@@ -239,6 +241,7 @@ class ddWeapon : Weapon
 						ddp.ddWeaponState &= ~DDW_RIGHTREADY;
 						ddp.ddWeaponState |= DDW_RIGHTNOBOBBING;
 						ddp.ddWeaponState &= ~DDW_WANNAREPLACE;
+						mode.bmodeready = false;
 						mode.ChangeState("PickupSwapStore");
 						return true;
 					}
@@ -272,6 +275,7 @@ class ddWeapon : Weapon
 				if(comer.UpSound) { wanter.A_StartSound(comer.UpSound, CHAN_WEAPON); }
 				ddp.ddWeaponState |= DDW_RIGHTNOBOBBING;
 				ddp.ddWeaponState &= ~DDW_WANNAREPLACE;
+				mode.bmodeready = false;
 				mode.ChangeState("PickupSwapDrop");	
 				return true;			
 			}
@@ -565,6 +569,9 @@ class ddWeapon : Weapon
 	virtual void SetSoundNumber(int sn) { ddWeapon(self).sndno = sn; }
 	
 	// ##goto weapon actions()
+
+	//do things when autoreloading after travelled is called
+	virtual void OnAutoReload() {}
 	
 	//apply bonuses during berserk
 	virtual void WhileBerserk() {} 
@@ -1436,7 +1443,6 @@ class ddWeapon : Weapon
 		
 	}
 	
-	//TODO: either integrate quickswap with addtoddplayer or fix errors with pickupswap/drop
 	action void A_PickupSwapDrop()
 	{
 		let ddp = ddPlayer(invoker.owner);
@@ -1460,6 +1466,7 @@ class ddWeapon : Weapon
 		}
 		else 
 		{ 
+			mode.bmodeready = true;
 			pspl.SetState(lWeap.GetReadyState());
 			pspr.SetState(rWeap.GetReadyState());
 			A_ChangeState("Ready"); 
@@ -1491,6 +1498,7 @@ class ddWeapon : Weapon
 				leftw.RetItem(ddp.lwx).companionpiece = rightw.RetItem(ddp.rwx);
 				pspr.SetState(ddp.GetRightWeapon(ddp.rwx).GetUpState());
 				if(ddp.GetRightWeapon(ddp.rwx).UpSound) { ddp.A_StartSound(ddp.GetRightWeapon(ddp.rwx).UpSound, CHAN_WEAPON); }
+				//mode.bmodeready = true;
 				if(mode is "twoHanding") { A_ChangeState("QuickSwapTH"); }
 				else { dualWielding(mode).brraised = false; A_ChangeState("QuickSwapDW"); }
 			}
@@ -1506,9 +1514,10 @@ class ddWeapon : Weapon
 				leftw.SetItem(invoker.swapHeld, ddp.lwx);
 				rightw.RetItem(ddp.rwx).companionpiece = leftw.RetItem(ddp.lwx);
 				leftw.RetItem(ddp.lwx).companionpiece = rightw.RetItem(ddp.rwx);
-				pspr.SetState(ddp.GetRightWeapon(ddp.rwx).GetUpState());
+				pspl.SetState(ddp.GetLeftWeapon(ddp.lwx).GetUpState());
 				if(ddp.GetLeftWeapon(ddp.lwx).UpSound) { ddp.A_StartSound(ddp.GetLeftWeapon(ddp.lwx).UpSound, CHAN_WEAPON); }
 				dualWielding(mode).blraised = false;
+				//mode.bmodeready = true;
 				A_ChangeState("QuickSwapDW");
 			}
 			

@@ -41,6 +41,11 @@ class ddSuperShotgun : ddWeapon
 		}
 	}
 	
+	override void OnAutoReload()
+	{
+		ddWeaponFlags &= ~SST_RALL;
+	}
+	
 	override void InventoryInfo(ddStats ddhud)
 	{
 		let hud = ddhud;		

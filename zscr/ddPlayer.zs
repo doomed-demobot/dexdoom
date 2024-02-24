@@ -293,7 +293,10 @@ class ddPlayer : DoomPlayer
 							}
 							else { inw.ref.mag = inw.ref.default.mag; inw.mag = inw.ref.mag; }
 						}
+						inw.ref.OnAutoReload();
+						inw.ddWeaponFlags = inw.ref.ddWeaponFlags;
 					}
+					
 				}
 				ddWeapon weap;
 				for(int z = 0; z < lw.size+rw.size; z++)
@@ -301,6 +304,7 @@ class ddPlayer : DoomPlayer
 					//auto reload ddweapons
 					if(z < lw.size) { weap = lw.RetItem(z);	}
 					else { weap = rw.RetItem(z-lw.size); }
+					weap.OnAutoReload();
 					if(weap.mag < weap.default.mag)
 					{
 						int cost = (weap.default.mag - weap.mag) * weap.costmultiplier;
