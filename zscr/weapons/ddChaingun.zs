@@ -15,7 +15,7 @@ class ddChaingun : ddWeapon replaces Chaingun
 		ddWeapon.ClassicAmmoType1 "Clip";
 		ddWeapon.ClassicAmmoType2 "Clip";
 		ddWeapon.rating 5;	
-		ddWeapon.SwitchSpeed 1.1;
+		ddWeapon.SwitchSpeed 1.3;
 		ddWeapon.WeaponType "LMG";
 		Inventory.PickupMessage "$GOTCHAINGUN";
 		Obituary "$OB_MPCHAINGUN";

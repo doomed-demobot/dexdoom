@@ -325,14 +325,14 @@ class ddPistolLeft : ddPistol
 			#### B 5 A_ddRefireLeft;
 			Goto Ready;
 		ReloadP:
-			#### F 5;
-			#### G 5 A_PistolReload1;
+			#### F 3;
+			#### G 3 A_PistolReload1;
 			#### G 0 A_DDActionLeft;
 		Reload2:
-			#### G 6 A_PistolReload2;
+			#### G 5 A_PistolReload2;
 			#### H 10 A_PistolReload3;
 			#### H 1 A_ddActionLeft;
-			#### IJ 5;
+			#### IJ 4;
 			Goto Ready;
 		UnloadP:
 			#### F 5 A_PistolReload2;
@@ -387,14 +387,14 @@ class ddPistolRight : ddPistol
 			#### B 5 A_ddRefireRight;
 			Goto Ready;
 		ReloadP:
-			#### F 5;
-			#### G 5 A_PistolReload1;
+			#### F 3;
+			#### G 3 A_PistolReload1;
 			#### G 0 A_DDActionRight;
 		Reload2:
-			#### G 6 A_PistolReload2;
+			#### G 5 A_PistolReload2;
 			#### H 10 A_PistolReload3;
 			#### H 1 A_ddActionRight;
-			#### IJ 5;
+			#### IJ 4;
 			Goto Ready;
 		UnloadP:
 			#### F 5 A_PistolReload2;
