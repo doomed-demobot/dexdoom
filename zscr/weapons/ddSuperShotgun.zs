@@ -143,8 +143,8 @@ class ddSuperShotgun : ddWeapon
 		if(weaponstatus == DDW_UNLOADING) { SetCaseNumber(3); return FindState('UnloadP'); }
 		if(ddWeaponFlags & SST_RSEQ1) { SetCaseNumber(2); weaponStatus = DDW_RELOADING; return FindState('Reload2'); }
 		if(ddWeaponFlags & SST_RSEQ2) { SetCaseNumber(5); weaponStatus = DDW_RELOADING; return FindState('Reload3'); }
-		if(mag == 1) { SetCaseNumber(4); weaponStatus = DDW_RELOADING; return FindState('ReloadA'); }
-		else if(mag == 0) { SetCaseNumber(4); weaponStatus = DDW_RELOADING; return FindState('ReloadP'); }
+		//if(mag == 1) { SetCaseNumber(4); weaponStatus = DDW_RELOADING; return FindState('ReloadA'); }
+		else if(mag < default.mag) { SetCaseNumber(4); weaponStatus = DDW_RELOADING; return FindState('ReloadP'); }
 		else { return FindState('DoNotJump'); }
 	}
 	
@@ -162,7 +162,7 @@ class ddSuperShotgun : ddWeapon
 		if(mag > 0) { mag--; A_FireDDSShotgunSingle(); }
 		else { }
 	}
-	//todo: fix jump to reload issues
+	
 	override void DD_Condition(int cn)
 	{
 		int caseno = cn;
@@ -179,7 +179,9 @@ class ddSuperShotgun : ddWeapon
 				if(res == RES_CLASSIC && (ddp.CountInv("Shell") < 2)) { ChangeState("NoAmmo", myside); break; }
 				if(mag < 1 && ddp.CountInv("BFS") < 1) { ChangeState("NoAmmo", myside); break; }
 				if(res == RES_DUALWLD) { //lower to reload
-					if(mag < 1 || (ddWeaponFlags & 7)) { LowerToReloadWeapon(); }
+					//if(mag < 1 || (ddWeaponFlags & 7)) { LowerToReloadWeapon(); }
+					if(mag < 1 && !(ddWeaponFlags & 7)) { SetCaseNumber(6); ChangeState("ReloadP", myside); break; }
+					if(ddWeaponFlags & 7) { LowerToReloadWeapon(); break; }
 					SetCaseNumber(1);
 					break;
 				}
@@ -193,7 +195,7 @@ class ddSuperShotgun : ddWeapon
 				}
 				else { if(mag < 1) { weaponstatus = DDW_RELOADING; SetCaseNumber(4); ChangeState("ReloadP", myside); break; } else { ddp.PlayAttacking(); SetCaseNumber(1); } break; } 
 			case 1: //jump to reload if twohanding
-				if(res == RES_CLASSIC && ddp.CountInv("Shell") >= 1) { ChangeState("ReloadP", myside); SetCaseNumber(2); break; }
+				if(res == RES_CLASSIC && ddp.CountInv("Shell") >= 1) { ChangeState("ReloadP", myside); SetCaseNumber(4); break; }
 				if((res == RES_TWOHAND || res == RES_HASESOA) && ddp.CountInv("BFS") >= 1 && mag < 1) { weaponstatus = DDW_RELOADING; ChangeState("ReloadP", myside); SetCaseNumber(4); }
 				else { SetCaseNumber(0); }
 				break;	
@@ -213,6 +215,10 @@ class ddSuperShotgun : ddWeapon
 				ddWeaponFlags &= ~SST_RALL;
 				SetCaseNumber(0);
 				break;
+			case 6: //eject half reload
+				ddWeaponFlags |= SST_RSEQ1;
+				SetCaseNumber(2);
+				ChangeState("Ready", myside);
 			default: break;
 		}
 	}
@@ -280,6 +286,7 @@ class ddSuperShotgunLeft : ddSuperShotgun
 			#### A 6;
 			#### A 0 A_DDActionLeft;
 			Goto Ready;
+		Reload:
 		ReloadP:			
 			#### B 7;
 			#### C 7;
@@ -298,7 +305,6 @@ class ddSuperShotgunLeft : ddSuperShotgun
 			#### H 6 A_ddRefireLeft;
 			#### A 5;
 			Goto Ready;	
-		Reload:
 		ReloadA:
 			#### B 7;
 			#### C 7;
@@ -369,11 +375,12 @@ class ddSuperShotgunRight : ddSuperShotgun
 			#### A 1 A_FireRightWeapon;
 			#### A 6;
 			#### A 0 A_DDActionRight;
-			Goto Ready;
+			Goto Ready;			
+		Reload:
 		ReloadP:
 			#### B 7;
 			#### C 7;
-			#### D 1 A_OpenShotgun2; //4
+			#### D 1 A_OpenShotgun2; //4, 6 for halfreload
 			#### D 1 A_DDActionRight;
 		Reload2:
 			#### D 5;
@@ -387,8 +394,7 @@ class ddSuperShotgunRight : ddSuperShotgun
 			#### H 0 A_DDActionRight; //5
 			#### H 6 A_ddRefireRight;
 			#### A 5;
-			Goto Ready;	
-		Reload:
+			Goto Ready;
 		ReloadA:
 			#### B 7;
 			#### C 7;
