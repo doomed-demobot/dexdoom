@@ -292,8 +292,8 @@ class ddPlasmaRifleLeft : ddPlasmaRifle
 		Altfire:
 			PLSG A 5 A_DDActionLeft;
 			PLSG A 0 A_FlashLeft;
-			PLSG AA 8 A_DDActionLeft;
 			PLSG AA 6 A_DDActionLeft;
+			PLSG AA 4 A_DDActionLeft;
 		Charging:
 			PLSG A 0 A_FlashLeft;
 			PLSG A 4 A_DDActionLeft;
@@ -336,8 +336,8 @@ class ddPlasmaRifleRight : ddPlasmaRifle
 		Altfire:
 			PLSG A 5 A_DDActionRight;
 			PLSG A 0 A_FlashRight;
-			PLSG AA 8 A_DDActionRight;
 			PLSG AA 6 A_DDActionRight;
+			PLSG AA 4 A_DDActionRight;
 		Charging:
 			PLSG A 0 A_FlashRight;
 			PLSG A 4 A_DDActionRight;
