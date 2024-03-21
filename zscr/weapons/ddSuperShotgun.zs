@@ -127,6 +127,7 @@ class ddSuperShotgun : ddWeapon
 		if(ModeCheck(4) == (RES_TWOHAND || RES_HASESOA)) 
 		{ 
 			ddPlayer(owner).ddWeaponState |= DDW_RIGHTNOBOBBING; 
+			ddPlayer(owner).ddWeaponState &= ~DDW_RIGHTREADY;			
 			weaponStatus = DDW_RELOADING;
 			
 			if(ddWeaponFlags & 4) { SetCaseNumber(2); return FindState("Reload2"); }
