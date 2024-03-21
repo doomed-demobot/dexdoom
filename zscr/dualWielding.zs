@@ -332,11 +332,13 @@ class dualWielding : ddWeapon
 			if(ddp.dddebug & DBG_WEAPONS)
 			{			
 				
+				hude.DrawString(hude.bf, ".", (50, -85), hude.DI_SCREEN_LEFT_BOTTOM | hude.DI_TEXT_ALIGN_CENTER, (leftheld) ? Font.CR_GREEN : Font.CR_RED);
 				hude.DrawString(hude.bf, ".", (50, -75), hude.DI_SCREEN_LEFT_BOTTOM | hude.DI_TEXT_ALIGN_CENTER, (ddp.ddWeaponState & DDW_LEFTREADY) ? Font.CR_GREEN : Font.CR_RED);
 				hude.DrawString(hude.bf, ".", (50, -65), hude.DI_SCREEN_LEFT_BOTTOM | hude.DI_TEXT_ALIGN_CENTER, (curLWp.weaponready) ? Font.CR_CYAN : Font.CR_RED);	
 				if(ddp.dddebug & DBG_VERBOSE && curLWp.companionpiece){
 					hude.DrawImage(curLWp.companionpiece.GetWeaponSprite(), (50, -75), hude.DI_SCREEN_LEFT_BOTTOM);}
 				hude.DrawString(hude.bf, ".", (0, -15), hude.DI_SCREEN_CENTER_BOTTOM | hude.DI_TEXT_ALIGN_CENTER, (bModeReady) ? Font.CR_GREEN : Font.CR_RED);
+				hude.DrawString(hude.bf, ".", (-50, -85), hude.DI_SCREEN_RIGHT_BOTTOM | hude.DI_TEXT_ALIGN_CENTER, (rightheld) ? Font.CR_GREEN : Font.CR_RED);
 				hude.DrawString(hude.bf, ".", (-50, -75), hude.DI_SCREEN_RIGHT_BOTTOM | hude.DI_TEXT_ALIGN_CENTER, (ddp.ddWeaponState & DDW_RIGHTREADY) ? Font.CR_GREEN : Font.CR_RED);		
 				hude.DrawString(hude.bf, ".", (-50, -65), hude.DI_SCREEN_RIGHT_BOTTOM | hude.DI_TEXT_ALIGN_CENTER, (curRWp.weaponready) ? Font.CR_CYAN : Font.CR_RED);			
 				if(ddp.dddebug & DBG_VERBOSE && curRWp.companionpiece){
@@ -376,7 +378,7 @@ class dualWielding : ddWeapon
 				//left primary/alternative
 				if(A_PressingLeftFire())
 				{
-					lw.onWeaponFire(1, false);
+					lw.onWeaponFire(1, invoker.leftheld);
 					if(ddp.ddWeaponState & DDW_LEFTREADY)
 					{
 						//ddp.PlayAttacking();
@@ -395,7 +397,7 @@ class dualWielding : ddWeapon
 				else if(A_PressingLeftAltFire())
 				{
 					if(FindInventory("ClassicModeToken")) { return; }
-					lw.onWeaponFire(1, true);
+					lw.onWeaponFire(1, invoker.leftheld);
 					if(ddp.ddWeaponState & DDW_LEFTREADY)
 					{
 						//ddp.PlayAttacking();
@@ -428,7 +430,7 @@ class dualWielding : ddWeapon
 				//right primary/alternative
 				if(A_PressingRightFire())
 				{
-					rw.onWeaponFire(0, false);
+					rw.onWeaponFire(0, invoker.rightheld);
 					if(ddp.ddWeaponState & DDW_RIGHTREADY)
 					{
 						//ddp.PlayAttacking();
@@ -447,7 +449,7 @@ class dualWielding : ddWeapon
 				else if(A_PressingRightAltFire())
 				{
 					if(FindInventory("ClassicModeToken")) { return; }
-					rw.onWeaponFire(0, true);
+					rw.onWeaponFire(0, invoker.rightheld);
 					if(ddp.ddWeaponState & DDW_RIGHTREADY)
 					{
 						//ddp.PlayAttacking();
@@ -497,7 +499,16 @@ class dualWielding : ddWeapon
 						A_CheckLeftWeaponMag();
 						lw.weaponready = false;
 						rw.weaponready = false;		
-					}	
+					}
+					else
+					{
+						if(ddp.ddWeaponState & DDW_RIGHTREADY)
+						{
+							A_CheckRightWeaponMag();
+							lw.weaponready = false;
+							rw.weaponready = false;
+						}	
+					}
 				}
 			}
 		}

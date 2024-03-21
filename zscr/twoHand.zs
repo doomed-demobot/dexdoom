@@ -103,6 +103,7 @@ class twoHanding : ddWeapon
 			}
 			if(ddp.dddebug & DBG_WEAPONS)			
 			{
+				hude.DrawString(hude.bf, ".", (-50, -85), hude.DI_SCREEN_RIGHT_BOTTOM | hude.DI_TEXT_ALIGN_CENTER, (rightheld) ? Font.CR_GREEN : Font.CR_RED);		
 				hude.DrawString(hude.bf, ".", (-50, -75), hude.DI_SCREEN_RIGHT_BOTTOM | hude.DI_TEXT_ALIGN_CENTER, (ddp.ddWeaponState & DDW_RIGHTREADY) ? Font.CR_GREEN : Font.CR_RED);		
 				hude.DrawString(hude.bf, ".", (-50, -65), hude.DI_SCREEN_RIGHT_BOTTOM | hude.DI_TEXT_ALIGN_CENTER, (curWeap.weaponready) ? Font.CR_CYAN : Font.CR_RED);
 				hude.DrawString(hude.bf, ".", (0, -15), hude.DI_SCREEN_CENTER_BOTTOM | hude.DI_TEXT_ALIGN_CENTER, (bModeReady) ? Font.CR_GREEN : Font.CR_RED);				
@@ -185,7 +186,7 @@ class twoHanding : ddWeapon
 			if(A_PressingRightFire())
 			{
 				//primary fire
-				weap.onWeaponFire(0, false);
+				weap.onWeaponFire(0, invoker.rightheld);
 				if(ddp.ddWeaponState & DDW_RIGHTREADY)
 				{
 					//ddp.PlayAttacking();
@@ -206,7 +207,7 @@ class twoHanding : ddWeapon
 			{
 				//secondary fire
 				if(FindInventory("ClassicModeToken")) { return; } 
-				weap.onWeaponFire(0, true);
+				weap.onWeaponFire(0, invoker.rightheld);
 				if(ddp.ddWeaponState & DDW_RIGHTREADY)
 				{
 					//ddp.PlayAttacking();
