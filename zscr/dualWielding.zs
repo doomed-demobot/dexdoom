@@ -376,6 +376,7 @@ class dualWielding : ddWeapon
 				//left primary/alternative
 				if(A_PressingLeftFire())
 				{
+					lw.onWeaponFire(1, false);
 					if(ddp.ddWeaponState & DDW_LEFTREADY)
 					{
 						//ddp.PlayAttacking();
@@ -389,11 +390,12 @@ class dualWielding : ddWeapon
 							SoundAlert(self);
 						}
 						lw.weaponready = false;
-					}		
+					}
 				}
 				else if(A_PressingLeftAltFire())
 				{
 					if(FindInventory("ClassicModeToken")) { return; }
+					lw.onWeaponFire(1, true);
 					if(ddp.ddWeaponState & DDW_LEFTREADY)
 					{
 						//ddp.PlayAttacking();
@@ -426,6 +428,7 @@ class dualWielding : ddWeapon
 				//right primary/alternative
 				if(A_PressingRightFire())
 				{
+					rw.onWeaponFire(0, false);
 					if(ddp.ddWeaponState & DDW_RIGHTREADY)
 					{
 						//ddp.PlayAttacking();
@@ -444,6 +447,7 @@ class dualWielding : ddWeapon
 				else if(A_PressingRightAltFire())
 				{
 					if(FindInventory("ClassicModeToken")) { return; }
+					rw.onWeaponFire(0, true);
 					if(ddp.ddWeaponState & DDW_RIGHTREADY)
 					{
 						//ddp.PlayAttacking();
@@ -512,15 +516,16 @@ class dualWielding : ddWeapon
 		let psplf = player.GetPSprite(PSP_LEFTWF);
 		let pspr = player.GetPSprite(PSP_RIGHTW);
 		let psprf = player.GetPSprite(PSP_RIGHTWF);
-		int sFactor;
+		double sFactorl, sFactorr;
 		if(lw && rw) 
 		{ 
-			sFactor = ((lw.sFactor + rw.sFactor) / 2) * 6;
+			//sFactor = ((lw.sFactor + rw.sFactor + 1) / 2) * 4;
+			sFactorL = lw.sFactor * 4; sFactorR = rw.sFactor * 4;
 			if(ddp.lwx != invoker.lSwapTarget) //lower left weapon
 			{
 				mode.blraised = false;
 				ddp.ddWeaponState &= ~DDW_LEFTREADY;
-				pspl.y += sFactor; psplf.y += sFactor;
+				pspl.y += sFactorl; psplf.y += sFactorl;
 				if(pspl.y < WEAPONBOTTOM) { /* ") */ }
 				else
 				{
@@ -539,7 +544,7 @@ class dualWielding : ddWeapon
 			}
 			else //raise left weapon
 			{
-				pspl.y -= sFactor; psplf.y -= sFactor;
+				pspl.y -= sFactorl; psplf.y -= sFactorl;
 				if(pspl.y > 0) { /* no */ }
 				else
 				{
@@ -554,7 +559,7 @@ class dualWielding : ddWeapon
 			{
 				mode.brraised = false;
 				ddp.ddWeaponState &= ~DDW_RIGHTREADY;
-				pspr.y += sFactor; psprf.y += sFactor;
+				pspr.y += sFactorr; psprf.y += sFactorr;
 				if(pspr.y < WEAPONBOTTOM) {  }
 				else
 				{
@@ -573,7 +578,7 @@ class dualWielding : ddWeapon
 			}
 			else //raise right weapon
 			{
-				pspr.y -= sFactor; psprf.y -= sFactor;
+				pspr.y -= sFactorr; psprf.y -= sFactorr;
 				if(pspr.y > 0) {  }
 				else
 				{
@@ -607,7 +612,7 @@ class dualWielding : ddWeapon
 		let psplf = player.getpsprite(PSP_LEFTWF);
 		let pspr = player.getpsprite(PSP_RIGHTW);
 		let psprf = player.getpsprite(PSP_RIGHTWF);
-		double sFactor = (lw.sFactor + rw.sFactor) / 2.0;
+		double sFactor = (lw.sFactor + rw.sFactor + 1.) / 2.0;
 		if(ddp.ddWeaponState & DDW_RIGHTISTH && pspr.y > 0)
 		{
 			pspr.y -= 4 * sFactor; psprf.y -= 4 * sFactor;	
@@ -653,7 +658,7 @@ class dualWielding : ddWeapon
 		let psprf = player.GetPSprite(PSP_RIGHTWF);
 		double bsk = (ddp.FindInventory("PowerBerserk")) ? 2.0 : 1.0;
 		//invoker.bModeReady = false;
-		double sFactor = ((lw.sFactor + rw.sFactor) / 2.0) * bsk;			
+		double sFactor = ((lw.sFactor + rw.sFactor + 1.0) / 2.0) * bsk;			
 		if(ddp.ddWeaponState & DDW_RIGHTISTH && pspr.y < 128)
 		{			
 			pspr.y += 6 * sFactor; psprf.y += 6 * sFactor;

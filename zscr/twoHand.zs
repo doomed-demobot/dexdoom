@@ -185,6 +185,7 @@ class twoHanding : ddWeapon
 			if(A_PressingRightFire())
 			{
 				//primary fire
+				weap.onWeaponFire(0, false);
 				if(ddp.ddWeaponState & DDW_RIGHTREADY)
 				{
 					//ddp.PlayAttacking();
@@ -205,6 +206,7 @@ class twoHanding : ddWeapon
 			{
 				//secondary fire
 				if(FindInventory("ClassicModeToken")) { return; } 
+				weap.onWeaponFire(0, true);
 				if(ddp.ddWeaponState & DDW_RIGHTREADY)
 				{
 					//ddp.PlayAttacking();
@@ -355,7 +357,7 @@ class twoHanding : ddWeapon
 		let psprf = player.GetPSprite(PSP_RIGHTWF);	
 		double bsk = (ddp.FindInventory("PowerBerserk")) ? 2.0 : 1.0;
 		//invoker.bModeReady = false;
-		double sFactor = ((lw.sFactor + rw.sFactor) / 2.0) * bsk;	
+		double sFactor = ((lw.sFactor + rw.sFactor + 1) / 2.0) * bsk;	
 		if(ddp.ddWeaponState & DDW_RIGHTISTH && pspr.y < 128)
 		{			
 			pspr.y += 6 * sFactor; psprf.y += 6 * sFactor;

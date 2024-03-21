@@ -569,6 +569,9 @@ class ddWeapon : Weapon
 	virtual void SetSoundNumber(int sn) { ddWeapon(self).sndno = sn; }
 	
 	// ##goto weapon actions()
+	
+	//extra stuff called by weapon modes. 1 = left, 0 = right
+	virtual void OnWeaponFire(int side, bool alt) {} 
 
 	//do things when autoreloading after travelled is called
 	virtual void OnAutoReload() {}
@@ -1193,6 +1196,10 @@ class ddWeapon : Weapon
 			let psprf = player.GetPSprite(PSP_RIGHTWF);
 			int bz = (FindInventory("PowerBerserk")) ? 2 : 1;
 			double sFactor = (12 + ((lWeap.sFactor + rWeap.sFactor) / 2)) * bz;
+			if(invoker.PressingLeftFire()) { lweap.onWeaponFire(CE_LEFT, false); }
+			else if(invoker.PressingLeftAltFire()) { lweap.onWeaponFire(CE_LEFT, true); }
+			if(invoker.PressingRightFire()) { rweap.onWeaponFire(CE_RIGHT, false); }
+			else if(invoker.PressingRightAltFire()) { rweap.onWeaponFire(CE_RIGHT, true); } 
 			if(lWeap.weaponready || ddp.lwx != invoker.lSwapTarget) 
 			{
 				player.SetPSprite(PSP_LEFTW, lWeap.GetUpState()); 
@@ -1251,6 +1258,10 @@ class ddWeapon : Weapon
 			let psprf = player.GetPSprite(PSP_RIGHTWF);
 			int bz = (FindInventory("PowerBerserk")) ? 2 : 1;
 			double sFactor = (14 + ((lWeap.sFactor + rWeap.sFactor) / 2)) * bz;
+			if(invoker.PressingLeftFire()) { lweap.onWeaponFire(CE_LEFT, false); }
+			else if(invoker.PressingLeftAltFire()) { lweap.onWeaponFire(CE_LEFT, true); }
+			if(invoker.PressingRightFire()) { rweap.onWeaponFire(CE_RIGHT, false); }
+			else if(invoker.PressingRightAltFire()) { rweap.onWeaponFire(CE_RIGHT, true); } 
 			if(pspr.y > 0) { pspr.y -= sFactor; psprf.y -= sFactor; }
 			pspl.x -= sFactor; psplf.x -= sFactor;
 			if(!(pspl.x <= -64)) { return; }
@@ -1293,6 +1304,10 @@ class ddWeapon : Weapon
 			let psplf = player.GetPSprite(PSP_LEFTWF);
 			let pspr = player.GetPSprite(PSP_RIGHTW);
 			let psprf = player.GetPSprite(PSP_RIGHTWF);
+			if(invoker.PressingLeftFire()) { lweap.onWeaponFire(CE_LEFT, false); }
+			else if(invoker.PressingLeftAltFire()) { lweap.onWeaponFire(CE_LEFT, true); }
+			if(invoker.PressingRightFire()) { rweap.onWeaponFire(CE_RIGHT, false); }
+			else if(invoker.PressingRightAltFire()) { rweap.onWeaponFire(CE_RIGHT, true); } 
 			if(rWeap.weaponready || ddp.rwx != invoker.rSwapTarget) 
 			{
 				player.SetPSprite(PSP_LEFTW, lWeap.GetUpState()); 
@@ -1383,6 +1398,10 @@ class ddWeapon : Weapon
 			let psprf = player.GetPSprite(PSP_RIGHTWF);
 			int bz = (FindInventory("PowerBerserk")) ? 2 : 1;
 			double sFactor = (14 + ((lWeap.sFactor + rWeap.sFactor) / 2)) * bz;
+			if(invoker.PressingLeftFire()) { lweap.onWeaponFire(CE_LEFT, false); }
+			else if(invoker.PressingLeftAltFire()) { lweap.onWeaponFire(CE_LEFT, true); }
+			if(invoker.PressingRightFire()) { rweap.onWeaponFire(CE_RIGHT, false); }
+			else if(invoker.PressingRightAltFire()) { rweap.onWeaponFire(CE_RIGHT, true); } 
 			if(pspl.y > 0) { pspl.y -= sFactor; psplf.y -= sFactor; }	
 			if((abs(pspr.x) + (2 * sFactor)) < 64)
 			{
