@@ -21,10 +21,10 @@ class inventoryOpener : CustomInventory
 		let pspr = player.GetPSprite(PSP_RIGHTW);
 		let psprf = player.GetPSprite(PSP_RIGHTWF);
 		let mode = ddWeapon(player.readyweapon);
-		if(!mode.bmodeready) { 
+		/*if(!mode.bmodeready) { 
 			if(ddp.dddebug & DBG_INVENTORY) { A_Log("Mode not ready"); } return; }
 		if(!(ddp.ddWeaponState & DDW_LEFTREADY) || !(ddp.ddWeaponState & DDW_RIGHTREADY)) { 
-			if(ddp.dddebug & DBG_INVENTORY) { A_Log("Weapons not ready"); } return; } 
+			if(ddp.dddebug & DBG_INVENTORY) { A_Log("Weapons not ready"); } return; }*/
 		if(mode is "playerInventory") 
 		{
 			if(playerInventory(mode).lowerL != -1 || playerInventory(mode).lowerR != -1 ) { 
@@ -125,6 +125,8 @@ class playerInventory : ddWeapon
 		targetIndex = -2;
 		inInventory = true;
 	}
+	
+	//todo: move item reassignment to end of lowering state
 	override void Tick()
 	{
 		Super.Tick();		
@@ -181,7 +183,8 @@ class playerInventory : ddWeapon
 		if(ddp)
 		{
 			if(ddp.player.readyweapon is "playerInventory")
-			{
+			{				
+				if(!(ddp.ddWeaponState & DDW_LEFTREADY) || !(ddp.ddWeaponState & DDW_RIGHTREADY)) { ddp.A_Log("Weapons not ready"); return; }
 				if(ddp.lastmode is "dualWielding")
 				{
 					if(lowerL == 1)
@@ -698,7 +701,7 @@ class playerInventory : ddWeapon
 					case 0: //right
 						let rss = RightWeapons(i.storedSpot);
 						if(i.storedIndex == ddp.rwx) {
-							i.lowerR = 1; i.heldRight = newWeap; ddp.ddWeaponState |= DDW_RIGHTNOBOBBING; pspr.SetState(ddp.GetRightWeapon(i.storedIndex).GetUpState());
+							i.lowerR = 1; i.heldRight = newWeap; ddp.ddWeaponState |= DDW_RIGHTNOBOBBING; /*pspr.SetState(ddp.GetRightWeapon(i.storedIndex).GetUpState())*/;
 						}
 						else { if(i.sW.weaponName != "emptie") { RemoveInventory(i.storedSpot.RetItem(i.storedIndex)); } rss.SetItem(newWeap, i.storedIndex);
 						}
@@ -709,7 +712,7 @@ class playerInventory : ddWeapon
 					case 1: //left
 						let lss = LeftWeapons(i.storedSpot);
 						if(i.storedIndex == ddp.lwx) {
-							i.lowerL = 1; i.heldLeft = newWeap; ddp.ddWeaponState |= DDW_LEFTNOBOBBING; pspl.SetState(ddp.GetLeftWeapon(i.storedIndex).GetUpState());
+							i.lowerL = 1; i.heldLeft = newWeap; ddp.ddWeaponState |= DDW_LEFTNOBOBBING; /*pspl.SetState(ddp.GetLeftWeapon(i.storedIndex).GetUpState())*/;
 						}
 						else { if(i.sW.weaponName != "emptie") { RemoveInventory(i.storedSpot.RetItem(i.storedIndex)); }  lss.SetItem(newWeap, i.storedIndex);
 						}
@@ -745,7 +748,7 @@ class playerInventory : ddWeapon
 					case 0: //right
 						let rts = RightWeapons(i.targetSpot);
 						if(i.targetIndex == ddp.rwx) {
-							i.lowerR = 1; i.heldRight = oldWeap; ddp.ddWeaponState |= DDW_RIGHTNOBOBBING; pspr.SetState(ddp.GetRightWeapon(i.targetIndex).GetUpState());
+							i.lowerR = 1; i.heldRight = oldWeap; ddp.ddWeaponState |= DDW_RIGHTNOBOBBING; /*pspr.SetState(ddp.GetRightWeapon(i.targetIndex).GetUpState())*/;
 						}
 						else { if(i.tW.weaponName != "emptie") { RemoveInventory(i.targetSpot.RetItem(i.targetIndex));} rts.SetItem(oldWeap, i.targetIndex); 
 						}
@@ -756,7 +759,7 @@ class playerInventory : ddWeapon
 					case 1: //left
 						let lts = LeftWeapons(i.targetSpot);
 						if(i.targetIndex == ddp.lwx) {
-							i.lowerL = 1; i.heldLeft = oldWeap; ddp.ddWeaponState |= DDW_LEFTNOBOBBING; pspl.SetState(ddp.GetLeftWeapon(i.targetIndex).GetUpState());
+							i.lowerL = 1; i.heldLeft = oldWeap; ddp.ddWeaponState |= DDW_LEFTNOBOBBING; /*pspl.SetState(ddp.GetLeftWeapon(i.targetIndex).GetUpState())*/;
 						}
 						else { if(i.tW.weaponName != "emptie") { RemoveInventory(i.targetSpot.RetItem(i.targetIndex)); } lts.SetItem(oldWeap, i.targetIndex);
 						}
