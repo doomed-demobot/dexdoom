@@ -156,8 +156,8 @@ class ddShotgun : ddWeapon
 				if(mag < 1 && ddp.CountInv("Shell") < 1) { ChangeState("NoAmmo", myside); break; }
 				if(res == RES_DUALWLD) { //lower to reload
 					if(mag < 1) { /*LowerToReloadWeapon();*/ SetCaseNumber(5); 
-						if(ddWeaponFlags & SHT_RSEQ) { SetCaseNumber(2); ChangeState("Reload2B", myside); } 
-						 else { ChangeState("ReloadOneHanded", myside); } 
+						if(ddWeaponFlags & SHT_RSEQ) { weaponStatus = DDW_RELOADING; SetCaseNumber(2); ChangeState("Reload2B", myside); } 
+						 else { weaponStatus = DDW_RELOADING; ChangeState("ReloadOneHanded", myside); } 
 					}	
 					else { SetCaseNumber(1); }
 					break;
