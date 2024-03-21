@@ -1179,7 +1179,7 @@ class ESOACharge : Ammo
 			Stop;
 	}
 }
-
+/*
 class CellPacke : CellPack {}
 
 class ESOAPack : ESOACharge
@@ -1219,7 +1219,7 @@ class CellPackSpawner : RandomSpawner replaces CellPack
 	}
 	
 }
-
+*/
 // #Class esoaActivator : CustomInventory()
 class esoaActivator : CustomInventory
 {
