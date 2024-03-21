@@ -20,8 +20,8 @@ class ddRocketLauncher : ddWeapon replaces RocketLauncher
 		ddWeapon.ClassicAmmoType1 "RocketAmmo";
 		ddWeapon.ClassicAmmoType2 "RocketAmmo";
 		ddWeapon.rating 7;
-		ddWeapon.SwitchSpeed 1.0;
-		ddWeapon.InitialMag 4;
+		ddWeapon.SwitchSpeed 1.2;
+		ddWeapon.InitialMag 6;
 		ddWeapon.MagUse1 1;
 		ddWeapon.WeaponType "Launcher";
 		+WEAPON.NOAUTOFIRE
@@ -39,7 +39,7 @@ class ddRocketLauncher : ddWeapon replaces RocketLauncher
 	
 	override void OnAutoReload()
 	{
-		ddWeaponFlags &= ~RKL_RSEQ;
+		ddWeaponFlags &= 3;
 	}
 	
 	override void PreviewInfo(ddStats ddhud)
@@ -71,25 +71,13 @@ class ddRocketLauncher : ddWeapon replaces RocketLauncher
 			}
 		}
 	}	
-	/*
-	override void Tick()
+
+	override void onWeaponFire(int side, bool alt)
 	{
-		Super.Tick();
-		let ddp = ddPlayer(owner);
-		if(!ddp) { return; }
-		let mode = ddWeapon(owner.player.readyweapon);
-		if(ddWeaponFlags & RKL_RLOD)
-		{
-			if(weaponside && ddp.GetLeftWeapon(ddp.lwx) is self.GetClassName()) { 
-				if(PressingLeftFire() && !mode.leftheld) { SetCaseNumber(5); ChangeState("RFinish", PSP_LEFTW); ddWeaponFlags &= ~RKL_RLOD; ddWeaponFlags |= RKL_RSEQ; } 
-			}
-			else if(!weaponside && ddp.GetRightWeapon(ddp.rwx) is self.GetClassName()) {
-				if(PressingRightFire()) { if(mode.rightheld) { return; } SetCaseNumber(5); ChangeState("RFinish", PSP_RIGHTW); ddWeaponFlags &= ~RKL_RLOD; ddWeaponFlags |= RKL_RSEQ; } 
-			}
-			else { return; }
-		}
+		if(!owner) { return; }
+		if(ddWeaponFlags & RKL_RLOD) { ddWeaponFlags &= ~RKL_RLOD; SetCaseNumber(5); ChangeState("RFinish", (weaponside) ? PSP_LEFTW : PSP_RIGHTW); }
 	}
-	*/
+	
 	override String getParentType()
 	{
 		return "ddRocketLauncher";
@@ -113,6 +101,7 @@ class ddRocketLauncher : ddWeapon replaces RocketLauncher
 	
 	override State GetReadyState()
 	{
+		ddWeaponFlags &= ~RKL_RLOD;
 		if(ddWeaponFlags & RKL_RSEQ) { SetCaseNumber(5); weaponStatus = DDW_RELOADING; return FindState("RFinish"); }
 		else { return FindState("Ready"); }
 	}
@@ -120,7 +109,7 @@ class ddRocketLauncher : ddWeapon replaces RocketLauncher
 	override State wannaReload()
 	{
 		if(mag > 0 && weaponstatus == DDW_UNLOADING) { SetCaseNumber(4); return FindState("UnloadP"); }
-		if(mag < default.mag) { ddWeaponFlags |= RKL_RLOD; ddWeaponFlags |= RKL_RSEQ; SetCaseNumber(2); weaponStatus = DDW_RELOADING; return FindState('ReloadP'); }
+		if(mag < default.mag) { ddWeaponFlags |= RKL_RSEQ; SetCaseNumber(6); weaponStatus = DDW_RELOADING; return FindState('ReloadP'); }
 		else { return FindState('DoNotJump'); }
 	}
 	
@@ -159,7 +148,7 @@ class ddRocketLauncher : ddWeapon replaces RocketLauncher
 				if(res == RES_DUALWLD)
 				{
 					if(mag < 1) { 
-						LowerToReloadWeapon(); SetCaseNumber(2); break; 
+						SetCaseNumber(6); LowerToReloadWeapon();  break; 
 					}
 					SetCaseNumber(1);
 					break;
@@ -169,7 +158,7 @@ class ddRocketLauncher : ddWeapon replaces RocketLauncher
 					if(ddp.CountInv("RocketAmmo") < 1) { break; }
 					if(mag < 1) { 
 						weaponstatus = DDW_RELOADING;
-						ChangeState("ReloadP", myside); SetCaseNumber(2); break; 
+						ChangeState("ReloadP", myside); SetCaseNumber(6); break; 
 					}
 					SetCaseNumber(1);
 					ddp.PlayAttacking();
@@ -178,7 +167,7 @@ class ddRocketLauncher : ddWeapon replaces RocketLauncher
 				else { ddp.PlayAttacking(); SetCaseNumber(1); break; }
 			case 1: //auto reload if twohanding
 				if(res == RES_HASESOA || res == RES_TWOHAND) { 
-					if(mag < 1) { ddWeaponFlags |= RKL_RLOD; ddWeaponFlags |= RKL_RSEQ; weaponstatus = DDW_RELOADING; ChangeState("ReloadP", myside); SetCaseNumber(2); break; } 
+					if(mag < 1) { ddWeaponFlags |= RKL_RLOD; ddWeaponFlags |= RKL_RSEQ; weaponstatus = DDW_RELOADING; ChangeState("ReloadP", myside); SetCaseNumber(6); break; } 
 					else { SetCaseNumber(0); break; } 
 				}
 				else { SetCaseNumber(0); break; }
@@ -213,6 +202,10 @@ class ddRocketLauncher : ddWeapon replaces RocketLauncher
 			case 5:
 				ddWeaponFlags &= ~RKL_RSEQ;
 				SetCaseNumber(0);
+				break;
+			case 6:
+				ddWeaponFlags |= RKL_RLOD;
+				SetCaseNumber(2);
 				break;
 			default: break;
 		}
@@ -275,6 +268,7 @@ class ddRocketLauncherLeft : ddRocketLauncher
 		ReloadA:
 		ReloadP:
 			MISG B 5;
+			MISG B 1 A_ddActionLeft;
 		Load:
 			MISG B 15;
 			MISG B 5 A_DDActionLeft;
@@ -323,6 +317,7 @@ class ddRocketLauncherRight : ddRocketLauncher
 		ReloadA:
 		ReloadP:
 			MISG B 5;
+			MISG B 1 A_DDActionRight;
 		Load:
 			MISG B 15;
 			MISG B 5 A_DDActionRight;
