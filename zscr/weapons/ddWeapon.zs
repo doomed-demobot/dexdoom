@@ -571,7 +571,7 @@ class ddWeapon : Weapon
 	// ##goto weapon actions()
 	
 	//extra stuff called by weapon modes. 1 = left, 0 = right
-	virtual void OnWeaponFire(int side, bool alt) {} 
+	virtual void OnWeaponFire(int side, bool held) {} 
 
 	//do things when autoreloading after travelled is called
 	virtual void OnAutoReload() {}
@@ -723,6 +723,7 @@ class ddWeapon : Weapon
 		let pspl = player.GetPSprite(PSP_LEFTW);
 		let lWeap = ddp.GetLeftWeapon(ddp.lwx);
 		State st = lWeap.GetRefireState();
+		if(ddp.player.readyweapon is "playerInventory") { return; }
 		if(!(player.weaponstate & (WF_QUICKLEFTOK | WF_QUICKRIGHTOK)) && invoker.bmodeReady == true && !lWeap.bAltFire && A_PressingLeftFire() && player.health > 0)
 		{ 	
 			if(ddp.dddebug & DBG_WEAPSEQUENCE) { A_Log("Left refire!"); } 
@@ -747,6 +748,7 @@ class ddWeapon : Weapon
 		let lWeap = ddp.GetLeftWeapon(ddp.lwx);
 		let mode = ddWeapon(ddp.player.readyweapon);
 		State st = lWeap.GetRefireState();
+		if(ddp.player.readyweapon is "playerInventory") { return; }
 		if(mode.leftHeld) { return; }
 		if(!(player.weaponstate & (WF_QUICKLEFTOK | WF_QUICKRIGHTOK)) && invoker.bmodeReady == true && !lWeap.bAltFire && A_PressingLeftFire() && player.health > 0)
 		{ 	
@@ -771,6 +773,7 @@ class ddWeapon : Weapon
 		let pspr = player.GetPSprite(PSP_RIGHTW);
 		let rWeap = ddp.GetRightWeapon(ddp.rwx);
 		State st = rWeap.GetRefireState();
+		if(ddp.player.readyweapon is "playerInventory") { return; }
 		if(!(player.weaponstate & (WF_QUICKLEFTOK | WF_QUICKRIGHTOK)) && invoker.bmodeReady == true && !rWeap.bAltFire && A_PressingRightFire() && player.health > 0)
 		{ 
 			if(ddp.dddebug & DBG_WEAPSEQUENCE) { A_Log("Right refire!"); } 
@@ -795,6 +798,7 @@ class ddWeapon : Weapon
 		let rWeap = ddp.GetRightWeapon(ddp.rwx);
 		let mode = ddWeapon(ddp.player.readyweapon);
 		State st = rWeap.GetRefireState();
+		if(ddp.player.readyweapon is "playerInventory") { return; }
 		if(mode.rightHeld) { return; }
 		if(!(player.weaponstate & (WF_QUICKLEFTOK | WF_QUICKRIGHTOK)) && invoker.bmodeReady == true && !rWeap.bAltFire && A_PressingRightFire() && player.health > 0)
 		{ 
@@ -1196,10 +1200,10 @@ class ddWeapon : Weapon
 			let psprf = player.GetPSprite(PSP_RIGHTWF);
 			int bz = (FindInventory("PowerBerserk")) ? 2 : 1;
 			double sFactor = (12 + ((lWeap.sFactor + rWeap.sFactor) / 2)) * bz;
-			if(invoker.PressingLeftFire()) { lweap.onWeaponFire(CE_LEFT, false); }
-			else if(invoker.PressingLeftAltFire()) { lweap.onWeaponFire(CE_LEFT, true); }
-			if(invoker.PressingRightFire()) { rweap.onWeaponFire(CE_RIGHT, false); }
-			else if(invoker.PressingRightAltFire()) { rweap.onWeaponFire(CE_RIGHT, true); } 
+			if(invoker.PressingLeftFire()) { lweap.onWeaponFire(CE_LEFT, mode.leftheld); }
+			else if(invoker.PressingLeftAltFire()) { lweap.onWeaponFire(CE_LEFT, mode.leftheld); }
+			if(invoker.PressingRightFire()) { rweap.onWeaponFire(CE_RIGHT, mode.rightheld); }
+			else if(invoker.PressingRightAltFire()) { rweap.onWeaponFire(CE_RIGHT, mode.rightheld); } 
 			if(lWeap.weaponready || ddp.lwx != invoker.lSwapTarget) 
 			{
 				player.SetPSprite(PSP_LEFTW, lWeap.GetUpState()); 
@@ -1258,10 +1262,10 @@ class ddWeapon : Weapon
 			let psprf = player.GetPSprite(PSP_RIGHTWF);
 			int bz = (FindInventory("PowerBerserk")) ? 2 : 1;
 			double sFactor = (14 + ((lWeap.sFactor + rWeap.sFactor) / 2)) * bz;
-			if(invoker.PressingLeftFire()) { lweap.onWeaponFire(CE_LEFT, false); }
-			else if(invoker.PressingLeftAltFire()) { lweap.onWeaponFire(CE_LEFT, true); }
-			if(invoker.PressingRightFire()) { rweap.onWeaponFire(CE_RIGHT, false); }
-			else if(invoker.PressingRightAltFire()) { rweap.onWeaponFire(CE_RIGHT, true); } 
+			if(invoker.PressingLeftFire()) { lweap.onWeaponFire(CE_LEFT, mode.leftheld); }
+			else if(invoker.PressingLeftAltFire()) { lweap.onWeaponFire(CE_LEFT, mode.leftheld); }
+			if(invoker.PressingRightFire()) { rweap.onWeaponFire(CE_RIGHT, mode.rightheld); }
+			else if(invoker.PressingRightAltFire()) { rweap.onWeaponFire(CE_RIGHT, mode.rightheld); } 
 			if(pspr.y > 0) { pspr.y -= sFactor; psprf.y -= sFactor; }
 			pspl.x -= sFactor; psplf.x -= sFactor;
 			if(!(pspl.x <= -64)) { return; }
@@ -1304,10 +1308,10 @@ class ddWeapon : Weapon
 			let psplf = player.GetPSprite(PSP_LEFTWF);
 			let pspr = player.GetPSprite(PSP_RIGHTW);
 			let psprf = player.GetPSprite(PSP_RIGHTWF);
-			if(invoker.PressingLeftFire()) { lweap.onWeaponFire(CE_LEFT, false); }
-			else if(invoker.PressingLeftAltFire()) { lweap.onWeaponFire(CE_LEFT, true); }
-			if(invoker.PressingRightFire()) { rweap.onWeaponFire(CE_RIGHT, false); }
-			else if(invoker.PressingRightAltFire()) { rweap.onWeaponFire(CE_RIGHT, true); } 
+			if(invoker.PressingLeftFire()) { lweap.onWeaponFire(CE_LEFT, mode.leftheld); }
+			else if(invoker.PressingLeftAltFire()) { lweap.onWeaponFire(CE_LEFT, mode.leftheld); }
+			if(invoker.PressingRightFire()) { rweap.onWeaponFire(CE_RIGHT, mode.rightheld); }
+			else if(invoker.PressingRightAltFire()) { rweap.onWeaponFire(CE_RIGHT, mode.rightheld); } 
 			if(rWeap.weaponready || ddp.rwx != invoker.rSwapTarget) 
 			{
 				player.SetPSprite(PSP_LEFTW, lWeap.GetUpState()); 
@@ -1398,10 +1402,10 @@ class ddWeapon : Weapon
 			let psprf = player.GetPSprite(PSP_RIGHTWF);
 			int bz = (FindInventory("PowerBerserk")) ? 2 : 1;
 			double sFactor = (14 + ((lWeap.sFactor + rWeap.sFactor) / 2)) * bz;
-			if(invoker.PressingLeftFire()) { lweap.onWeaponFire(CE_LEFT, false); }
-			else if(invoker.PressingLeftAltFire()) { lweap.onWeaponFire(CE_LEFT, true); }
-			if(invoker.PressingRightFire()) { rweap.onWeaponFire(CE_RIGHT, false); }
-			else if(invoker.PressingRightAltFire()) { rweap.onWeaponFire(CE_RIGHT, true); } 
+			if(invoker.PressingLeftFire()) { lweap.onWeaponFire(CE_LEFT, mode.leftheld); }
+			else if(invoker.PressingLeftAltFire()) { lweap.onWeaponFire(CE_LEFT, mode.leftheld); }
+			if(invoker.PressingRightFire()) { rweap.onWeaponFire(CE_RIGHT, mode.rightheld); }
+			else if(invoker.PressingRightAltFire()) { rweap.onWeaponFire(CE_RIGHT, mode.rightheld); } 
 			if(pspl.y > 0) { pspl.y -= sFactor; psplf.y -= sFactor; }	
 			if((abs(pspr.x) + (2 * sFactor)) < 64)
 			{
