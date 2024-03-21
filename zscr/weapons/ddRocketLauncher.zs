@@ -72,9 +72,10 @@ class ddRocketLauncher : ddWeapon replaces RocketLauncher
 		}
 	}	
 
-	override void onWeaponFire(int side, bool alt)
+	override void onWeaponFire(int side, bool held)
 	{
 		if(!owner) { return; }
+		if(held) { return; }
 		if(ddWeaponFlags & RKL_RLOD) { ddWeaponFlags &= ~RKL_RLOD; SetCaseNumber(5); ChangeState("RFinish", (weaponside) ? PSP_LEFTW : PSP_RIGHTW); }
 	}
 	
