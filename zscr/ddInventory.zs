@@ -189,13 +189,14 @@ class playerInventory : ddWeapon
 				{
 					if(lowerL == 1)
 					{
-						ddWeapon hole = lWeap.RetItem(ddp.lwx);
+						//ddWeapon hole = lWeap.RetItem(ddp.lwx);
+						ddWeapon hole = heldleft;
 						pspl.y += 6 * hole.sFactor;
 						if(pspl.y > 127)
 						{							
 							ddWeapon hole = lWeap.RetItem(ddp.lwx);
 							if(ddp.dddebug & DBG_INVENTORY) { ddp.A_Log("Left weapon replaced with held weapon "..heldleft.GetTag()); }
-							lWeap.SetItem(heldLeft, ddp.lwx);
+							//lWeap.SetItem(heldLeft, ddp.lwx);
 							if(lWeap.RetItem(ddp.lwx).bTwoHander) { ddp.ddWeaponState |= DDW_LEFTISTH; }
 							else { ddp.ddWeaponState &= ~DDW_LEFTISTH; }
 							rWeap.RetItem(ddp.rwx).companionpiece = lWeap.RetItem(ddp.lwx);
@@ -207,6 +208,7 @@ class playerInventory : ddWeapon
 							pspl.x = -64 - ddp.GetLeftWeapon(ddp.lwx).xoffset;		
 							psplf.x = -64 - ddp.GetLeftWeapon(ddp.lwx).xoffset;
 							if(lWeap.RetItem(ddp.rwx).UpSound) { ddp.A_StartSound(lWeap.RetItem(ddp.rwx).UpSound, CHAN_WEAPON); }
+							ddp.ddWeaponState &= ~DDW_NOLEFTSPRITECHANGE;
 							lowerL = 0;
 						}
 					}
@@ -228,7 +230,7 @@ class playerInventory : ddWeapon
 					if(lowerL == 1)
 					{
 						ddWeapon hole = lWeap.RetItem(ddp.lwx);
-						lWeap.SetItem(heldLeft, ddp.lwx);
+						//lWeap.SetItem(heldLeft, ddp.lwx);
 						if(lWeap.RetItem(ddp.lwx).bTwoHander) { ddp.ddWeaponState |= DDW_LEFTISTH; }
 						else { ddp.ddWeaponState &= ~DDW_LEFTISTH; }
 						if(!(hole is "ddFist")) { ddp.RemoveInventory(hole); }
@@ -242,12 +244,13 @@ class playerInventory : ddWeapon
 				
 				if(lowerR == 1)
 				{
-					ddWeapon hole = rWeap.RetItem(ddp.rwx);
+					//ddWeapon hole = rWeap.RetItem(ddp.rwx);
+					ddWeapon hole = heldRight;
 					pspr.y += 6 * hole.sFactor;
 					if(pspr.y > 127)
 					{
 						if(ddp.dddebug & DBG_INVENTORY) { ddp.A_Log("Right weapon replaced with held weapon "..heldright.GetTag()); }
-						rWeap.SetItem(heldRight, ddp.rwx);
+						//rWeap.SetItem(heldRight, ddp.rwx);
 						if(rWeap.RetItem(ddp.rwx).bTwoHander) { ddp.ddWeaponState |= DDW_RIGHTISTH; }
 						else { ddp.ddWeaponState &= ~DDW_RIGHTISTH; }
 						rWeap.RetItem(ddp.rwx).companionpiece = lWeap.RetItem(ddp.lwx);
@@ -262,6 +265,7 @@ class playerInventory : ddWeapon
 							psprf.x = 64 + rWeap.RetItem(ddp.rwx).xoffset;
 						}
 						if(rWeap.RetItem(ddp.rwx).UpSound) { ddp.A_StartSound(rWeap.RetItem(ddp.rwx).UpSound, CHAN_WEAPON); }
+						ddp.ddWeaponState &= ~DDW_NORIGHTSPRITECHANGE;
 						lowerR = 0;
 					}
 				}
@@ -701,7 +705,8 @@ class playerInventory : ddWeapon
 					case 0: //right
 						let rss = RightWeapons(i.storedSpot);
 						if(i.storedIndex == ddp.rwx) {
-							i.lowerR = 1; i.heldRight = newWeap; ddp.ddWeaponState |= DDW_RIGHTNOBOBBING; /*pspr.SetState(ddp.GetRightWeapon(i.storedIndex).GetUpState())*/;
+							ddp.ddWeaponState |= DDW_NORIGHTSPRITECHANGE;
+							i.lowerR = 1; i.heldRight = rss.RetItem(i.storedIndex);  pspr.SetState(i.heldRight.GetUpState()); rss.Setitem(newWeap, i.storedIndex); ddp.ddWeaponState |= DDW_RIGHTNOBOBBING;
 						}
 						else { if(i.sW.weaponName != "emptie") { RemoveInventory(i.storedSpot.RetItem(i.storedIndex)); } rss.SetItem(newWeap, i.storedIndex);
 						}
@@ -712,7 +717,8 @@ class playerInventory : ddWeapon
 					case 1: //left
 						let lss = LeftWeapons(i.storedSpot);
 						if(i.storedIndex == ddp.lwx) {
-							i.lowerL = 1; i.heldLeft = newWeap; ddp.ddWeaponState |= DDW_LEFTNOBOBBING; /*pspl.SetState(ddp.GetLeftWeapon(i.storedIndex).GetUpState())*/;
+							ddp.ddWeaponState |= DDW_NOLEFTSPRITECHANGE;
+							i.lowerL = 1; i.heldLeft = lss.RetItem(i.storedIndex); pspl.SetState(i.heldLeft.GetUpState()); ddp.ddWeaponState |= DDW_LEFTNOBOBBING; lss.SetItem(newWeap, i.storedIndex);
 						}
 						else { if(i.sW.weaponName != "emptie") { RemoveInventory(i.storedSpot.RetItem(i.storedIndex)); }  lss.SetItem(newWeap, i.storedIndex);
 						}
@@ -748,7 +754,8 @@ class playerInventory : ddWeapon
 					case 0: //right
 						let rts = RightWeapons(i.targetSpot);
 						if(i.targetIndex == ddp.rwx) {
-							i.lowerR = 1; i.heldRight = oldWeap; ddp.ddWeaponState |= DDW_RIGHTNOBOBBING; /*pspr.SetState(ddp.GetRightWeapon(i.targetIndex).GetUpState())*/;
+							ddp.ddWeaponState |= DDW_NORIGHTSPRITECHANGE;
+							i.lowerR = 1; i.heldRight = rts.RetItem(i.targetIndex); pspr.SetState(i.heldRight.GetUpState()); ddp.ddWeaponState |= DDW_RIGHTNOBOBBING; rts.SetItem(oldWeap, i.targetindex);
 						}
 						else { if(i.tW.weaponName != "emptie") { RemoveInventory(i.targetSpot.RetItem(i.targetIndex));} rts.SetItem(oldWeap, i.targetIndex); 
 						}
@@ -759,7 +766,8 @@ class playerInventory : ddWeapon
 					case 1: //left
 						let lts = LeftWeapons(i.targetSpot);
 						if(i.targetIndex == ddp.lwx) {
-							i.lowerL = 1; i.heldLeft = oldWeap; ddp.ddWeaponState |= DDW_LEFTNOBOBBING; /*pspl.SetState(ddp.GetLeftWeapon(i.targetIndex).GetUpState())*/;
+							ddp.ddWeaponState |= DDW_NOLEFTSPRITECHANGE;
+							i.lowerL = 1; i.heldLeft = lts.RetItem(i.targetIndex); pspl.SetState(i.heldLeft.GetUpState()); ddp.ddWeaponState |= DDW_LEFTNOBOBBING; lts.SetItem(oldWeap, i.targetIndex);
 						}
 						else { if(i.tW.weaponName != "emptie") { RemoveInventory(i.targetSpot.RetItem(i.targetIndex)); } lts.SetItem(oldWeap, i.targetIndex);
 						}
