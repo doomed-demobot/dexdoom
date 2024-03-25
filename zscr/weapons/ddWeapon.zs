@@ -582,6 +582,7 @@ class ddWeapon : Weapon
 	action void A_ChangeSpriteLeft(int forcemode = -1)
 	{
 		let ddp = ddPlayer(invoker.owner);
+		if(ddp.ddWeaponState & DDW_NOLEFTSPRITECHANGE) { return; }
 		let lw = ddp.GetLeftWeapon(ddp.lwx);
 		let pspl = ddp.player.GetPSprite(PSP_LEFTW);
 		String sp;
@@ -594,6 +595,7 @@ class ddWeapon : Weapon
 	action void A_ChangeSpriteRight(int forcemode = -1)
 	{
 		let ddp = ddPlayer(invoker.owner);
+		if(ddp.ddWeaponState & DDW_NORIGHTSPRITECHANGE) { return; }
 		let rw = ddp.GetRightWeapon(ddp.rwx);
 		let pspr = ddp.player.GetPSprite(PSP_RIGHTW);
 		String sp;

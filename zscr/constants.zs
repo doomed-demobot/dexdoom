@@ -46,6 +46,8 @@ enum ddWeaponStatus
 	DDW_REPLACELEFT = 1 << 8,
 	DDW_LEFTISTH = 1 << 9,
 	DDW_RIGHTISTH = 1 << 10,
+	DDW_NOLEFTSPRITECHANGE = 1 << 11,
+	DDW_NORIGHTSPRITECHANGE = 1 << 12,
 };
 
 enum CommonCombo
