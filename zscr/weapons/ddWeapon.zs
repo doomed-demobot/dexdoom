@@ -1155,7 +1155,7 @@ class ddWeapon : Weapon
 		cpiece.weaponready = false;
 		if(weaponside)
 		{
-			if(!(ddp.ddWeaponState & DDW_RIGHTREADY)) { ChangeState("NoAmmo", myside); return; }
+			if(cpiece.weaponstatus == DDW_FIRING) { ChangeState("NoAmmo", myside); return; }
 			mode.bmodeready = false;
 			pspl.SetState(FindState('Select'));
 			psplf.SetState(null);
@@ -1171,7 +1171,7 @@ class ddWeapon : Weapon
 		}
 		else 
 		{ 
-			if(!(ddp.ddWeaponState & DDW_LEFTREADY)) { ChangeState("NoAmmo", myside); return; }
+			if(cpiece.weaponstatus == DDW_FIRING) { ChangeState("NoAmmo", myside); return; }
 			mode.bmodeready = false;
 			pspl.SetState(cpiece.FindState('Select'));
 			psplf.SetState(null);
