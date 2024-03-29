@@ -567,6 +567,7 @@ class ddPlayer : DoomPlayer
 			}
 			if((rwx != weap.rSwapTarget) && weap.weaponStatus == DDW_READY)
 			{
+				if(rw.weaponstatus == DDW_FIRING) { return; }
 				player.SetPSprite(PSP_RIGHTW, rw.GetUpState());
 				ddWeaponState &= ~DDW_RIGHTREADY;
 				weap.bmodeready = false;
@@ -580,6 +581,7 @@ class ddPlayer : DoomPlayer
 			//lower them
 			if((lwx != weap.lSwapTarget || rwx != weap.rSwapTarget) && weap.weaponStatus == DDW_READY)
 			{
+				if(lw.weaponstatus == DDW_FIRING || rw.weaponstatus == DDW_FIRING) { return; }
 				player.SetPSprite(PSP_LEFTW, lw.GetUpState());
 				player.SetPSprite(PSP_RIGHTW, rw.GetUpState());
 				ddWeaponState &= ~DDW_LEFTREADY;

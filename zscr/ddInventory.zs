@@ -189,14 +189,11 @@ class playerInventory : ddWeapon
 				{
 					if(lowerL == 1)
 					{
-						//ddWeapon hole = lWeap.RetItem(ddp.lwx);
 						ddWeapon hole = heldleft;
 						pspl.y += 6 * hole.sFactor;
 						if(pspl.y > 127)
 						{							
-							ddWeapon hole = lWeap.RetItem(ddp.lwx);
 							if(ddp.dddebug & DBG_INVENTORY) { ddp.A_Log("Left weapon replaced with held weapon "..heldleft.GetTag()); }
-							//lWeap.SetItem(heldLeft, ddp.lwx);
 							if(lWeap.RetItem(ddp.lwx).bTwoHander) { ddp.ddWeaponState |= DDW_LEFTISTH; }
 							else { ddp.ddWeaponState &= ~DDW_LEFTISTH; }
 							rWeap.RetItem(ddp.rwx).companionpiece = lWeap.RetItem(ddp.lwx);
@@ -229,8 +226,7 @@ class playerInventory : ddWeapon
 				{
 					if(lowerL == 1)
 					{
-						ddWeapon hole = lWeap.RetItem(ddp.lwx);
-						//lWeap.SetItem(heldLeft, ddp.lwx);
+						ddWeapon hole = heldleft;
 						if(lWeap.RetItem(ddp.lwx).bTwoHander) { ddp.ddWeaponState |= DDW_LEFTISTH; }
 						else { ddp.ddWeaponState &= ~DDW_LEFTISTH; }
 						if(!(hole is "ddFist")) { ddp.RemoveInventory(hole); }
