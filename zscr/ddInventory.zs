@@ -21,10 +21,10 @@ class inventoryOpener : CustomInventory
 		let pspr = player.GetPSprite(PSP_RIGHTW);
 		let psprf = player.GetPSprite(PSP_RIGHTWF);
 		let mode = ddWeapon(player.readyweapon);
-		/*if(!mode.bmodeready) { 
+		if(!mode.bmodeready) { 
 			if(ddp.dddebug & DBG_INVENTORY) { A_Log("Mode not ready"); } return; }
 		if(!(ddp.ddWeaponState & DDW_LEFTREADY) || !(ddp.ddWeaponState & DDW_RIGHTREADY)) { 
-			if(ddp.dddebug & DBG_INVENTORY) { A_Log("Weapons not ready"); } return; }*/
+			if(ddp.dddebug & DBG_INVENTORY) { A_Log("Weapons not ready"); } return; }
 		if(mode is "playerInventory") 
 		{
 			if(playerInventory(mode).lowerL != -1 || playerInventory(mode).lowerR != -1 ) { 

@@ -45,6 +45,13 @@ class ddPlasmaRifle : ddWeapon replaces PlasmaRifle
 		hude.DrawString(hude.fa, "Spare ammo: "..hude.FormatNumber(AmmoGive1), (12, 59), hude.DI_SCREEN_CENTER | hude.DI_TEXT_ALIGN_LEFT);
 	}
 	
+	override void Travelled()
+	{
+		Super.Travelled();
+		if(owner) { owner.GiveInventory("Cell", (charge * 2)); }
+		charge = 0;
+	}
+	
 	override void HUDA(ddStats hude)
 	{	
 		int warn = (mag < 6) ? 255 : ((mag < 16) ? 128 : 0); 
