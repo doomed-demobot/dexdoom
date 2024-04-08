@@ -233,6 +233,7 @@ class playerInventory : ddWeapon
 						rWeap.RetItem(ddp.rwx).companionpiece = lWeap.RetItem(ddp.lwx);
 						lWeap.RetItem(ddp.lwx).companionpiece = rWeap.RetItem(ddp.rwx);	
 						ddp.ddWeaponState &= ~DDW_LEFTNOBOBBING;
+						ddp.ddWeaponState &= ~DDW_NOLEFTSPRITECHANGE;
 						ddp.player.SetPSprite(PSP_LEFTW, ddp.GetLeftWeapon(ddp.lwx).FindState('Ready'));
 						lowerL = -1;
 					}					
