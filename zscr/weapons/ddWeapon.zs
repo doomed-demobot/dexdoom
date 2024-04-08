@@ -103,7 +103,7 @@ class ddWeapon : Weapon
 	
 	virtual ui void HUDA(ddStats hude) {} //screensize 11; minimal
 	virtual ui void HUDB(ddStats hude) { self.HUDA(hude); } //screensize 10; more descriptive 
-	
+	/*
 	override bool Used(Actor user)
 	{
 		let ddp = ddPlayer(user);
@@ -134,6 +134,39 @@ class ddWeapon : Weapon
 			}
 		}
 	}
+	*/
+	bool PickMeUp(Actor pickerupper)
+	{
+		let ddp = ddPlayer(pickerupper);
+		if(ddp.waitToPickup > 0) { if(ddp.dddebug & DBG_INVENTORY) { ddp.A_Log("WAIT!"); } return false; }
+		if(ddp.desire != self) { if(ddp.dddebug & DBG_INVENTORY) { ddp.A_Log("ya missed!"); } return false; }
+		else 
+		{ 
+			if(AddToDDPlayer(pickerupper))
+			{
+				PlayPickupSound(pickerupper);
+				ddp.A_Log(PickupMessage());
+				if(!bNoScreenFlash && ddp.player.playerstate != PST_DEAD)
+				{
+					ddp.player.bonuscount = BONUSADD;
+				}
+				ddp.waitToPickup++;
+				if(ddp.player.readyweapon is "playerInventory") 
+				{ 
+						playerInventory(ddp.player.readyweapon).sW.nullify();
+						playerInventory(ddp.player.readyweapon).storedIndex = -1;				
+				}
+				self.GoAwayAndDie();
+				return true;
+			}
+			else
+			{
+				return false;
+			}
+		}
+		
+	}
+	
 	
 	protected bool AddToDDPlayer(Actor wanter)
 	{

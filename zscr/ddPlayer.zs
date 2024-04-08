@@ -25,6 +25,8 @@ class ddPlayer : DoomPlayer
 	Array<Actor> alfBlacklist;
 	//other
 	ddweapon desire;
+	Vector3 tepos;
+	TouchEntity myte;
 	Default
 	{
 		Speed 1;
@@ -367,14 +369,21 @@ class ddPlayer : DoomPlayer
 		plFOV = fouv.GetFloat();
 		if(!FindInventory("ClassicModeToken") && visrec) { plFOV += (instTimer / 4); }
 		BobDDWeapons();
-		//get looked at weapon
-		int d = 64;
-		ftranslatedlinetarget sub;
-		Actor source = self;
-		source.AimLineAttack(angle, d, sub, 0., ALF_CHECKNONSHOOTABLE | ALF_CHECK3D);
-		if(sub.linetarget is "ddWeapon") { desire = ddWeapon(sub.linetarget); }
-		else { desire = null; }
+		//get looked at weapon [on the way out]
+		//int d = 64;
+		//ftranslatedlinetarget sub;
+		//Actor source = self;
+		//source.AimLineAttack(angle, d, sub, 0., ALF_CHECKNONSHOOTABLE | ALF_CHECK3D);
+		//if(sub.linetarget is "ddWeapon") { desire = ddWeapon(sub.linetarget); }
+		//else { desire = null; }
 		
+		//get looked at weapon
+		flinetracedata re;
+		LineTrace(angle, 50, pitch, 0, 40, 0, 0, re);
+		tepos = re.hitlocation;
+		if(!myte) { myte = TouchEntity(Spawn("TouchEntity")); myte.owner = self; }
+		if(myte) { if(myte.closest) { desire = ddWeapon(myte.closest); } else { desire = null; } }
+		if(desire) { if(player.cmd.buttons & BT_USE) { desire.PickMeUp(self); } }
 		if(waitToPickup != 0 && mode.weaponstatus != DDM_SWAPPING) { waitToPickup++; }
 		if(waitToPickup >= 35) { waitToPickup = 0; }
 		//physical and visual recoil control
@@ -1332,5 +1341,52 @@ class ClassicModeToken : ESOA
 	Default
 	{
 		Inventory.RestrictedTo "ddPlayerClassic";
+	}
+}
+
+class TouchEntity : Actor
+{
+	ddPlayer owner;
+	ddWeapon closest;
+	Default
+	{
+		Health 999;
+		Radius 5;
+		Height 5;
+		Gravity 0;
+		Mass 1;
+	}
+	
+	void TEMove()
+	{
+		if(!owner) { Destroy(); }
+		SetOrigin(owner.tepos, false);
+		if(owner.dddebug & DBG_INVENTORY) { self.sprite = GetSpriteIndex("PKUPA0"); }
+		else { self.sprite = GetSpriteIndex("TNT1A0"); }
+		closest = null;
+		CheckNeighbors();
+	}
+	
+	void CheckNeighbors()
+	{
+		BlockThingsIterator blk = BlockThingsIterator.Create(self, 8);
+		float rec = 666.;
+		while(blk.Next())
+		{
+			if(blk.thing is "ddWeapon" && (Distance2D(blk.thing) - (blk.thing.radius / 2) < rec)) { 
+				rec = Distance2D(blk.thing) - (blk.thing.radius / 2); if(rec < 10 && (self.pos.z - blk.thing.pos.z - (blk.thing.height / 2)) < 10) { closest = ddWeapon(blk.thing); }
+			}
+		}
+	}
+	
+	States
+	{
+		Spawn:
+			#### A 1 TEMove;
+			Loop;
+		Death:
+			PKUP A 0;
+			TNT1 A -1;
+			Stop;
 	}
 }
