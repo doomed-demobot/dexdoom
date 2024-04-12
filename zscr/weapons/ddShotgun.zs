@@ -212,6 +212,7 @@ class ddShotgun : ddWeapon
 		Altfire:
 			Goto Ready;
 		FlashA:
+		FlashDW:
 		FlashP:
 			SHTF A 4 Bright A_Light1;
 			SHTF B 3 Bright A_Light2;
@@ -336,6 +337,10 @@ class ddShotgunRight : ddShotgun
 			#### A 1;
 			#### A 7;
 			Goto Ready;
+		FlashDW:
+			SHTF C 4 Bright A_Light1;
+			SHTF D 3 Bright A_Light2;
+			Goto FlashDone;
 	}
 }
 // #Class ShotgunSpawner : RandomSpawner replaces Shotgun()
