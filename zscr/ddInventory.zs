@@ -101,6 +101,8 @@ class playerInventory : ddWeapon
 		Weapon.BobSpeed 0;
 		+DDWEAPON.MODEREADY;
 		-DDWEAPON.GOESININV;
+		+INVENTORY.UNDROPPABLE;
+		+INVENTORY.UNTOSSABLE;
 		Tag "";
 	}
 	
@@ -321,6 +323,7 @@ class playerInventory : ddWeapon
 					drp.AttachToOwner(owner);
 					if(ddp.dddebug & DBG_INVENTORY && ddp.dddebug & DBG_VERBOSE) { ddp.A_Log("Left weapon replaced with "..ddp.GetFists().GetTag()); }
 					lWeap.SetItem(ddWeapon(ddp.GetFists(1)), li);
+					ddp.ddWeaponState &= ~DDW_LEFTISTH;
 					if(li == ddp.lwx)
 					{
 						rWeap.RetItem(ddp.rwx).companionpiece = lWeap.RetItem(ddp.lwx);
@@ -349,6 +352,7 @@ class playerInventory : ddWeapon
 					drp.AttachToOwner(owner);
 					if(ddp.dddebug & DBG_INVENTORY && ddp.dddebug & DBG_VERBOSE) { ddp.A_Log("Right weapon replaced with "..ddp.GetFists().GetTag()); }
 					rWeap.SetItem(ddWeapon(ddp.GetFists(0)), ri);
+					ddp.ddWeaponState &= ~DDW_RIGHTISTH;
 					if(ri == ddp.rwx)
 					{
 						rWeap.RetItem(ddp.rwx).companionpiece = lWeap.RetItem(ddp.lwx);
@@ -366,6 +370,31 @@ class playerInventory : ddWeapon
 				}
 			}
 		}
+	}
+	
+	override void PreTravelled()
+	{
+		let ddp = ddPlayer(owner);
+		if(lowerL == 1) 
+		{ 
+			if(!(heldLeft is "ddFist")) { ddp.RemoveInventory(heldLeft); }
+			ddp.player.SetPSprite(PSP_LEFTW, ddp.GetLeftWeapon(ddp.lwx).GetUpState());
+			ddp.ddWeaponState &= ~DDW_NOLEFTSPRITECHANGE;
+			lowerL = 0;
+		}
+		if(lowerR == 1)
+		{
+			if(!(heldRight is "ddFist")) { ddp.RemoveInventory(heldRight); }
+			ddp.player.SetPSprite(PSP_RIGHTW, ddp.GetRightWeapon(ddp.rwx).GetUpState());
+			ddp.ddWeaponState &= ~DDW_NORIGHTSPRITECHANGE;
+			lowerR = 0;
+		}
+		ddp.GetRightWeapon(ddp.rwx).companionpiece = ddp.GetLeftWeapon(ddp.lwx);
+		ddp.GetLeftWeapon(ddp.lwx).companionpiece = ddp.GetRightWeapon(ddp.rwx);
+		if(ddp.GetLeftWeapon(ddp.lwx).bTwoHander) { ddp.ddWeaponState |= DDW_LEFTISTH; }
+		else { ddp.ddWeaponState &= ~DDW_RIGHTISTH; }
+		if(ddp.GetRightWeapon(ddp.rwx).bTwoHander) { ddp.ddWeaponState |= DDW_RIGHTISTH; }
+		else { ddp.ddWeaponState &= ~DDW_RIGHTISTH; }
 	}
 	
 	override void Travelled()

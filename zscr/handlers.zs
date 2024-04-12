@@ -6,6 +6,7 @@ class ddHandlers : EventHandler
 		let p = ddPlayer(players[e.Playernumber].mo);
 		if(p)
 		{	
+			if(p.player.readyweapon is "playerInventory") { p.player.readyweapon = ddWeapon(p.lastmode); }
 			if(p.lastmode is "twoHanding" || p.player.readyweapon is "twoHanding") { p.InitTwoHanding(); }
 			else if(p.lastmode is "dualWielding" || p.player.readyweapon is "dualWielding") { p.InitDualWielding(); }
 			else { p.lastmode = p.lastmode; }
@@ -16,6 +17,7 @@ class ddHandlers : EventHandler
 		let p = ddPlayer(players[e.Playernumber].mo);
 		if(p)
 		{	
+			if(p.player.readyweapon is "playerInventory") { p.player.readyweapon = ddWeapon(p.lastmode); }
 			if(p.lastmode is "twoHanding" || p.player.readyweapon is "twoHanding") { p.InitTwoHanding(); }
 			else if(p.lastmode is "dualWielding" || p.player.readyweapon is "dualWielding") { p.InitDualWielding(); }
 			else { p.lastmode = p.lastmode; }

@@ -90,6 +90,8 @@ class dualWielding : ddWeapon
 							pInv.RetItem(x).construct(lw.GetParentType(), lw.rating, lw.GetWeaponSprite(), lw.mag, lw.ddWeaponFlags);
 							ddp.RemoveInventory(lw);
 							lWeap.SetItem(ddWeapon(ddp.GetFists(1)), ddp.lwx);
+							if(lWeap.RetItem(ddp.lwx).bTwoHander) { ddp.ddWeaponState |= DDW_LEFTISTH; }
+							else { ddp.ddWeaponState &= ~DDW_LEFTISTH; }
 							if(++ddp.lwx > lWeap.size - 1) { ddp.lwx = 0; }
 							lSwapTarget = ddp.lwx;
 							ddp.player.setpsprite(PSP_LEFTW, lWeap.RetItem(ddp.lwx).GetUpState());
@@ -113,6 +115,8 @@ class dualWielding : ddWeapon
 					tos.ddWeaponFlags = lw.ddWeaponFlags;
 					ddp.RemoveInventory(lw);				
 					lWeap.SetItem(ddWeapon(ddp.GetFists(1)), ddp.lwx);
+					if(lWeap.RetItem(ddp.lwx).bTwoHander) { ddp.ddWeaponState |= DDW_LEFTISTH; }
+					else { ddp.ddWeaponState &= ~DDW_LEFTISTH; }
 					if(++ddp.lwx > lWeap.size - 1) { ddp.lwx = 0; }
 					lSwapTarget = ddp.lwx;
 					ddp.player.setpsprite(PSP_LEFTW, lWeap.RetItem(ddp.lwx).GetUpState());
@@ -141,6 +145,8 @@ class dualWielding : ddWeapon
 							pInv.RetItem(x).construct(rw.GetParentType(), rw.rating, rw.GetWeaponSprite(), rw.mag, rw.ddWeaponFlags);
 							ddp.RemoveInventory(rw);
 							rWeap.SetItem(ddWeapon(ddp.GetFists(0)), ddp.rwx);
+							if(rWeap.RetItem(ddp.rwx).bTwoHander) { ddp.ddWeaponState |= DDW_RIGHTISTH; }
+							else { ddp.ddWeaponState &= ~DDW_RIGHTISTH; }
 							if(++ddp.rwx > rWeap.size - 1) { ddp.rwx = 0; }
 							rSwapTarget = ddp.rwx;
 							ddp.player.setpsprite(PSP_RIGHTW, rWeap.RetItem(ddp.rwx).GetUpState());
@@ -165,6 +171,8 @@ class dualWielding : ddWeapon
 					tos.ddWeaponFlags = rw.ddWeaponFlags;
 					ddp.RemoveInventory(rw);
 					rWeap.SetItem(ddWeapon(ddp.GetFists(0)), ddp.rwx);
+					if(rWeap.RetItem(ddp.rwx).bTwoHander) { ddp.ddWeaponState |= DDW_RIGHTISTH; }
+					else { ddp.ddWeaponState &= ~DDW_RIGHTISTH; }
 					if(++ddp.rwx > rWeap.size - 1) { ddp.rwx = 0; }
 					rSwapTarget = ddp.rwx;
 					ddp.player.setpsprite(PSP_RIGHTW, rWeap.RetItem(ddp.rwx).GetUpState());

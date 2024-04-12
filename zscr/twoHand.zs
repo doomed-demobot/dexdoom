@@ -132,6 +132,8 @@ class twoHanding : ddWeapon
 				ddp.A_Print("Stored "..weap.GetTag(), 1);
 				pInv.RetItem(x).construct(weap.GetParentType(), weap.rating, weap.GetWeaponSprite(), weap.mag, weap.ddWeaponFlags);
 				rWeap.SetItem(ddWeapon(ddp.GetFists(0)), ddp.rwx);
+				if(rWeap.RetItem(ddp.rwx).bTwoHander) { ddp.ddWeaponState |= DDW_RIGHTISTH; }
+				else { ddp.ddWeaponState &= ~DDW_RIGHTISTH; }
 				if(++ddp.rwx > rWeap.size - 1) { ddp.rwx = 0; }
 				rSwapTarget = ddp.rwx;
 				rWeap.RetItem(ddp.rwx).companionpiece = lWeap.RetItem(ddp.lwx);
@@ -151,6 +153,8 @@ class twoHanding : ddWeapon
 		tos.ddWeaponFlags = weap.ddWeaponFlags;
 		tos.AmmoGive1 = 0;		
 		rWeap.SetItem(ddWeapon(ddp.GetFists(0)), ddp.rwx);
+		if(rWeap.RetItem(ddp.rwx).bTwoHander) { ddp.ddWeaponState |= DDW_RIGHTISTH; }
+		else { ddp.ddWeaponState &= ~DDW_RIGHTISTH; }
 		if(++ddp.rwx > rWeap.size - 1) { ddp.rwx = 0; }
 		rSwapTarget = ddp.rwx;
 		rWeap.RetItem(ddp.rwx).companionpiece = lWeap.RetItem(ddp.lwx);
@@ -303,6 +307,7 @@ class twoHanding : ddWeapon
 	action void A_RaiseSingle()
 	{
 		let ddp = ddplayer(self);
+		if(!ddp) { return; }
 		if(!ddp.FindInventory("LeftWeapons")) { return; }
 		if(!ddp.FindInventory("RightWeapons")) { return; }
 		let lWeap = ddp.GetLeftWeapons();
