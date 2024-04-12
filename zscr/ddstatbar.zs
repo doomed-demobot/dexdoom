@@ -296,9 +296,11 @@ class ddStats : BaseStatusBar
 			int spindle = dPlay.ddWeaponState;
 			String label = "";
 			Color res;
-			for(int x = 10; x > -1; x--)
+			for(int x = 12; x > -1; x--)
 			{				
 				switch(x){
+					case 12: label = "NORIGHTSPRITECHANGE"; break;
+					case 11: label = "NOLEFTSPRITECHANGE"; break;
 					case 10: label = "RITH"; break;
 					case 9: label = "LITH"; break;
 					case 8: label = "REPLLEFT"; break;
@@ -314,7 +316,7 @@ class ddStats : BaseStatusBar
 				if(spindle & 1 << x) { res = Font.CR_GREEN; }
 				else { res = Font.CR_RED; }
 				
-				DrawString(fa, label, (5,8 + (15*(10-x))), DI_SCREEN_LEFT, res); 
+				DrawString(fa, label, (5,8 + (15*(12-x))), DI_SCREEN_LEFT, res); 
 			}
 		}
 		if(dPlay.dddebug & DBG_PLAYER)
