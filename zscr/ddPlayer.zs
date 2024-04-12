@@ -198,7 +198,7 @@ class ddPlayer : DoomPlayer
 		let lw = GetLeftWeapon(lwx);
 		let rw = GetRightWeapon(rwx);
 		let mode = ddWeapon(player.readyweapon);
-		if(1)
+		if(lw.weaponStatus != DDW_FIRING && rw.weaponStatus != DDW_FIRING)
 		{
 			if(player.PendingWeapon != WP_NOCHANGE)
 			{
@@ -228,7 +228,7 @@ class ddPlayer : DoomPlayer
 		}
 		else
 		{
-			player.PendingWeapon = WP_NOCHANGE;
+			//player.PendingWeapon = WP_NOCHANGE;
 		}		
 	}
 	
