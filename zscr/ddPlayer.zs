@@ -1355,6 +1355,8 @@ class TouchEntity : Actor
 		Height 5;
 		Gravity 0;
 		Mass 1;
+		-SOLID;
+		
 	}
 	
 	void TEMove()
@@ -1370,11 +1372,14 @@ class TouchEntity : Actor
 	void CheckNeighbors()
 	{
 		BlockThingsIterator blk = BlockThingsIterator.Create(self, 8);
-		float rec = 666.;
+		float rec = 666.f;
 		while(blk.Next())
 		{
 			if(blk.thing is "ddWeapon" && (Distance2D(blk.thing) - (blk.thing.radius / 2) < rec)) { 
-				rec = Distance2D(blk.thing) - (blk.thing.radius / 2); if(rec < 10 && (self.pos.z - blk.thing.pos.z - (blk.thing.height / 2)) < 10) { closest = ddWeapon(blk.thing); }
+				rec = Distance2D(blk.thing) - (blk.thing.radius / 2); if(rec < 10 && 
+				(abs(self.pos.z) - abs(blk.thing.pos.z) - (blk.thing.height / 16)) < 10 &&
+				(abs(self.pos.z) - abs(blk.thing.pos.z) - (blk.thing.height / 16)) > -10) 
+				{ closest = ddWeapon(blk.thing); }
 			}
 		}
 	}
