@@ -91,14 +91,14 @@ class ddShotgun : ddWeapon
 		}
 		else { return FindState("Ready"); }
 	}
-	
+	/* TODO: make a slightly better angled shotgun sprite
 	override State GetFlashState()
 	{
 		let ddp = ddPlayer(owner);
 		if(ddp.player.readyweapon is "dualWielding" || ddp.player.pendingweapon is "dualWielding" || ddp.lastmode is "dualWielding") { return FindState("FlashDW"); }
 		else { return Super.GetFlashState(); }
 	}
-	
+	*/
 	override String, int GetSprites(int forcemode)
 	{
 		let ddp = ddPlayer(owner);
