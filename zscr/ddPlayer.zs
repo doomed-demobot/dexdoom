@@ -369,14 +369,6 @@ class ddPlayer : DoomPlayer
 		plFOV = fouv.GetFloat();
 		if(!FindInventory("ClassicModeToken") && visrec) { plFOV += (instTimer / 4); }
 		BobDDWeapons();
-		//get looked at weapon [on the way out]
-		//int d = 64;
-		//ftranslatedlinetarget sub;
-		//Actor source = self;
-		//source.AimLineAttack(angle, d, sub, 0., ALF_CHECKNONSHOOTABLE | ALF_CHECK3D);
-		//if(sub.linetarget is "ddWeapon") { desire = ddWeapon(sub.linetarget); }
-		//else { desire = null; }
-		
 		//get looked at weapon
 		flinetracedata re;
 		LineTrace(angle, 50, pitch, 0, 40, 0, 0, re);
@@ -1376,10 +1368,10 @@ class TouchEntity : Actor
 		while(blk.Next())
 		{
 			if(blk.thing is "ddWeapon" && (Distance2D(blk.thing) - (blk.thing.radius / 2) < rec)) { 
-				rec = Distance2D(blk.thing) - (blk.thing.radius / 2); if(rec < 10 && 
-				(abs(self.pos.z) - abs(blk.thing.pos.z) - (blk.thing.height / 16)) < 10 &&
-				(abs(self.pos.z) - abs(blk.thing.pos.z) - (blk.thing.height / 16)) > -10) 
-				{ closest = ddWeapon(blk.thing); }
+				rec = Distance2D(blk.thing) - (blk.thing.radius / 2); if(rec < 14 && 
+				self.pos.z <= (blk.thing.pos.z + blk.thing.height) &&
+				self.pos.z >= (blk.thing.pos.z)
+				){ closest = ddWeapon(blk.thing); }
 			}
 		}
 	}
