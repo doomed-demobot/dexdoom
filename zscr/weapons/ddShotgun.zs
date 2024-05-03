@@ -91,14 +91,14 @@ class ddShotgun : ddWeapon
 		}
 		else { return FindState("Ready"); }
 	}
-	/* TODO: make a slightly better angled shotgun sprite
+	
 	override State GetFlashState()
 	{
 		let ddp = ddPlayer(owner);
 		if(ddp.player.readyweapon is "dualWielding" || ddp.player.pendingweapon is "dualWielding" || ddp.lastmode is "dualWielding") { return FindState("FlashDW"); }
 		else { return Super.GetFlashState(); }
 	}
-	*/
+	
 	override String, int GetSprites(int forcemode)
 	{
 		let ddp = ddPlayer(owner);
@@ -286,6 +286,10 @@ class ddShotgunLeft : ddShotgun
 			#### A 1;
 			#### A 7;
 			Goto Ready;
+		FlashDW:
+			SHTF C 4 Bright A_Light1;
+			SHTF D 3 Bright A_Light2;
+			Goto FlashDone;
 	}
 }
 // #Class ddShotgunRight : ddShotgun()
