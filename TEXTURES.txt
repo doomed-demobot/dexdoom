@@ -28,7 +28,7 @@ Sprite "PUNFD0", 147, 76
 		FlipX
 	}
 }
-
+/*
 //pistol
 Sprite "PIFDA0", 57, 62
 {
@@ -55,7 +55,7 @@ Sprite "PIFDC0", 66, 81
 	{
 		FlipX
 	}
-}
+}*/
 //pistol reload twohand
 Sprite "PISDF0", 66, 81
 {

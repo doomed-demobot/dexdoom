@@ -157,7 +157,10 @@ class ddPistol : ddWeapon replaces Pistol
 	{
 		let ddp = ddPlayer(owner);
 		if(ddp.FindInventory("ClassicModeToken")) { return FindState("FlashC"); }
-		else { return Super.GetFlashState(); }		
+		if(ddp.player.readyweapon is "dualWielding" || ddp.player.pendingweapon is "dualWielding" || ddp.lastmode is "dualWielding") {
+			ddp.player.GetPSprite(PSP_RIGHTWF).Frame = 2;
+		}
+		return Super.GetFlashState();
 	}
 	
 	override void primaryattack()
@@ -300,7 +303,7 @@ class ddPistolLeft : ddPistol
 			#### B 2 A_FireLeftWeapon;
 			#### C 1 A_DDActionLeft;
 			#### CCCC 1 A_ddRefireLeftHeavy;
-			#### B 5;
+			#### A 5;
 			Goto Ready;
 		FireClassic:
 			#### A 0 A_DDActionLeft;
@@ -322,7 +325,7 @@ class ddPistolLeft : ddPistol
 			#### C 1;
 			#### C 1 A_DDActionLeft;
 			#### C 3;
-			#### B 5 A_ddRefireLeft;
+			#### A 5 A_ddRefireLeft;
 			Goto Ready;
 		ReloadP:
 			#### F 3;
@@ -341,6 +344,12 @@ class ddPistolLeft : ddPistol
 			#### I 4 A_DDActionLeft;
 			#### J 4;
 			Goto Ready;
+		FlashP:
+			PISF B 2 Bright A_Light2;
+			Goto FlashDone;
+		FlashA:
+			PISF B 1 Bright A_Light2;
+			Goto FlashDone;
 	}
 }
 // #Class ddPistolRight : ddPistol()
@@ -365,7 +374,7 @@ class ddPistolRight : ddPistol
 			#### B 2 A_FireRightWeapon;
 			#### C 1 A_DDActionRight;
 			#### CCCC 1 A_ddRefireRightHeavy;
-			#### B 5;
+			#### A 5;
 			Goto Ready;
 		FireClassic:
 			#### A 0 A_DDActionRight;
@@ -384,7 +393,7 @@ class ddPistolRight : ddPistol
 			#### C 1;
 			#### C 1 A_DDActionRight;
 			#### C 3;
-			#### B 5 A_ddRefireRight;
+			#### A 5 A_ddRefireRight;
 			Goto Ready;
 		ReloadP:
 			#### F 3;
@@ -403,6 +412,12 @@ class ddPistolRight : ddPistol
 			#### I 4 A_DDActionRight;
 			#### J 4;
 			Goto Ready;
+		FlashP:
+			PISF # 2 Bright A_Light2;
+			Goto FlashDone;
+		FlashA:
+			PISF # 1 Bright A_Light2;
+			Goto FlashDone;
 			
 			
 	}
@@ -455,7 +470,7 @@ extend class ddWeapon
 	action void A_FireDDPistol()
 	{
 		bool accurate;
-		int dam = 4 * random(1,3);
+		int dam = 4 * random(2,3);
 		let ddp = ddPlayer(invoker.owner);
 		ddWeapon weap = ddWeapon(self);
 		Class<Ammo> type = (ddp.FindInventory("ClassicModeToken")) ? weap.ClassicAmmoType1 : weap.AmmoType1;
@@ -470,15 +485,13 @@ extend class ddWeapon
 		if(ddp.FindInventory("ClassicModeToken")) { ddp.A_StartSound("weapons/pistol", CHAN_WEAPON, CHANF_OVERLAP); }
 		else { ddp.A_StartSound("weapons/pistolnew", CHAN_WEAPON, CHANF_OVERLAP); }
 		ddShot(accurate, "BulletPuff", dam, eA, eP, weap.weaponside, (pen) ? 10 : 3);
-		//ddp.TakeInventory(type, 1);
-		if(pen) { AddRecoil(2., 1, 4.); }
+		if(pen) { AddRecoil(1.8, 1, 4.); }
 		else { AddRecoil(1.5, 0, 4.); }
 	}
-	
 	action void A_BurstFireDDPistol() 
 	{
 		bool accurate;
-		int dam = 5 * random(1,3);		
+		int dam = 5 * random(2,3);		
 		let ddp = ddPlayer(invoker.owner);
 		ddWeapon weap = ddWeapon(self);
 		Class<Ammo> type = (ddp.FindInventory("ClassicModeToken")) ? weap.ClassicAmmoType1 : weap.AmmoType1;
@@ -493,7 +506,6 @@ extend class ddWeapon
 		if(ddp.FindInventory("ClassicModeToken")) { ddp.A_StartSound("weapons/pistol", CHAN_WEAPON, CHANF_OVERLAP); }
 		else { ddp.A_StartSound("weapons/pistolnew", CHAN_WEAPON, CHANF_OVERLAP); }
 		ddShot(false, "BulletPuff", dam, eA, eP,weap.weaponside, 5);
-		//ddp.TakeInventory(type, 1);
 		if(pen) { AddRecoil(7.5, 4, 3.5); }
 		else { AddRecoil(3, 1, 3.5); }
 	}
