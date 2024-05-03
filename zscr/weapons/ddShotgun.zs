@@ -104,7 +104,17 @@ class ddShotgun : ddWeapon
 		let ddp = ddPlayer(owner);
 		if(forcemode < 0)
 		{
-			if(ddp.player.readyweapon is "dualWielding" || ddp.player.pendingweapon is "dualWielding" || ddp.lastmode is "dualWielding") { return "SHTDA0", -1; }
+			if(ddp.player.readyweapon is "dualWielding" || ddp.player.pendingweapon is "dualWielding" || ddp.lastmode is "dualWielding") 
+			{ 
+				String sp; 
+				int frame = -1;
+				if(ddWeaponFlags & SHT_RSEQ) { 
+					sp = "SHOHA0";
+					frame = ((weaponside) ? 5 : 11); 
+				}
+				else { sp = ((weaponside) ? "SHTDA0" : "SHTRA0"); }
+				return sp, frame;
+			}
 			else if(ddp.player.readyweapon is "twoHanding" || ddp.player.pendingweapon is "twoHanding" || ddp.lastmode is "twoHanding")  { return "SHTGA0", -1; }
 			else { return "TNT1A0", -1; }
 		}
@@ -220,12 +230,16 @@ class ddShotgun : ddWeapon
 			Goto Ready;
 		FlashA:
 		FlashDW:
+			Goto FlashDone;
 		FlashP:
 			SHTF A 4 Bright A_Light1;
 			SHTF B 3 Bright A_Light2;
 			Goto FlashDone;	
 		Spawn:
 			SHOT A -1;
+			Stop;
+		Ind:
+			SHTR A 0;
 			Stop;
 	}
 	
@@ -240,7 +254,7 @@ class ddShotgunLeft : ddShotgun
 			#### A 10;
 		Ready:
 			SHTD A 0 A_ChangeSpriteLeft;
-			#### A 1 A_LeftWeaponReady;
+			#### # 1 A_LeftWeaponReady;
 			Loop;
 		Altfire:
 		Fire:
@@ -302,7 +316,7 @@ class ddShotgunRight : ddShotgun
 			#### A 10;
 		Ready:
 			SHTD A 0 A_ChangeSpriteRight;
-			#### A 1 A_RightWeaponReady;
+			#### # 1 A_RightWeaponReady;
 			Loop;	
 		Altfire:
 		Fire:
@@ -337,7 +351,7 @@ class ddShotgunRight : ddShotgun
 			SHOH K 6 A_SlideShotgun;
 			SHOH J 3 A_DDActionRight;
 			SHOH IHG 3;
-			SHOH A 7 A_ddRefireRightHeavy;
+			SHOH G 7 A_ddRefireRightHeavy;
 			Goto Ready;			
 		UnloadP:		
 			#### BC 5;
@@ -349,8 +363,8 @@ class ddShotgunRight : ddShotgun
 			#### A 7;
 			Goto Ready;
 		FlashDW:
-			SHTF C 4 Bright A_Light1;
-			SHTF D 3 Bright A_Light2;
+			SHTF E 4 Bright A_Light1;
+			SHTF F 3 Bright A_Light2;
 			Goto FlashDone;
 	}
 }
