@@ -415,8 +415,8 @@ extend class ddWeapon
 			if(ddp is "ddPlayerClassic") { eP = 0; }
 			ddShot(false, "BulletPuff", dam, eA, eP, weap.weaponside,kick);
 		}		
-		if(pen) { AddRecoil(12., 8, 4.); }
-		else { AddRecoil(6, 1, 4.); }
+		if(pen) { AddRecoil(12., 5, 4.); }
+		else { AddRecoil(4, 1, 4.); }
 	}
 	
 	action void A_PumpShotgun()
