@@ -496,7 +496,7 @@ extend class ddWeapon
 		else { eA = Random2() * (0.99 / 256); eP = Random2() * (0.99 / 256); }
 		if(ddp.FindInventory("ClassicModeToken")) { ddp.A_StartSound("weapons/pistol", CHAN_WEAPON, CHANF_OVERLAP); }
 		else { ddp.A_StartSound("weapons/pistolnew", CHAN_WEAPON, CHANF_OVERLAP); }
-		if(invoker.mag < 1) { ddp.A_StartSound("weapons/chaingunspin", CHAN_WEAPON, CHANF_OVERLAP); }
+		if(invoker.mag < 1) { ddp.A_StartSound("weapons/nofire", CHAN_WEAPON, CHANF_OVERLAP); }
 		ddShot(accurate, "BulletPuff", dam, eA, eP, weap.weaponside, (pen) ? 10 : 3);
 		if(pen) { AddRecoil(1.8, 1, 4.); }
 		else { AddRecoil(1.5, 0, 4.); }
@@ -518,7 +518,7 @@ extend class ddWeapon
 		else { eA = Random2() * (1.67 / 256); eP = Random2() * (2.25 / 256); }
 		if(ddp.FindInventory("ClassicModeToken")) { ddp.A_StartSound("weapons/pistol", CHAN_WEAPON, CHANF_OVERLAP); }
 		else { ddp.A_StartSound("weapons/pistolnew", CHAN_WEAPON, CHANF_OVERLAP); }
-		if(invoker.mag < 1) { ddp.A_StartSound("weapons/chaingunspin", CHAN_WEAPON, CHANF_OVERLAP); }
+		if(invoker.mag < 1) { ddp.A_StartSound("weapons/nofire", CHAN_WEAPON, CHANF_OVERLAP); }
 		ddShot(false, "BulletPuff", dam, eA, eP,weap.weaponside, 5);
 		if(pen) { AddRecoil(7.5, 4, 3.5); }
 		else { AddRecoil(3, 1, 3.5); }
