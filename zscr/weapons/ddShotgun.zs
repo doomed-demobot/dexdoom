@@ -29,6 +29,7 @@ class ddShotgun : ddWeapon
 		Obituary "$OB_MPSHOTGUN";
 		Tag "$TAG_SHOTGUN";
 	}
+	
 	/*
 	override void WhileBerserk()
 	{
@@ -91,7 +92,8 @@ class ddShotgun : ddWeapon
 		}
 		else { return FindState("Ready"); }
 	}
-	/* TODO: make a slightly better angled shotgun sprite
+	
+	/*
 	override State GetFlashState()
 	{
 		let ddp = ddPlayer(owner);
@@ -162,7 +164,7 @@ class ddShotgun : ddWeapon
 				if(res == RES_CLASSIC && (ddp.CountInv("Shell") < 1)) { ChangeState("NoAmmo", myside); break; }
 				if(mag < 1 && ddp.CountInv("Shell") < 1) { ChangeState("NoAmmo", myside); break; }
 				if(res == RES_DUALWLD) { //lower to reload
-					if(mag < 1) { /*LowerToReloadWeapon();*/ SetCaseNumber(5); 
+					if(mag < 1) { SetCaseNumber(5); 
 						if(ddWeaponFlags & SHT_RSEQ) { weaponStatus = DDW_RELOADING; SetCaseNumber(2); ChangeState("Reload2B", myside); } 
 						 else { weaponStatus = DDW_RELOADING; ChangeState("ReloadOneHanded", myside); } 
 					}	

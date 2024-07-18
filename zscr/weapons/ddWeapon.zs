@@ -75,7 +75,6 @@ class ddWeapon : Weapon
 	flagdef goesInInv	 : prFlags, 4; //weapon goes into playerInventory;
 	Default
 	{
-		//Species 'PlayerThing';
 		Weapon.MinSelectionAmmo1  0;
 		Weapon.MinSelectionAmmo2 0;
 		Weapon.Kickback 100;
@@ -103,38 +102,7 @@ class ddWeapon : Weapon
 	
 	virtual ui void HUDA(ddStats hude) {} //screensize 11; minimal
 	virtual ui void HUDB(ddStats hude) { self.HUDA(hude); } //screensize 10; more descriptive 
-	/*
-	override bool Used(Actor user)
-	{
-		let ddp = ddPlayer(user);
-		if(ddp.waitToPickup > 0) { if(ddp.dddebug & DBG_INVENTORY) { ddp.A_Log("WAIT!"); } return false; }
-		if(ddp.desire != self) { if(ddp.dddebug & DBG_INVENTORY) { ddp.A_Log("ya missed!"); } return false; }
-		else 
-		{ 
-			if(AddToDDPlayer(user))
-			{
-				PlayPickupSound(user);
-				ddp.A_Log(PickupMessage());
-				if(!bNoScreenFlash && ddp.player.playerstate != PST_DEAD)
-				{
-					ddp.player.bonuscount = BONUSADD;
-				}
-				ddp.waitToPickup++;
-				if(ddp.player.readyweapon is "playerInventory") 
-				{ 
-						playerInventory(ddp.player.readyweapon).sW.nullify();
-						playerInventory(ddp.player.readyweapon).storedIndex = -1;				
-				}
-				self.GoAwayAndDie();
-				return true;
-			}
-			else
-			{
-				return false;
-			}
-		}
-	}
-	*/
+	
 	bool PickMeUp(Actor pickerupper)
 	{
 		let ddp = ddPlayer(pickerupper);
@@ -161,6 +129,7 @@ class ddWeapon : Weapon
 			}
 			else
 			{
+				ddp.waitToPickup++;
 				return false;
 			}
 		}
@@ -487,7 +456,7 @@ class ddWeapon : Weapon
 		debuggin = CVar.GetCVar("pl_debug", owner.player).GetBool();
 		wolfen = CVar.GetCVar("pl_wolfen", owner.player).GetBool();
 		swapc = CVar.GetCVar("pl_wolfcontrols", owner.player).GetBool();
-		altmodeL = ddPlayer(owner).altmodeL; //ik these arent cvars shut up
+		altmodeL = ddPlayer(owner).altmodeL; //ik these arent cvars
 		altmodeR = ddPlayer(owner).altmodeR;
 	}
 	
@@ -547,12 +516,12 @@ class ddWeapon : Weapon
 	{
 		return "TNT1A0", -1;
 	}
-	
+	//used to call non-action functions with A_ddAction with casenumbers
 	virtual void DD_Condition(int cn)
 	{
 		if(owner) { owner.A_Log("This weapon has no conditions to get."); }	
 	}	
-	
+	//same but with A_CallSound
 	virtual void DD_Sound(int sn)
 	{
 		if(owner) { owner.A_Log("This weapon has no sounds to play"); }
@@ -608,6 +577,9 @@ class ddWeapon : Weapon
 
 	//do things when autoreloading after travelled is called
 	virtual void OnAutoReload() {}
+	
+	//do things when initTwoHanding/initDualWielding is called
+	virtual void onInit() {}
 	
 	//apply bonuses during berserk
 	virtual void WhileBerserk() {} 
@@ -1052,7 +1024,6 @@ class ddWeapon : Weapon
 			if(lWeap.mag == 0) 
 			{
 				if(ddp.dddebug & DBG_WEAPSEQUENCE) { A_Log("Left weapon mag is empty"); }
-				//player.SetPSprite(PSP_RIGHTW, rWeap.FindState('Ready'));
 				ddp.player.SetPSprite(PSP_LEFTW, lWeap.FindState('Ready'));
 				invoker.bModeReady = true;
 				if(ddp.ddWeaponState & DDW_RIGHTREADY) { rWeap.weaponstatus = DDW_UNLOADING; mode.A_CheckRightWeaponMag(); }
@@ -1070,7 +1041,6 @@ class ddWeapon : Weapon
 		if(!ddp.CheckESOA(cost) && (!lWeap.bNoLower && ddp.player.readyweapon is "dualWielding")) 
 		{ 
 			if(ddp.dddebug & DBG_WEAPSEQUENCE) { A_Log("Lowering weapons to reload left weapon"); }
-			//invoker.bmodeReady = false;
 			ddp.player.SetPSprite(PSP_LEFTW, lweap.FindState('Select'));
 			ddp.player.SetPSprite(PSP_RIGHTW, rweap.FindState('Select'));
 			ddp.ddWeaponState |= DDW_LEFTNOBOBBING;
@@ -1090,7 +1060,7 @@ class ddWeapon : Weapon
 		ddp.player.SetPSprite(PSP_LEFTW, st);
 		mode.ChangeState('Ready');
 	}
-	//TODO: firing unloaded weapon freezes them
+	
 	action void A_CheckRightWeaponMag()
 	{
 		let ddp = ddPlayer(invoker.owner);
@@ -1101,8 +1071,7 @@ class ddWeapon : Weapon
 		if(rWeap.bnoReload) 
 		{ 
 			if(ddp.dddebug & DBG_WEAPSEQUENCE && ddp.dddebug & DBG_VERBOSE) { A_Log("Right weapon doesn't reload, returning"); }
-			ddp.player.setpsprite(PSP_RIGHTW, rWeap.FindState('Ready')); 
-			//player.setpsprite(PSP_LEFTW,  lWeap.FindState('Ready')); 
+			ddp.player.setpsprite(PSP_RIGHTW, rWeap.FindState('Ready'));
 			mode.ChangeState('Ready'); 
 			return; 
 		}
@@ -1111,16 +1080,14 @@ class ddWeapon : Weapon
 			if(!(rWeap.mag < rWeap.default.mag)) 
 			{ 
 				if(ddp.dddebug & DBG_WEAPSEQUENCE && ddp.dddebug & DBG_VERBOSE) { A_Log("Right weapon full, returning"); } 
-				ddp.player.setpsprite(PSP_RIGHTW, rWeap.FindState('Ready')); 
-				//player.setpsprite(PSP_LEFTW,  lWeap.FindState('Ready')); 
+				ddp.player.setpsprite(PSP_RIGHTW, rWeap.FindState('Ready'));
 				mode.ChangeState('Ready');
 				return; 
 			}
 			if(ddp.CountInv(type) < rWeap.MagUse1) 
 			{ 
 				if(ddp.dddebug & DBG_WEAPSEQUENCE && ddp.dddebug & DBG_VERBOSE) { A_Log("No ammo for right weapon, returning"); } 
-				ddp.player.setpsprite(PSP_RIGHTW, rWeap.FindState('Ready')); 
-				//player.setpsprite(PSP_LEFTW,  lWeap.FindState('Ready')); 
+				ddp.player.setpsprite(PSP_RIGHTW, rWeap.FindState('Ready'));
 				invoker.bmodeReady = true; 
 				mode.ChangeState('Ready'); 
 				return; 
@@ -1148,7 +1115,6 @@ class ddWeapon : Weapon
 		if(!ddp.CheckESOA(cost) && (!rWeap.bNoLower && ddp.player.readyweapon is "dualWielding")) 
 		{ 
 			if(ddp.dddebug & DBG_WEAPSEQUENCE) { A_Log("Lowering weapons to reload right weapon"); }
-			//invoker.bmodeReady = false; 
 			ddp.player.SetPSprite(PSP_LEFTW, lweap.FindState('Select'));
 			ddp.player.SetPSprite(PSP_RIGHTW, rweap.FindState('Select'));
 			ddp.ddWeaponState |= DDW_LEFTNOBOBBING;
@@ -1163,12 +1129,10 @@ class ddWeapon : Weapon
 			if(ddp.dddebug & DBG_WEAPSEQUENCE && ddp.dddebug & DBG_VERBOSE) { A_Log("Right weapon refused reload"); }
 			rWeap.weaponready = true; 
 			ddp.player.setpsprite(PSP_RIGHTW, rWeap.FindState('Ready'));
-			//player.setpsprite(PSP_LEFTW,  lWeap.FindState('Ready')); 
 			mode.ChangeState('Ready'); 
 			return; 
 		}
 		ddp.player.SetPSprite(PSP_RIGHTW, st);
-		//player.SetPSprite(PSP_LEFTW, lWeap.GetReadyState());
 		mode.ChangeState('Ready');
 	}
 	//called by weapons when they reload themselves; assumptions already made
@@ -1224,7 +1188,6 @@ class ddWeapon : Weapon
 		if(ddp)
 		{
 			let mode = ddWeapon(player.readyweapon);
-			//mode.weaponstatus = DDW_RELOADING;
 			let lWeap = ddp.GetLeftWeapon(ddp.lwx);
 			let rWeap = ddp.GetRightWeapon(ddp.rwx);
 			let lw = ddp.GetLeftWeapons();
@@ -1556,7 +1519,6 @@ class ddWeapon : Weapon
 				leftw.RetItem(ddp.lwx).companionpiece = rightw.RetItem(ddp.rwx);
 				pspr.SetState(ddp.GetRightWeapon(ddp.rwx).GetUpState());
 				if(ddp.GetRightWeapon(ddp.rwx).UpSound) { ddp.A_StartSound(ddp.GetRightWeapon(ddp.rwx).UpSound, CHAN_WEAPON); }
-				//mode.bmodeready = true;
 				if(mode is "twoHanding") { A_ChangeState("QuickSwapTH"); }
 				else { dualWielding(mode).brraised = false; A_ChangeState("QuickSwapDW"); }
 			}
@@ -1575,7 +1537,6 @@ class ddWeapon : Weapon
 				pspl.SetState(ddp.GetLeftWeapon(ddp.lwx).GetUpState());
 				if(ddp.GetLeftWeapon(ddp.lwx).UpSound) { ddp.A_StartSound(ddp.GetLeftWeapon(ddp.lwx).UpSound, CHAN_WEAPON); }
 				dualWielding(mode).blraised = false;
-				//mode.bmodeready = true;
 				A_ChangeState("QuickSwapDW");
 			}
 			
@@ -1832,7 +1793,7 @@ class FistList : Pocket
 }
 
 //Item stored in WeaponsInventory; holds weaponname, rating, weaponsprite, and mag for display and retrieval
-//Also creates a copy of its referenced weapon.
+//Also creates a copy of its referenced weapon. Probably should find alternative way to store info and flags
 // #Class inventoryWeapon : Inventory()
 class inventoryWeapon : Inventory
 {

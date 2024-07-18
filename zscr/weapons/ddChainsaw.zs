@@ -49,7 +49,6 @@ class ddChainsaw : ddWeapon replaces Chainsaw
 		return FindState("Fire");
 	}
 	
-	
 	// ##ddChainsaw States()
 	States
 	{

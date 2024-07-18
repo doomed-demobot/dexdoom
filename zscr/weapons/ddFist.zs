@@ -254,8 +254,7 @@ extend class ddWeapon
 		if(ddp.player == null) { return; }
 		int damage = random[Punch](1, 10) << 1;
 
-		if (FindInventory("PowerBerserk"))
-			damage *= 10;
+		if(ddp.FindInventory("PowerBerserk")) { damage *= 10; }
 
 		double ang = ddp.angle + Random2[Punch]() * (5.625 / 256);
 		double range = ddp.MeleeRange + MELEEDELTA;
@@ -263,11 +262,10 @@ extend class ddWeapon
 
 		ddp.LineAttack(ang, range, pitch, damage, 'Melee', "BulletPuff", LAF_ISMELEEATTACK, t);
 
-		// turn to face target
 		if(t.linetarget)
 		{
-			A_StartSound ("*fist", CHAN_WEAPON);
-			angle = t.angleFromSource;
+			ddp.A_StartSound("*fist", CHAN_WEAPON);
+			ddp.angle = t.angleFromSource;
 		}
 	}
 	
@@ -279,14 +277,12 @@ extend class ddWeapon
 		if(ddp.player == null) { return; }
 		int damage = random[Punch](1, 20) << 1;
 
-		if(ddp.FindInventory("PowerBerserk"))
-			damage *= 10;
+		if(ddp.FindInventory("PowerBerserk")) {	damage *= 10; }
 
 		double ang = ddp.angle + Random2[Punch]() * (5.625 / 256);
 		double range = ddp.MeleeRange + ddp.MELEEDELTA;
 		double pitch = ddp.AimLineAttack(ang, range, null, 0., ALF_CHECK3D);
 		ddp.LineAttack(ang, range, pitch, damage, 'Melee', "BulletPuff", LAF_ISMELEEATTACK, t);
-		// turn to face target
 		if(t.linetarget)
 		{
 			ddp.A_StartSound ("*fist", CHAN_WEAPON);
@@ -302,15 +298,13 @@ extend class ddWeapon
 		if(ddp.player == null) { return; }
 		int damage = random[Punch](1, 4) << 1;
 
-		if(ddp.FindInventory("PowerBerserk"))
-			damage *= 10;
+		if(ddp.FindInventory("PowerBerserk")) {	damage *= 10; }
 
 		double ang = ddp.angle + Random2[Punch]() * (5.625 / 256);
 		double range = ddp.MeleeRange + ddp.MELEEDELTA;
 		double pitch = ddp.AimLineAttack(ang, range, null, 0., ALF_CHECK3D);
 
 		ddp.LineAttack(ang, range + 10, pitch, damage, 'Melee', "BulletPuff", LAF_ISMELEEATTACK, t);
-		// turn to face target
 		if(t.linetarget)
 		{
 			ddp.A_StartSound ("*fist", CHAN_WEAPON);

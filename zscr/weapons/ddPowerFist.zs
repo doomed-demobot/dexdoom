@@ -128,7 +128,6 @@ class ddPowerFistLeft : ddPowerFist
 			Loop;
 		Fire:
 			PFSF AA 0 A_ddActionLeft;
-			//PFSF A 0 A_ddActionLeft;
 			PFSF BC 2;
 			PFSF D 3 A_PFist1;
 			PFSF E 5 A_PFist2;
@@ -172,7 +171,6 @@ class ddPowerFistRight : ddPowerFist
 			Loop;
 		Fire:
 			PFST AA 0 A_ddActionRight;
-			//PFST A 0 A_ddActionRight;
 			PFST BC 2;
 			PFST D 3 A_PFist1;
 			PFST E 5 A_PFist2;
@@ -210,8 +208,6 @@ extend class ddWeapon
 		double ang = ddp.angle + Random2[Punch]() * (5.625 / 256);
 
 		ddp.LineAttack(ang, 64, ddp.pitch, damage, 'Melee', "BulletPuff", LAF_ISMELEEATTACK, t);
-
-		// turn to face target
 		if(t.linetarget)
 		{
 			ddp.A_StartSound ("*fist", CHAN_WEAPON);

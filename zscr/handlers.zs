@@ -12,6 +12,7 @@ class ddHandlers : EventHandler
 			else { p.lastmode = p.lastmode; }
 		}		
 	}
+	//BUG: left weapon weaponstate not reset on respawn
 	override void PlayerRespawned(PlayerEvent e)
 	{
 		let p = ddPlayer(players[e.Playernumber].mo);

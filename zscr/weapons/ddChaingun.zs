@@ -1,6 +1,11 @@
 // #Class ddChaingun : ddWeapon replaces Chaingun()
 //Doom Chaingun. Firerate increases while firing like Doom 2016 Chaingun. Altfire revs barrel without
 //using ammo.
+enum ddChaingunFlags{
+	CHG_ALTFR1 = 0,
+	CHG_ALTFR2 = 1,
+};
+
 class ddChaingun : ddWeapon replaces Chaingun
 {
 	bool safeflasher; //true if flash 2, false if flash 1;
@@ -29,10 +34,22 @@ class ddChaingun : ddWeapon replaces Chaingun
 		spintimer = 0;
 	}
 	
+	override void OnInit()
+	{
+		spin = 0;
+		spintimer = 0;
+	}
+	
 	override void Tick()
 	{
 		Super.Tick();
-		if(owner) {
+		let ddp = ddPlayer(owner);
+		if(ddp) 
+		{
+			if(ddp.wolfen && bAltFire && !PressingFireButton()) { 
+				if(weaponSide) { ddp.altModeL = 0; }
+				else { ddp.altModeR = 0; } 
+			}
 			if(--spintimer < 0) { spintimer = 0; }
 			if(!spintimer) { if(spin > 0) { spin -= 10; spintimer += 35; } if(spin < 0) { spin = 0; } }
 		}
@@ -132,7 +149,6 @@ class ddChaingun : ddWeapon replaces Chaingun
 				spin += 5;
 				spintimer = 35;
 				if(spin > 40) { spin = 40; }
-				break;
 			default:
 				break;
 		}

@@ -226,16 +226,13 @@ extend class ddWeapon
 
 		int damage = random[Punch](5, 18) << 1;
 
-		if (FindInventory("PowerStrength"))
-			damage *= 3;
+		if (FindInventory("PowerStrength")) { damage *= 3; }
 
 		double ang = angle + Random2[Punch]() * (5.625 / 256);
 		double range = MeleeRange + MELEEDELTA;
 		double pitch = AimLineAttack (ang, range, null, 0., ALF_CHECK3D);
 
 		LineAttack(ang, 64, pitch, damage, 'Melee', "BulletPuff", LAF_ISMELEEATTACK, t);
-
-		// turn to face target
 		if(t.linetarget)
 		{
 			ddp.bJustAttacked = true;
@@ -252,16 +249,13 @@ extend class ddWeapon
 
 		int damage = random[Punch](5, 10) << 1;
 
-		if (FindInventory("PowerStrength"))
-			damage *= 3;
+		if (FindInventory("PowerStrength")) { damage *= 3; }
 
 		double ang = angle + Random2[Punch]() * (5.625 / 256);
 		double range = MeleeRange + MELEEDELTA;
 		double pitch = AimLineAttack (ang, range, null, 0., ALF_CHECK3D);
 
 		LineAttack(ang, 64, pitch, damage, 'Melee', "BulletPuff", LAF_ISMELEEATTACK, t);
-
-		// turn to face target
 		if(t.linetarget)
 		{
 			A_StartSound ("*fist", CHAN_WEAPON);

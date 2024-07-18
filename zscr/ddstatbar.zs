@@ -94,7 +94,6 @@ class ddStats : BaseStatusBar
 						int rwxp, lwxp, ind, not;
 						if(lInd == wep.lSwapTarget && lwyp < 1)
 						{
-							//lInd = wep.lSwapTarget;
 							ind = lInd;
 							if(++ind > lWeap.items.Size() - 1) { ind = 0; }
 							[lwxp, not] = TexMan.GetSize(TexMan.CheckForTexture(lWeap.RetItem(ind).GetWeaponSprite()));
@@ -158,7 +157,6 @@ class ddStats : BaseStatusBar
 						}
 					}
 					
-					
 					if(dPlay.GetLeftWeapon(wep.lSwapTarget).bTwoHander) { DrawString(bf, "!", (-75 + lwIconX, 0), DI_SCREEN_LEFT_CENTER, Font.CR_RED); }
 					if(dPlay.GetRightWeapon(wep.rSwapTarget).bTwoHander) { DrawString(bf, "!", (75 - rwIconX, 0), DI_SCREEN_RIGHT_CENTER, Font.CR_RED); }
 					if(wep.weaponStatus == DDM_SWAPPING) { qSwapPopUp = 100; }
@@ -187,7 +185,6 @@ class ddStats : BaseStatusBar
 			
 		}
 	}
-	
 	
 	//draw hud
 	void DrawFullScreenStuff(double TicFrac)

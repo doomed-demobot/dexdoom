@@ -2,9 +2,6 @@
 //Weapon mode for using a single weapon.
 class twoHanding : ddWeapon
 {
-	//flags; define flags when needed
-	int thFlags;
-	
 	Default
 	{	
 		Weapon.SlotNumber 1;
@@ -25,8 +22,6 @@ class twoHanding : ddWeapon
 		+INVENTORY.UNDROPPABLE;
 		Tag "Two Handing";
 	}
-		
-	//constant checking
 	
 	override void Tick()
 	{
@@ -193,7 +188,6 @@ class twoHanding : ddWeapon
 				weap.onWeaponFire(0, invoker.rightheld);
 				if(ddp.ddWeaponState & DDW_RIGHTREADY)
 				{
-					//ddp.PlayAttacking();
 					weap.weaponStatus = DDW_FIRING;
 					ddp.ddWeaponState &= ~DDW_RIGHTREADY;
 					ddp.ddWeaponState &= ~DDW_RIGHTBOBBING;
@@ -214,7 +208,6 @@ class twoHanding : ddWeapon
 				weap.onWeaponFire(0, invoker.rightheld);
 				if(ddp.ddWeaponState & DDW_RIGHTREADY)
 				{
-					//ddp.PlayAttacking();
 					ddp.ddWeaponState &= ~DDW_RIGHTREADY;
 					weap.weaponStatus = DDW_ALTFIRING;
 					ddp.ddWeaponState &= ~DDW_RIGHTBOBBING;
@@ -300,8 +293,7 @@ class twoHanding : ddWeapon
 					A_ChangeState('Ready');
 				}
 			}
-		}
-		
+		}		
 	}
 	
 	action void A_RaiseSingle()
@@ -362,7 +354,6 @@ class twoHanding : ddWeapon
 		let pspr = player.GetPSprite(PSP_RIGHTW);
 		let psprf = player.GetPSprite(PSP_RIGHTWF);	
 		double bsk = (ddp.FindInventory("PowerBerserk")) ? 2.0 : 1.0;
-		//invoker.bModeReady = false;
 		double sFactor = ((lw.sFactor + rw.sFactor + 1) / 2.0) * bsk;	
 		if(ddp.ddWeaponState & DDW_RIGHTISTH && pspr.y < 128)
 		{			
@@ -420,7 +411,7 @@ class twoHanding : ddWeapon
 		invoker.weaponstatus = DDW_READY;
 		A_ChangeState("Ready");		
 	}
-		
+	
 	// ## twoHanding States()
 	States
 	{

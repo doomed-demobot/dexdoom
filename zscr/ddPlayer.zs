@@ -16,13 +16,11 @@ class ddPlayer : DoomPlayer
 	inventoryWeapon invTemp;
 	ddWeapon lastmode; //remember previous mode [dual or 2h]
 	bool swapDown;
-	//player stuff
 	float helpme; // holds transparency of help text
 	uint8 dddebug;
 	bool debuggin, visrec, phyrec, gethelp, autoreload; //cvars
 	float plFOV;
 	int instability, instTimer; //instability penalty
-	Array<Actor> alfBlacklist;
 	//other
 	ddweapon desire;
 	Vector3 tepos;
@@ -35,7 +33,6 @@ class ddPlayer : DoomPlayer
 		Height 56;
 		Mass 100;
 		PainChance 255;
-		//Species 'PlayerThing';
 		Player.DisplayName "Baseclass";
 		Player.CrouchSprite "PLYC";
 		Player.StartItem "twoHanding";	
@@ -417,7 +414,7 @@ class ddPlayer : DoomPlayer
 								{
 									let weap = ddWeapon(Spawn(""..item.GetClassName().."Left"));
 									weap.AttachToOwner(self); weap.AmmoGive1 = 0; noIW = true;
-									if(self is "ddPlayerClassic") { weap.sFactor = 1.0; }
+									if(self is "ddPlayerClassic") { weap.sFactor = 2; }
 									lWeap.SetItem(weap, x);
 								}
 							}
@@ -427,7 +424,7 @@ class ddPlayer : DoomPlayer
 								{
 									let weap = ddWeapon(Spawn(""..item.GetClassName().."Right"));
 									weap.AttachToOwner(self); weap.AmmoGive1 = 0; noIW = true;
-									if(self is "ddPlayerClassic") { weap.sFactor = 1.0; }
+									if(self is "ddPlayerClassic") { weap.sFactor = 2; }
 									rWeap.SetItem(weap, x - lWeap.size);
 								}
 							}
@@ -684,14 +681,16 @@ class ddPlayer : DoomPlayer
 		if(rWeap.RetItem(rwx).bTwoHander) { ddWeaponState |= DDW_RIGHTISTH; }
 		else { ddWeaponState &= ~DDW_RIGHTISTH; }
 		let rw = GetRightWeapon(rwx);
+		rw.onInit();
 		let lw = GetLeftWeapon(lwx);
+		lw.onInit();
 		let pspl = player.GetPSprite(PSP_LEFTW);
 		let psplf = player.GetPSprite(PSP_LEFTWF);
 		let pspr = player.GetPSprite(PSP_RIGHTW);
 		let psprf = player.GetPSprite(PSP_RIGHTWF);
 		let mode = player.GetPSprite(PSP_WEAPON);
 		lastmode = ddWeapon(FindInventory("twoHanding"));
-		player.SetPSprite(PSP_LEFTW, lw.FindState('Select'));
+		player.SetPSprite(PSP_LEFTW, lw.FindState('Ready'));
 		player.SetPSprite(PSP_RIGHTW, rw.FindState('Select'));
 		pspr.x = 0; psprf.x = 0;
 		pspr.y = 128; psprf.y = 128;
@@ -718,7 +717,9 @@ class ddPlayer : DoomPlayer
 		if(rWeap.RetItem(rwx).bTwoHander) { ddWeaponState |= DDW_RIGHTISTH; }
 		else { ddWeaponState &= ~DDW_RIGHTISTH; }
 		let rw = GetRightWeapon(rwx);
+		rw.onInit();
 		let lw = GetLeftWeapon(lwx);
+		lw.onInit();
 		let pspl = player.GetPSprite(PSP_LEFTW);
 		let psplf = player.GetPSprite(PSP_LEFTWF);
 		let pspr = player.GetPSprite(PSP_RIGHTW);
@@ -1040,61 +1041,8 @@ class ddPlayer : DoomPlayer
 	{
 		if(PlayerNumber() == consoleplayer)
 		{
-			A_Log("no");
+			A_Log("not yet haha");
 		}		
-	}
-	
-	States
-	{
-		Spawn:
-			PLAY A -1;
-			Loop;
-		See:
-			PLAY ABCD 4;
-			Loop;
-		Missile:
-			PLAY E 12;
-			Goto Spawn;
-		Melee:
-			PLAY F 6 BRIGHT;
-			Goto Missile;
-		Pain:
-			PLAY G 4;
-			PLAY G 4 A_Pain;
-			Goto Spawn;
-		Death:
-			PLAY H 0 A_PlayerSkinCheck("AltSkinDeath");
-		Death1:
-			PLAY H 10;
-			PLAY I 10 A_PlayerScream;
-			PLAY J 10 A_NoBlocking;
-			PLAY KLM 10;
-			PLAY N -1;
-			Stop;
-		XDeath:
-			PLAY O 0 A_PlayerSkinCheck("AltSkinXDeath");
-		XDeath1:
-			PLAY O 5;
-			PLAY P 5 A_XScream;
-			PLAY Q 5 A_NoBlocking;
-			PLAY RSTUV 5;
-			PLAY W -1;
-			Stop;
-		AltSkinDeath:
-			PLAY H 6;
-			PLAY I 6 A_PlayerScream;
-			PLAY JK 6;
-			PLAY L 6 A_NoBlocking;
-			PLAY MNO 6;
-			PLAY P -1;
-			Stop;
-		AltSkinXDeath:
-			PLAY Q 5 A_PlayerScream;
-			PLAY R 0 A_NoBlocking;
-			PLAY R 5 A_SkullPop;
-			PLAY STUVWX 5;
-			PLAY Y -1;
-			Stop;
 	}
 }
 // #Class ddPlayerNormal : ddPlayer()
@@ -1156,6 +1104,15 @@ class ESOA : Inventory
 		+INVENTORY.IGNORESKILL;
 	}
 	
+	override void AttachToOwner(Actor other)
+	{
+		Super.AttachToOwner(other);
+		if(ddPlayer(other).getHelp)
+		{
+			other.A_Print("Charge with Cell ammo to fire dualwielding effectively!");
+		}
+	}
+	
 	States
 	{
 		Spawn:
@@ -1168,8 +1125,8 @@ class ESOACharge : Ammo
 	Default
 	{
 		Inventory.PickupMessage "";
-		Inventory.Amount 1;
-		Inventory.MaxAmount 1000;
+		Inventory.Amount 100;
+		Inventory.MaxAmount 2000;
 		Ammo.BackpackAmount 0;
 		Ammo.BackpackMaxAmount 1000;
 		Inventory.Icon "";
@@ -1178,51 +1135,11 @@ class ESOACharge : Ammo
 	States
 	{
 		Spawn:
-			TNT1 A -1;
-			Stop;
-	}
-}
-/*
-class CellPacke : CellPack {}
-
-class ESOAPack : ESOACharge
-{
-	Default
-	{
-		Inventory.PickupMessage "Picked up an ESOA charge pack";
-		Inventory.Amount 100;
-	}
-	
-	States
-	{
-		Spawn:
 			CELP A -1;
 			Stop;
 	}
 }
 
-class CellPackSpawner : RandomSpawner replaces CellPack
-{
-	Default
-	{
-		DropItem "CellPacke", 255, 45;
-		DropItem "ESOAPack", 255, 24;
-	}
-	
-	override Name ChooseSpawn()
-	{
-		for(int x = 0; x < 8; x++)
-		{
-			if(players[x].mo is "ddPlayerClassic")
-			{
-				return "CellPacke";
-			}
-		}
-		return Super.ChooseSpawn();
-	}
-	
-}
-*/
 // #Class esoaActivator : CustomInventory()
 class esoaActivator : CustomInventory
 {
@@ -1293,8 +1210,6 @@ class unloadActivator : custominventory
 		{
 			lw.weaponready = false;
 			rw.weaponready = false;
-			//ddp.ddWeaponState &= ~DDW_RIGHTREADY;
-			//ddp.ddWeaponState &= ~DDW_LEFTREADY;
 			if(mode is "twoHanding" || ddp.player.cmd.buttons & BT_USE)
 			{
 				rw.weaponstatus = DDW_UNLOADING;
@@ -1326,7 +1241,6 @@ class unloadActivator : custominventory
 	
 }
 
-
 //token given to classic mode player; disables altfire, extra items and special weapon handling
 class ClassicModeToken : ESOA
 {	
@@ -1336,6 +1250,7 @@ class ClassicModeToken : ESOA
 	}
 }
 
+//invisible actor following crosshair. allows pickup of nearby weapons
 class TouchEntity : Actor
 {
 	ddPlayer owner;

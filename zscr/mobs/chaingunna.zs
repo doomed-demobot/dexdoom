@@ -1,6 +1,6 @@
 class Chaingunna : ChaingunGuy replaces ChaingunGuy
 {
-	//slight replacement chaingun not guaranteed but clips are
+	//slight replacement chaingun not guaranteed but big clips are
 	Default
 	{
 		DropItem "ddChaingun", 10, 1;

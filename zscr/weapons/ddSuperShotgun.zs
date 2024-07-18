@@ -144,7 +144,6 @@ class ddSuperShotgun : ddWeapon
 		if(weaponstatus == DDW_UNLOADING) { SetCaseNumber(3); return FindState('UnloadP'); }
 		if(ddWeaponFlags & SST_RSEQ1) { SetCaseNumber(2); weaponStatus = DDW_RELOADING; return FindState('Reload2'); }
 		if(ddWeaponFlags & SST_RSEQ2) { SetCaseNumber(5); weaponStatus = DDW_RELOADING; return FindState('Reload3'); }
-		//if(mag == 1) { SetCaseNumber(4); weaponStatus = DDW_RELOADING; return FindState('ReloadA'); }
 		else if(mag < default.mag) { SetCaseNumber(4); weaponStatus = DDW_RELOADING; return FindState('ReloadP'); }
 		else { return FindState('DoNotJump'); }
 	}
@@ -180,7 +179,6 @@ class ddSuperShotgun : ddWeapon
 				if(res == RES_CLASSIC && (ddp.CountInv("Shell") < 2)) { ChangeState("NoAmmo", myside); break; }
 				if(mag < 1 && ddp.CountInv("BFS") < 1) { ChangeState("NoAmmo", myside); break; }
 				if(res == RES_DUALWLD) { //lower to reload
-					//if(mag < 1 || (ddWeaponFlags & 7)) { LowerToReloadWeapon(); }
 					if(mag < 1 && !(ddWeaponFlags & 7)) { SetCaseNumber(6); ChangeState("ReloadP", myside); break; }
 					if(ddWeaponFlags & 7) { LowerToReloadWeapon(); break; }
 					SetCaseNumber(1);
@@ -333,8 +331,7 @@ class ddSuperShotgunLeft : ddSuperShotgun
 			#### E 5 A_DDActionLeft;
 			#### G 6 A_CloseShotgun2;
 			#### HA 6;
-			Goto Ready;
-			
+			Goto Ready;			
 		FlashA:
 		Boom:
 			SH2F A 2 Bright A_Light1;
@@ -567,7 +564,6 @@ extend class ddWeapon
 	}
 }
 
-//todo: add cattleman back when it can be balanced
 // #Class BreakActionSpawner : RandomSpawner replaces SuperShotgun()
 class BreakActionSpawner : RandomSpawner replaces SuperShotgun
 {

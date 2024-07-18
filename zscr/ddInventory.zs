@@ -245,13 +245,11 @@ class playerInventory : ddWeapon
 				
 				if(lowerR == 1)
 				{
-					//ddWeapon hole = rWeap.RetItem(ddp.rwx);
 					ddWeapon hole = heldRight;
 					pspr.y += 6 * hole.sFactor;
 					if(pspr.y > 127)
 					{
 						if(ddp.dddebug & DBG_INVENTORY) { ddp.A_Log("Right weapon replaced with held weapon "..heldright.GetTag()); }
-						//rWeap.SetItem(heldRight, ddp.rwx);
 						if(rWeap.RetItem(ddp.rwx).bTwoHander) { ddp.ddWeaponState |= DDW_RIGHTISTH; }
 						else { ddp.ddWeaponState &= ~DDW_RIGHTISTH; }
 						rWeap.RetItem(ddp.rwx).companionpiece = lWeap.RetItem(ddp.lwx);
@@ -662,7 +660,6 @@ class playerInventory : ddWeapon
 		invoker.inInventory = !invoker.inInventory;
 	}
 	
-	//TODO: import stored weaponflags into inventory
 	action void A_InvSelect()
 	{
 		let ddp = ddPlayer(self);

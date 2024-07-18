@@ -389,7 +389,6 @@ class dualWielding : ddWeapon
 					lw.onWeaponFire(1, invoker.leftheld);
 					if(ddp.ddWeaponState & DDW_LEFTREADY)
 					{
-						//ddp.PlayAttacking();
 						lw.weaponStatus = DDW_FIRING;
 						ddp.ddWeaponState &= ~DDW_LEFTREADY;
 						ddp.ddWeaponState &= ~DDW_LEFTBOBBING;
@@ -408,7 +407,6 @@ class dualWielding : ddWeapon
 					lw.onWeaponFire(1, invoker.leftheld);
 					if(ddp.ddWeaponState & DDW_LEFTREADY)
 					{
-						//ddp.PlayAttacking();
 						lw.weaponStatus = DDW_FIRING;
 						ddp.ddWeaponState &= ~DDW_LEFTREADY;
 						ddp.ddWeaponState &= ~DDW_LEFTBOBBING;
@@ -441,7 +439,6 @@ class dualWielding : ddWeapon
 					rw.onWeaponFire(0, invoker.rightheld);
 					if(ddp.ddWeaponState & DDW_RIGHTREADY)
 					{
-						//ddp.PlayAttacking();
 						rw.weaponStatus = DDW_FIRING;
 						ddp.ddWeaponState &= ~DDW_RIGHTREADY;
 						ddp.ddWeaponState &= ~DDW_RIGHTBOBBING;
@@ -460,7 +457,6 @@ class dualWielding : ddWeapon
 					rw.onWeaponFire(0, invoker.rightheld);
 					if(ddp.ddWeaponState & DDW_RIGHTREADY)
 					{
-						//ddp.PlayAttacking();
 						rw.weaponStatus = DDW_FIRING;
 						ddp.ddWeaponState &= ~DDW_RIGHTREADY;
 						ddp.ddWeaponState &= ~DDW_RIGHTBOBBING;
@@ -538,7 +534,6 @@ class dualWielding : ddWeapon
 		double sFactorl, sFactorr;
 		if(lw && rw) 
 		{ 
-			//sFactor = ((lw.sFactor + rw.sFactor + 1) / 2) * 4;
 			sFactorL = lw.sFactor * 4; sFactorR = rw.sFactor * 4;
 			if(ddp.lwx != invoker.lSwapTarget) //lower left weapon
 			{
@@ -564,7 +559,7 @@ class dualWielding : ddWeapon
 			else //raise left weapon
 			{
 				pspl.y -= sFactorl; psplf.y -= sFactorl;
-				if(pspl.y > 0) { /* no */ }
+				if(pspl.y > 0) { }
 				else
 				{
 					pspl.y = 0; psplf.y = 0;
@@ -676,7 +671,6 @@ class dualWielding : ddWeapon
 		let pspr = player.GetPSprite(PSP_RIGHTW);
 		let psprf = player.GetPSprite(PSP_RIGHTWF);
 		double bsk = (ddp.FindInventory("PowerBerserk")) ? 2.0 : 1.0;
-		//invoker.bModeReady = false;
 		double sFactor = ((lw.sFactor + rw.sFactor + 1.0) / 2.0) * bsk;			
 		if(ddp.ddWeaponState & DDW_RIGHTISTH && pspr.y < 128)
 		{			
