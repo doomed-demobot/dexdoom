@@ -96,8 +96,7 @@ When you have no weapon equipped to a slot, you pull your fists out. Along with 
 - LP -> RP for a quick jab-hook combo
 - Full 10x berserk bonus damage
 
-The Brass Knuckles comes with new techniques to tenderize demon flesh. With your left hand, you throw out a jab to stun lock opponents. With your right hand, you throw out a jab to smash faces. Follow up a jab with a hook to throw it faster. Your Brass Knuckles get full
-berserk power when active.
+The Brass Knuckles comes with new techniques to tenderize demon flesh. With your left hand, you throw out a jab to stun lock opponents. With your right hand, you throw out a jab to smash faces. Follow up a jab with a hook to throw it faster. Your Brass Knuckles get full berserk power when active.
 
 ### Power Fists
 - Same attacks for left and right handed attacks
@@ -109,8 +108,24 @@ The experimental Power Fists crush enemies with explosive power, but are very cu
 ### Knives
 - Left hand performs slow stab
 - Right hand performs quick slices
-- RP -> LP quick slice-stab combo
+- RP -> RP -> LP quick slice-stab combo
 - 3x berserk bonus damage
 
+While weaker than your Brass Knuckles, the Knives perform well at cutting up zombies and imps. Left fire for a stab attack. Right fire for up to two quick slashes. Follow up a stab with two slashes for a quicker stab.
 
+### Berserk
+- Reduces recoil for weapons
+- Increases damage for Brass Knuckles and Knives
+- 60 second time limit
 
+The Berserk power effects now only last for 60 seconds. Plenty of time to rampage with either gun or fist, your choice.
+
+# Items
+
+### Tactical Backpack
+
+The Tactical Backpack sometimes replaces the Backpack. Instead of increasing max ammo capacity, it increases weapon inventory size by 3 and quick slots by 1. Also has a chance to contain spare ammo.
+
+### ESOA
+
+The ESOA is a rare upgrade that can replace the BFG 9000. Once equip, you fire both weapons as if you are two-handing them, which includes not having to lower your weapons to reload! It must be charged to work, however, and slower, more powerful weapons use it up the fastest. The ESOA can be charged by picking up Cell ammo for the Plasma Rifle.
