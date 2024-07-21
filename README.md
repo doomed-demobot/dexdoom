@@ -129,3 +129,11 @@ The Tactical Backpack sometimes replaces the Backpack. Instead of increasing max
 ### ESOA
 
 The ESOA is a rare upgrade that can replace the BFG 9000. Once equip, you fire both weapons as if you are two-handing them, which includes not having to lower your weapons to reload! It must be charged to work, however, and slower, more powerful weapons use it up the fastest. The ESOA can be charged by picking up Cell ammo for the Plasma Rifle.
+
+# Secret Tricks
+
+- Reloads can be interrupted by quick swapping or switching wield modes. Switch back to the weapon to continue the reload where you left off.
+- The longer you shoot, the more inaccurate you shots become. Wait for you vision to stabilize to return to max accuracy.
+- You cannot swing fist weapons while firing, but you can quickly shoot a gun after using them.
+- After lowering your left weapon to reload the right, you can switch wield modes during the reload animation to stay in two-handing mode and start firing without raising the left weapon.
+- Quick swapping can be cancelled by simply reselecting the weapon being lowered.
