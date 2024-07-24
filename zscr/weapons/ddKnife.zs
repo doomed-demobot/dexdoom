@@ -144,8 +144,8 @@ class ddKnifeLeft : ddKnife
 			KNFL CD 1;
 			KNFL E 1 A_Whoosh;
 			KNFL F 1;
-			KNFL G 7 A_Stab;
-			KNFL HI 3;
+			KNFL G 5 A_Stab;
+			KNFL HI 2;
 			Goto Ready;
 	}
 }
@@ -173,7 +173,7 @@ class ddKnifeRight : ddKnife
 			KNFR G 2 A_Slice;
 			KNFR H 2;
 			TNT1 A 2 A_ddRefireRight;
-			KNFR MNO 2;
+			KNFR MNO 1;
 			Goto Ready;
 		Fire2:
 			KNFR I 1 A_Whoosh;
@@ -181,7 +181,7 @@ class ddKnifeRight : ddKnife
 			KNFR K 2 A_Slice;
 			KNFR L 2;
 			TNT1 A 2 A_ComQuick;
-			KNFR MNO 3;
+			KNFR MNO 1;
 			KNFR A 0 A_ddRefireRight;
 			Goto Ready;
 	}
@@ -247,7 +247,7 @@ extend class ddWeapon
 		FTranslatedLineTarget t;
 		if(ddp.player == null) { return; }
 
-		int damage = random[Punch](5, 10) << 1;
+		int damage = random[Punch](5, 12) << 1;
 
 		if (FindInventory("PowerStrength")) { damage *= 3; }
 
