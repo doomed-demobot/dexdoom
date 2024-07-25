@@ -427,20 +427,20 @@ extend class ddWeapon
 	}
 }
 
-class Celle : Cell replaces cell
+class Celle : Cell replaces Cell
 {
 	Default
 	{
 		+INVENTORY.ALWAYSPICKUP;
 	}
-	override void Touch(Actor toucher)
+	override void DoPickupSpecial(Actor toucher)
 	{
-		Super.AttachToOwner(toucher);
+		Super.DoPickupSpecial(toucher);
 		if(!toucher.player) { return; }
 		if(toucher.FindInventory("ESOA"))
 		{
 			toucher.A_Log("...and used some to charge your ESOA!");
-			toucher.GiveInventory("ESOACharge", 50);
+			toucher.GiveInventory("ESOACharge", 65);
 		}
 	}
 }
