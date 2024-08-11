@@ -28,7 +28,7 @@ Sprite "PUNFD0", 147, 76
 		FlipX
 	}
 }
-
+/*
 //pistol
 Sprite "PIFDA0", 57, 62
 {
@@ -55,17 +55,23 @@ Sprite "PIFDC0", 66, 81
 	{
 		FlipX
 	}
-}
+}*/
 //pistol reload twohand
 Sprite "PISDF0", 66, 81
 {
 	Offset -133, -95
-	Patch "PIFDC0", 0, 0
+	Patch "PISGC0", 0, 0
+	{
+		FlipX
+	}
 }
 Sprite "PISDG0", 66, 81
 {
-	Offset -133, -99
-	Patch "PIFDC0", 0, 0
+	Offset -133, -99	
+	Patch "PISGC0", 0, 0
+	{
+		FlipX
+	}
 }
 Sprite "PISDH0", 87, 82
 {
@@ -83,31 +89,37 @@ Sprite "PISDJ0", 66, 62
 	Patch "PISDA0", 0, 0
 }
 //pistol reload left
-Sprite "PISGF0", 66, 81
+Sprite "PISLF0", 66, 81
 {
 	Offset -119, -96
 	Patch "PISGC0", 0, 0
 }
-Sprite "PISGG0", 66, 81
+Sprite "PISLG0", 66, 81
 {
 	Offset -119, -100
 	Patch "PISGC0", 0, 0
 }
-Sprite "PISGH0", 79, 82
+Sprite "PISLH0", 79, 82
 {
 	Offset -104, -99
 	Patch "PISGB0", 0, 0
 }
-Sprite "PISGI0", 57, 62
+Sprite "PISLI0", 57, 62
 {
 	Offset -126, -119
 	Patch "PISGA0", 0, 0
 }
-Sprite "PISGJ0", 57, 62
+Sprite "PISLJ0", 57, 62
 {
 	Offset -126, -109
 	Patch "PISGA0", 0, 0
 }
+Sprite "PISLK0", 75, 73
+{
+	Offset -84, -101
+	Patch "PISLB0", 0, 0
+}
+
 //pistol reload right
 Sprite "PIFDF0", 66, 81
 {
@@ -152,6 +164,11 @@ Sprite "PIFDJ0", 57, 62
 	{
 		FlipX
 	}
+}
+Sprite "PIFDK0", 75, 73
+{
+	Offset -147, -102
+	Patch "PIFDB0", 0, 0
 }
 
 //plasma rifle

@@ -102,15 +102,22 @@ class ddPistol : ddWeapon replaces Pistol
 		if(forcemode < 0)
 		{
 			if(ddp.player.readyweapon is "dualWielding" || ddp.player.pendingweapon is "dualWielding" || ddp.lastmode is "dualWielding") {
-				String sp = (weaponside) ? "PISGA0" : "PIFDA0";
-				return sp, ((ddweaponflags & PIS_RSEQ) ? 5 : 0); 
+				String sp = (weaponside) ? "PISLA0" : "PIFDA0";
+				int fr = ((ddweaponflags & PIS_RSEQ) ? 10 : 0);
+				fr = ((mag < 1) ? 1 : fr);
+				return sp, fr; 
 			}
-			else if(ddp.player.readyweapon is "twoHanding" || ddp.player.pendingweapon is "twoHanding" || ddp.lastmode is "twoHanding")  { return "PISDA0", ((ddweaponflags & PIS_RSEQ) ? 5 : 0); }
+			else if(ddp.player.readyweapon is "twoHanding" || ddp.player.pendingweapon is "twoHanding" || ddp.lastmode is "twoHanding")  
+			{
+				int fr = ((ddweaponflags & PIS_RSEQ ? 5 : 0));
+				fr = ((mag < 1) ? 5 : fr);
+				return "PISDA0", fr; 
+			}
 			else { 
 				return "TNT1A0"; }
 		}
-		else if(forcemode == 2) { return "PISGA0", ((ddweaponflags & PIS_RSEQ) ? 5 : 0); }
-		else if(forcemode == 1) { return "PISDA0", ((ddweaponflags & PIS_RSEQ) ? 5 : 0); }
+		else if(forcemode == 2) { return "PISLA0", ((ddweaponflags & PIS_RSEQ) ? 10 : 0); }
+		else if(forcemode == 1) { return "PISDA0", -1; }
 		else { return "TNT1A0", -1; }
 	}
 		
@@ -157,7 +164,10 @@ class ddPistol : ddWeapon replaces Pistol
 	{
 		let ddp = ddPlayer(owner);
 		if(ddp.FindInventory("ClassicModeToken")) { return FindState("FlashC"); }
-		else { return Super.GetFlashState(); }		
+		if(ddp.player.readyweapon is "dualWielding" || ddp.player.pendingweapon is "dualWielding" || ddp.lastmode is "dualWielding") {
+			ddp.player.GetPSprite(PSP_RIGHTWF).Frame = 2;
+		}
+		return Super.GetFlashState();
 	}
 	
 	override void primaryattack()
@@ -278,6 +288,7 @@ class ddPistol : ddWeapon replaces Pistol
 		Ind:
 			PISD A 0;
 			PIFD A 0;
+			PISL A 0;
 			Stop;
 	}
 }
@@ -288,7 +299,7 @@ class ddPistolLeft : ddPistol
 	States
 	{
 		NoAmmo:
-			#### A 10;
+			#### # 10 A_ChangeSpriteLeft;
 		Ready:
 			PISD A 0 A_ChangeSpriteLeft;
 			#### # 1 A_LeftWeaponReady;
@@ -298,9 +309,10 @@ class ddPistolLeft : ddPistol
 			#### A 1;
 			#### B 0 A_FlashLeft;
 			#### B 2 A_FireLeftWeapon;
-			#### C 1 A_DDActionLeft;
-			#### CCCC 1 A_ddRefireLeftHeavy;
-			#### B 5;
+			#### C 0 A_DDActionLeft;
+			#### # 1 A_ChangeSpriteLeft;
+			#### #### 1 A_ddRefireLeftHeavy;
+			#### # 5;
 			Goto Ready;
 		FireClassic:
 			#### A 0 A_DDActionLeft;
@@ -319,10 +331,11 @@ class ddPistolLeft : ddPistol
 		Burst:
 			#### B 0 A_FlashLeft;
 			#### B 1 A_FireLeftWeapon;
-			#### C 1;
-			#### C 1 A_DDActionLeft;
-			#### C 3;
-			#### B 5 A_ddRefireLeft;
+			#### C 0;
+			#### # 1 A_ChangeSpriteLeft;
+			#### # 1 A_DDActionLeft;
+			#### # 3;
+			#### # 5 A_ddRefireLeft;
 			Goto Ready;
 		ReloadP:
 			#### F 3;
@@ -341,6 +354,12 @@ class ddPistolLeft : ddPistol
 			#### I 4 A_DDActionLeft;
 			#### J 4;
 			Goto Ready;
+		FlashP:
+			PISF B 2 Bright A_Light2;
+			Goto FlashDone;
+		FlashA:
+			PISF B 1 Bright A_Light2;
+			Goto FlashDone;
 	}
 }
 // #Class ddPistolRight : ddPistol()
@@ -350,7 +369,7 @@ class ddPistolRight : ddPistol
 	States
 	{
 		NoAmmo:
-			#### A 10;
+			#### # 10 A_ChangeSpriteRight;
 		Ready:
 			PISD A 0 A_ChangeSpriteRight;
 			#### # 1 A_RightWeaponReady;
@@ -363,9 +382,10 @@ class ddPistolRight : ddPistol
 			#### A 1;
 			#### B 0 A_FlashRight;
 			#### B 2 A_FireRightWeapon;
-			#### C 1 A_DDActionRight;
-			#### CCCC 1 A_ddRefireRightHeavy;
-			#### B 5;
+			#### C 0 A_DDActionRight;
+			#### # 1 A_ChangeSpriteRight;
+			#### #### 1 A_ddRefireRightHeavy;
+			#### # 5;
 			Goto Ready;
 		FireClassic:
 			#### A 0 A_DDActionRight;
@@ -381,10 +401,11 @@ class ddPistolRight : ddPistol
 		Burst:
 			#### B 0 A_FlashRight;
 			#### B 1 A_FireRightWeapon;
-			#### C 1;
-			#### C 1 A_DDActionRight;
-			#### C 3;
-			#### B 5 A_ddRefireRight;
+			#### C 0;
+			#### # 1 A_ChangeSpriteRight;
+			#### # 1 A_DDActionRight;
+			#### # 3;
+			#### # 5 A_ddRefireRight;
 			Goto Ready;
 		ReloadP:
 			#### F 3;
@@ -403,6 +424,12 @@ class ddPistolRight : ddPistol
 			#### I 4 A_DDActionRight;
 			#### J 4;
 			Goto Ready;
+		FlashP:
+			PISF # 2 Bright A_Light2;
+			Goto FlashDone;
+		FlashA:
+			PISF # 1 Bright A_Light2;
+			Goto FlashDone;
 			
 			
 	}
@@ -455,7 +482,7 @@ extend class ddWeapon
 	action void A_FireDDPistol()
 	{
 		bool accurate;
-		int dam = 4 * random(1,3);
+		int dam = 4 * random(2,3);
 		let ddp = ddPlayer(invoker.owner);
 		ddWeapon weap = ddWeapon(self);
 		Class<Ammo> type = (ddp.FindInventory("ClassicModeToken")) ? weap.ClassicAmmoType1 : weap.AmmoType1;
@@ -469,16 +496,15 @@ extend class ddWeapon
 		else { eA = Random2() * (0.99 / 256); eP = Random2() * (0.99 / 256); }
 		if(ddp.FindInventory("ClassicModeToken")) { ddp.A_StartSound("weapons/pistol", CHAN_WEAPON, CHANF_OVERLAP); }
 		else { ddp.A_StartSound("weapons/pistolnew", CHAN_WEAPON, CHANF_OVERLAP); }
+		if(invoker.mag < 1) { ddp.A_StartSound("weapons/nofire", CHAN_WEAPON, CHANF_OVERLAP); }
 		ddShot(accurate, "BulletPuff", dam, eA, eP, weap.weaponside, (pen) ? 10 : 3);
-		//ddp.TakeInventory(type, 1);
-		if(pen) { AddRecoil(2., 1, 4.); }
+		if(pen) { AddRecoil(1.8, 1, 4.); }
 		else { AddRecoil(1.5, 0, 4.); }
 	}
-	
 	action void A_BurstFireDDPistol() 
 	{
 		bool accurate;
-		int dam = 5 * random(1,3);		
+		int dam = 5 * random(2,3);		
 		let ddp = ddPlayer(invoker.owner);
 		ddWeapon weap = ddWeapon(self);
 		Class<Ammo> type = (ddp.FindInventory("ClassicModeToken")) ? weap.ClassicAmmoType1 : weap.AmmoType1;
@@ -492,8 +518,8 @@ extend class ddWeapon
 		else { eA = Random2() * (1.67 / 256); eP = Random2() * (2.25 / 256); }
 		if(ddp.FindInventory("ClassicModeToken")) { ddp.A_StartSound("weapons/pistol", CHAN_WEAPON, CHANF_OVERLAP); }
 		else { ddp.A_StartSound("weapons/pistolnew", CHAN_WEAPON, CHANF_OVERLAP); }
+		if(invoker.mag < 1) { ddp.A_StartSound("weapons/nofire", CHAN_WEAPON, CHANF_OVERLAP); }
 		ddShot(false, "BulletPuff", dam, eA, eP,weap.weaponside, 5);
-		//ddp.TakeInventory(type, 1);
 		if(pen) { AddRecoil(7.5, 4, 3.5); }
 		else { AddRecoil(3, 1, 3.5); }
 	}
