@@ -355,7 +355,7 @@ class ddPlasmaRifleRight : ddPlasmaRifle
 			PLSG A 0 A_DDActionRight;
 			PLSG A 0 A_FlashRight;
 			PLSG A 3 A_FireRightWeapon;
-			PLSG B 20 A_ddRefireRight;
+			PLGF B 20 A_ddRefireRight;
 			Goto Ready;
 		ReloadP:
 			#### # 0 A_ChangeSpriteRight;
@@ -424,6 +424,42 @@ extend class ddWeapon
 		}
 		ddp.TakeInventory("Cell", pellets / 2);
 		AddRecoil(5., 0, 2.4);
+	}
+}
+
+class Celle : Cell replaces Cell
+{
+	Default
+	{
+		+INVENTORY.ALWAYSPICKUP;
+	}
+	override void DoPickupSpecial(Actor toucher)
+	{
+		Super.DoPickupSpecial(toucher);
+		if(!toucher.player) { return; }
+		if(toucher.FindInventory("ESOA"))
+		{
+			toucher.A_Log("...and used some to charge your ESOA!");
+			toucher.GiveInventory("ESOACharge", 65);
+		}
+	}
+}
+
+class CellPacke : CellPack replaces CellPack
+{
+	Default
+	{
+		+INVENTORY.ALWAYSPICKUP;
+	}
+	override void DoPickupSpecial(Actor toucher)
+	{
+		Super.DoPickupSpecial(toucher);
+		if(!toucher.player) { return; }
+		if(toucher.FindInventory("ESOA"))
+		{
+			toucher.A_Log("...and used some to charge your ESOA!");
+			toucher.GiveInventory("ESOACharge", 300);
+		}
 	}
 }
 

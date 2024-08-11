@@ -14,7 +14,13 @@ addmenukey "Toggle ESOA" "use esoaActivator"
 defaultbind j "use esoaActivator"
 addmenukey "Drop weapon" weapdrop
 defaultbind h weapdrop
+//addmenukey "Reload Right Weapon" "+reload"
+//defaultbind g "+reload"
+addmenukey "Reload Weapon" "+reload"
+defaultbind r "+reload"
 addmenukey "Unload Left Weapon (Hold use for right)" "use unloadActivator"
 defaultbind u "use unloadActivator"
+//addmenukey "(Optional) Unload Left Weapon" "use unloadActivatorLeft"
+//defaultbind i "use unloadActivatorLeft"
 addmenukey "Sort Inventory" +zoom
 defaultbind mouse3 +zoom
