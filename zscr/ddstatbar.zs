@@ -293,9 +293,13 @@ class ddStats : BaseStatusBar
 			int spindle = dPlay.ddWeaponState;
 			String label = "";
 			Color res;
-			for(int x = 12; x > -1; x--)
+			for(int x = 16; x > -1; x--)
 			{				
 				switch(x){
+					case 16: label = "RIGHTRAISETOREL"; break;
+					case 15: label = "RIGHTLOWERTOREL"; break;
+					case 14: label = "LEFTRAISETOREL"; break;
+					case 13: label = "LEFTLOWERTOREL"; break;
 					case 12: label = "NORIGHTSPRITECHANGE"; break;
 					case 11: label = "NOLEFTSPRITECHANGE"; break;
 					case 10: label = "RITH"; break;
@@ -313,7 +317,7 @@ class ddStats : BaseStatusBar
 				if(spindle & 1 << x) { res = Font.CR_GREEN; }
 				else { res = Font.CR_RED; }
 				
-				DrawString(fa, label, (5,8 + (15*(12-x))), DI_SCREEN_LEFT, res); 
+				DrawString(fa, label, (5,8 + (15*(16-x))), DI_SCREEN_LEFT, res); 
 			}
 		}
 		if(dPlay.dddebug & DBG_PLAYER)
@@ -340,8 +344,10 @@ class ddStats : BaseStatusBar
 		}
 		if(dPlay.dddebug & DBG_WEAPSEQUENCE)
 		{
-			if(lw) { DrawString(fa, "cn : "..FormatNumber(lw.caseno), (16, -125), DI_SCREEN_LEFT_BOTTOM); }
-			if(rw) { DrawString(fa, "cn : "..FormatNumber(rw.caseno), (-50, -125), DI_SCREEN_RIGHT_BOTTOM); }  
+			if(lw) { DrawString(fa, "cn : "..FormatNumber(lw.caseno), (16, -125), DI_SCREEN_LEFT_BOTTOM); 
+				DrawString(fa, "sndn : "..FormatNumber(lw.sndno), (1, -134), DI_SCREEN_LEFT_BOTTOM); }
+			if(rw) { DrawString(fa, "cn : "..FormatNumber(rw.caseno), (-50, -125), DI_SCREEN_RIGHT_BOTTOM);
+				DrawString(fa, "sndn : "..FormatNumber(rw.sndno), (-65, -134), DI_SCREEN_RIGHT_BOTTOM); }  
 			DrawString(fa, FormatNumber(pspl.x), (85, 0), DI_SCREEN_LEFT_CENTER);
 			DrawString(fa, FormatNumber(pspl.y), (85, 10), DI_SCREEN_LEFT_CENTER, Font.CR_ORANGE);			
 			DrawString(fa, FormatNumber(pspr.x), (-55, 0), DI_SCREEN_RIGHT_CENTER);
