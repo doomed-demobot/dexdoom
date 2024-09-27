@@ -86,7 +86,10 @@ class ddChaingun : ddWeapon replaces Chaingun
 			if(level.mapTime & mod) { return "CHGGA", 1; }
 			else { return "CHGGB", 0; }
 		}
-		else { return "CHGGA0", 0; }
+		else { 
+			if(ddp.player.readyweapon is "dualWielding" || ddp.lastmode is "dualWielding") { return (weaponside) ? "CHGGA0" : "CHGRA0", 0; }
+			else { return "CHGGA0", 0; }
+		}
 	}
 	
 	override State GetAttackState()
@@ -110,6 +113,11 @@ class ddChaingun : ddWeapon replaces Chaingun
 	
 	override State GetFlashState()
 	{
+		let ddp = ddPlayer(owner);
+		ddWeapon mode = ddWeapon(ddp.player.readyweapon);
+		if(mode is "dualWielding" || ddp.player.pendingweapon is "dualWielding" || ddp.lastmode is "dualWielding") {
+			ddp.player.GetPSprite(PSP_RIGHTWF).Frame = ((safeflasher) ? 5 : 4); 
+		}
 		if(!safeflasher) { safeflasher = !safeflasher; if(owner.CountInv(AmmoType1.GetClassName()) >= AmmoUse1) { return FindState('Flash'); } else { return FindState('NoFlash'); } }
 		else { safeflasher = !safeflasher; if(owner.CountInv(AmmoType1.GetClassName()) >= AmmoUse1) { return FindState('Flash2'); } else { return FindState('NoFlash'); } } 
 	}
@@ -227,8 +235,12 @@ class ddChaingunLeft : ddChaingun
 			CHGG B 1 A_SetTicksLeft;
 			CHGG B 0 A_ddRefireLeft;
 			Goto Ready;
-			
-			
+		Flash:
+			CHGF C 5 Bright A_Light2;
+			Goto FlashDone;
+		Flash2:
+			CHGF D 5 Bright A_Light2;
+			Goto FlashDone;
 	}
 }
 // #Class ddChaingunRight : ddChaingun()
@@ -240,7 +252,7 @@ class ddChaingunRight : ddChaingun
 		NoAmmo:
 			#### # 10;
 		Ready:
-			CHGG A 0 A_ChangeSpriteRight;
+			CHGR A 0 A_ChangeSpriteRight;
 			#### # 1 A_RightWeaponReady;
 			Loop;
 		Select:
@@ -275,6 +287,12 @@ class ddChaingunRight : ddChaingun
 			CHGG B 1 A_SetTicksRight;
 			CHGG B 0 A_ddRefireRight;
 			Goto Ready;
+		Flash:
+			CHGF # 5 Bright A_Light2;
+			Goto FlashDone;
+		Flash2:
+			CHGF # 5 Bright A_Light2;
+			Goto FlashDone;
 	}
 }
 
