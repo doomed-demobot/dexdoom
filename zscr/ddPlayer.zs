@@ -5,7 +5,7 @@ class ddPlayer : DoomPlayer
 	int rwx, lwx; //weapon slots, right and left;
 	int waitToPickup;
 	bool altmodeL, altmodeR; //true if alt, false if primary
-	uint ddWeaponState;
+	int ddWeaponState;
 	bool wolfen, swapc;
 	double addPitch;
 	double addAngle;
@@ -169,9 +169,11 @@ class ddPlayer : DoomPlayer
 			}
 			else
 			{	
-				//if((ddWeaponState & DDW_RIGHTREADY) && (ddWeaponState & DDW_LEFTREADY)) { 
-					CheckQuickSwap();	
-				//}
+				CheckQuickSwap();
+				if(ddWeaponState & DDW_LEFTLOWERTOREL) { weap.A_LowerToReloadLeft(); }
+				else if(ddWeaponState & DDW_RIGHTLOWERTOREL) { weap.A_LowerToReloadRight(); }
+				if(ddWeaponState & DDW_LEFTRAISETOREL) { weap.A_RaiseToReloadLeft(); }	
+				else if(ddWeaponState & DDW_RIGHTRAISETOREL) { weap.A_RaiseToReloadRight(); }
 				if(weap.bmodeReady) 
 				{ 
 					CheckWeaponChange();
@@ -180,8 +182,7 @@ class ddPlayer : DoomPlayer
 						CheckWeaponFire();
 					}
 					CheckWeaponButtons();
-				}
-				
+				}				
 			}
 		}
 		else 
@@ -199,6 +200,10 @@ class ddPlayer : DoomPlayer
 		{
 			if(player.PendingWeapon != WP_NOCHANGE)
 			{
+				ddWeaponState &= ~DDW_LEFTLOWERTOREL;
+				ddWeaponState &= ~DDW_LEFTRAISETOREL;
+				ddWeaponState &= ~DDW_RIGHTLOWERTOREL;
+				ddWeaponState &= ~DDW_RIGHTRAISETOREL;
 				if(player.readyweapon is "twoHanding")
 				{
 					if(FindInventory("ClassicModeToken")) { ddWeaponState &= ~DDW_LEFTISTH; ddWeaponState &= ~DDW_RIGHTISTH; }
@@ -676,6 +681,10 @@ class ddPlayer : DoomPlayer
 		ddWeapon(player.readyweapon).rswaptarget = rwx;
 		ddWeaponState |= DDW_LEFTNOBOBBING;
 		ddWeaponState |= DDW_RIGHTNOBOBBING;
+		ddWeaponState &= ~DDW_LEFTLOWERTOREL;
+		ddWeaponState &= ~DDW_LEFTRAISETOREL;
+		ddWeaponState &= ~DDW_RIGHTLOWERTOREL;
+		ddWeaponState &= ~DDW_RIGHTRAISETOREL;
 		if(lWeap.RetItem(lwx).bTwoHander) { ddWeaponState |= DDW_LEFTISTH; }
 		else { ddWeaponState &= ~DDW_LEFTISTH; }
 		if(rWeap.RetItem(rwx).bTwoHander) { ddWeaponState |= DDW_RIGHTISTH; }
@@ -712,6 +721,10 @@ class ddPlayer : DoomPlayer
 		dualWielding(player.readyweapon).brraised = false;
 		ddWeaponState |= DDW_LEFTNOBOBBING;
 		ddWeaponState |= DDW_RIGHTNOBOBBING;
+		ddWeaponState &= ~DDW_LEFTLOWERTOREL;
+		ddWeaponState &= ~DDW_LEFTRAISETOREL;
+		ddWeaponState &= ~DDW_RIGHTLOWERTOREL;
+		ddWeaponState &= ~DDW_RIGHTRAISETOREL;
 		if(lWeap.RetItem(lwx).bTwoHander) { ddWeaponState |= DDW_LEFTISTH; }
 		else { ddWeaponState &= ~DDW_LEFTISTH; }
 		if(rWeap.RetItem(rwx).bTwoHander) { ddWeaponState |= DDW_RIGHTISTH; }
@@ -1206,7 +1219,7 @@ class unloadActivator : custominventory
 		let mode = ddWeapon(ddp.player.readyweapon);
 		let lw = ddp.GetLeftWeapon(ddp.lwx);
 		let rw = ddp.GetRightWeapon(ddp.rwx);
-		if(ddp.ddWeaponState & DDW_LEFTREADY && ddp.ddWeaponState & DDW_RIGHTREADY)
+		if(mode.weaponstatus == DDW_READY)
 		{
 			lw.weaponready = false;
 			rw.weaponready = false;
@@ -1225,7 +1238,7 @@ class unloadActivator : custominventory
 		}
 		else
 		{
-			if(ddp.dddebug & DBG_WEAPONS) { A_Log("Weapons not ready"); return;}
+			if(ddp.dddebug & DBG_WEAPONS) { A_Log("Mode not ready"); return;}
 		}
 	}
 	

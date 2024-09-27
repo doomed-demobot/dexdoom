@@ -23,8 +23,8 @@ class inventoryOpener : CustomInventory
 		let mode = ddWeapon(player.readyweapon);
 		if(!mode.bmodeready) { 
 			if(ddp.dddebug & DBG_INVENTORY) { A_Log("Mode not ready"); } return; }
-		if(!(ddp.ddWeaponState & DDW_LEFTREADY) || !(ddp.ddWeaponState & DDW_RIGHTREADY)) { 
-			if(ddp.dddebug & DBG_INVENTORY) { A_Log("Weapons not ready"); } return; }
+		/*if(!(ddp.ddWeaponState & DDW_LEFTREADY) || !(ddp.ddWeaponState & DDW_RIGHTREADY)) { 
+			if(ddp.dddebug & DBG_INVENTORY) { A_Log("Weapons not ready"); } return; }*/
 		if(mode is "playerInventory") 
 		{
 			if(playerInventory(mode).lowerL != -1 || playerInventory(mode).lowerR != -1 ) { 
@@ -188,7 +188,7 @@ class playerInventory : ddWeapon
 		{
 			if(ddp.player.readyweapon is "playerInventory")
 			{				
-				if(!(ddp.ddWeaponState & DDW_LEFTREADY) || !(ddp.ddWeaponState & DDW_RIGHTREADY)) { ddp.A_Log("Weapons not ready"); return; }
+				//if(!(ddp.ddWeaponState & DDW_LEFTREADY) || !(ddp.ddWeaponState & DDW_RIGHTREADY)) { ddp.A_Log("Weapons not ready"); return; }
 				if(ddp.lastmode is "dualWielding")
 				{
 					if(lowerL == 1)
