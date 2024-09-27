@@ -20,7 +20,7 @@ maps
 			resource0
 			{
 				type = 0;
-				location = "C:\\Users\\marcu\\Desktop\\DOOM\\dexdoom\\DOOM2.WAD";
+				location = "C:\\Users\\marcu\\Desktop\\DOOM\\dexdoom - dev\\DOOM2.WAD";
 				option1 = 0;
 				option2 = 0;
 				notfortesting = 0;
@@ -30,15 +30,15 @@ maps
 			resource1
 			{
 				type = 2;
-				location = "C:\\Users\\marcu\\Desktop\\DOOM\\dexdoom\\gzdoom.pk3";
+				location = "C:\\Users\\marcu\\Desktop\\DOOM\\dexdoom - dev\\gzdoom.pk3";
 				option1 = 0;
 				option2 = 0;
 				notfortesting = 1;
 				requiredarchives = "gzdoom";
 			}
 		}
-		viewpositiony = 216.0513f;
-		viewpositionx = 584.1487f;
+		viewpositiony = 131.9081f;
+		viewpositionx = 512.3242f;
 		
 		testprecommand
 		{
@@ -62,7 +62,7 @@ maps
 			background = "";
 			backoffsety = 0;
 		}
-		viewscale = 1.304728f;
+		viewscale = 2.866487f;
 		
 		reloadresourceprecommand
 		{
