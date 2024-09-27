@@ -97,12 +97,12 @@ class dualWielding : ddWeapon
 							ddp.player.setpsprite(PSP_LEFTW, lWeap.RetItem(ddp.lwx).GetUpState());
 							ddp.ddWeaponState &= ~DDW_LEFTREADY;
 							pspl.y = 128;
-							psplf.y = 128;	
+							psplf.y = 128;
 							self.blraised = false;
 							self.brraised = false;
 							ddp.player.SetPSprite(PSP_WEAPON, FindState('QuickSwapDW'));
 							rWeap.RetItem(ddp.rwx).companionpiece = lWeap.RetItem(ddp.lwx);
-							lWeap.RetItem(ddp.lwx).companionpiece = rWeap.RetItem(ddp.rwx);	
+							lWeap.RetItem(ddp.lwx).companionpiece = rWeap.RetItem(ddp.rwx);
 							dropChoice = -1;
 							return null;
 						}
@@ -113,7 +113,7 @@ class dualWielding : ddWeapon
 					tos.AttachToOwner(owner);
 					tos.mag = lw.mag;
 					tos.ddWeaponFlags = lw.ddWeaponFlags;
-					ddp.RemoveInventory(lw);				
+					ddp.RemoveInventory(lw);
 					lWeap.SetItem(ddWeapon(ddp.GetFists(1)), ddp.lwx);
 					if(lWeap.RetItem(ddp.lwx).bTwoHander) { ddp.ddWeaponState |= DDW_LEFTISTH; }
 					else { ddp.ddWeaponState &= ~DDW_LEFTISTH; }
@@ -128,14 +128,14 @@ class dualWielding : ddWeapon
 					self.brraised = false;
 					ddp.player.SetPSprite(PSP_WEAPON, FindState('QuickSwapDW'));
 					rWeap.RetItem(ddp.rwx).companionpiece = lWeap.RetItem(ddp.lwx);
-					lWeap.RetItem(ddp.lwx).companionpiece = rWeap.RetItem(ddp.rwx);	
+					lWeap.RetItem(ddp.lwx).companionpiece = rWeap.RetItem(ddp.rwx);
 					dropChoice = -1;
 					return ddWeapon(tos.CreateTossable());
 				}
 				else if(!dropChoice)
 				{
 					if(rw is "ddFist") { ddp.A_Print("no can do", 1); ddp.A_StartSound("misc/boowomp", CHAN_BODY, CHANF_OVERLAP);
-						dropChoice = -1; ddp.player.SetPSprite(PSP_WEAPON, FindState('Ready')); bmodeready = true; return null; 
+						dropChoice = -1; ddp.player.SetPSprite(PSP_WEAPON, FindState('Ready')); bmodeready = true; return null;
 					}
 					for(int x = 0; x < pInv.items.Size(); x++)
 					{
@@ -237,7 +237,7 @@ class dualWielding : ddWeapon
 		}
 		if(rWeap.items.size())
 		{
-			CurRWp = ddp.GetRightWeapon(ddp.rwx);	
+			CurRWp = ddp.GetRightWeapon(ddp.rwx);
 		}
 		let typel = (ddp.FindInventory("ClassicModeToken")) ?
 		((!CurLWp.bAltFire) ? CurLWp.ClassicAmmoType1 : CurLWp.ClassicAmmoType2) :
@@ -262,7 +262,7 @@ class dualWielding : ddWeapon
 			hude.DrawImage(inv ? "HCINVN" : "", (35, -20), hude.DI_SCREEN_LEFT_BOTTOM, 0.9);
 			hude.DrawString(hude.bf, (ddp.Health > -200) ? hude.FormatNumber(ddp.Health) : "REALLY FREAKIN' DEAD", (50, -35), hude.DI_SCREEN_LEFT_BOTTOM | hude.DI_TEXT_ALIGN_CENTER, 0, 0.5, -1, 4, (1.25,1.25));
 			if(ddp.FindInventory("ESOA"))
-			{				
+			{
 				hude.DrawString(hude.fa, "esoa", (0, -25), hude.DI_SCREEN_CENTER_BOTTOM | hude.DI_TEXT_ALIGN_CENTER, 0, (ddp.esoaActive) ? 0.7 : 0.33);
 				hude.DrawString(hude.fa, "[           ]", (0, -15), hude.DI_SCREEN_CENTER_BOTTOM | hude.DI_TEXT_ALIGN_CENTER, 0, (ddp.esoaActive) ? 0.7 : 0.33);
 				double width = (20 * (chargeam / chargemx)) * 2;
@@ -417,7 +417,7 @@ class dualWielding : ddWeapon
 							SoundAlert(self);
 						}
 						lw.weaponready = false;
-					}			
+					}
 				}
 				else if(A_PressingLeftModeSwitch())
 				{
@@ -449,7 +449,7 @@ class dualWielding : ddWeapon
 							SoundAlert(self);
 						}
 						rw.weaponready = false;
-					}			
+					}
 				}
 				else if(A_PressingRightAltFire())
 				{
@@ -467,7 +467,7 @@ class dualWielding : ddWeapon
 							SoundAlert(self);
 						}
 						rw.weaponready = false;
-					}			
+					}
 				}
 				else if(A_PressingRightModeSwitch())
 				{
@@ -481,7 +481,7 @@ class dualWielding : ddWeapon
 						player.SetPSprite(PSP_RIGHTW, rw.FindState('NoAmmo'));
 						ddp.ddWeaponState &= ~DDW_RIGHTREADY;
 						rw.weaponready = false;
-					}			
+					}
 				}
 			}
 			else if(A_PressingReload())
@@ -494,10 +494,10 @@ class dualWielding : ddWeapon
 						A_CheckRightWeaponMag();
 						lw.weaponready = false;
 						rw.weaponready = false;
-					}					
+					}
 				}
 				else
-				{					
+				{
 					if(ddp.ddWeaponState & DDW_LEFTREADY)
 					{
 						A_CheckLeftWeaponMag();
@@ -511,7 +511,7 @@ class dualWielding : ddWeapon
 							A_CheckRightWeaponMag();
 							lw.weaponready = false;
 							rw.weaponready = false;
-						}	
+						}
 					}
 				}
 			}
@@ -521,7 +521,7 @@ class dualWielding : ddWeapon
 	
 	action void A_QuickSwapDW()
 	{
-		let ddp = ddPlayer(self);		
+		let ddp = ddPlayer(self);
 		let mode = dualWielding(player.readyweapon);
 		let lWeap = ddp.GetLeftWeapons();
 		let rWeap = ddp.GetRightWeapons();
@@ -629,7 +629,7 @@ class dualWielding : ddWeapon
 		double sFactor = (lw.sFactor + rw.sFactor + 1.) / 2.0;
 		if(ddp.ddWeaponState & DDW_RIGHTISTH && pspr.y > 0)
 		{
-			pspr.y -= 4 * sFactor; psprf.y -= 4 * sFactor;	
+			pspr.y -= 4 * sFactor; psprf.y -= 4 * sFactor;
 			if(pspr.y < 1) { pspr.y = 0; psprf.y = 0; }
 		}
 		else
@@ -658,7 +658,7 @@ class dualWielding : ddWeapon
 	{		
 		let ddp = ddPlayer(self);
 		let lWeap = ddp.GetLeftWeapons();
-		let rWeap = ddp.GetRightWeapons();		
+		let rWeap = ddp.GetRightWeapons();
 		if(ddp.ddWeaponState & DDW_WANNAREPLACE && ddPlayer(self).gethelp) { A_Log("\cgSwap cancelled"); }
 		invoker.weaponStatus = DDM_SWAPPING;
 		ddp.ddWeaponState &= ~DDW_WANNAREPLACE;
@@ -671,7 +671,7 @@ class dualWielding : ddWeapon
 		let pspr = player.GetPSprite(PSP_RIGHTW);
 		let psprf = player.GetPSprite(PSP_RIGHTWF);
 		double bsk = (ddp.FindInventory("PowerBerserk")) ? 2.0 : 1.0;
-		double sFactor = ((lw.sFactor + rw.sFactor + 1.0) / 2.0) * bsk;			
+		double sFactor = ((lw.sFactor + rw.sFactor + 1.0) / 2.0) * bsk;
 		if(ddp.ddWeaponState & DDW_RIGHTISTH && pspr.y < 128)
 		{			
 			pspr.y += 6 * sFactor; psprf.y += 6 * sFactor;

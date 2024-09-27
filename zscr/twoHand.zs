@@ -55,7 +55,7 @@ class twoHanding : ddWeapon
 		if(curWeap)
 		{
 			int curWeapAm, curWeapMx;
-			[curWeapAm, curWeapMx] = hude.GetAmount(type);		
+			[curWeapAm, curWeapMx] = hude.GetAmount(type);
 			let bz = ddp.FindInventory("PowerBerserk");
 			let inv = ((ddp.player.cheats & CF_GODMODE) || ddp.FindInventory("PowerInvulnerable"));
 			bool mx = (curWeapAm == curWeapMx);
@@ -83,10 +83,10 @@ class twoHanding : ddWeapon
 			}
 			if(wolfen) 
 			{ 
-				if(!ddp.FindInventory("ClassicModeToken")) { hude.DrawString(hude.fa, ddp.altmodeR ? "A" : "P", (0, -48), hude.DI_SCREEN_CENTER_BOTTOM | hude.DI_TEXT_ALIGN_CENTER); } 
+				if(!ddp.FindInventory("ClassicModeToken")) { hude.DrawString(hude.fa, ddp.altmodeR ? "A" : "P", (0, -48), hude.DI_SCREEN_CENTER_BOTTOM | hude.DI_TEXT_ALIGN_CENTER); }
 			}
 			hude.DrawInventoryIcon(plarm, (-35, -20), 0, 0.4);
-			hude.DrawString(hude.bf, hude.FormatNumber(plarm.Amount), (-50, -35), hude.DI_SCREEN_RIGHT_BOTTOM | hude.DI_TEXT_ALIGN_CENTER, 0, 0.5, -1, 4, (1.25,1.25));			
+			hude.DrawString(hude.bf, hude.FormatNumber(plarm.Amount), (-50, -35), hude.DI_SCREEN_RIGHT_BOTTOM | hude.DI_TEXT_ALIGN_CENTER, 0, 0.5, -1, 4, (1.25,1.25));
 			if(ddp.desire)
 			{
 				if(ddp is "ddPlayerClassic")
@@ -96,12 +96,12 @@ class twoHanding : ddWeapon
 				}
 				else { ddp.desire.PreviewInfo(hude); }
 			}
-			if(ddp.dddebug & DBG_WEAPONS)			
+			if(ddp.dddebug & DBG_WEAPONS)
 			{
-				hude.DrawString(hude.bf, ".", (-50, -85), hude.DI_SCREEN_RIGHT_BOTTOM | hude.DI_TEXT_ALIGN_CENTER, (rightheld) ? Font.CR_GREEN : Font.CR_RED);		
-				hude.DrawString(hude.bf, ".", (-50, -75), hude.DI_SCREEN_RIGHT_BOTTOM | hude.DI_TEXT_ALIGN_CENTER, (ddp.ddWeaponState & DDW_RIGHTREADY) ? Font.CR_GREEN : Font.CR_RED);		
+				hude.DrawString(hude.bf, ".", (-50, -85), hude.DI_SCREEN_RIGHT_BOTTOM | hude.DI_TEXT_ALIGN_CENTER, (rightheld) ? Font.CR_GREEN : Font.CR_RED);
+				hude.DrawString(hude.bf, ".", (-50, -75), hude.DI_SCREEN_RIGHT_BOTTOM | hude.DI_TEXT_ALIGN_CENTER, (ddp.ddWeaponState & DDW_RIGHTREADY) ? Font.CR_GREEN : Font.CR_RED);
 				hude.DrawString(hude.bf, ".", (-50, -65), hude.DI_SCREEN_RIGHT_BOTTOM | hude.DI_TEXT_ALIGN_CENTER, (curWeap.weaponready) ? Font.CR_CYAN : Font.CR_RED);
-				hude.DrawString(hude.bf, ".", (0, -15), hude.DI_SCREEN_CENTER_BOTTOM | hude.DI_TEXT_ALIGN_CENTER, (bModeReady) ? Font.CR_GREEN : Font.CR_RED);				
+				hude.DrawString(hude.bf, ".", (0, -15), hude.DI_SCREEN_CENTER_BOTTOM | hude.DI_TEXT_ALIGN_CENTER, (bModeReady) ? Font.CR_GREEN : Font.CR_RED);
 				if(ddp.dddebug & DBG_VERBOSE && curweap.companionpiece)
 					hude.DrawImage(curWeap.companionpiece.GetWeaponSprite(), (-50, -85), hude.DI_SCREEN_RIGHT_BOTTOM | hude.DI_TEXT_ALIGN_CENTER);
 			}
@@ -132,8 +132,8 @@ class twoHanding : ddWeapon
 				if(++ddp.rwx > rWeap.size - 1) { ddp.rwx = 0; }
 				rSwapTarget = ddp.rwx;
 				rWeap.RetItem(ddp.rwx).companionpiece = lWeap.RetItem(ddp.lwx);
-				lWeap.RetItem(ddp.lwx).companionpiece = rWeap.RetItem(ddp.rwx);		
-				ddp.player.setpsprite(PSP_RIGHTW, rWeap.RetItem(ddp.rwx).GetUpState());	
+				lWeap.RetItem(ddp.lwx).companionpiece = rWeap.RetItem(ddp.rwx);
+				ddp.player.setpsprite(PSP_RIGHTW, rWeap.RetItem(ddp.rwx).GetUpState());
 				ddp.ddWeaponState &= ~DDW_RIGHTREADY;
 				bmodeready = false;
 				pspr.y = 128;
@@ -154,14 +154,14 @@ class twoHanding : ddWeapon
 		rSwapTarget = ddp.rwx;
 		rWeap.RetItem(ddp.rwx).companionpiece = lWeap.RetItem(ddp.lwx);
 		lWeap.RetItem(ddp.lwx).companionpiece = rWeap.RetItem(ddp.rwx);	
-		ddp.player.setpsprite(PSP_RIGHTW, rWeap.RetItem(ddp.rwx).GetUpState());	
+		ddp.player.setpsprite(PSP_RIGHTW, rWeap.RetItem(ddp.rwx).GetUpState());
 		ddp.ddWeaponState &= ~DDW_RIGHTREADY;
 		bmodeready = false;
 		pspr.y = 128;
 		psprf.y = 128;	
 		ddp.player.SetPSprite(PSP_WEAPON, FindState('QuickSwapTH'));
 		ddp.RemoveInventory(weap);
-		ddp.A_Print("Dropped "..weap.GetTag(), 1);			
+		ddp.A_Print("Dropped "..weap.GetTag(), 1);
 		return ddWeapon(tos.CreateTossable());
 	}
 
@@ -259,7 +259,7 @@ class twoHanding : ddWeapon
 		let psprf = player.GetPSprite(PSP_RIGHTWF);
 		double sFactor;
 		if(rw) 
-		{ 			
+		{
 			sFactor = rw.sFactor * 6;
 			if(ddp.rwx != invoker.rSwapTarget) //lower right weapon
 			{
@@ -312,7 +312,7 @@ class twoHanding : ddWeapon
 		let psprf = player.getpsprite(PSP_RIGHTWF);
 		double sFactor = rw.sFactor;
 		if(ddp.ddWeaponState & DDW_RIGHTISTH && pspr.y > 0)
-		{			
+		{
 			pspr.y -= 6 * sFactor; psprf.y -= 6 * sFactor;	
 			if(pspr.y < 1) { pspr.y = 0; psprf.y = 0; }
 		}
@@ -337,7 +337,7 @@ class twoHanding : ddWeapon
 	
 	action void A_SwitchToDual()
 	{
-		let ddp = ddPlayer(self);	
+		let ddp = ddPlayer(self);
 		let lWeap = ddp.GetLeftWeapons();
 		let rWeap = ddp.GetRightWeapons();
 		if(lWeap.items.Size() < 1) { return; }
@@ -354,9 +354,9 @@ class twoHanding : ddWeapon
 		let pspr = player.GetPSprite(PSP_RIGHTW);
 		let psprf = player.GetPSprite(PSP_RIGHTWF);	
 		double bsk = (ddp.FindInventory("PowerBerserk")) ? 2.0 : 1.0;
-		double sFactor = ((lw.sFactor + rw.sFactor + 1) / 2.0) * bsk;	
+		double sFactor = ((lw.sFactor + rw.sFactor + 1) / 2.0) * bsk;
 		if(ddp.ddWeaponState & DDW_RIGHTISTH && pspr.y < 128)
-		{			
+		{
 			pspr.y += 6 * sFactor; psprf.y += 6 * sFactor;
 			if(pspr.y > 128) { pspr.y = 128; psprf.y = 128; }
 		}
@@ -365,9 +365,9 @@ class twoHanding : ddWeapon
 			pspr.x += 2 * sFactor; psprf.x += 2 * sFactor;
 			pspl.y -= 6 * sFactor;
 			psplf.y -= 6 * sFactor;
-			if(pspl.y > 0) { return; }			
+			if(pspl.y > 0) { return; }
 			pspl.y = 0; psplf.y = 0;
-			pspl.x = -64; psplf.x = -64;			
+			pspl.x = -64; psplf.x = -64;
 			if(!(ddp.ddWeaponState & DDW_RIGHTISTH)) { pspr.y = 0; psprf.y = 0; }
 			let dwd = ddWeapon(FindInventory("dualWielding"));
 			dwd.weaponstatus = DDW_RELOADING;
@@ -400,8 +400,8 @@ class twoHanding : ddWeapon
 			ddp.lwx = invoker.lSwapTarget;
 			lWeap = lw.RetItem(ddp.lwx);
 			if(lWeap.bTwoHander && !ddp.CheckESOA(2)) { ddp.ddWeaponState |= DDW_LEFTISTH; }
-			else { ddp.ddWeaponState &= ~DDW_LEFTISTH; }	
-			player.SetPSprite(PSP_LEFTW, lWeap.GetUpState());					
+			else { ddp.ddWeaponState &= ~DDW_LEFTISTH; }
+			player.SetPSprite(PSP_LEFTW, lWeap.GetUpState());
 		}
 		if(ddp.dddebug & DBG_WEAPONS) { A_Log("mode ready"); }
 		invoker.bmodeready = true;  
@@ -409,7 +409,7 @@ class twoHanding : ddWeapon
 		ddp.ddWeaponState &= ~DDW_LEFTNOBOBBING;
 		ddp.ddWeaponState &= ~DDW_RIGHTNOBOBBING;
 		invoker.weaponstatus = DDW_READY;
-		A_ChangeState("Ready");		
+		A_ChangeState("Ready");	
 	}
 	
 	// ## twoHanding States()
