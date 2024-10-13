@@ -89,6 +89,8 @@ class playerInventory : ddWeapon
 	ddWeapon heldLeft, heldRight; //stores new weapon for slot if needed
 	inventoryWeapon sW, tW; //store info about selected weapon/target weapon
 	bool inInventory; // true if selecting inventory slots, false if selecting weapon slots
+	static const string cmdtosearch[] = { "+attack", "+altattack", "+reload", "+zoom", "+user1", "+user2", "+user3", "+user4" };
+	Array<int> commands;
 	Default
 	{
 		Weapon.AmmoType1 "NotAnAmmo";
@@ -187,7 +189,7 @@ class playerInventory : ddWeapon
 		if(ddp)
 		{
 			if(ddp.player.readyweapon is "playerInventory")
-			{				
+			{
 				//if(!(ddp.ddWeaponState & DDW_LEFTREADY) || !(ddp.ddWeaponState & DDW_RIGHTREADY)) { ddp.A_Log("Weapons not ready"); return; }
 				if(ddp.lastmode is "dualWielding")
 				{
@@ -414,6 +416,7 @@ class playerInventory : ddWeapon
 		let ddp = ddPlayer(owner);
 		int fi = ddp.fwx;
 		//temp ints
+		String ou; //used for keybindings
 		int it, lt, rt;
 		let lWeap = ddp.GetLeftWeapons();
 		let rWeap = ddp.GetRightWeapons();
@@ -445,8 +448,24 @@ class playerInventory : ddWeapon
 			hude.DrawImage(fi2.GetIconSprite(), (15, -55), hude.DI_SCREEN_CENTER, 0.3);
 			hude.DrawImage(fi3.GetIconSprite(), (-15, -55), hude.DI_SCREEN_CENTER, 0.3);		
 		}
-		hude.DrawImage(fx.GetIconSprite(), (0, -55), hude.DI_SCREEN_CENTER, 0.85);			
+		hude.DrawImage(fx.GetIconSprite(), (0, -55), hude.DI_SCREEN_CENTER, 0.85);
+		if(flst.items.Size() > 1)
+		{
+			Bindings.GetAllKeysForCommand(commands, cmdtosearch[0]);
+			ou = Bindings.NameAllKeys(commands);
+			ou= hude.ShortenCommandNames(ou);
+			hude.DrawString(hude.fa, ou, (24, -64), hude.DI_SCREEN_CENTER, (ddp.player.cmd.buttons & BT_ATTACK) ? Font.CR_ICE : Font.CR_OLIVE);
+			Bindings.GetAllKeysForCommand(commands, cmdtosearch[1]);
+			ou = Bindings.NameAllKeys(commands);
+			ou = hude.ShortenCommandNames(ou);
+			hude.DrawString(hude.fa, ou, (-44, -64), hude.DI_SCREEN_CENTER, (ddp.player.cmd.buttons & BT_ALTATTACK) ? Font.CR_ICE : Font.CR_OLIVE);
+		}
 		//draw pInv	
+		Bindings.GetAllKeysForCommand(commands, "+user1");
+		ou = Bindings.NameAllKeys(commands);
+		ou = hude.ShortenCommandNames(ou);
+		if(!inInventory) { hude.DrawString(hude.fa, ou, (-4, 44), hude.DI_SCREEN_CENTER, (ddp.player.cmd.buttons & BT_USER1) ? Font.CR_ICE : Font.CR_OLIVE); }
+		else { hude.DrawString(hude.fa, ou, (-120, -20), hude.DI_SCREEN_CENTER, (ddp.player.cmd.buttons & BT_USER1) ? Font.CR_ICE : Font.CR_OLIVE); }
 		if(1)
 		{
 			it = isx;
@@ -463,6 +482,21 @@ class playerInventory : ddWeapon
 			if(ix == storedIndex && storedSide == -1) { iColor = tar; pwd += 11; }
 			hude.DrawString(hude.fa, "[", (-5 - (pwd / 2), 25), hude.DI_SCREEN_CENTER, iColor, (inInventory) ? 0.85 : 0.3);
 			hude.DrawString(hude.fa, "]", (0 + (pwd / 2), 25), hude.DI_SCREEN_CENTER, iColor, (inInventory) ? 0.85 : 0.3);
+			if(inInventory)
+			{
+				Bindings.GetAllKeysForCommand(commands, "+user2");
+				ou = Bindings.NameAllKeys(commands);
+				ou = hude.ShortenCommandNames(ou);
+				hude.DrawString(hude.fa, ou, (-4, 36), hude.DI_SCREEN_CENTER, (ddp.player.cmd.buttons & BT_USER2) ? Font.CR_ICE : Font.CR_OLIVE);				
+				Bindings.GetAllKeysForCommand(commands, "+user3");
+				ou = Bindings.NameAllKeys(commands);
+				ou = hude.ShortenCommandNames(ou);
+				hude.DrawString(hude.fa, ou, (14, 38), hude.DI_SCREEN_CENTER, (ddp.player.cmd.buttons & BT_USER3) ? Font.CR_ICE : Font.CR_OLIVE);
+				Bindings.GetAllKeysForCommand(commands, "+user4");
+				ou = Bindings.NameAllKeys(commands);
+				ou = hude.ShortenCommandNames(ou);
+				hude.DrawString(hude.fa, ou, (-24, 38), hude.DI_SCREEN_CENTER, (ddp.player.cmd.buttons & BT_USER4) ? Font.CR_ICE : Font.CR_OLIVE);
+			}
 		}
 		//draw lWeap
 		if(1)
@@ -483,6 +517,21 @@ class playerInventory : ddWeapon
 			hude.DrawString(hude.fa, "[", (-80 - (lwd / 2), -30), hude.DI_SCREEN_CENTER, lColor, (!inInventory) ? 0.85 : 0.3);
 			hude.DrawString(hude.fa, "]", (-75 + (lwd / 2), -30), hude.DI_SCREEN_CENTER, lColor, (!inInventory) ? 0.85 : 0.3);
 			hude.DrawImage(lw.GetWeaponSprite(), (-75-lwxp,-20), hude.DI_SCREEN_CENTER, (!inInventory) ? 0.75 : 0.3);
+			if(!inInventory && weapSide)
+			{
+				Bindings.GetAllKeysForCommand(commands, "+user2");
+				ou = Bindings.NameAllKeys(commands);
+				ou = hude.ShortenCommandNames(ou);
+				hude.DrawString(hude.fa, ou, (-79, -21), hude.DI_SCREEN_CENTER, (ddp.player.cmd.buttons & BT_USER2) ? Font.CR_ICE : Font.CR_OLIVE);				
+				Bindings.GetAllKeysForCommand(commands, "+user3");
+				ou = Bindings.NameAllKeys(commands);
+				ou = hude.ShortenCommandNames(ou);
+				hude.DrawString(hude.fa, ou, (-59, -19), hude.DI_SCREEN_CENTER, (ddp.player.cmd.buttons & BT_USER3) ? Font.CR_ICE : Font.CR_OLIVE);
+				Bindings.GetAllKeysForCommand(commands, "+user4");
+				ou = Bindings.NameAllKeys(commands);
+				ou = hude.ShortenCommandNames(ou);
+				hude.DrawString(hude.fa, ou, (-99, -19), hude.DI_SCREEN_CENTER, (ddp.player.cmd.buttons & BT_USER4) ? Font.CR_ICE : Font.CR_OLIVE);				
+			}
 		}
 		//draw rWeap
 		if(1)
@@ -504,7 +553,41 @@ class playerInventory : ddWeapon
 			hude.DrawString(hude.fa, "[", (70 - (rwd / 2), -30), hude.DI_SCREEN_CENTER, rColor, (!inInventory) ? 0.85 : 0.3);
 			hude.DrawString(hude.fa, "]", (75 + (rwd / 2), -30), hude.DI_SCREEN_CENTER, rColor, (!inInventory) ? 0.85 : 0.3);
 			hude.DrawImage(rw.GetWeaponSprite(), (75-rwxp,-20), hude.DI_SCREEN_CENTER, (!inInventory) ? 0.75 : 0.3);
+			if(!inInventory && !weapSide)
+			{
+				Bindings.GetAllKeysForCommand(commands, "+user2");
+				ou = Bindings.NameAllKeys(commands);
+				ou = hude.ShortenCommandNames(ou);
+				hude.DrawString(hude.fa, ou, (71, -21), hude.DI_SCREEN_CENTER, (ddp.player.cmd.buttons & BT_USER2) ? Font.CR_ICE : Font.CR_OLIVE);				
+				Bindings.GetAllKeysForCommand(commands, "+user3");
+				ou = Bindings.NameAllKeys(commands);
+				ou = hude.ShortenCommandNames(ou);
+				hude.DrawString(hude.fa, ou, (91, -19), hude.DI_SCREEN_CENTER, (ddp.player.cmd.buttons & BT_USER3) ? Font.CR_ICE : Font.CR_OLIVE);
+				Bindings.GetAllKeysForCommand(commands, "+user4");
+				ou = Bindings.NameAllKeys(commands);
+				ou = hude.ShortenCommandNames(ou);
+				hude.DrawString(hude.fa, ou, (51, -19), hude.DI_SCREEN_CENTER, (ddp.player.cmd.buttons & BT_USER4) ? Font.CR_ICE : Font.CR_OLIVE);				
+			}
 		}
+		if(!inInventory)
+		{
+			Bindings.GetAllKeysForCommand(commands, "+reload");
+			ou = Bindings.NameAllKeys(commands);
+			ou = hude.ShortenCommandNames(ou);
+			if(weapSide) { hude.DrawString(hude.fa, ou, (71, -21), hude.DI_SCREEN_CENTER, (ddp.player.cmd.buttons & BT_RELOAD) ? Font.CR_ICE : Font.CR_OLIVE); }
+			else { hude.DrawString(hude.fa, ou, (-79, -21), hude.DI_SCREEN_CENTER, (ddp.player.cmd.buttons & BT_RELOAD) ? Font.CR_ICE : Font.CR_OLIVE); }
+			
+		}
+		
+		Bindings.GetAllKeysForCommand(commands, "weapdrop");
+		ou = Bindings.NameAllKeys(commands);
+		ou = hude.ShortenCommandNames(ou);
+		hude.DrawString(hude.fa, ""..ou.." : Drop", (-88, 36), hude.DI_SCREEN_CENTER | hude.DI_TEXT_ALIGN_CENTER);				
+		Bindings.GetAllKeysForCommand(commands, "+zoom");
+		ou = Bindings.NameAllKeys(commands);
+		ou = hude.ShortenCommandNames(ou);
+		hude.DrawString(hude.fa, ""..ou.." : Sort", (-88, 46), hude.DI_SCREEN_CENTER | hude.DI_TEXT_ALIGN_CENTER, (ddp.player.cmd.buttons & BT_ZOOM) ? Font.CR_ICE : Font.CR_OLIVE);
+		
 		//draw selWeap info
 		int pos;
 		if(inInventory) { if(ddp is "ddPlayerNormal") {
@@ -552,19 +635,7 @@ class playerInventory : ddWeapon
 					}
 				} 
 			}				
-		}			
-		double helpt = (ddp.helpme/20.);
-		if(ddp.GetHelp)
-		{
-			hude.DrawString(hude.fa, "\ctQuickswap Left"..":".."\ck Select left", (0, -190), hude.DI_SCREEN_CENTER | hude.DI_TEXT_ALIGN_CENTER, 0, helpt);
-			hude.DrawString(hude.fa, "\ctQuickswap Right"..":".."\ck Select right", (0, -180), hude.DI_SCREEN_CENTER | hude.DI_TEXT_ALIGN_CENTER, Font.CR_RED, helpt);
-			hude.DrawString(hude.fa, "\ctLeft Alternative"..":".."\ck Select weapon", (0, -170), hude.DI_SCREEN_CENTER | hude.DI_TEXT_ALIGN_CENTER, Font.CR_RED, helpt);
-			hude.DrawString(hude.fa, "\ctLeft Primary"..":".."\ck Switch to "..((inInventory) ? "inventory" : "weapons"), (0, -160), hude.DI_SCREEN_CENTER | hude.DI_TEXT_ALIGN_CENTER, Font.CR_RED, helpt);
-			hude.DrawString(hude.fa, "\ctReload"..":".."\ck Switch weapon side", (0, -150), hude.DI_SCREEN_CENTER | hude.DI_TEXT_ALIGN_CENTER, Font.CR_RED, helpt);
-			hude.DrawString(hude.fa, "\ctRight Primary"..":".."\ck Fist select right", (0, -140), hude.DI_SCREEN_CENTER | hude.DI_TEXT_ALIGN_CENTER, Font.CR_RED, helpt);
-			hude.DrawString(hude.fa, "\ctRight alternative"..":".."\ck Fist select left", (0, -130), hude.DI_SCREEN_CENTER | hude.DI_TEXT_ALIGN_CENTER, Font.CR_RED, helpt);
-			hude.DrawString(hude.fa, "\ctZoom"..":".."\ck Sort inventory", (0, -120), hude.DI_SCREEN_CENTER | hude.DI_TEXT_ALIGN_CENTER, Font.CR_RED, helpt);
-		}	
+		}
 		
 		//draw ammo
 		hude.DrawString(hude.fa, "Ammo", (0,0), hude.DI_SCREEN_RIGHT_CENTER | hude.DI_TEXT_ALIGN_RIGHT);
@@ -915,7 +986,7 @@ class playerInventory : ddWeapon
 			Goto Ready;
 		Zoom:
 			---- A 35 A_Log("Hold to sort inventory...");
-			---- A 20 SortInventoryIfYouWant;
+			---- A 45 SortInventoryIfYouWant;
 			Goto Ready;
 			
 	}

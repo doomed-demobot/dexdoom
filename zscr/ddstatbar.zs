@@ -278,6 +278,22 @@ class ddStats : BaseStatusBar
 		DrawString(fa, ""..dPlay.CountInv("Cell"), (-25, 130), DI_SCREEN_RIGHT_CENTER);		
 	}
 	
+	String ShortenCommandNames(String inp)
+	{
+		inp.MakeLower();
+		inp.Replace("Mouse1", "M1"); 
+		inp.Replace("Mouse2", "M2");
+		inp.Replace("Mouse3", "M3");
+		inp.Replace("Mouse4", "M4");
+		inp.Replace("Mouse5", "M5");
+		inp.Replace("Backspace", "BS");
+		inp.Replace("Enter", "EN");
+		inp.Replace("SHIFT", "SH");
+		inp.Replace("Space", "SP");
+		inp.Replace("Control", "CT");
+		return inp;
+	}
+	
 	void DPlayDebug()
 	{
 		let wep = ddWeapon(dPlay.player.ReadyWeapon);
