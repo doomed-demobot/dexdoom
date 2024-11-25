@@ -1,11 +1,10 @@
 // #Class : ddChainsaw : ddWeapon replaces Chainsaw()
 //Doom Chainsaw. Unchanged, but cannot be used in dualWielding. No altfire.
-class ddChainsaw : ddWeapon replaces Chainsaw
+//todo: make fistweapon
+class ddChainsaw : ddFist
 {
 	Default
 	{
-		Weapon.Kickback 0;
-		Weapon.SelectionOrder 2200;
 		Weapon.UpSound "weapons/sawup";
 		Weapon.ReadySound "weapons/sawidle";
 		Weapon.AmmoType1 "NotAnAmmo";
@@ -17,12 +16,14 @@ class ddChainsaw : ddWeapon replaces Chainsaw
 		ddWeapon.rating 3;
 		ddWeapon.SwitchSpeed 2;
 		ddWeapon.WeaponType "Chainsaw";
-		+DDWEAPON.TWOHANDER;
+		+DDWEAPON.TWOHANDER;		
+		-DDWEAPON.GOESININV;		
+		ddWeapon.WeaponType "Fist";
 		Inventory.PickupMessage "$GOTCHAINSAW";
 		Obituary "$OB_MPCHAINSAW";
 		Tag "$TAG_CHAINSAW";
 	}
-	
+	/*
 	override void InventoryInfo(ddStats ddhud)
 	{
 		let hud = ddhud;		
@@ -36,6 +37,12 @@ class ddChainsaw : ddWeapon replaces Chainsaw
 	{
 		let hude = ddhud;
 		hude.DrawString(hude.fa, GetTag(), (12, 45), hude.DI_SCREEN_CENTER | hude.DI_TEXT_ALIGN_LEFT);
+	}
+	*/
+	
+	override String GetIconSprite()
+	{
+		return "ICKNFE";
 	}
 	
 	override String GetWeaponSprite() { return "CSAWA0"; }
@@ -68,7 +75,7 @@ class ddChainsaw : ddWeapon replaces Chainsaw
 
 class ddChainsawLeft : ddChainsaw 
 {
-	Default { ddweapon.weaponside CE_LEFT; -DDWEAPON.GOESININV; }
+	Default { -DDFIST.ADDME; ddweapon.weaponside CE_LEFT; }
 	
 	States
 	{
@@ -89,7 +96,7 @@ class ddChainsawLeft : ddChainsaw
 
 class ddChainsawRight : ddChainsaw 
 {	
-	Default { ddweapon.weaponside CE_RIGHT; -DDWEAPON.GOESININV; }
+	Default { -DDFIST.ADDME; ddweapon.weaponside CE_RIGHT; }
 	
 	States
 	{
