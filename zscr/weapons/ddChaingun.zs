@@ -87,8 +87,9 @@ class ddChaingun : ddWeapon replaces Chaingun
 			else { return "CHGGB", 0; }
 		}
 		else { 
-			if(ddp.player.readyweapon is "dualWielding" || ddp.lastmode is "dualWielding") { return (weaponside) ? "CHGGA0" : "CHGRA0", 0; }
-			else { return "CHGGA0", 0; }
+			/*if(ddp.player.readyweapon is "dualWielding" || ddp.lastmode is "dualWielding") { return (weaponside) ? "CHGGA0" : "CHGRA0", 0; }
+			else { return "CHGGA0", 0; }*/
+			return "CHGGA0", 0;
 		}
 	}
 	
@@ -115,9 +116,9 @@ class ddChaingun : ddWeapon replaces Chaingun
 	{
 		let ddp = ddPlayer(owner);
 		ddWeapon mode = ddWeapon(ddp.player.readyweapon);
-		if(mode is "dualWielding" || ddp.player.pendingweapon is "dualWielding" || ddp.lastmode is "dualWielding") {
+		/*if(mode is "dualWielding" || ddp.player.pendingweapon is "dualWielding" || ddp.lastmode is "dualWielding") {
 			ddp.player.GetPSprite(PSP_RIGHTWF).Frame = ((safeflasher) ? 5 : 4); 
-		}
+		}*/
 		if(!safeflasher) { safeflasher = !safeflasher; if(owner.CountInv(AmmoType1.GetClassName()) >= AmmoUse1) { return FindState('Flash'); } else { return FindState('NoFlash'); } }
 		else { safeflasher = !safeflasher; if(owner.CountInv(AmmoType1.GetClassName()) >= AmmoUse1) { return FindState('Flash2'); } else { return FindState('NoFlash'); } } 
 	}
