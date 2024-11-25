@@ -311,8 +311,8 @@ class ddPistolLeft : ddPistol
 			#### B 2 A_FireLeftWeapon;
 			#### C 0 A_DDActionLeft;
 			#### # 1 A_ChangeSpriteLeft;
-			#### #### 1 A_ddRefireLeftHeavy;
-			#### # 5;
+			#### ####### 1 A_ddRefireLeftHeavy;
+			#### # 2;
 			Goto Ready;
 		FireClassic:
 			#### A 0 A_DDActionLeft;
@@ -384,8 +384,8 @@ class ddPistolRight : ddPistol
 			#### B 2 A_FireRightWeapon;
 			#### C 0 A_DDActionRight;
 			#### # 1 A_ChangeSpriteRight;
-			#### #### 1 A_ddRefireRightHeavy;
-			#### # 5;
+			#### ####### 1 A_ddRefireRightHeavy;
+			#### # 2;
 			Goto Ready;
 		FireClassic:
 			#### A 0 A_DDActionRight;
