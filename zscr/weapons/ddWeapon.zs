@@ -30,7 +30,7 @@ class ddWeapon : Weapon
 	//owner cvars
 	bool debuggin, wolfen, swapc, altModeL, altModeR;
 	//weapon stuff
-	bool leftheld, rightheld;
+	bool leftheld, rightheld, zoomheld;
 	ddWeapon companionpiece; 
 	Name weaponType; //general classification for some weapon relations
 	int weaponside;
@@ -397,6 +397,8 @@ class ddWeapon : Weapon
 	
 	action bool A_PressingReload() { return (player.cmd.buttons & BT_RELOAD); }
 	
+	action bool A_PressingZoom() { return (player.cmd.buttons & BT_ZOOM); }
+	
 	
 	// ##goto button checks()
 	bool PressingRightFire() 
@@ -448,7 +450,7 @@ class ddWeapon : Weapon
 	action bool PressingRightSwitch() { let own = ddPlayer(invoker.owner); return (own.player.cmd.buttons & BT_RIGHTSWITCH); }
 	action bool PressingLeftSwitch() { let own = ddPlayer(invoker.owner); return (own.player.cmd.buttons & BT_LEFTSWITCH); }
 	action bool PressingReload() { let own = ddPlayer(invoker.owner); return (own.player.cmd.buttons & BT_RELOAD); }
-	
+	bool PressingZoom() { let own = ddPlayer(owner); return (own.player.cmd.buttons & BT_ZOOM); }
 	// ##goto weapon getters()	
 	
 	void GetCVars()

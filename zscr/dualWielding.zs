@@ -51,6 +51,8 @@ class dualWielding : ddWeapon
 		else { leftheld = false; }
 		if(PressingRightFire() || PressingRightAltFire()) { rightheld = true; }
 		else { rightheld = false; }
+		if(PressingZoom()) { zoomheld = true; }
+		else { zoomheld = false; }
 	}
 	
 	override ddWeapon CreateTossable()
@@ -727,8 +729,9 @@ class dualWielding : ddWeapon
 			---- A 1 A_FireDualWield;
 			Goto Ready;
 		Zoom:
-			---- A 10 
+			---- A 1
 			{ 
+				if(invoker.zoomheld) { return; }
 				if(!(ddPlayer(self).ddWeaponState & DDW_WANNAREPLACE))
 				{ A_StartSound("misc/chat2", CHAN_BODY, 0, 0.67); ddPlayer(self).ddWeaponState |= DDW_WANNAREPLACE; 
 				  A_Log("\ctRight primary\c-: Select Right\n\ctLeft primary\c-: Select Left\n\ctZoom\c-: Cancel");
