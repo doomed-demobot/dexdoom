@@ -21,7 +21,6 @@ class ddFist : ddWeapon replaces Fist
 	flagdef addMe : fistFlags, 0; //set true for parent types to be added to fInv, false for left/right counterparts
 	Default
 	{
-		Weapon.SelectionOrder 3700;
 		Weapon.AmmoType1 "NotAnAmmo";
 		Weapon.AmmoType2 "NotAnAmmo";
 		ddWeapon.ClassicAmmoType1 "NotAnAmmo";
@@ -44,7 +43,7 @@ class ddFist : ddWeapon replaces Fist
 		let hud = ddhud;
 		hud.DrawString(hud.fa, GetTag(), (30, 45), hud.DI_SCREEN_CENTER | hud.DI_TEXT_ALIGN_LEFT);
 		hud.DrawString(hud.fa, "Fist Weapon", (30, 55), hud.DI_SCREEN_CENTER | hud.DI_TEXT_ALIGN_LEFT);
-	}
+	}	
 	
 	override void AttachToOwner(Actor other)
 	{

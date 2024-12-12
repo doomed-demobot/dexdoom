@@ -714,6 +714,10 @@ class playerInventory : ddWeapon
 		}
 		rWeap.RetItem(ddp.rwx).companionpiece = lWeap.RetItem(ddp.lwx);
 		lWeap.RetItem(ddp.lwx).companionpiece = rWeap.RetItem(ddp.rwx);
+		if(rWeap.RetItem(ddp.rwx).bTwoHander) { ddp.ddWeaponState |= DDW_RIGHTISTH; }
+		else { ddp.ddWeaponState &= ~DDW_RIGHTISTH; }
+		if(lWeap.RetItem(ddp.lwx).bTwoHander) { ddp.ddWeaponState |= DDW_LEFTISTH; }
+		else { ddp.ddWeaponState &= ~DDW_LEFTISTH; }
 	}
 	
 	action void A_ChangeSide()

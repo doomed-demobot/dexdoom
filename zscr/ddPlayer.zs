@@ -338,7 +338,7 @@ class ddPlayer : DoomPlayer
 		phyrec = CVar.GetCVar("pl_phyrecoil", player).GetBool();
 		visrec = CVar.GetCVar("pl_visrecoil", player).GetBool();
 		gethelp = CVar.GetCVar("pl_givehelp", player).GetBool();
-		autoreload = CVar.GetCVar("pl_autoreload", player).GetBool();		
+		autoreload = CVar.GetCVar("pl_autoreload", player).GetBool();
 		CVar fouv = Cvar.GetCVar("fov", player);
 		if(helpme > 0.1) { helpme -= 0.5; } else { helpme = 0.0; } 
 		//set debug flags
@@ -822,31 +822,47 @@ class ddPlayer : DoomPlayer
 		}
 	}
 	
-	clearscope ddWeapon GetFists(int side = -1) 
+	clearscope ddWeapon GetFists(int side = -1, bool ignoreTwoHander = false) 
 	{ 
 		let flst = GetFistList();
-		if(side < 0) { return flst.RetItem(fwx); }
+		if(side < 0) 
+		{ 
+			if(!ignoreTwoHander && flst.RetItem(fwx).btwohander && 
+			(player.readyweapon is "dualWielding" || lastmode is "dualWielding") && 
+			!FindInventory("ClassicModeToken")) { 
+				return flst.RetItem(0); 
+			} 			
+			return flst.RetItem(fwx); 
+		}			
 		else
 		{
-			ddWeapon fst = ddWeapon(FindInventory(flst.RetItem(fwx).GetClassName()..((side) ? "Left" : "Right")));
+			ddWeapon fst;		
+			if(!ignoreTwoHander && flst.RetItem(fwx).btwohander && 
+			(player.readyweapon is "dualWielding" || lastmode is "dualWielding") && 
+			!FindInventory("ClassicModeToken")) { 
+				fst = ddWeapon(FindInventory(flst.RetItem(0).GetClassName()..((side) ? "Left" : "Right")));; 
+			}
+			else { fst = ddWeapon(FindInventory(flst.RetItem(fwx).GetClassName()..((side) ? "Left" : "Right"))); }
 			return fst;
 		}
 	}
 	
 	// slot is 0th position
-	clearscope ddWeapon GetLeftWeapon(int slot, bool bypass = false) 
+	clearscope ddWeapon GetLeftWeapon(int slot, bool ignoreTwoHander = false) 
 	{ 
 		let lWeap = GetLeftWeapons();
 		if(slot > lWeap.items.size() - 1 || slot < 0) { return null; }
-		if(!bypass && lWeap.RetItem(slot).bTwoHander && !FindInventory("ClassicModeToken")) { return ddWeapon(GetFists(1)); }
+		if(!ignoreTwoHander && lWeap.RetItem(slot).bTwoHander && !FindInventory("ClassicModeToken")) { return ddWeapon(GetFists(1)); }
 		else { return ddWeapon(lWeap.RetItem(slot)); }
 	}
 	
-	clearscope ddWeapon GetRightWeapon(int slot, bool bypass = false)
+	clearscope ddWeapon GetRightWeapon(int slot, bool ignoreTwoHander = false)
 	{
 		let rWeap = GetRightWeapons();
 		if(slot > rWeap.items.size() - 1 || slot < 0) { return null; }
-		if(!bypass && rWeap.RetItem(slot).bTwoHander && (player.readyweapon is "dualWielding" || lastmode is "dualWielding") && !FindInventory("ClassicModeToken")) { 
+		if(!ignoreTwoHander && rWeap.RetItem(slot).bTwoHander &&
+		(player.readyweapon is "dualWielding" || lastmode is "dualWielding") &&
+		!FindInventory("ClassicModeToken")) { 
 			return ddWeapon(GetFists(0)); 
 		}
 		else { return ddWeapon(rWeap.RetItem(slot)); }

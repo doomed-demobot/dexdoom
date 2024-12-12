@@ -1,10 +1,11 @@
 // #Class : ddChainsaw : ddWeapon replaces Chainsaw()
 //Doom Chainsaw. Unchanged, but cannot be used in dualWielding. No altfire.
 //todo: make fistweapon
-class ddChainsaw : ddFist
+class ddChainsaw : ddFist 
 {
 	Default
 	{
+		Inventory.MaxAmount 2;
 		Weapon.UpSound "weapons/sawup";
 		Weapon.ReadySound "weapons/sawidle";
 		Weapon.AmmoType1 "NotAnAmmo";
@@ -14,10 +15,11 @@ class ddChainsaw : ddFist
 		Weapon.AmmoUse1  0;
 		Weapon.AmmoUse2  0;
 		ddWeapon.rating 3;
-		ddWeapon.SwitchSpeed 2;
+		ddWeapon.SwitchSpeed 0.75;
 		ddWeapon.WeaponType "Chainsaw";
-		+DDWEAPON.TWOHANDER;		
-		-DDWEAPON.GOESININV;		
+		+DDWEAPON.TWOHANDER;
+		-DDWEAPON.GOESININV;	
+		+DDFIST.ADDME;
 		ddWeapon.WeaponType "Fist";
 		Inventory.PickupMessage "$GOTCHAINSAW";
 		Obituary "$OB_MPCHAINSAW";
@@ -42,10 +44,9 @@ class ddChainsaw : ddFist
 	
 	override String GetIconSprite()
 	{
-		return "ICKNFE";
+		return "ICCHAI";
 	}
 	
-	override String GetWeaponSprite() { return "CSAWA0"; }
 	override String GetParentType() { return "ddChainsaw"; }
 	
 	override void primaryattack() { A_ddSaw(); }
@@ -67,15 +68,12 @@ class ddChainsaw : ddFist
 			Goto Ready;
 		Fire:
 			Goto Ready;
-		Spawn:
-			CSAW A -1;
-			Stop;
 	}
 }
 
 class ddChainsawLeft : ddChainsaw 
 {
-	Default { -DDFIST.ADDME; ddweapon.weaponside CE_LEFT; }
+	Default { Inventory.MaxAmount 1; -DDFIST.ADDME; ddweapon.weaponside CE_LEFT; }
 	
 	States
 	{
@@ -96,7 +94,7 @@ class ddChainsawLeft : ddChainsaw
 
 class ddChainsawRight : ddChainsaw 
 {	
-	Default { -DDFIST.ADDME; ddweapon.weaponside CE_RIGHT; }
+	Default { Inventory.MaxAmount 1; -DDFIST.ADDME; ddweapon.weaponside CE_RIGHT; }
 	
 	States
 	{
@@ -114,6 +112,34 @@ class ddChainsawRight : ddChainsaw
 		Altfire:
 			Goto Ready;	
 	}
+}
+
+// #Class ChainsawPK : CustomInventory()
+class ChainsawPK : CustomInventory replaces Chainsaw
+{
+	Default
+	{
+		Inventory.Amount 1;
+		Inventory.MaxAmount 2;
+		Inventory.PickupMessage "You found a chainsaw!";
+		Inventory.PickupSound "misc/secret";
+		-INVENTORY.INVBAR;
+		+INVENTORY.UNTOSSABLE;
+		+INVENTORY.UNDROPPABLE;	
+	}
+	
+	States
+	{	
+		Spawn:
+			CSAW A -1;
+			Stop;
+		Pickup:
+			TNT1 A 1 A_GiveInventory("ddChainsaw", 1);
+			TNT1 A 0 A_GiveInventory("ddChainsawLeft", 1);
+			TNT1 A 0 A_GiveInventory("ddChainsawRight", 1);
+			Stop;
+	}
+	
 }
 
 extend class ddWeapon
