@@ -237,10 +237,10 @@ class ddChaingunLeft : ddChaingun
 			CHGG B 0 A_ddRefireLeft;
 			Goto Ready;
 		Flash:
-			CHGF C 5 Bright A_Light2;
+			CHGF # 5 Bright A_Light2;
 			Goto FlashDone;
 		Flash2:
-			CHGF D 5 Bright A_Light2;
+			CHGF # 5 Bright A_Light2;
 			Goto FlashDone;
 	}
 }
