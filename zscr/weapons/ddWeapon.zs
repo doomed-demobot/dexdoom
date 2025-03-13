@@ -1031,7 +1031,7 @@ class ddWeapon : Weapon
 				if(ddp.dddebug & DBG_WEAPSEQUENCE) { A_Log("Left weapon mag is empty"); }
 				ddp.player.SetPSprite(PSP_LEFTW, lWeap.FindState('Ready'));
 				invoker.bModeReady = true;
-				if(ddp.ddWeaponState & DDW_RIGHTREADY) { rWeap.weaponstatus = DDW_UNLOADING; mode.A_CheckRightWeaponMag(); }
+				//if(ddp.ddWeaponState & DDW_RIGHTREADY) { rWeap.weaponstatus = DDW_UNLOADING; mode.A_CheckRightWeaponMag(); }
 				return;
 			}
 			
