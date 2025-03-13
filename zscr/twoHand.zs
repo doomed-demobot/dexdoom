@@ -9,7 +9,7 @@ class twoHanding : ddWeapon
 		Weapon.BobRangeX 0;
 		Weapon.BobRangeY 0;
 		Weapon.BobSpeed 0;
-		Weapon.SelectionOrder 1;
+		Weapon.SelectionOrder 350;
 		Weapon.UpSound "weapon/twohup";
 		Inventory.Amount 1;
 		Inventory.MaxAmount 1;

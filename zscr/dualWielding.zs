@@ -489,6 +489,7 @@ class dualWielding : ddWeapon
 			else if(A_PressingReload())
 			{
 				if(FindInventory("ClassicModeToken")) { return; }
+				/*
 				if(player.cmd.buttons & BT_USE)
 				{
 					if(ddp.ddWeaponState & DDW_RIGHTREADY)
@@ -515,6 +516,12 @@ class dualWielding : ddWeapon
 							rw.weaponready = false;
 						}
 					}
+				}*/
+				if(ddp.ddWeaponState & DDW_LEFTREADY)
+				{
+					A_CheckLeftWeaponMag();
+					lw.weaponready = false;
+					rw.weaponready = false;		
 				}
 			}
 		}

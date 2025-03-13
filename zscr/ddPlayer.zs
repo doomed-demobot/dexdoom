@@ -14,7 +14,7 @@ class ddPlayer : DoomPlayer
 	int ComboTimer; //set by weapons
 	int fwx;
 	inventoryWeapon invTemp;
-	ddWeapon lastmode; //remember previous mode [dual or 2h]
+	ddWeapon lastmode; //remember previous mode [dual or 2h] todo: put in pocket so it doesnt get cleared on death
 	bool swapDown;
 	float helpme; // holds transparency of help text
 	uint8 dddebug;
@@ -39,7 +39,9 @@ class ddPlayer : DoomPlayer
 		Player.StartItem "dualWielding";
 		Player.StartItem "inventoryOpener";
 		Player.StartItem "esoaActivator";
-		Player.StartItem "unloadActivator";
+		Player.StartItem "reloadRight";
+		Player.StartItem "unloadActivatorRight";
+		Player.StartItem "unloadActivatorLeft";
 		Player.StartItem "playerInventory";
 		Player.StartItem "ddFist";
 		Player.StartItem "ddFistLeft";
@@ -91,9 +93,9 @@ class ddPlayer : DoomPlayer
 		combotimer = 0;
 		desire = null;
 	}
-	
+	//todo: gdi doesnt set readyweapon to ddfistright. find what does
 	override void GiveDefaultInventory()
-	{
+	{	
 		Super.GiveDefaultInventory();
 		invtemp = inventoryWeapon(FindInventory("inventoryWeapon"));
 		rwx = 0;
@@ -1214,7 +1216,7 @@ class esoaActivator : CustomInventory
 	}	
 }
 
-class unloadActivator : custominventory
+class unloadActivatorLeft : custominventory
 {
 	Default
 	{
@@ -1229,28 +1231,20 @@ class unloadActivator : custominventory
 		+INVENTORY.UNTOSSABLE;
 	}
 	
-	action void A_UseUnload()
+	action void A_UseUnloadLeft()
 	{
 		let ddp = ddPlayer(Self);
 		let mode = ddWeapon(ddp.player.readyweapon);
 		let lw = ddp.GetLeftWeapon(ddp.lwx);
 		let rw = ddp.GetRightWeapon(ddp.rwx);
+		if(!(mode is "dualWielding")) { if(ddp.dddebug & DBG_WEAPONS) { A_Log("Not dualwielding"); } return; }
 		if(mode.weaponstatus == DDW_READY)
 		{
 			lw.weaponready = false;
 			rw.weaponready = false;
-			if(mode is "twoHanding" || ddp.player.cmd.buttons & BT_USE)
-			{
-				rw.weaponstatus = DDW_UNLOADING;
-				mode.A_CheckRightWeaponMag();
-				return;
-			}
-			else
-			{
-				lw.weaponstatus = DDW_UNLOADING;
-				mode.A_CheckLeftWeaponMag();
-				return;
-			}
+			lw.weaponstatus = DDW_UNLOADING;
+			mode.A_CheckLeftWeaponMag();
+			return;
 		}
 		else
 		{
@@ -1264,10 +1258,98 @@ class unloadActivator : custominventory
 			TNT1 A -1;
 			Stop;
 		Use:
-			---- A 1 A_UseUnload;
+			---- A 1 A_UseUnloadLeft;
 			Loop;
+	}	
+}
+class unloadActivatorRight : custominventory
+{
+	Default
+	{
+		Inventory.Amount 1;
+		Inventory.MaxAmount 1;
+		Inventory.UseSound "";
+		-INVENTORY.INVBAR;
+		-INVENTORY.AUTOACTIVATE;
+		+INVENTORY.IGNORESKILL;
+		+INVENTORY.QUIET;
+		+INVENTORY.UNDROPPABLE;
+		+INVENTORY.UNTOSSABLE;
 	}
 	
+	action void A_UseUnloadRight()
+	{
+		let ddp = ddPlayer(Self);
+		let mode = ddWeapon(ddp.player.readyweapon);
+		let lw = ddp.GetLeftWeapon(ddp.lwx);
+		let rw = ddp.GetRightWeapon(ddp.rwx);
+		if(mode.weaponstatus == DDW_READY)
+		{
+			lw.weaponready = false;
+			rw.weaponready = false;
+			rw.weaponstatus = DDW_UNLOADING;
+			mode.A_CheckRightWeaponMag();
+			return;
+		}
+		else
+		{
+			if(ddp.dddebug & DBG_WEAPONS) { A_Log("Mode not ready"); return; }
+		}
+	}
+	
+	States
+	{
+		Spawn:
+			TNT1 A -1;
+			Stop;
+		Use:
+			---- A 1 A_UseUnloadRight;
+			Loop;
+	}	
+}
+
+class reloadRight : CustomInventory
+{
+	Default
+	{
+		Inventory.Amount 1;
+		Inventory.MaxAmount 1;
+		Inventory.UseSound "";
+		-INVENTORY.INVBAR;
+		-INVENTORY.AUTOACTIVATE;
+		+INVENTORY.IGNORESKILL;
+		+INVENTORY.QUIET;
+		+INVENTORY.UNDROPPABLE;
+		+INVENTORY.UNTOSSABLE;
+	}
+	
+	action void A_UseReloadRight()
+	{
+		let ddp = ddPlayer(self);
+		let mode = ddWeapon(ddp.player.readyweapon);
+		let lw = ddp.GetLeftWeapon(ddp.lwx);
+		let rw = ddp.GetRightWeapon(ddp.rwx);
+		if(mode.WeaponStatus == DDW_READY)
+		{
+			lw.weaponready = false;
+			rw.weaponready = false;
+			rw.weaponstatus = DDW_RELOADING;
+			mode.A_CheckRightWeaponMag();
+			return;
+		}
+		else { if(ddp.dddebug & DBG_WEAPONS) { A_Log("Mode not ready"); } return; }
+		
+	}
+	
+	States
+	{
+		Spawn:
+			TNT1 A -1;
+			Stop;
+		Use:
+			---- A 1 A_UseReloadRight;
+			Loop;
+	}
 }
 
 //token given to classic mode player; disables altfire, extra items and special weapon handling
