@@ -410,7 +410,7 @@ extend class ddWeapon
 		double pitch = BulletSlope ();
 		for (int i = 0; i < pels; i++)
 		{
-			if(pen) { eA = (Random2() * (6.67 / 256)); eP = (Random2() * (3.45 / 256)); } 
+			if(pen) { eA = (Random2() * (4.44 / 256)); eP = (Random2() * (2.33 / 256)); } 
 			else { eA = random2() * (3.925 / 256); eP = random2() * (1.225 / 256); }
 			dam = 5 * random(1,((ddp is "ddPlayerClassic") ? 3 : 4));
 			if(ddp is "ddPlayerClassic") { eP = 0; }
