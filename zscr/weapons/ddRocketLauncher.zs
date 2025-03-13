@@ -175,6 +175,10 @@ class ddRocketLauncher : ddWeapon replaces RocketLauncher
 			case 2: //reload checks 1
 				if(mag < default.mag && ddp.CountInv("RocketAmmo") > 0) { 
 					mag++; ddp.TakeInventory("RocketAmmo", 1); ddp.A_StartSound("weapons/rocketload", CHAN_WEAPON, CHANF_OVERLAP); SetCaseNumber(3);
+					if(mag >= default.mag || ddp.CountInv("RocketAmmo") < 1) {
+						ddWeaponFlags &= ~RKL_RLOD; ddWeaponFlags |= RKL_RSEQ; 
+						SetCaseNumber(5); ChangeState("RFinish", myside); 					
+					}
 				}
 				else { 
 					ddWeaponFlags &= ~RKL_RLOD; ddWeaponFlags |= RKL_RSEQ; 
@@ -183,7 +187,11 @@ class ddRocketLauncher : ddWeapon replaces RocketLauncher
 				break;
 			case 3: //reload checks 2
 				if(mag < default.mag && ddp.CountInv("RocketAmmo") > 0) { 
-					mag++; ddp.TakeInventory("RocketAmmo", 1); ddp.A_StartSound("weapons/rocketload", CHAN_WEAPON, CHANF_OVERLAP); SetCaseNumber(2); ChangeState("Load", myside); 
+					mag++; ddp.TakeInventory("RocketAmmo", 1); ddp.A_StartSound("weapons/rocketload", CHAN_WEAPON, CHANF_OVERLAP); SetCaseNumber(2); ChangeState("Load", myside);
+					if(mag >= default.mag || ddp.CountInv("RocketAmmo") < 1) {
+						ddWeaponFlags &= ~RKL_RLOD; ddWeaponFlags |= RKL_RSEQ; 
+						SetCaseNumber(5); ChangeState("RFinish", myside); 					
+					}
 				}
 				else { 
 					ddWeaponFlags &= ~RKL_RLOD; ddWeaponFlags |= RKL_RSEQ; 
@@ -271,11 +279,12 @@ class ddRocketLauncherLeft : ddRocketLauncher
 			MISG B 5;
 			MISG B 1 A_ddActionLeft;
 		Load:
-			MISG B 15;
+			MISG B 10;
 			MISG B 5 A_DDActionLeft;
 			MISG B 1 A_DDActionLeft;
 		RFinish:
-			MISG A 10 A_RLPump1;
+			MISG A 5;
+			MISG A 5 A_RLPump1;
 			MISG A 2 A_RLPump2;
 			MISG A 1 A_DDActionLeft;
 			Goto Ready;
@@ -320,11 +329,12 @@ class ddRocketLauncherRight : ddRocketLauncher
 			MISG B 5;
 			MISG B 1 A_DDActionRight;
 		Load:
-			MISG B 15;
+			MISG B 10;
 			MISG B 5 A_DDActionRight;
 			MISG B 1 A_DDActionRight;
 		RFinish:
-			MISG A 10 A_RLPump1;
+			MISG A 5;
+			MISG A 5 A_RLPump1;
 			MISG A 2 A_RLPump2;
 			MISG A 1 A_DDActionRight;
 			Goto Ready;
@@ -399,7 +409,7 @@ class ddGrenade : Actor
 		BounceFactor 0.5;
 		SeeSound "weapons/grenade";
 		BounceSound "weapons/grenadeb";
-		DeathSound "weapons/rocklx";
+		DeathSound "weapons/grenadeb";
 		Obituary "%o blocked %k's pass.";
 		+BOUNCEONWALLS;
 		+BOUNCEONFLOORS;
@@ -413,7 +423,9 @@ class ddGrenade : Actor
 			GRNA A 1;
 			Loop;
 		Death:
+			GRNA A 30;
 			MISL B 0 { self.bNoGravity = true; }
+			MISL B 0 A_StartSound("weapons/rocklx", CHAN_BODY);
 			MISL B 8 Bright A_Explode;
 			MISL C 6 Bright;
 			MISL D 4 Bright;
