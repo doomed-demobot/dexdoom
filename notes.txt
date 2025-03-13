@@ -52,6 +52,6 @@ notes:
 	playattacking() must be called during successful passes in dd_condition; no longer called per attack call in modes
 	changing readyweapon (caller) resets psprite info (coordinates, flags, and/or sprite?) (of all linked by caller?)
 	changing psp_weapon runs new state once then finishes rest of function
-	psprites are depended on their pointers towards actors for states (e.g. if rw isn't the same rw after a weapon switch, it is empty);
+	psprites are dependent on their pointers towards actors for states (e.g. if rw isn't the same rw after a weapon switch, it is empty);
 	changing psprite states-including to null- retains psprite info
 	clearinventory() and givedefaultinventory() are called before intermission screen
