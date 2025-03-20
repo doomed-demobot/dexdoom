@@ -518,6 +518,16 @@ class ddWeapon : Weapon
 	{
 		return "TNT1A0", -1;
 	}
+	
+	virtual void DD_WeapAction(int no)
+	{
+		if(owner) { owner.A_Log("No action defined for tic "..no); }
+	}
+	
+	virtual void DD_WeapSound(int no)
+	{
+		if(owner) { owner.A_Log("No sound defined for tic "..no); }
+	}
 	//used to call non-action functions with A_ddAction with casenumbers
 	virtual void DD_Condition(int cn)
 	{
@@ -888,6 +898,52 @@ class ddWeapon : Weapon
 		mag = 0;
 	}
 	
+	action void TestFunc()
+	{
+		let ddp = ddPlayer(self);
+		let pspl = ddp.player.GetPSprite(PSP_LEFTW);
+		Console.printf(""..(pspl.Tics));
+		pspl.Tics = 0;
+	}
+	
+	//weapon sounds should be defined with the tics in the frame
+	action void A_WeapSoundLeft()
+	{
+		let ddp = ddPlayer(self);
+		let weap = ddp.GetLeftWeapon(ddp.lwx);
+		let pspl = ddp.player.GetPSprite(PSP_LEFTW);
+		if(weap) { weap.DD_WeapSound(pspl.tics); }
+		pspl.tics = 0;
+	}
+	
+	action void A_WeapSoundRight()
+	{
+		let ddp = ddPlayer(self);
+		let weap = ddp.GetRightWeapon(ddp.rwx);
+		let pspr = ddp.player.GetPSprite(PSP_RIGHTW);
+		if(weap) { weap.DD_WeapSound(pspr.tics); }
+		pspr.tics = 0;
+	}
+	
+	action void A_WeapActionLeft()
+	{
+		let ddp = ddPlayer(self);
+		let weap = ddp.GetLeftWeapon(ddp.lwx);
+		let pspl = ddp.player.GetPSPrite(PSP_LEFTW);
+		if(weap) { weap.DD_WeapAction(pspl.tics); }
+		pspl.tics = 0;
+	}
+	
+	action void A_WeapActionRight()
+	{
+		let ddp = ddPlayer(self);
+		let weap = ddp.GetRightWeapon(ddp.rwx);
+		let pspr = ddp.player.GetPSprite(PSP_RIGHTW);
+		if(weap) { weap.DD_WeapAction(pspr.tics); }
+		pspr.tics = 0;
+	}
+	
+	//deprecated
 	action void A_ddActionLeft()
 	{
 		let ddp = ddPlayer(self);
