@@ -625,8 +625,11 @@ class ddWeapon : Weapon
 	void ChangeState(statelabel st, int layer = PSP_WEAPON)
 	{
 		let own = ddPlayer(owner);
-		if(own.player)
-			own.player.SetPSprite(layer, FindState(st));
+		let psp = own.player.GetPSprite(layer);
+		if(own.player) {
+			//own.player.SetPSprite(layer, FindState(st));
+			psp.SetState(FindState(st));
+		}
 	}
 	action void A_ChangeState(statelabel st, int layer = PSP_WEAPON)
 	{
@@ -912,8 +915,9 @@ class ddWeapon : Weapon
 		let ddp = ddPlayer(self);
 		let weap = ddp.GetLeftWeapon(ddp.lwx);
 		let pspl = ddp.player.GetPSprite(PSP_LEFTW);
-		if(weap) { weap.DD_WeapSound(pspl.tics); }
+		int no = pspl.tics;
 		pspl.tics = 0;
+		if(weap) { weap.DD_WeapSound(no); }
 	}
 	
 	action void A_WeapSoundRight()
@@ -921,8 +925,9 @@ class ddWeapon : Weapon
 		let ddp = ddPlayer(self);
 		let weap = ddp.GetRightWeapon(ddp.rwx);
 		let pspr = ddp.player.GetPSprite(PSP_RIGHTW);
-		if(weap) { weap.DD_WeapSound(pspr.tics); }
+		int no = pspr.tics;
 		pspr.tics = 0;
+		if(weap) { weap.DD_WeapSound(no); }
 	}
 	
 	action void A_WeapActionLeft()
@@ -930,8 +935,9 @@ class ddWeapon : Weapon
 		let ddp = ddPlayer(self);
 		let weap = ddp.GetLeftWeapon(ddp.lwx);
 		let pspl = ddp.player.GetPSPrite(PSP_LEFTW);
-		if(weap) { weap.DD_WeapAction(pspl.tics); }
+		int no = pspl.tics;
 		pspl.tics = 0;
+		if(weap) { weap.DD_WeapAction(no); }
 	}
 	
 	action void A_WeapActionRight()
@@ -939,8 +945,9 @@ class ddWeapon : Weapon
 		let ddp = ddPlayer(self);
 		let weap = ddp.GetRightWeapon(ddp.rwx);
 		let pspr = ddp.player.GetPSprite(PSP_RIGHTW);
-		if(weap) { weap.DD_WeapAction(pspr.tics); }
+		int no = pspr.tics;
 		pspr.tics = 0;
+		if(weap) { weap.DD_WeapAction(no); }
 	}
 	
 	//deprecated
