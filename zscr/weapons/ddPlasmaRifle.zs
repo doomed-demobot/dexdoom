@@ -185,34 +185,23 @@ class ddPlasmaRifle : ddWeapon replaces PlasmaRifle
 		else { return FindState("DoNotJump"); }
 	}
 	
-	override void DD_Condition(int cn)
-	{
-		int caseno = cn;
+	override void DD_WeapAction(int no)
+	{		
 		let ddp = ddPlayer(owner);
 		let mode = ddWeapon(ddp.player.readyweapon);
 		let me = ddWeapon(self);
 		let cpiece = ddWeapon(me.companionpiece);
 		int myside = (weaponside) ? PSP_LEFTW : PSP_RIGHTW; 
 		int flashside = (weaponside) ? PSP_LEFTWF : PSP_RIGHTWF;
-		switch(caseno)
+		switch(no)
 		{
-			case 0: //init/ammo check
+			case 1: //init/ammo check
 				int cost = (bAltFire) ? AmmoUse2 : AmmoUse1;
 				if(ddp.CountInv("Cell") < cost) { charge = 0; ChangeState('NoAmmo', myside); break; }
-				ddp.PlayAttacking(); 
-				SetCaseNumber((bAltFire) ? 3 : 1);
+				ddp.PlayAttacking();
 				break;
-			case 1: //mag check
-				if(mag < 1) { weaponstatus = DDW_RELOADING; ChangeState('ReloadP', myside); SetCaseNumber(2); break; }
-				SetCaseNumber(0);
-				break;
-			case 2: //reload
-				mag += 5;
-				double pit = 1. * ((mag+0.0)/(default.mag+0.0));
-				ddp.A_StartSound("weapons/plasmax", CHAN_WEAPON, CHANF_OVERLAP, 1., ATTN_NORM, pit);
-				if(mag > 50) { mag = 50; }
-				if(weaponside) { if(mag < 50 && !(PressingLeftFire())) { ChangeState("ReloadP", myside); break; } }
-				else { if(mag < 50 && !(PressingRightFire())) { ChangeState("ReloadP", myside); break; } }
+			case 2: //mag check
+				if(mag < 1) { weaponstatus = DDW_RELOADING; ChangeState('ReloadP', myside); break; }
 				break;
 			case 3: //alt charge shot
 				if(mag > 0 && ddp.CountInv("Cell") > 1)
@@ -222,10 +211,21 @@ class ddPlasmaRifle : ddWeapon replaces PlasmaRifle
 					ddp.TakeInventory("Cell", 2);
 					mag-=1;
 				}
-				else { charge = 0; ddp.A_StartSound("misc/woosh", CHAN_WEAPON, CHANF_OVERLAP); SetCaseNumber(0); ChangeState("NoAmmo", myside); ChangeState(null, flashside); break; }
+				else { charge = 0; ddp.A_StartSound("misc/woosh", CHAN_WEAPON, CHANF_OVERLAP); ChangeState("NoAmmo", myside); ChangeState(null, flashside); break; }
 				break;
-			default: break;
-		}		
+			case 4: //reload
+				mag += 5;
+				double pit = 1. * ((mag+0.0)/(default.mag+0.0));
+				ddp.A_StartSound("weapons/plasmax", CHAN_WEAPON, CHANF_OVERLAP, 1., ATTN_NORM, pit);
+				if(mag > 50) { mag = 50; }
+				break;
+			case 5: //reload loop
+				if(weaponside) { if(mag < 50 && !(PressingLeftFire())) { ChangeState("ReloadP", myside); break; } }
+				else { if(mag < 50 && !(PressingRightFire())) { ChangeState("ReloadP", myside); break; } }
+				break;
+				
+			default: ddp.A_Log("No action defined for tic "..no); break;
+		}
 	}
 	
 	// ## ddPlasmaRifle States()
@@ -289,21 +289,29 @@ class ddPlasmaRifleLeft : ddPlasmaRifle
 			PLSG A 1 A_LeftWeaponReady;
 			Loop;
 		Fire:
-			PLSG A 0 A_DDActionLeft;
+			PLSG A 1 A_WeapActionLeft;
 			PLSG A 2 A_SetTicksLeft;
 			PLSG A 0 A_FlashLeft;
 			PLSG A 1 A_FireLeftWeapon;
-			PLSG A 0 A_DDActionLeft;
+			PLSG A 2 A_WeapActionLeft;
 			PLSG A 2 A_ddRefireLeft;
 			Goto Ready;
 		Altfire:
-			PLSG A 5 A_DDActionLeft;
+			PLSG A 1 A_WeapActionLeft;
+			PLSG A 5;
 			PLSG A 0 A_FlashLeft;
-			PLSG AA 6 A_DDActionLeft;
-			PLSG AA 4 A_DDActionLeft;
+			PLSG A 3 A_WeapActionLeft;
+			PLSG A 6;
+			PLSG A 3 A_WeapActionLeft;
+			PLSG A 6;
+			PLSG A 3 A_WeapActionLeft;
+			PLSG A 4;
+			PLSG A 3 A_WeapActionLeft;
+			PLSG A 4;
 		Charging:
 			PLSG A 0 A_FlashLeft;
-			PLSG A 4 A_DDActionLeft;
+			PLSG A 3 A_WeapActionLeft;
+			PLSG A 4;
 			PLSG A 2 A_ddRefireLeft;
 			PLSG A 25 A_FireLeftWeapon;
 			Goto Ready;
@@ -316,7 +324,9 @@ class ddPlasmaRifleLeft : ddPlasmaRifle
 			#### # 0 A_ChangeSpriteLeft;
 			#### # 0 A_FlashLeft;
 			#### # 5;
-			#### # 1 A_DDActionLeft;
+			#### # 4 A_WeapActionLeft;
+			#### # 5;
+			#### # 5 A_WeapActionLeft;
 			#### # 10;
 			Goto Ready;
 	}
@@ -333,26 +343,33 @@ class ddPlasmaRifleRight : ddPlasmaRifle
 			PLSG A 1 A_RightWeaponReady;
 			Loop;
 		Fire:
-			PLSG A 0 A_DDActionRight;
+			PLSG A 1 A_WeapActionRight;
 			PLSG A 2 A_SetTicksRight;
 			PLSG A 0 A_FlashRight;
 			PLSG A 1 A_FireRightWeapon;
-			PLSG A 0 A_DDActionRight;
+			PLSG A 2 A_WeapActionRight;
 			PLSG A 2 A_ddRefireRight;
 			Goto Ready;
 		Altfire:
 			PLSG A 5 A_DDActionRight;
 			PLSG A 0 A_FlashRight;
-			PLSG AA 6 A_DDActionRight;
-			PLSG AA 4 A_DDActionRight;
+			PLSG A 3 A_WeapActionRight;
+			PLSG A 6;
+			PLSG A 3 A_WeapActionRight;
+			PLSG A 6;
+			PLSG A 3 A_WeapActionRight;
+			PLSG A 4;
+			PLSG A 3 A_WeapActionRight;
+			PLSG A 4;
 		Charging:
 			PLSG A 0 A_FlashRight;
-			PLSG A 4 A_DDActionRight;
+			PLSG A 3 A_WeapActionRight;
+			PLSG A 4;
 			PLSG A 2 A_ddRefireRight;
 			PLSG A 25 A_FireRightWeapon;
 			Goto Ready;
 		FireClassic:
-			PLSG A 0 A_DDActionRight;
+			PLSG A 1 A_WeapActionRight;
 			PLSG A 0 A_FlashRight;
 			PLSG A 3 A_FireRightWeapon;
 			PLGF B 20 A_ddRefireRight;
@@ -361,7 +378,9 @@ class ddPlasmaRifleRight : ddPlasmaRifle
 			#### # 0 A_ChangeSpriteRight;
 			#### # 0 A_FlashRight;
 			#### # 5;
-			#### # 1 A_DDActionRight;
+			#### # 4 A_WeapActionRight;
+			#### # 5;
+			#### # 5 A_WeapActionRight;
 			#### # 10;
 			Goto Ready;
 	}

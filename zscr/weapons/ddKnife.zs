@@ -56,9 +56,8 @@ class ddKnife : ddFist
 		}
 	}
 	
-	override void DD_Condition(int cn)
-	{
-		int caseno = cn;
+	override void DD_WeapAction(int no)
+	{		
 		let ddp = ddPlayer(owner);
 		let pspl = ddp.player.GetPSprite(PSP_LEFTW);
 		let psplf = ddp.player.GetPSprite(PSP_LEFTWF);
@@ -66,33 +65,26 @@ class ddKnife : ddFist
 		let psprf = ddp.player.GetPSprite(PSP_RIGHTWF);
 		int myside = (weaponside) ? PSP_LEFTW : PSP_RIGHTW; 
 		int flashside = (weaponside) ? PSP_LEFTWF : PSP_RIGHTWF;
-		switch(caseno)
+		switch(no)
 		{
-			case 0:
 			case 1:
-			case 2: //just in case
-			default:
-				if(weaponside)
-				{
+				if(weaponside) {
 					if(ddp.combo == COM_QUICK) { ChangeState("QuickJab", myside); break; } 
 					if(!(ddp.ddWeaponState & DDW_RIGHTREADY)) { ChangeState("Ready", myside); }
 					else { 
 						if(ddp.dddebug & DBG_WEAPSEQUENCE && ddp.dddebug & DBG_VERBOSE) { ddp.A_Log("Left fist attack blocked by right attack"); } 
 					}
 				}
-				else
-				{
+				else {
 					if(!(ddp.ddWeaponState & DDW_LEFTREADY)) { ChangeState("Ready", myside); }
 					else {
 						if(ddp.dddebug & DBG_WEAPSEQUENCE && ddp.dddebug & DBG_VERBOSE) { ddp.A_Log("Right fist attack blocked by left attack"); } 
-					}
-					
+					}				
 				}
-				break;
+				break;				
+			default: ddp.A_Log("No action defined for tic "..no); break;
 		}
-	
-	}
-	
+	}	
 	
 	// ## ddKnife States()
 	States
@@ -130,7 +122,7 @@ class ddKnifeLeft : ddKnife
 			KNFL A 1;
 			Loop;
 		Fire:
-			KNFL A 0 A_DDActionLeft;
+			KNFL A 1 A_WeapActionLeft;
 			KNFL BC 2;
 			KNFL CD 1;
 			KNFL E 1 A_Whoosh2;
@@ -166,7 +158,7 @@ class ddKnifeRight : ddKnife
 			KNFR A 1;
 			Loop;
 		Fire:
-			KNFR A 0 A_DDActionRight;
+			KNFR A 1 A_WeapActionRight;
 			KNFR BCD 1;
 			KNFR E 1 A_Whoosh;
 			KNFR F 2; 

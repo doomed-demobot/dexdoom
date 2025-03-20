@@ -42,9 +42,8 @@ class ddPowerFist : ddFist
 	
 	override void primaryattack() { A_PowerPunch(); }
 	
-	override void DD_Condition(int cn)
+	override void DD_WeapAction(int no)
 	{
-		int caseno = cn;
 		let ddp = ddPlayer(owner);
 		let pspl = ddp.player.GetPSprite(PSP_LEFTW);
 		let psplf = ddp.player.GetPSprite(PSP_LEFTWF);
@@ -54,11 +53,10 @@ class ddPowerFist : ddFist
 		let cpiece = ddWeapon(me.companionpiece);
 		int myside = (weaponside) ? PSP_LEFTW : PSP_RIGHTW;
 		int flashside = (weaponside) ? PSP_LEFTWF : PSP_RIGHTWF;
-		switch(caseno)
+		switch(no)
 		{
-			case 0: //init/ready check
-				if(PressingLeftFire() && PressingRightFire())
-				{
+			case 1: //init/ready check
+				if(PressingLeftFire() && PressingRightFire()) {
 					if(me is "ddPowerFist" && cpiece is "ddPowerFist") { 
 						if(me.weaponside) { pspl.SetState(me.FindState("Double")); }
 						else { pspr.SetState(me.FindState("Double")); }
@@ -67,22 +65,20 @@ class ddPowerFist : ddFist
 						break;
 					}
 				}
-				if(weaponside)
-				{
+				if(weaponside) {
 					if(!(ddp.ddWeaponState & DDW_RIGHTREADY)) { ChangeState("NoAmmo", myside); }
 					else { 
 						if(ddp.dddebug & DBG_WEAPSEQUENCE && ddp.dddebug & DBG_VERBOSE) { ddp.A_Log("Left fist attack blocked by right attack"); } 
 					}
 				}
-				else
-				{
+				else {
 					if(!(ddp.ddWeaponState & DDW_LEFTREADY)) { ChangeState("NoAmmo", myside); }
 					else {
 						if(ddp.dddebug & DBG_WEAPSEQUENCE && ddp.dddebug & DBG_VERBOSE) { ddp.A_Log("Right fist attack blocked by left attack"); } 
 					}
 				}			
 				break;
-			default: break;
+			default: ddp.A_Log("No action defined for tic "..no); break;
 		}
 	}
 	
@@ -127,7 +123,7 @@ class ddPowerFistLeft : ddPowerFist
 			PFSF A 1;
 			Loop;
 		Fire:
-			PFSF AA 0 A_ddActionLeft;
+			PFSF AA 1 A_WeapActionLeft;
 			PFSF BC 2;
 			PFSF D 3 A_PFist1;
 			PFSF E 5 A_PFist2;
@@ -170,7 +166,7 @@ class ddPowerFistRight : ddPowerFist
 			PFST A 1;
 			Loop;
 		Fire:
-			PFST AA 0 A_ddActionRight;
+			PFST AA 1 A_WeapActionRight;
 			PFST BC 2;
 			PFST D 3 A_PFist1;
 			PFST E 5 A_PFist2;

@@ -163,9 +163,8 @@ class ddSuperShotgun : ddWeapon
 		else { }
 	}
 	
-	override void DD_Condition(int cn)
+	override void DD_WeapAction(int no)
 	{
-		int caseno = cn;
 		let ddp = ddPlayer(owner);
 		let mode = ddWeapon(ddp.player.readyweapon);
 		let me = ddWeapon(self);
@@ -173,54 +172,49 @@ class ddSuperShotgun : ddWeapon
 		int myside = (weaponside) ? PSP_LEFTW : PSP_RIGHTW; 
 		int flashside = (weaponside) ? PSP_LEFTWF : PSP_RIGHTWF;
 		let res = ModeCheck();
-		switch(caseno)
+		switch(no)
 		{
-			case 0: //init/mode check
+			case 1: //init/mode check
 				if(res == RES_CLASSIC && (ddp.CountInv("Shell") < 2)) { ChangeState("NoAmmo", myside); break; }
 				if(mag < 1 && ddp.CountInv("BFS") < 1) { ChangeState("NoAmmo", myside); break; }
 				if(res == RES_DUALWLD) { //lower to reload
-					if(mag < 1 && !(ddWeaponFlags & 7)) { SetCaseNumber(6); ChangeState("ReloadP", myside); break; }
+					if(mag < 1 && !(ddWeaponFlags & 7)) { ChangeState("ReloadP", myside); break; }
 					if(ddWeaponFlags & 7) { LowerToReloadWeapon(); break; }
-					SetCaseNumber(1);
 					break;
 				}
-				else if(ddWeaponFlags & SST_RSEQ1) { SetCaseNumber(2); ChangeState("Reload2", myside); break; }
-				else if(ddWeaponFlags & SST_RSEQ2) { SetCaseNumber(5); ChangeState("Reload3", myside); break; }
+				else if(ddWeaponFlags & SST_RSEQ1) { ChangeState("Reload2", myside); break; }
+				else if(ddWeaponFlags & SST_RSEQ2) { ChangeState("Reload3", myside); break; }
 				else if(res == RES_HASESOA) 
 				{ 
 					if(mag < 1) 
-					{ weaponstatus = DDW_RELOADING; SetCaseNumber(4); ChangeState("ReloadP", myside); break; } 
-					ddp.PlayAttacking(); SetCaseNumber(1); break; 
+					{ weaponstatus = DDW_RELOADING; ChangeState("ReloadP", myside); break; } 
+					ddp.PlayAttacking(); break; 
 				}
-				else { if(mag < 1) { weaponstatus = DDW_RELOADING; SetCaseNumber(4); ChangeState("ReloadP", myside); break; } else { ddp.PlayAttacking(); SetCaseNumber(1); } break; } 
-			case 1: //jump to reload if twohanding
-				if(res == RES_CLASSIC && ddp.CountInv("Shell") >= 1) { ChangeState("ReloadP", myside); SetCaseNumber(4); break; }
-				if((res == RES_TWOHAND || res == RES_HASESOA) && ddp.CountInv("BFS") >= 1 && mag < 1) { weaponstatus = DDW_RELOADING; ChangeState("ReloadP", myside); SetCaseNumber(4); }
-				else { SetCaseNumber(0); }
-				break;	
-			case 2:
-				if(mag < 1) { ddWeaponFlags |= SST_RSEQA; ReloadWeaponMag(2); SetCaseNumber(5); break; }
-				else { ReloadWeaponMag(2); SetCaseNumber(5); break; }
-			case 3:
-				UnloadWeaponMag();
-				SetCaseNumber(0);
+				else { if(mag < 1) { weaponstatus = DDW_RELOADING; ChangeState("ReloadP", myside); break; } else { ddp.PlayAttacking(); } break; }
+			case 2: //jump to reload if twohanding
+				if(res == RES_CLASSIC && ddp.CountInv("Shell") >= 1) { ChangeState("ReloadP", myside); break; }
+				if((res == RES_TWOHAND || res == RES_HASESOA) && ddp.CountInv("BFS") >= 1 && mag < 1) { weaponstatus = DDW_RELOADING; ChangeState("ReloadP", myside); }
+				else { }
 				break;
-			case 4: //eject
+			case 3:
+				if(mag < 1) { ddWeaponFlags |= SST_RSEQA; ReloadWeaponMag(2); break; }
+				else { ReloadWeaponMag(2); break; }
+			case 4:
+				UnloadWeaponMag();
+				break;
+			case 5: //eject
 				if(mag < 1) { ddWeaponFlags |= SST_RSEQ1; }
 				else { ddWeaponFlags |= SST_RSEQ2; }
-				SetCaseNumber(2);
+				if(res == RES_DUALWLD && (ddWeaponFlags & 7)) { ChangeState("Ready", myside); }
 				break;
-			case 5: //close
+			case 6: //close
 				ddWeaponFlags &= ~SST_RALL;
-				SetCaseNumber(0);
 				break;
-			case 6: //eject half reload
-				ddWeaponFlags |= SST_RSEQ1;
-				SetCaseNumber(2);
-				ChangeState("Ready", myside);
-			default: break;
+			default: ddp.A_Log("No action defined for tic "..no); break;
 		}
+		
 	}
+	
 	
 	// ## ddSuperShotgun States()
 	States
@@ -267,68 +261,52 @@ class ddSuperShotgunLeft : ddSuperShotgun
 			#### A 1 A_LeftWeaponReady;
 			Loop;
 		Fire:
-			#### A 0 A_DDActionLeft;
+			#### A 1 A_WeapActionLeft;
 			#### A 3;
 			#### A 0 A_FlashLeft;
 			#### A 1 A_FireLeftWeapon;
 			#### A 6;
-			#### A 0 A_DDActionLeft;
+			#### A 2 A_WeapActionLeft;
 			Goto Ready;
 		Select:
 			#### A 1 A_ChangeSpriteLeft;
 			Loop;
 		Altfire:
-			#### A 0 A_DDActionLeft;
+			#### A 1 A_WeapActionLeft;
 			#### A 3;
 			#### A 0 A_FlashLeft;
 			#### A 1 A_FireLeftWeapon;
 			#### A 6;
-			#### A 0 A_DDActionLeft;
+			#### A 2 A_WeapActionLeft;
 			Goto Ready;
 		Reload:
+		ReloadA:
 		ReloadP:			
 			#### B 7;
 			#### C 7;
-			#### D 1 A_OpenShotgun2; //4
-			#### D 1 A_DDActionLeft;
+			#### D 1 A_OpenShotgun2;
+			#### D 5 A_WeapActionLeft;
+			#### D 1;
 		Reload2:
 			#### D 5;
 			#### E 7;
 			#### F 0 A_LoadShotgun2;
-			#### F 1 A_DDActionLeft; //2
+			#### F 3 A_WeapActionLeft;
+			#### F 1;
 		Reload3:
 			#### F 6;
 			#### G 5;
 			#### G 1 A_CloseShotgun2;
-			#### H 0 A_DDActionLeft; //5
+			#### H 6 A_WeapActionLeft;
 			#### H 6 A_ddRefireLeft;
-			#### A 5;
-			Goto Ready;	
-		ReloadA:
-			#### B 7;
-			#### C 7;
-			#### D 7 A_OpenShotgun2;
-			#### F 1 A_LoadShotgun2;
-			#### F 4 A_DDActionLeft; //4
-		Reload2A:
-			#### E 4;
-			#### D 6;
-			#### E 5;			
-			#### F 0 A_LoadShotgun2;
-			#### F 1 A_DDActionLeft; //2
-		Reload3A:
-			#### F 6;
-			#### G 6;
-			#### H 0 A_CloseShotgun2;
-			#### H 1 A_DDActionLeft; //5
-			#### H 5 A_ddRefireLeft;
 			#### A 5;
 			Goto Ready;
 		UnloadP:
 			#### BC 7;
 			#### D 7 A_OpenShotgun2;
 			#### F 5 A_LoadShotgun2;
-			#### E 5 A_DDActionLeft;
+			#### E 4 A_WeapActionLeft;
+			#### E 5;
 			#### G 6 A_CloseShotgun2;
 			#### HA 6;
 			Goto Ready;			
@@ -359,58 +337,41 @@ class ddSuperShotgunRight : ddSuperShotgun
 			#### A 1 A_ChangeSpriteRight;
 			Loop;
 		Fire:
-			#### A 0 A_DDActionRight;
+			#### A 1 A_WeapActionRight;
 			#### A 3;
 			#### A 0 A_FlashRight;
 			#### A 1 A_FireRightWeapon;
 			#### A 6;
-			#### A 0 A_DDActionRight;
+			#### A 2 A_WeapActionRight;
 			Goto Ready;
 		Altfire:
-			#### A 0 A_DDActionRight;
+			#### A 1 A_WeapActionRight;
 			#### A 3;
 			#### A 0 A_FlashRight;
 			#### A 1 A_FireRightWeapon;
 			#### A 6;
-			#### A 0 A_DDActionRight;
+			#### A 2 A_WeapActionRight;
 			Goto Ready;			
 		Reload:
+		ReloadA:
 		ReloadP:
 			#### B 7;
 			#### C 7;
-			#### D 1 A_OpenShotgun2; //4, 6 for halfreload
-			#### D 1 A_DDActionRight;
+			#### D 1 A_OpenShotgun2;
+			#### D 5 A_WeapActionRight;
+			#### D 1;
 		Reload2:
 			#### D 5;
 			#### E 7;
 			#### F 0 A_LoadShotgun2;
-			#### F 1 A_DDActionRight; //2
+			#### F 3 A_WeapActionRight;
+			#### F 1;
 		Reload3:
 			#### F 6;
 			#### G 5;
 			#### G 1 A_CloseShotgun2;
-			#### H 0 A_DDActionRight; //5
+			#### H 6 A_WeapActionRight;
 			#### H 6 A_ddRefireRight;
-			#### A 5;
-			Goto Ready;
-		ReloadA:
-			#### B 7;
-			#### C 7;
-			#### D 7 A_OpenShotgun2;
-			#### F 1 A_LoadShotgun2;
-			#### F 4 A_DDActionRight; //4
-		Reload2A:
-			#### E 4;
-			#### D 6;
-			#### E 5;			
-			#### F 0 A_LoadShotgun2;
-			#### F 1 A_DDActionRight; //2
-		Reload3A:
-			#### F 6;
-			#### G 6;
-			#### H 0 A_CloseShotgun2;
-			#### H 1 A_DDActionRight; //5
-			#### H 5 A_ddRefireRight;
 			#### A 5;
 			Goto Ready;
 		UnloadP:

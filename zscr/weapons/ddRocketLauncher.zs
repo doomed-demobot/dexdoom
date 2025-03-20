@@ -131,9 +131,8 @@ class ddRocketLauncher : ddWeapon replaces RocketLauncher
 		if(mag > 0) { mag--; A_FireDDGrenade(); }
 	}
 	
-	override void DD_Condition(int cn)
+	override void DD_WeapAction(int no)
 	{
-		int caseno = cn;
 		let ddp = ddPlayer(owner);
 		let mode = ddWeapon(ddp.player.readyweapon);
 		let me = ddWeapon(self);
@@ -141,64 +140,61 @@ class ddRocketLauncher : ddWeapon replaces RocketLauncher
 		int myside = (weaponside) ? PSP_LEFTW : PSP_RIGHTW; 
 		int flashside = (weaponside) ? PSP_LEFTWF : PSP_RIGHTWF;
 		let res = ModeCheck();
-		switch(caseno)
+		switch(no)
 		{
-			case 0: //init/ammo check
+			case 1: //init/ammo check
 				if(res == RES_CLASSIC && ddp.CountInv("RocketAmmo") < 1) { ChangeState("NoAmmo", myside); break; }
 				if(mag < 1 && ddp.CountInv("RocketAmmo") < 1) { ChangeState("NoAmmo", myside); break; }
-				if(res == RES_DUALWLD)
-				{
+				if(res == RES_DUALWLD) {
 					if(mag < 1) { 
-						SetCaseNumber(6); LowerToReloadWeapon();  break; 
+						LowerToReloadWeapon(); break; 
 					}
-					SetCaseNumber(1);
 					break;
 				}
-				else if(res == RES_HASESOA || res == RES_TWOHAND)
-				{
+				else if(res == RES_HASESOA || res == RES_TWOHAND) {
 					if(ddp.CountInv("RocketAmmo") < 1) { break; }
 					if(mag < 1) { 
 						weaponstatus = DDW_RELOADING;
-						ChangeState("ReloadP", myside); SetCaseNumber(6); break; 
+						ChangeState("ReloadP", myside); break; 
 					}
-					SetCaseNumber(1);
 					ddp.PlayAttacking();
 					break;
 				}
-				else { ddp.PlayAttacking(); SetCaseNumber(1); break; }
-			case 1: //auto reload if twohanding
+				else { ddp.PlayAttacking(); break; }
+			case 2: //auto reload if twohanding
 				if(res == RES_HASESOA || res == RES_TWOHAND) { 
-					if(mag < 1) { ddWeaponFlags |= RKL_RLOD; ddWeaponFlags |= RKL_RSEQ; weaponstatus = DDW_RELOADING; ChangeState("ReloadP", myside); SetCaseNumber(6); break; } 
-					else { SetCaseNumber(0); break; } 
+					if(mag < 1) { ddWeaponFlags |= RKL_RLOD; ddWeaponFlags |= RKL_RSEQ; weaponstatus = DDW_RELOADING; ChangeState("ReloadP", myside); break; } 
+					else { break; } 
 				}
-				else { SetCaseNumber(0); break; }
-			case 2: //reload checks 1
+				else { break; }
+			case 3: //reload checks 1
 				if(mag < default.mag && ddp.CountInv("RocketAmmo") > 0) { 
-					mag++; ddp.TakeInventory("RocketAmmo", 1); ddp.A_StartSound("weapons/rocketload", CHAN_WEAPON, CHANF_OVERLAP); SetCaseNumber(3);
+					mag++; ddp.TakeInventory("RocketAmmo", 1); ddp.A_StartSound("weapons/rocketload", CHAN_WEAPON, CHANF_OVERLAP);
 					if(mag >= default.mag || ddp.CountInv("RocketAmmo") < 1) {
 						ddWeaponFlags &= ~RKL_RLOD; ddWeaponFlags |= RKL_RSEQ; 
-						SetCaseNumber(5); ChangeState("RFinish", myside); 					
+						ChangeState("RFinish", myside); 					
 					}
 				}
 				else { 
 					ddWeaponFlags &= ~RKL_RLOD; ddWeaponFlags |= RKL_RSEQ; 
-					SetCaseNumber(5); ChangeState("RFinish", myside); 
+					ChangeState("RFinish", myside); 
 				}
 				break;
-			case 3: //reload checks 2
+			case 4: //reload checks 2
 				if(mag < default.mag && ddp.CountInv("RocketAmmo") > 0) { 
-					mag++; ddp.TakeInventory("RocketAmmo", 1); ddp.A_StartSound("weapons/rocketload", CHAN_WEAPON, CHANF_OVERLAP); SetCaseNumber(2); ChangeState("Load", myside);
+					mag++; ddp.TakeInventory("RocketAmmo", 1); ddp.A_StartSound("weapons/rocketload", CHAN_WEAPON, CHANF_OVERLAP);
 					if(mag >= default.mag || ddp.CountInv("RocketAmmo") < 1) {
 						ddWeaponFlags &= ~RKL_RLOD; ddWeaponFlags |= RKL_RSEQ; 
-						SetCaseNumber(5); ChangeState("RFinish", myside); 					
+						ChangeState("RFinish", myside); 					
 					}
+					else { ChangeState("Load", myside); break; }
 				}
 				else { 
 					ddWeaponFlags &= ~RKL_RLOD; ddWeaponFlags |= RKL_RSEQ; 
-					SetCaseNumber(5); ChangeState("RFinish", myside); 
+					ChangeState("RFinish", myside); 
 				}
 				break;
-			case 4: //checks during unload
+			case 5: //checks during unload
 				if(mag > 0 && PressingFireButton()) { ddp.A_StartSound("weapons/shotgp", CHAN_WEAPON, CHANF_OVERLAP); break; }
 				else
 				{
@@ -208,15 +204,13 @@ class ddRocketLauncher : ddWeapon replaces RocketLauncher
 					else { ddp.A_StartSound("weapons/shotgp", CHAN_WEAPON, CHANF_OVERLAP); }
 					break;
 				}
-			case 5:
-				ddWeaponFlags &= ~RKL_RSEQ;
-				SetCaseNumber(0);
-				break;
 			case 6:
 				ddWeaponFlags |= RKL_RLOD;
-				SetCaseNumber(2);
 				break;
-			default: break;
+			case 7:
+				ddWeaponFlags &= ~RKL_RSEQ;
+				break;
+			default: ddp.A_Log("No action defined for tic "..no); break;
 		}
 	}
 	
@@ -260,40 +254,43 @@ class ddRocketLauncherLeft : ddRocketLauncher
 			MISG A 1 A_LeftWeaponReady;
 			Loop;
 		Fire:
-			MISG A 0 A_DDActionLeft;
+			MISG A 1 A_WeapActionLeft;
 			MISG B 0 A_FlashLeft;
 			MISG B 8;
 			MISG B 12 A_FireLeftWeapon;
-			MISG B 0 A_DDActionLeft;
+			MISG B 2 A_WeapActionLeft;
 			MISG B 0 A_ddRefireLeft;
 			Goto Ready;
 		Altfire:
-			MISG A 0 A_DDActionLeft;
-			MISG A 1 A_DDActionLeft;
-			MISG B 12 A_FireLeftWeapon;
-			MISG B 0 A_DDActionLeft;
+			MISG A 1 A_WeapActionLeft;
+			MISG A 1;
+			MISG B 14 A_FireLeftWeapon;
+			MISG B 2 A_WeapActionLeft;
 			MISG B 0 A_ddRefireLeft;
 			Goto Ready;
 		ReloadA:
 		ReloadP:
 			MISG B 5;
-			MISG B 1 A_ddActionLeft;
+			MISG B 6 A_WeapActionLeft;
+			MISG B 1;
 		Load:
 			MISG B 10;
-			MISG B 5 A_DDActionLeft;
-			MISG B 1 A_DDActionLeft;
+			MISG B 3 A_WeapActionLeft;
+			MISG B 5;
+			MISG B 4 A_WeapActionLeft;
+			MISG B 1;
 		RFinish:
 			MISG A 5;
 			MISG A 5 A_RLPump1;
 			MISG A 2 A_RLPump2;
-			MISG A 1 A_DDActionLeft;
+			MISG A 7 A_WeapActionLeft;
 			Goto Ready;
 		UnloadP:
 			MISG B 5;
 		Unload:
 			MISG B 5;
-			MISG A 5 A_DDActionLeft;
-			MISG A 5;
+			MISG A 5 A_WeapActionLeft;
+			MISG A 10;
 			Goto Ready;
 			
 	}
@@ -310,40 +307,43 @@ class ddRocketLauncherRight : ddRocketLauncher
 			MISG A 1 A_RightWeaponReady;
 			Loop;
 		Fire:
-			MSIG A 0 A_DDActionRight;
+			MISG A 1 A_WeapActionRight;
 			MISG B 0 A_FlashRight;
 			MISG B 8;
 			MISG B 12 A_FireRightWeapon;
-			MISG B 0 A_DDActionRight;
+			MISG B 2 A_WeapActionRight;
 			MISG B 0 A_ddRefireRight;
 			Goto Ready;
 		Altfire:
-			MISG A 0 A_DDActionRight;	
-			MISG A 1 A_DDActionRight;
-			MISG B 12 A_FireRightWeapon;
-			MISG B 0 A_DDActionRight;
+			MISG A 1 A_WeapActionRight;
+			MISG A 1;
+			MISG B 14 A_FireRightWeapon;
+			MISG B 2 A_WeapActionRight;
 			MISG B 0 A_ddRefireRight;
 			Goto Ready;
 		ReloadA:
 		ReloadP:
 			MISG B 5;
-			MISG B 1 A_DDActionRight;
+			MISG B 6 A_WeapActionRight;
+			MISG B 1;
 		Load:
 			MISG B 10;
-			MISG B 5 A_DDActionRight;
-			MISG B 1 A_DDActionRight;
+			MISG B 3 A_WeapActionRight;
+			MISG B 5;
+			MISG B 4 A_WeapActionRight;
+			MISG B 1;
 		RFinish:
 			MISG A 5;
 			MISG A 5 A_RLPump1;
 			MISG A 2 A_RLPump2;
-			MISG A 1 A_DDActionRight;
+			MISG A 7 A_WeapActionRight;
 			Goto Ready;
 		UnloadP:
 			MISG B 5;
 		Unload:
 			MISG B 5;
-			MISG A 5 A_DDActionRight;
-			MISG A 5;
+			MISG A 5 A_WeapActionRight;
+			MISG A 10;
 			Goto Ready;
 			
 	}

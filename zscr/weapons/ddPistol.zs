@@ -194,9 +194,8 @@ class ddPistol : ddWeapon replaces Pistol
 		burstcounter = 3;
 	}
 	
-	override void DD_Condition(int cn)
-	{
-		int caseno = cn;
+	override void DD_WeapAction(int no)
+	{		
 		let ddp = ddPlayer(owner);
 		let me = ddWeapon(self);
 		let type = (ddp.FindInventory("ClassicModeToken")) ?
@@ -209,9 +208,9 @@ class ddPistol : ddWeapon replaces Pistol
 		int myside = (weaponside) ? PSP_LEFTW : PSP_RIGHTW; 
 		int flashside = (weaponside) ? PSP_LEFTWF : PSP_RIGHTWF;
 		let res = ModeCheck();
-		switch(caseno)
+		switch(no)
 		{
-			case 0: //init/ammo check
+			case 1: //init/ammo check
 				if(res == RES_CLASSIC && (ddp.CountInv(type) < 1)) {					
 					if(ddp.dddebug & DBG_WEAPSEQUENCE) { ddp.A_Log("No ammo for Pistol fire"); } 
 					ChangeState("NoAmmo", myside);
@@ -222,34 +221,29 @@ class ddPistol : ddWeapon replaces Pistol
 					ChangeState("NoAmmo", myside);
 					break;
 				}
-				if((res == RES_TWOHAND || res == RES_HASESOA)) { if(mag < 1 || ddWeaponFlags & PIS_RSEQ) { weaponstatus = DDW_RELOADING; SetCaseNumber(5); ChangeState("ReloadP", myside); break; } }
-				if(res == RES_DUALWLD) { if(mag < 1 || ddWeaponFlags & PIS_RSEQ) { SetCaseNumber(5); LowerToReloadWeapon(); break; } }				
+				if((res == RES_TWOHAND || res == RES_HASESOA)) { if(mag < 1 || ddWeaponFlags & PIS_RSEQ) { weaponstatus = DDW_RELOADING; ChangeState("ReloadP", myside); break; } }
+				if(res == RES_DUALWLD) { if(mag < 1 || ddWeaponFlags & PIS_RSEQ) { LowerToReloadWeapon(); break; } }				
 				ddp.PlayAttacking(); 
-				SetCaseNumber(((bAltFire) ? 2 : 1));
 				break;
-			case 1: //primary
-				SetCaseNumber(0);
-				if((res == RES_TWOHAND || res == RES_HASESOA) && ddp.CountInv(type) > 1 && mag < 1) { weaponstatus = DDW_RELOADING; SetCaseNumber(5); ChangeState("ReloadP", myside); }				
+			case 2: //primary
+				if((res == RES_TWOHAND || res == RES_HASESOA) && ddp.CountInv(type) > 1 && mag < 1) { weaponstatus = DDW_RELOADING; ChangeState("ReloadP", myside); }				
 				break;
-			case 2: //alt burstcounter check
-				if((res == RES_TWOHAND || res == RES_HASESOA) && ddp.CountInv(type) > 1 && mag < 1) { weaponstatus = DDW_RELOADING; self.burstcounter = 3; SetCaseNumber(3); ChangeState("ReloadP", myside); break; }
-				if(self.burstcounter < 1 || mag < 1) { self.burstcounter = 3; SetCaseNumber(0); }
-				else { ChangeState("Burst", myside); SetCaseNumber(2); }
+			case 3: //alt burstcounter check
+				if((res == RES_TWOHAND || res == RES_HASESOA) && ddp.CountInv(type) > 1 && mag < 1) { weaponstatus = DDW_RELOADING; self.burstcounter = 3; ChangeState("ReloadP", myside); break; }
+				if(self.burstcounter < 1 || mag < 1) { self.burstcounter = 3; }
+				else { ChangeState("Burst", myside); }
 				break;
-			case 3: //reload ")
-				me.ddweaponflags &= ~PIS_RSEQ;
-				ReloadWeaponMag(((mag > 0) ? 16 : 15), 1); 
-				SetCaseNumber(0);
-				break;
-			case 4:
-				UnloadWeaponMag();
-				SetCaseNumber(0);
+			case 4: //reload ")
+				me.ddweaponflags |= PIS_RSEQ;
 				break;
 			case 5:
-				me.ddweaponflags |= PIS_RSEQ;
-				SetCaseNumber(3);
+				me.ddweaponflags &= ~PIS_RSEQ;
+				ReloadWeaponMag(((mag > 0) ? 16 : 15), 1); 
 				break;
-			default: break;
+			case 6:
+				UnloadWeaponMag();
+				break;
+			default: ddp.A_Log("No action defined for tic "..no); break;
 		}
 	}
 	
@@ -305,17 +299,17 @@ class ddPistolLeft : ddPistol
 			#### # 1 A_LeftWeaponReady;
 			Loop;
 		Fire:
-			#### A 0 A_DDActionLeft;
+			#### A 1 A_WeapActionLeft;
 			#### A 1;
 			#### B 0 A_FlashLeft;
 			#### B 2 A_FireLeftWeapon;
-			#### C 0 A_DDActionLeft;
+			#### C 2 A_WeapActionLeft;
 			#### # 1 A_ChangeSpriteLeft;
 			#### ######## 1 A_ddRefireLeftHeavy;
 			#### # 1;
 			Goto Ready;
 		FireClassic:
-			#### A 0 A_DDActionLeft;
+			#### A 1 A_WeapActionLeft;
 			#### A 4;
 			#### B 0 A_FlashLeft;
 			#### B 6 A_FireLeftWeapon;
@@ -326,32 +320,35 @@ class ddPistolLeft : ddPistol
 			PISD A 1 A_ChangeSpriteLeft;
 			Loop;	
 		AltFire:
-			#### A 0 A_DDActionLeft;
+			#### A 1 A_WeapActionLeft;
 			#### A 4;
 		Burst:
 			#### B 0 A_FlashLeft;
 			#### B 1 A_FireLeftWeapon;
 			#### C 0;
 			#### # 1 A_ChangeSpriteLeft;
-			#### # 1 A_DDActionLeft;
+			#### # 3 A_WeapActionLeft;
+			#### # 1;
 			#### # 3;
 			#### # 5 A_ddRefireLeft;
 			Goto Ready;
 		ReloadP:
 			#### F 3;
 			#### G 3 A_PistolReload1;
-			#### G 0 A_DDActionLeft;
+			#### G 4 A_WeapActionLeft;
 		Reload2:
 			#### G 5 A_PistolReload2;
 			#### H 10 A_PistolReload3;
-			#### H 1 A_ddActionLeft;
+			#### H 5 A_WeapActionLeft;
+			#### H 1;
 			#### IJ 4;
 			Goto Ready;
 		UnloadP:
 			#### F 5 A_PistolReload2;
 			#### G 5;
 			#### H 4 A_PistolReload3;
-			#### I 4 A_DDActionLeft;
+			#### I 6 A_WeapActionLeft;
+			#### I 4;
 			#### J 4;
 			Goto Ready;
 		FlashP:
@@ -378,17 +375,17 @@ class ddPistolRight : ddPistol
 			PISD A 1 A_ChangeSpriteRight;
 			Loop;	
 		Fire:
-			#### A 0 A_DDActionRight;
+			#### A 1 A_WeapActionRight;
 			#### A 1;
 			#### B 0 A_FlashRight;
 			#### B 2 A_FireRightWeapon;
-			#### C 0 A_DDActionRight;
+			#### C 2 A_WeapActionRight;
 			#### # 1 A_ChangeSpriteRight;
 			#### ######## 1 A_ddRefireRightHeavy;
 			#### # 1;
 			Goto Ready;
 		FireClassic:
-			#### A 0 A_DDActionRight;
+			#### A 1 A_WeapActionRight;
 			#### A 4;
 			#### B 0 A_FlashRight;
 			#### B 6 A_FireRightWeapon;
@@ -396,32 +393,35 @@ class ddPistolRight : ddPistol
 			#### B 5 A_ddRefireRight;
 			Goto Ready;				
 		AltFire:
-			#### A 0 A_DDActionRight;
+			#### A 1 A_WeapActionRight;
 			#### A 4;
 		Burst:
 			#### B 0 A_FlashRight;
 			#### B 1 A_FireRightWeapon;
 			#### C 0;
 			#### # 1 A_ChangeSpriteRight;
-			#### # 1 A_DDActionRight;
+			#### # 3 A_WeapActionRight;
+			#### # 1;
 			#### # 3;
 			#### # 5 A_ddRefireRight;
 			Goto Ready;
 		ReloadP:
 			#### F 3;
 			#### G 3 A_PistolReload1;
-			#### G 0 A_DDActionRight;
+			#### G 4 A_WeapActionRight;
 		Reload2:
 			#### G 5 A_PistolReload2;
 			#### H 10 A_PistolReload3;
-			#### H 1 A_ddActionRight;
+			#### H 5 A_WeapActionRight;
+			#### H 1;
 			#### IJ 4;
 			Goto Ready;
 		UnloadP:
 			#### F 5 A_PistolReload2;
 			#### G 5;
 			#### H 4 A_PistolReload3;
-			#### I 4 A_DDActionRight;
+			#### I 6 A_WeapActionRight;
+			#### I 4;
 			#### J 4;
 			Goto Ready;
 		FlashP:

@@ -157,9 +157,8 @@ class ddShotgun : ddWeapon
 	
 	override void alternativeattack() { primaryattack(); } 
 	
-	override void DD_Condition(int cn)
+	override void DD_WeapAction(int no)
 	{
-		int caseno = cn;
 		let ddp = ddPlayer(owner);
 		let mode = ddWeapon(ddp.player.readyweapon);
 		let me = ddWeapon(self);
@@ -167,50 +166,49 @@ class ddShotgun : ddWeapon
 		int myside = (weaponside) ? PSP_LEFTW : PSP_RIGHTW; 
 		int flashside = (weaponside) ? PSP_LEFTWF : PSP_RIGHTWF;
 		let res = ModeCheck();
-		switch(caseno)
+		switch(no)
 		{
-			case 0: //init/mode check
+			case 1: //init/mode check
 				if(res == RES_CLASSIC && (ddp.CountInv("Shell") < 1)) { ChangeState("NoAmmo", myside); break; }
 				if(mag < 1 && ddp.CountInv("Shell") < 1) { ChangeState("NoAmmo", myside); break; }
 				if(res == RES_DUALWLD) { //lower to reload
-					if(mag < 1) { SetCaseNumber(5); 
-						if(ddWeaponFlags & SHT_RSEQ) { weaponStatus = DDW_RELOADING; SetCaseNumber(2); ChangeState("Reload2B", myside); } 
-						 else { weaponStatus = DDW_RELOADING; ChangeState("ReloadOneHanded", myside); } 
-					}	
-					else { SetCaseNumber(1); }
+					if(mag < 1) {
+						if(ddWeaponFlags & SHT_RSEQ) { weaponStatus = DDW_RELOADING; ChangeState("Reload2B", myside); }
+						 else { weaponStatus = DDW_RELOADING; ChangeState("ReloadOneHanded", myside); }
+					}
+					else { /*:))))*/ }
 					break;
 				}
-				else if(res == RES_HASESOA) 
-				{ 
-					if(ddWeaponFlags & SHT_RSEQ) { weaponStatus = DDW_RELOADING; SetCaseNumber(2); ChangeState("Reload2", myside); break; }
-					if(mag < 1) { weaponstatus = DDW_RELOADING; SetCaseNumber(5); ChangeState("ReloadP", myside); break; }
-					else { ddp.PlayAttacking(); SetCaseNumber(1); break; } 
+				else if(res == RES_HASESOA)
+				{
+					if(ddWeaponFlags & SHT_RSEQ) { weaponStatus = DDW_RELOADING; ChangeState("Reload2", myside); break; }
+					if(mag < 1) { weaponstatus = DDW_RELOADING; ChangeState("ReloadP", myside); break; }
+					else { ddp.PlayAttacking(); break; }
 				}
-				else 
-				{ 
-					if(ddWeaponFlags & SHT_RSEQ) { weaponStatus = DDW_RELOADING; SetCaseNumber(2); ChangeState("Reload2", myside); break; }
-					if(mag < 1) { weaponstatus = DDW_RELOADING; SetCaseNumber(5); ChangeState("ReloadP", myside); break; }
-					else { ddp.PlayAttacking(); SetCaseNumber(1); } 
-					break; 
+				else
+				{
+					if(ddWeaponFlags & SHT_RSEQ) { weaponStatus = DDW_RELOADING; ChangeState("Reload2", myside); break; }
+					if(mag < 1) { weaponstatus = DDW_RELOADING; ChangeState("ReloadP", myside); break; }
+					else { ddp.PlayAttacking(); }
+					break;
 				} 
-			case 1: //jump to reload if twohanding
+			case 2: //jump to reload if twohanding
 				if((res == RES_TWOHAND || res == RES_HASESOA || res == RES_CLASSIC) && ddp.CountInv("Shell") > 0) { weaponstatus = DDW_RELOADING; ChangeState("ReloadP", myside); SetCaseNumber(5); }
-				else { SetCaseNumber(0); }
-				break;	
-			case 2: //reload mag
-				ReloadWeaponMag(1); SetCaseNumber(0); ddWeaponFlags &= ~SHT_RSEQ; break;
-			case 3: //unload mag
-				UnloadWeaponMag(); SetCaseNumber(0); break;
-			case 4: //reload mag onehanded
-				AddRecoil(0.0, 5, 0.0); ReloadWeaponMag(1); SetCaseNumber(0); break;
-			case 5: //reload checkpoint (tm)
+				else { /*yes*/ }
+				break;			
+			case 3: //reload mag
+				ReloadWeaponMag(1); ddWeaponFlags &= ~SHT_RSEQ; break;			
+			case 4: //unload mag
+				UnloadWeaponMag(); break;			
+			case 5: //reload mag onehanded MOVE DOWN HERE V V V
+				AddRecoil(0.0, 5, 0.0); ReloadWeaponMag(1); break;
+			case 6: //reload checkpoint (tm)
 				ddWeaponFlags |= SHT_RSEQ;
-				SetCaseNumber(2);
 				break;
-			default: break;
-		}
+			default: ddp.A_Log("No action defined for tic "..no); break;
+		}		
 	}
-	
+		
 	// ## ddShotgun States()
 	States
 	{
@@ -259,12 +257,12 @@ class ddShotgunLeft : ddShotgun
 			Loop;
 		Altfire:
 		Fire:
-			#### A 0 A_DDActionLeft;
+			#### A 1 A_WeapActionLeft;
 			#### A 3;
 			#### A 0 A_FlashLeft;
 			#### A 1 A_FireLeftWeapon;
 			#### A 6;
-			#### A 0 A_DDActionLeft;
+			#### A 2 A_WeapActionLeft;
 			Goto Ready;	
 		Select:
 			SHTD A 1 A_ChangeSpriteLeft;
@@ -273,29 +271,34 @@ class ddShotgunLeft : ddShotgun
 		ReloadP:			
 			#### BC 5;
 			#### D 4 A_RackShotgun;
-			#### C 3 A_DDActionLeft;
+			#### C 6 A_WeapActionLeft;
+			#### C 3;
 		Reload2:
 			#### C 2 A_SlideShotgun;
 			#### B 4;
-			#### B 1 A_DDActionLeft;
+			#### B 3 A_WeapActionLeft;
+			#### B 1;
 			#### A 2;
 			#### A 1;
 			#### A 7 A_ddRefireLeft;
 			Goto Ready;
 		ReloadOneHanded:
 			SHOH ABCDE 2;
-			SHOH F 1 A_DDActionLeft;
+			SHOH F 6 A_WeapActionLeft;
+			SHOH F 1;
 			SHOH F 12 A_RackShotgun;
 		Reload2B:
 			SHOH E 6 A_SlideShotgun;
-			SHOH D 3 A_DDActionLeft;
+			SHOH D 3 A_WeapActionLeft;
+			SHOH D 3;
 			SHOH CBA 3;
 			SHOH A 7 A_ddRefireLeftHeavy;
 			Goto Ready;			
 		UnloadP:		
 			#### BC 5;
 			#### D 4 A_PumpShotgun;
-			#### C 5 A_DDActionLeft;
+			#### C 4 A_WeapActionLeft;
+			#### C 5;
 			#### B 5;
 			#### A 2;
 			#### A 1;
@@ -321,12 +324,12 @@ class ddShotgunRight : ddShotgun
 			Loop;	
 		Altfire:
 		Fire:
-			#### A 0 A_DDActionRight;
+			#### A 1 A_WeapActionRight;
 			#### A 3;
 			#### A 0 A_FlashRight;
 			#### A 1 A_FireRightWeapon;
 			#### A 6;
-			#### A 0 A_DDActionRight;
+			#### A 2 A_WeapActionRight;
 			Goto Ready;	
 		Select:
 			SHTD A 1 A_ChangeSpriteRight;
@@ -335,29 +338,34 @@ class ddShotgunRight : ddShotgun
 		ReloadP:		
 			#### BC 5;
 			#### D 4 A_RackShotgun;
-			#### C 3 A_DDActionRight;
+			#### C 6 A_WeapActionRight;
+			#### C 3;
 		Reload2:
 			#### C 2 A_SlideShotgun;
 			#### B 4;
-			#### B 1 A_DDActionRight;
+			#### B 3 A_WeapActionRight;
+			#### B 1;
 			#### A 2;
 			#### A 1;
 			#### A 7 A_ddRefireRight;
 			Goto Ready;
 		ReloadOneHanded:
 			SHOH GHIJK 2;
-			SHOH L 1 A_DDActionRight;
+			SHOH L 6 A_WeapActionRight;
+			SHOH L 1;
 			SHOH L 12 A_RackShotgun;
 		Reload2B:
 			SHOH K 6 A_SlideShotgun;
-			SHOH J 3 A_DDActionRight;
+			SHOH J 3 A_WeapActionRight;
+			SHOH J 3;
 			SHOH IHG 3;
 			SHOH G 7 A_ddRefireRightHeavy;
 			Goto Ready;			
 		UnloadP:		
 			#### BC 5;
 			#### D 4 A_PumpShotgun;
-			#### C 5 A_DDActionRight;
+			#### C 4 A_WeapActionRight;
+			#### C 5;
 			#### B 5;
 			#### A 2;
 			#### A 1;
