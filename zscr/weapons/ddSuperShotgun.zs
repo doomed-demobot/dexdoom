@@ -378,7 +378,7 @@ class ddSuperShotgunRight : ddSuperShotgun
 			#### BC 7;
 			#### D 7 A_OpenShotgun2;
 			#### F 5 A_LoadShotgun2;
-			#### E 5 A_DDActionRight;
+			#### E 4 A_WeapActionRight;
 			#### G 6 A_CloseShotgun2;
 			#### HA 6;
 			Goto Ready;
