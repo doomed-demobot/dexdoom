@@ -65,9 +65,8 @@ class ddBFG9000 : ddWeapon
 		return "ddBFG9000";
 	}
 	
-	override void DD_Condition(int cn)
+	override void DD_WeapAction(int no)
 	{
-		int caseno = cn;
 		let ddp = ddPlayer(owner);
 		let mode = ddWeapon(ddp.player.readyweapon);
 		let me = ddWeapon(self);
@@ -75,13 +74,13 @@ class ddBFG9000 : ddWeapon
 		int myside = (weaponside) ? PSP_LEFTW : PSP_RIGHTW; 
 		int flashside = (weaponside) ? PSP_LEFTWF : PSP_RIGHTWF;
 		let res = ModeCheck();
-		switch(caseno)
+		switch(no)
 		{
-			case 0: //init/ammo check
+			case 1:
 				if(ddp.CountInv("Cell") < 40) { ChangeState("NoAmmo", myside); break; }
-				ddp.PlayAttacking(); 
+				ddp.PlayAttacking();
 				break;
-			default: break;
+			default: ddp.A_Log("No action defined for tic "..no); break;
 		}
 	}
 	
@@ -128,7 +127,7 @@ class ddBFG9000Left : ddBFG9000
 			BFGG A 1 A_LeftWeaponReady;
 			Loop;
 		Fire:
-			BFGG A 0  A_DDActionLeft;
+			BFGG A 1 A_DDActionLeft;
 			BFGG A 20 A_BFGsound;
 			BFGG B 10 A_FlashLeft;
 			BFGG B 10 A_FireLeftWeapon;
@@ -165,7 +164,7 @@ class ddBFG9000Right : ddBFG9000
 			BFGG A 1 A_RightWeaponReady;
 			Loop;
 		Fire:
-			BFGG A 0  A_DDActionRight;
+			BFGG A 1 A_DDActionRight;
 			BFGG A 20 A_BFGsound;
 			BFGG B 10 A_FlashRight;
 			BFGG B 10 A_FireRightWeapon;

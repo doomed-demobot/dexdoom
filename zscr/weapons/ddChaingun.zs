@@ -147,19 +147,18 @@ class ddChaingun : ddWeapon replaces Chaingun
 		else { return 12; } 
 	}
 	
-	override void DD_Condition(int cn)
+	override void DD_WeapAction(int no)
 	{
 		let ddp = ddPlayer(owner);
 		let weap = ddWeapon(self);
-		int casenumber = cn;
-		switch(casenumber)
+		switch(no)
 		{
-			case 0:
+			case 1:
 				spin += 5;
 				spintimer = 35;
 				if(spin > 40) { spin = 40; }
-			default:
 				break;
+			default: ddp.A_Log("No action defined for tic "..no); break;
 		}
 	}
 	
@@ -228,20 +227,23 @@ class ddChaingunLeft : ddChaingun
 			Goto Ready;
 		Altfire:
 			CHGG A 0 A_ChainSpin;
-			CHGG A 1 A_ddActionLeft;
+			CHGG A 1 A_WeapActionLeft;
+			CHGG A 1;
 			CHGG A 1 A_SetTicksLeft;
 			CHGG B 0 A_ChainSpin;
 			CHGG B 0 A_ChainSpin;
-			CHGG B 1 A_ddActionLeft;
+			CHGG B 1 A_WeapActionLeft;
+			CHGG B 1;
 			CHGG B 1 A_SetTicksLeft;
 			CHGG B 0 A_ddRefireLeft;
 			Goto Ready;
+			/*
 		Flash:
 			CHGF # 5 Bright A_Light2;
 			Goto FlashDone;
 		Flash2:
 			CHGF # 5 Bright A_Light2;
-			Goto FlashDone;
+			Goto FlashDone;*/
 	}
 }
 // #Class ddChaingunRight : ddChaingun()
@@ -280,20 +282,23 @@ class ddChaingunRight : ddChaingun
 			Goto Ready;
 		Altfire:
 			CHGG A 0 A_ChainSpin;
-			CHGG A 1 A_ddActionRight;
+			CHGG A 1 A_WeapActionRight;
+			CHGG A 1;
 			CHGG A 1 A_SetTicksRight;
 			CHGG B 0 A_ChainSpin;
 			CHGG B 0 A_ChainSpin;
-			CHGG B 1 A_ddActionRight;
+			CHGG B 1 A_WeapActionRight;
+			CHGG B 1;
 			CHGG B 1 A_SetTicksRight;
 			CHGG B 0 A_ddRefireRight;
 			Goto Ready;
+			/*
 		Flash:
 			CHGF # 5 Bright A_Light2;
 			Goto FlashDone;
 		Flash2:
 			CHGF # 5 Bright A_Light2;
-			Goto FlashDone;
+			Goto FlashDone;*/
 	}
 }
 

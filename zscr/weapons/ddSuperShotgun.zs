@@ -3,6 +3,7 @@
 // #Class ddSuperShotgun : ddWeapon()
 enum ddSShotgunFlags{
 	SST_RSEQA = 1,
+	SST_RQUIK = 2,
 	SST_RSEQ1 = 4,
 	SST_RSEQ2 = 6,
 	SST_RALL = 7,
@@ -178,7 +179,7 @@ class ddSuperShotgun : ddWeapon
 				if(res == RES_CLASSIC && (ddp.CountInv("Shell") < 2)) { ChangeState("NoAmmo", myside); break; }
 				if(mag < 1 && ddp.CountInv("BFS") < 1) { ChangeState("NoAmmo", myside); break; }
 				if(res == RES_DUALWLD) { //lower to reload
-					if(mag < 1 && !(ddWeaponFlags & 7)) { ChangeState("ReloadP", myside); break; }
+					if(mag < 1 && !(ddWeaponFlags & 7)) { ddWeaponFlags |= SST_RQUIK; ChangeState("ReloadP", myside); break; }
 					if(ddWeaponFlags & 7) { LowerToReloadWeapon(); break; }
 					break;
 				}
@@ -203,9 +204,8 @@ class ddSuperShotgun : ddWeapon
 				UnloadWeaponMag();
 				break;
 			case 5: //eject
-				if(mag < 1) { ddWeaponFlags |= SST_RSEQ1; }
-				else { ddWeaponFlags |= SST_RSEQ2; }
-				if(res == RES_DUALWLD && (ddWeaponFlags & 7)) { ChangeState("Ready", myside); }
+				ddWeaponFlags |= SST_RSEQ1;
+				if(ddWeaponFlags & SST_RQUIK) { ddWeaponFlags &= ~SST_RQUIK; ChangeState("Ready", myside); }
 				break;
 			case 6: //close
 				ddWeaponFlags &= ~SST_RALL;

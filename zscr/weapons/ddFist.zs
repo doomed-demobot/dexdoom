@@ -98,9 +98,9 @@ class ddFist : ddWeapon replaces Fist
 	{
 		return "ddFist";
 	}
-	override void DD_Condition(int cn)
+	
+	override void DD_WeapAction(int no)
 	{
-		int caseno = cn;
 		let ddp = ddPlayer(owner);
 		let pspl = ddp.player.GetPSprite(PSP_LEFTW);
 		let psplf = ddp.player.GetPSprite(PSP_LEFTWF);
@@ -108,9 +108,9 @@ class ddFist : ddWeapon replaces Fist
 		let psprf = ddp.player.GetPSprite(PSP_RIGHTWF);
 		int myside = (weaponside) ? PSP_LEFTW : PSP_RIGHTW; 
 		int flashside = (weaponside) ? PSP_LEFTWF : PSP_RIGHTWF;
-		switch(caseno)
+		switch(no)
 		{
-			case 0: //init/ready check
+			case 1: //init/ready check
 				if(weaponside)
 				{
 					if(!(ddp.ddWeaponState & DDW_RIGHTREADY)) { ChangeState("Ready", myside); }
@@ -128,8 +128,8 @@ class ddFist : ddWeapon replaces Fist
 						if(ddp.dddebug & DBG_WEAPSEQUENCE && ddp.dddebug & DBG_VERBOSE) { ddp.A_Log("Right fist attack blocked by left attack"); } 
 					}
 				}			
-				break;
-			default: break;
+				break;			
+			default: ddp.A_Log("No action defined for tic "..no); break;
 		}
 	}
 	
@@ -174,7 +174,8 @@ class ddFistLeft : ddFist
 			PUNG B 1;
 			Loop;
 		Fire:
-			PUNG B 1 A_DDActionLeft;
+			PUNG B 1 A_WeapActionLeft;
+			PUNG B 1;
 			PUNG C 1 A_Whoosh;
 			PUNG D 6 A_FireLeftWeapon;
 			PUNG C 1;
@@ -213,7 +214,8 @@ class ddFistRight : ddFist
 			PUNG A 1;
 			Loop;
 		Fire:
-			TNT1 A 2 A_DDActionRight;
+			TNT1 A 1 A_WeapActionRight;
+			TNT1 A 2;
 			PUNH A 1;
 			PUNH B 2 A_Whoosh;
 			PUNH CD 2;
