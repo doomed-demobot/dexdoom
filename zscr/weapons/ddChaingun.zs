@@ -39,22 +39,7 @@ class ddChaingun : ddWeapon replaces Chaingun
 		spin = 0;
 		spintimer = 0;
 	}
-	
-	override void Tick()
-	{
-		Super.Tick();
-		let ddp = ddPlayer(owner);
-		if(ddp) 
-		{
-			if(ddp.wolfen && bAltFire && !PressingFireButton()) { 
-				if(weaponSide) { ddp.altModeL = 0; }
-				else { ddp.altModeR = 0; } 
-			}
-			if(--spintimer < 0) { spintimer = 0; }
-			if(!spintimer) { if(spin > 0) { spin -= 10; spintimer += 35; } if(spin < 0) { spin = 0; } }
-		}
-	}
-	
+		
 	override void InventoryInfo(ddStats ddhud)
 	{
 		let hud = ddhud;		
@@ -68,6 +53,13 @@ class ddChaingun : ddWeapon replaces Chaingun
 		let hude = ddhud;
 		hude.DrawString(hude.fa, GetTag(), (12, 45), hude.DI_SCREEN_CENTER | hude.DI_TEXT_ALIGN_LEFT);
 		hude.DrawString(hude.fa, "Spare ammo: "..hude.FormatNumber(AmmoGive1), (12, 52), hude.DI_SCREEN_CENTER | hude.DI_TEXT_ALIGN_LEFT);
+	}
+	
+	override TextureID GetFireModeIcon()
+	{
+		if(fireMode == 0) { return TexMan.CheckForTexture("ICONDOUB"); }
+		else if (fireMode == 1) { return TexMan.CheckForTexture("ICONSPIN"); }
+		else { return Super.GetFireModeIcon(); }
 	}
 	
 	override String, int GetSprites()
@@ -157,7 +149,13 @@ class ddChaingun : ddWeapon replaces Chaingun
 				spin += 5;
 				spintimer = 35;
 				if(spin > 40) { spin = 40; }
+			case 2:
+				if(!PressingFireButton()) { 
+					if(weaponside) { ddp.altModeL = 0; fireMode = ddp.altModeL; }
+					else { ddp.altModeR = 0; fireMode = ddp.altModeR; }
+				}
 				break;
+				
 			default: ddp.A_Log("No action defined for tic "..no); break;
 		}
 	}
@@ -229,11 +227,13 @@ class ddChaingunLeft : ddChaingun
 			CHGG A 0 A_ChainSpin;
 			CHGG A 1 A_WeapActionLeft;
 			CHGG A 1;
+			CHGG A 2 A_WeapActionLeft;
 			CHGG A 1 A_SetTicksLeft;
 			CHGG B 0 A_ChainSpin;
 			CHGG B 0 A_ChainSpin;
 			CHGG B 1 A_WeapActionLeft;
 			CHGG B 1;
+			CHGG B 2 A_WeapActionLeft;
 			CHGG B 1 A_SetTicksLeft;
 			CHGG B 0 A_ddRefireLeft;
 			Goto Ready;
@@ -284,11 +284,13 @@ class ddChaingunRight : ddChaingun
 			CHGG A 0 A_ChainSpin;
 			CHGG A 1 A_WeapActionRight;
 			CHGG A 1;
+			CHGG A 2 A_WeapActionRight;
 			CHGG A 1 A_SetTicksRight;
 			CHGG B 0 A_ChainSpin;
 			CHGG B 0 A_ChainSpin;
 			CHGG B 1 A_WeapActionRight;
 			CHGG B 1;
+			CHGG B 2 A_WeapActionRight;
 			CHGG B 1 A_SetTicksRight;
 			CHGG B 0 A_ddRefireRight;
 			Goto Ready;

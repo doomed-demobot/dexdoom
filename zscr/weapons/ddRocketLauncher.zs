@@ -50,6 +50,13 @@ class ddRocketLauncher : ddWeapon replaces RocketLauncher
 		hude.DrawString(hude.fa, "Spare ammo: "..hude.FormatNumber(AmmoGive1), (12, 59), hude.DI_SCREEN_CENTER | hude.DI_TEXT_ALIGN_LEFT);
 	}
 	
+	override TextureID GetFireModeIcon()
+	{
+		if(fireMode == 0) { return TexMan.CheckForTexture("ICONSING"); }
+		else if (fireMode == 1) { return TexMan.CheckForTexture("ICONGREN"); }
+		else { return Super.GetFireModeIcon(); }
+	}
+	
 	override void HUDA(ddStats hude)
 	{
 		if(owner.player.readyweapon is "twoHanding")
@@ -393,14 +400,16 @@ extend class ddWeapon
 }
 //TODO: make it not explode after running out of speed/bounces
 // #Class ddGrenade : Actor()
+
 class ddGrenade : Actor
 {
+	bool contact;
 	Default
 	{
 		Radius 11;
 		Height 8;
 		Speed 40;
-		Damage 15;
+		Damage 0;
 		Projectile;
 		-NOGRAVITY;
 		+RANDOMIZE;
@@ -411,10 +420,43 @@ class ddGrenade : Actor
 		BounceSound "weapons/grenadeb";
 		DeathSound "weapons/grenadeb";
 		Obituary "%o blocked %k's pass.";
+		+ALLOWBOUNCEONACTORS;
+		+BOUNCEONACTORS;
 		+BOUNCEONWALLS;
 		+BOUNCEONFLOORS;
 		+BOUNCEONCEILINGS;
 		+BOUNCEAUTOOFF;
+	}
+	
+	override void PostBeginPlay()
+	{
+		Super.PostBeginPlay();
+		contact = true;
+	}
+	
+	override int SpecialBounceHit(Actor bounceMobj, Line bounceLine, readonly<SecPlane> bouncePlane)
+	{
+		if(bounceMobj)
+		{
+			if(contact && bounceMobj.bismonster)
+			{
+				console.printf("contact");
+				let st = FindState("Death") + 1;
+				self.vel = (0, 0, 0);
+				SetState(st);
+				return MHIT_DEFAULT;
+			}
+			else
+			{
+				contact = false;
+				return MHIT_DEFAULT;
+			}
+		}
+		else
+		{
+			contact = false;
+			return MHIT_DEFAULT;
+		}
 	}
 	// ##ddGrenade States()
 	States

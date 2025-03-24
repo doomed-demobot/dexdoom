@@ -324,8 +324,11 @@ class dualWielding : ddWeapon
 			{
 				if(!ddp.FindInventory("ClassicModeToken"))
 				{
-					hude.DrawString(hude.fa, ddp.altmodeL ? "A" : "P", (-64, -48), hude.DI_SCREEN_CENTER_BOTTOM | hude.DI_TEXT_ALIGN_CENTER);
-					hude.DrawString(hude.fa, ddp.altmodeR ? "A" : "P", (65, -48), hude.DI_SCREEN_CENTER_BOTTOM | hude.DI_TEXT_ALIGN_CENTER);
+					//hude.DrawString(hude.fa, ddp.altmodeL ? "A" : "P", (-64, -48), hude.DI_SCREEN_CENTER_BOTTOM | hude.DI_TEXT_ALIGN_CENTER);
+					//hude.DrawString(hude.fa, ddp.altmodeR ? "A" : "P", (65, -48), hude.DI_SCREEN_CENTER_BOTTOM | hude.DI_TEXT_ALIGN_CENTER);
+					hude.DrawTexture(CurLWP.GetFireModeIcon(), (-88, -20), hude.DI_SCREEN_CENTER_BOTTOM , 1., (-1, -1), (0.33, 0.33));
+					hude.DrawTexture(CurRWP.GetFireModeIcon(), (38, -20), hude.DI_SCREEN_CENTER_BOTTOM , 1., (-1, -1), (0.33, 0.33));					
+					
 				}
 			}		
 			if(ddp.desire)
@@ -427,6 +430,7 @@ class dualWielding : ddWeapon
 					if(ddp.ddWeaponState & DDW_LEFTREADY)
 					{
 						ddp.altmodeL = !ddp.altmodeL;
+						lw.fireMode = ddp.altModeL;
 						lw.weaponStatus = DDW_FIRING;
 						lw.bAltFire = false;
 						A_StartSound("weapons/chaingunspin", CHAN_BODY, CHANF_OVERLAP);
@@ -477,6 +481,7 @@ class dualWielding : ddWeapon
 					if(ddp.ddWeaponState & DDW_RIGHTREADY)
 					{
 						ddp.altmodeR = !ddp.altmodeR;
+						rw.fireMode = ddp.altModeR;
 						rw.weaponStatus = DDW_FIRING;
 						rw.bAltFire = false;
 						A_StartSound("weapons/chaingunspin", CHAN_BODY, CHANF_OVERLAP);
@@ -574,6 +579,7 @@ class dualWielding : ddWeapon
 					pspl.y = 0; psplf.y = 0;
 					if(rw) { lw.companionpiece = rw; rw.companionpiece = rw; }
 					player.SetPSprite(PSP_LEFTW, lw.GetReadyState());
+					ddp.altModeL = lw.fireMode;
 					mode.blraised = true;
 				}
 			}
@@ -608,6 +614,7 @@ class dualWielding : ddWeapon
 					pspr.y = 0; psprf.y = 0;
 					if(lw) { rw.companionpiece = lw; lw.companionpiece = rw; }
 					player.SetPSprite(PSP_RIGHTW, rw.GetReadyState());
+					ddp.altModeR = rw.fireMode;
 					mode.brraised = true;
 				}
 			}

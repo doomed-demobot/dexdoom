@@ -85,7 +85,10 @@ class twoHanding : ddWeapon
 			}
 			if(wolfen) 
 			{ 
-				if(!ddp.FindInventory("ClassicModeToken")) { hude.DrawString(hude.fa, ddp.altmodeR ? "A" : "P", (0, -48), hude.DI_SCREEN_CENTER_BOTTOM | hude.DI_TEXT_ALIGN_CENTER); }
+				if(!ddp.FindInventory("ClassicModeToken")) { 				
+					//hude.DrawString(hude.fa, ddp.altmodeR ? "A" : "P", (0, -48), hude.DI_SCREEN_CENTER_BOTTOM | hude.DI_TEXT_ALIGN_CENTER); 
+					hude.DrawTexture(CurWeap.GetFireModeIcon(), (-26, -20), hude.DI_SCREEN_CENTER_BOTTOM , 1., (-1, -1), (0.33, 0.33));
+				}
 			}
 			hude.DrawInventoryIcon(plarm, (-35, -20), 0, 0.4);
 			hude.DrawString(hude.bf, hude.FormatNumber(plarm.Amount), (-50, -35), hude.DI_SCREEN_RIGHT_BOTTOM | hude.DI_TEXT_ALIGN_CENTER, 0, 0.5, -1, 4, (1.25,1.25));
@@ -227,6 +230,7 @@ class twoHanding : ddWeapon
 				if(ddp.ddWeaponState & DDW_RIGHTREADY)
 				{
 					ddp.altmodeR = !ddp.altmodeR;
+					weap.fireMode = ddp.altModeR;
 					weap.weaponStatus = DDW_FIRING;
 					weap.bAltFire = false;
 					A_StartSound("weapons/chaingunspin", CHAN_BODY, CHANF_OVERLAP);
@@ -290,6 +294,7 @@ class twoHanding : ddWeapon
 					pspr.y = 0; psprf.y = 0;
 					if(lw) { rw.companionpiece = lw; lw.companionpiece = rw; }
 					player.SetPSprite(PSP_RIGHTW, rw.GetReadyState());
+					ddp.altModeR = rw.fireMode;
 					invoker.bModeReady = true;
 					invoker.weaponStatus = DDW_READY;
 					A_ChangeState('Ready');

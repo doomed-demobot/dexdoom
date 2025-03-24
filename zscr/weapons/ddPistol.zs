@@ -58,7 +58,7 @@ class ddPistol : ddWeapon replaces Pistol
 					hude.DrawString(hude.bf, hude.FormatNumber(mag), (64, -20), hude.DI_SCREEN_CENTER_BOTTOM | hude.DI_TEXT_ALIGN_CENTER, 0, 0.5, -1, 4, (0.75,0.75));				
 			}
 		}
-	}
+	}	
 	
 	override void PreviewInfo(ddStats ddhud)
 	{
@@ -66,6 +66,13 @@ class ddPistol : ddWeapon replaces Pistol
 		hude.DrawString(hude.fa, GetTag(), (12, 45), hude.DI_SCREEN_CENTER | hude.DI_TEXT_ALIGN_LEFT);
 		hude.DrawString(hude.fa, hude.FormatNumber(mag).."/"..hude.FormatNumber(default.mag), (12, 52), hude.DI_SCREEN_CENTER | hude.DI_TEXT_ALIGN_LEFT);
 		hude.DrawString(hude.fa, "Spare ammo: "..hude.FormatNumber(AmmoGive1), (12, 59), hude.DI_SCREEN_CENTER | hude.DI_TEXT_ALIGN_LEFT);
+	}
+	
+	override TextureID GetFireModeIcon()
+	{
+		if(fireMode == 0) { return TexMan.CheckForTexture("ICONSING"); }
+		else if (fireMode == 1) { return TexMan.CheckForTexture("ICONBRST"); }
+		else { return Super.GetFireModeIcon(); }
 	}
 	
 	override void PostBeginPlay()
@@ -245,6 +252,52 @@ class ddPistol : ddWeapon replaces Pistol
 				break;
 			default: ddp.A_Log("No action defined for tic "..no); break;
 		}
+	}
+	
+	action void A_FireDDPistol()
+	{
+		bool accurate;
+		int dam = 4 * random(2,3);
+		let ddp = ddPlayer(invoker.owner);
+		ddWeapon weap = ddWeapon(self);
+		Class<Ammo> type = (ddp.FindInventory("ClassicModeToken")) ? weap.ClassicAmmoType1 : weap.AmmoType1;
+		if(ddp.player == null) { return; }	
+		double eA = 0;
+		double eP = 0;
+		accurate = !ddp.player.refire;
+		bool pen = (ddp.player.readyweapon is "dualWielding"&&!ddp.CheckESOA(0));
+		bool bz = (ddp.FindInventory("PowerBerserk"));
+		if(pen) { eA = (Random2() * (1.99 / 256)); eP = (Random2() * (1.67 / 256)); } 
+		else { eA = Random2() * (0.99 / 256); eP = Random2() * (0.99 / 256); }
+		if(ddp.FindInventory("ClassicModeToken")) { ddp.A_StartSound("weapons/pistol", CHAN_WEAPON, CHANF_OVERLAP); }
+		else { ddp.A_StartSound("weapons/pistolnew", CHAN_WEAPON, CHANF_OVERLAP); }
+		if(invoker.mag < 4) { ddp.A_StartSound("weapons/nofire", CHAN_WEAPON, CHANF_OVERLAP); }
+		ddShot(accurate, "BulletPuff", dam, eA, eP, weap.weaponside, (pen) ? 10 : 3);
+		if(pen) { AddRecoil(1.8, 1, 4.); }
+		else { AddRecoil(1.5, 0, 4.); }
+	}
+	
+	action void A_BurstFireDDPistol() 
+	{
+		bool accurate;
+		int dam = 5 * random(2,3);		
+		let ddp = ddPlayer(invoker.owner);
+		ddWeapon weap = ddWeapon(self);
+		Class<Ammo> type = (ddp.FindInventory("ClassicModeToken")) ? weap.ClassicAmmoType1 : weap.AmmoType1;
+		if(ddp.player == null) { return; }
+		bool pen = (ddp.player.readyweapon is "dualWielding"&&!ddp.CheckESOA(0));
+		if(ddp.dddebug & DBG_WEAPONS) { A_Log(""..weap.GetClassName().." dualwielding penalties "..((pen) ? "active" : "inactive")); }
+		double eA = 0;
+		double eP = 0;
+		bool bz = (ddp.FindInventory("PowerBerserk"));
+		if(pen) { eA = (Random2() * (3.67 / 256)); eP = (Random2() * (4.25 / 256)); } 
+		else { eA = Random2() * (1.67 / 256); eP = Random2() * (2.25 / 256); }
+		if(ddp.FindInventory("ClassicModeToken")) { ddp.A_StartSound("weapons/pistol", CHAN_WEAPON, CHANF_OVERLAP); }
+		else { ddp.A_StartSound("weapons/pistolnew", CHAN_WEAPON, CHANF_OVERLAP); }
+		if(invoker.mag < 4) { ddp.A_StartSound("weapons/nofire", CHAN_WEAPON, CHANF_OVERLAP); }
+		ddShot(false, "BulletPuff", dam, eA, eP,weap.weaponside, 5);
+		if(pen) { AddRecoil(7.5, 4, 3.5); }
+		else { AddRecoil(3, 1, 3.5); }
 	}
 	
 	// ## ddPistol States()
@@ -478,52 +531,7 @@ class d9MSpawner : RandomSpawner
 }
 
 extend class ddWeapon
-{
-	action void A_FireDDPistol()
-	{
-		bool accurate;
-		int dam = 4 * random(2,3);
-		let ddp = ddPlayer(invoker.owner);
-		ddWeapon weap = ddWeapon(self);
-		Class<Ammo> type = (ddp.FindInventory("ClassicModeToken")) ? weap.ClassicAmmoType1 : weap.AmmoType1;
-		if(ddp.player == null) { return; }	
-		double eA = 0;
-		double eP = 0;
-		accurate = !ddp.player.refire;
-		bool pen = (ddp.player.readyweapon is "dualWielding"&&!ddp.CheckESOA(0));
-		bool bz = (ddp.FindInventory("PowerBerserk"));
-		if(pen) { eA = (Random2() * (1.99 / 256)); eP = (Random2() * (1.67 / 256)); } 
-		else { eA = Random2() * (0.99 / 256); eP = Random2() * (0.99 / 256); }
-		if(ddp.FindInventory("ClassicModeToken")) { ddp.A_StartSound("weapons/pistol", CHAN_WEAPON, CHANF_OVERLAP); }
-		else { ddp.A_StartSound("weapons/pistolnew", CHAN_WEAPON, CHANF_OVERLAP); }
-		if(invoker.mag < 4) { ddp.A_StartSound("weapons/nofire", CHAN_WEAPON, CHANF_OVERLAP); }
-		ddShot(accurate, "BulletPuff", dam, eA, eP, weap.weaponside, (pen) ? 10 : 3);
-		if(pen) { AddRecoil(1.8, 1, 4.); }
-		else { AddRecoil(1.5, 0, 4.); }
-	}
-	action void A_BurstFireDDPistol() 
-	{
-		bool accurate;
-		int dam = 5 * random(2,3);		
-		let ddp = ddPlayer(invoker.owner);
-		ddWeapon weap = ddWeapon(self);
-		Class<Ammo> type = (ddp.FindInventory("ClassicModeToken")) ? weap.ClassicAmmoType1 : weap.AmmoType1;
-		if(ddp.player == null) { return; }
-		bool pen = (ddp.player.readyweapon is "dualWielding"&&!ddp.CheckESOA(0));
-		if(ddp.dddebug & DBG_WEAPONS) { A_Log(""..weap.GetClassName().." dualwielding penalties "..((pen) ? "active" : "inactive")); }
-		double eA = 0;
-		double eP = 0;
-		bool bz = (ddp.FindInventory("PowerBerserk"));
-		if(pen) { eA = (Random2() * (3.67 / 256)); eP = (Random2() * (4.25 / 256)); } 
-		else { eA = Random2() * (1.67 / 256); eP = Random2() * (2.25 / 256); }
-		if(ddp.FindInventory("ClassicModeToken")) { ddp.A_StartSound("weapons/pistol", CHAN_WEAPON, CHANF_OVERLAP); }
-		else { ddp.A_StartSound("weapons/pistolnew", CHAN_WEAPON, CHANF_OVERLAP); }
-		if(invoker.mag < 4) { ddp.A_StartSound("weapons/nofire", CHAN_WEAPON, CHANF_OVERLAP); }
-		ddShot(false, "BulletPuff", dam, eA, eP,weap.weaponside, 5);
-		if(pen) { AddRecoil(7.5, 4, 3.5); }
-		else { AddRecoil(3, 1, 3.5); }
-	}
-	
+{	
 	action void A_PistolReload1() { A_StartSound("weapons/preload1", CHAN_WEAPON, CHANF_OVERLAP); }
 	action void A_PistolReload2() { A_StartSound("weapons/preload2", CHAN_WEAPON, CHANF_OVERLAP); }
 	action void A_PistolReload3() { A_StartSound("weapons/preload3", CHAN_WEAPON, CHANF_OVERLAP); }

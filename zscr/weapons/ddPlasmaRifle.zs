@@ -45,6 +45,13 @@ class ddPlasmaRifle : ddWeapon replaces PlasmaRifle
 		hude.DrawString(hude.fa, "Spare ammo: "..hude.FormatNumber(AmmoGive1), (12, 59), hude.DI_SCREEN_CENTER | hude.DI_TEXT_ALIGN_LEFT);
 	}
 	
+	override TextureID GetFireModeIcon()
+	{
+		if(fireMode == 0) { return TexMan.CheckForTexture("ICONSING"); }
+		else if (fireMode == 1) { return TexMan.CheckForTexture("ICONGREN"); }
+		else { return Super.GetFireModeIcon(); }
+	}
+	
 	override void Travelled()
 	{
 		Super.Travelled();

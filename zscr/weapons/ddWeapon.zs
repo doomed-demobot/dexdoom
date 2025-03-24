@@ -46,6 +46,7 @@ class ddWeapon : Weapon
 	uint lswaptarget, rswapTarget;
 	int caseno;
 	int sndno;
+	int fireMode; //true = alt; false = primary
 	class<Ammo> ClassicAmmoType1, ClassicAmmoType2;
 	ddWeapon swapHeld; //weapon stored here for pickupswapstore
 	property ClassicAmmoType : ClassicAmmoType1;
@@ -517,6 +518,11 @@ class ddWeapon : Weapon
 	virtual String, int GetSprites(int forcemode = -1)
 	{
 		return "TNT1A0", -1;
+	}
+	
+	clearscope virtual TextureID GetFireModeIcon()
+	{
+		return TexMan.CheckForTexture("TNT1");
 	}
 	
 	virtual void DD_WeapAction(int no)
