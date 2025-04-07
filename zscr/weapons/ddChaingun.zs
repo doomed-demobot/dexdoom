@@ -39,6 +39,15 @@ class ddChaingun : ddWeapon replaces Chaingun
 		spin = 0;
 		spintimer = 0;
 	}
+	
+	override void Tick()
+	{
+		Super.Tick();		
+		if(owner) {
+			if(--spintimer < 0) { spintimer = 0; }
+			if(!spintimer) { if(spin > 0) { spin -= 10; spintimer += 35; } if(spin < 0) { spin = 0; } }
+		}
+	}
 		
 	override void InventoryInfo(ddStats ddhud)
 	{
@@ -235,6 +244,7 @@ class ddChaingunLeft : ddChaingun
 			CHGG B 1;
 			CHGG B 2 A_WeapActionLeft;
 			CHGG B 1 A_SetTicksLeft;
+			CHGG B 2 A_WeapActionLeft;
 			CHGG B 0 A_ddRefireLeft;
 			Goto Ready;
 			/*
@@ -291,7 +301,8 @@ class ddChaingunRight : ddChaingun
 			CHGG B 1 A_WeapActionRight;
 			CHGG B 1;
 			CHGG B 2 A_WeapActionRight;
-			CHGG B 1 A_SetTicksRight;
+			CHGG B 1 A_SetTicksRight;			
+			CHGG B 2 A_WeapActionRight;
 			CHGG B 0 A_ddRefireRight;
 			Goto Ready;
 			/*
