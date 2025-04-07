@@ -534,15 +534,11 @@ class ddWeapon : Weapon
 	{
 		if(owner) { owner.A_Log("No sound defined for tic "..no); }
 	}
-	//used to call non-action functions with A_ddAction with casenumbers
-	virtual void DD_Condition(int cn)
+	
+	virtual State GetWeapState(int no)
 	{
-		if(owner) { owner.A_Log("This weapon has no conditions to get."); }	
-	}	
-	//same but with A_CallSound
-	virtual void DD_Sound(int sn)
-	{
-		if(owner) { owner.A_Log("This weapon has no sounds to play"); }
+		if(owner) { owner.A_Log("No state defined for tic "..no); }
+		return FindState('DoNotJump');
 	}
 	
 	int ModeCheck(int esoaCost = -1)
@@ -641,7 +637,38 @@ class ddWeapon : Weapon
 	{
 		if(player)
 			player.SetPSprite(layer, invoker.FindState(st));
-	}	
+	}
+	
+	//used for weapon states
+	action void A_WeapSetStateLeft()
+	{
+		let own = ddPlayer(invoker.owner);
+		if(own)
+		{
+			let lw = own.GetLeftWeapon(own.lwx);
+			let psp = own.player.GetPSprite(PSP_LEFTW);
+			int no = psp.tics;
+			psp.tics = 0;
+			let st = lw.GetWeapState(no);
+			if(st == lw.FindState('DoNotJump')) { return; }
+			else { psp.SetState(st); }
+		}
+	}
+	
+	action void A_WeapSetStateRight()
+	{
+		let own = ddPlayer(invoker.owner);
+		if(own)
+		{
+			let rw = own.GetRightWeapon(own.rwx);
+			let psp = own.player.GetPSprite(PSP_RIGHTW);
+			int no = psp.tics;
+			psp.tics = 0;
+			let st = rw.GetWeapState(no);
+			if(st == rw.FindState('DoNotJump')) { return; }
+			else { psp.SetState(st); }
+		}
+	}
 	
 	action void AddRecoil(double pitch, int angle, double desFOV)
 	{
@@ -956,34 +983,6 @@ class ddWeapon : Weapon
 		if(weap) { weap.DD_WeapAction(no); }
 	}
 	
-	//deprecated
-	action void A_ddActionLeft()
-	{
-		let ddp = ddPlayer(self);
-		let weap = ddp.GetLeftWeapon(ddp.lwx);
-		if(weap) { weap.DD_Condition(weap.caseno); }
-	}
-	action void A_ddActionRight()
-	{		
-		let ddp = ddPlayer(self);
-		let weap = ddp.GetRightWeapon(ddp.rwx);
-		if(weap) { weap.DD_Condition(weap.caseno); }
-	}
-	
-	action void A_CallSoundLeft()
-	{
-		let ddp = ddPlayer(self);
-		let weap = ddp.GetLeftWeapon(ddp.lwx);
-		if(weap) { weap.DD_Sound(weap.sndno); }
-	}
-	
-	action void A_CallSoundRight()
-	{
-		let ddp = ddPlayer(self);
-		let weap = ddp.GetRightWeapon(ddp.rwx);
-		if(weap) { weap.DD_Sound(weap.sndno); }
-	}
-	
 	//-1 = side independent; kick = added instability
 	action void ddShot(bool accurate, Class<Actor> pufftype, int damage, double eAngle = 0, double ePitch = 0, int iSide = -1, int kick = 0)
 	{	
@@ -1213,7 +1212,7 @@ class ddWeapon : Weapon
 		ddp.player.SetPSprite(PSP_RIGHTW, st);
 		mode.ChangeState('Ready');
 	}
-	//called by weapons when they reload themselves; assumptions already made
+	//called by weapons when they reload themselves
 	void LowerToReloadWeapon()
 	{
 		let ddp = ddPlayer(owner);
