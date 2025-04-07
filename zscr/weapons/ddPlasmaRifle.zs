@@ -358,7 +358,8 @@ class ddPlasmaRifleRight : ddPlasmaRifle
 			PLSG A 2 A_ddRefireRight;
 			Goto Ready;
 		Altfire:
-			PLSG A 5 A_DDActionRight;
+			PLSG A 1 A_WeapActionRight;
+			PLSG A 5;
 			PLSG A 0 A_FlashRight;
 			PLSG A 3 A_WeapActionRight;
 			PLSG A 6;

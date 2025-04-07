@@ -127,7 +127,8 @@ class ddBFG9000Left : ddBFG9000
 			BFGG A 1 A_LeftWeaponReady;
 			Loop;
 		Fire:
-			BFGG A 1 A_DDActionLeft;
+			BFGG A 1 A_WeapActionLeft;
+			BFGG A 1;
 			BFGG A 20 A_BFGsound;
 			BFGG B 10 A_FlashLeft;
 			BFGG B 10 A_FireLeftWeapon;
@@ -164,7 +165,8 @@ class ddBFG9000Right : ddBFG9000
 			BFGG A 1 A_RightWeaponReady;
 			Loop;
 		Fire:
-			BFGG A 1 A_DDActionRight;
+			BFGG A 1 A_WeapActionRight;
+			BFGG A 1;
 			BFGG A 20 A_BFGsound;
 			BFGG B 10 A_FlashRight;
 			BFGG B 10 A_FireRightWeapon;
