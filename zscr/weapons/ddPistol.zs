@@ -116,15 +116,21 @@ class ddPistol : ddWeapon replaces Pistol
 			}
 			else if(ddp.player.readyweapon is "twoHanding" || ddp.player.pendingweapon is "twoHanding" || ddp.lastmode is "twoHanding")  
 			{
-				int fr = ((ddweaponflags & PIS_RSEQ ? 5 : 0));
-				fr = ((mag < 1) ? 5 : fr);
-				return "PISDA0", fr; 
+				int fr = ((ddweaponflags & PIS_RSEQ ? 9 : 0));
+				if(mag < 1) { return "PISEI0", 8; }
+				else { return "PISDA0", fr; }
+				//fr = ((mag < 1) ? 9 : fr);
+				//return "PISDA0", fr; 
 			}
 			else { 
 				return "TNT1A0"; }
 		}
 		else if(forcemode == 2) { return "PISLA0", ((ddweaponflags & PIS_RSEQ) ? 10 : 0); }
-		else if(forcemode == 1) { return "PISDA0", -1; }
+		else if(forcemode == 1) {
+			int fr = ((ddweaponflags & PIS_RSEQ ? 9 : 0));
+			if(mag < 1) { return "PISEI0", 8; }
+			else { return "PISDA0", fr; }		
+		}
 		else { return "TNT1A0", -1; }
 	}
 		
@@ -254,6 +260,15 @@ class ddPistol : ddWeapon replaces Pistol
 		}
 	}
 	
+	override State GetWeapState(int no)
+	{
+		switch(no)
+		{
+			case 1: if(mag >= 1) { return FindState("Reload3"); } else { return FindState("DoNotJump"); }
+			default: return Super.GetWeapState(no);
+		}
+	}
+	
 	action void A_FireDDPistol()
 	{
 		bool accurate;
@@ -336,6 +351,7 @@ class ddPistol : ddWeapon replaces Pistol
 			PISD A 0;
 			PIFD A 0;
 			PISL A 0;
+			PISE A 0;
 			Stop;
 	}
 }
@@ -356,6 +372,7 @@ class ddPistolLeft : ddPistol
 			#### A 1;
 			#### B 0 A_FlashLeft;
 			#### B 2 A_FireLeftWeapon;
+			#### C 0 A_ChangeSpriteLeft;
 			#### C 2 A_WeapActionLeft;
 			#### # 1 A_ChangeSpriteLeft;
 			#### ######## 1 A_ddRefireLeftHeavy;
@@ -387,15 +404,20 @@ class ddPistolLeft : ddPistol
 			Goto Ready;
 		ReloadP:
 			#### F 3;
-			#### G 3 A_PistolReload1;
+			#### H 2 A_PistolReload1;
+			#### G 2;
 			#### G 4 A_WeapActionLeft;
 		Reload2:
-			#### G 5 A_PistolReload2;
-			#### H 10 A_PistolReload3;
-			#### H 5 A_WeapActionLeft;
-			#### H 1;
-			#### IJ 4;
-			Goto Ready;
+			#### G 4;
+			#### H 8;
+			#### I 10 A_PistolReload2;
+			#### I 1 A_WeapSetStateLeft;
+			#### J 10 A_PistolReload3;
+		Reload3:
+			#### J 5 A_WeapActionLeft;
+			#### J 1;
+			#### J 4;
+			Goto Ready;		
 		UnloadP:
 			#### F 5 A_PistolReload2;
 			#### G 5;
@@ -432,6 +454,7 @@ class ddPistolRight : ddPistol
 			#### A 1;
 			#### B 0 A_FlashRight;
 			#### B 2 A_FireRightWeapon;
+			#### # 0 A_ChangeSpriteRight;
 			#### C 2 A_WeapActionRight;
 			#### # 1 A_ChangeSpriteRight;
 			#### ######## 1 A_ddRefireRightHeavy;
@@ -460,14 +483,19 @@ class ddPistolRight : ddPistol
 			Goto Ready;
 		ReloadP:
 			#### F 3;
-			#### G 3 A_PistolReload1;
+			#### H 2 A_PistolReload1;
+			#### G 2;
 			#### G 4 A_WeapActionRight;
 		Reload2:
-			#### G 5 A_PistolReload2;
-			#### H 10 A_PistolReload3;
-			#### H 5 A_WeapActionRight;
-			#### H 1;
-			#### IJ 4;
+			#### G 4;
+			#### H 8;
+			#### I 10 A_PistolReload2;
+			#### I 1 A_WeapSetStateRight;
+			#### J 10 A_PistolReload3;
+		Reload3:
+			#### J 5 A_WeapActionRight;
+			#### J 1;
+			#### J 4;
 			Goto Ready;
 		UnloadP:
 			#### F 5 A_PistolReload2;
@@ -532,8 +560,7 @@ class d9MSpawner : RandomSpawner
 
 extend class ddWeapon
 {	
-	action void A_PistolReload1() { A_StartSound("weapons/preload1", CHAN_WEAPON, CHANF_OVERLAP); }
-	action void A_PistolReload2() { A_StartSound("weapons/preload2", CHAN_WEAPON, CHANF_OVERLAP); }
-	action void A_PistolReload3() { A_StartSound("weapons/preload3", CHAN_WEAPON, CHANF_OVERLAP); }
-	
+	action void A_PistolReload1() { A_StartSound("weapons/shotgp1", CHAN_WEAPON, CHANF_OVERLAP); }
+	action void A_PistolReload2() { A_StartSound("weapons/shotgp2", CHAN_WEAPON, CHANF_OVERLAP); }
+	action void A_PistolReload3() { A_StartSound("weapons/shotgp2", CHAN_WEAPON, CHANF_OVERLAP, 1.0, ATTN_NORM, 1.5); }
 }
