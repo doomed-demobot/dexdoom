@@ -1,0 +1,87 @@
+
+Sprite "PLSGC0", 83, 61
+{
+	Offset -123, -114
+	Patch "PLSGA0", 0, 0
+}
+
+Sprite "PLGFB0", 104, 111
+{
+	Offset -152, -57
+	Patch "PLSGB0", 0, 0
+	{
+		FlipX
+	}
+}
+
+Sprite "PFSFA0", 288, 144
+{
+	Offset 23, -24
+	Patch "PFSTA0", 0, 0
+	{
+		FlipX
+	}
+}
+
+Sprite "PFSFB0", 288, 144
+{
+	Offset 34, -37
+	Patch "PFSTB0", 0, 0
+	{
+		FlipX
+	}
+}
+
+Sprite "PFSFC0", 288, 144
+{
+	Offset 25, -54
+	Patch "PFSTC0", 0, 0
+	{
+		FlipX
+	}
+}
+
+Sprite "PFSFD0", 288, 144
+{
+	Offset 22, -24
+	Patch "PFSTD0", 0, 0
+	{
+		FlipX
+	}
+}
+
+Sprite "PFSFE0", 288, 144
+{
+	Offset 27, -24
+	Patch "PFSTE0", 0, 0
+	{
+		FlipX
+	}
+}
+
+Sprite "PFSFF0", 288, 144
+{
+	Offset 4, -24
+	Patch "PFSTF0", 0, 0
+	{
+		FlipX
+	}
+}
+
+Sprite "PFSFG0", 288, 144
+{
+	Offset -35, -24
+	Patch "PFSTG0", 0, 0
+	{
+		FlipX
+	}
+}
+
+Sprite "PFSFH0", 288, 144
+{
+	Offset -23, -50
+	Patch "PFSTH0", 0, 0
+	{
+		FlipX
+	}
+}

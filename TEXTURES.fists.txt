@@ -1,0 +1,26 @@
+Sprite "PUNFB0", 80, 41
+{
+	Offset -151, -127
+	Patch "PUNGB0", 0, 0
+	{
+		FlipX
+	}
+}
+
+Sprite "PUNFC0", 107, 52
+{
+	Offset -151, -127
+	Patch "PUNGC0", 0, 0
+	{
+		FlipX
+	}
+}
+
+Sprite "PUNFD0", 147, 76
+{
+	Offset -108, -92
+	Patch "PUNGD0", 0, 0
+	{
+		FlipX
+	}
+}

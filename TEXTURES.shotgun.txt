@@ -1,0 +1,90 @@
+
+Sprite "SHOHA0", 79, 60
+{
+	Offset -118, -118
+	Patch "SHTDA0", 0, 0
+}
+
+Sprite "SHOHB0", 79, 60
+{
+	Offset -114, -130
+	Patch "SHTDA0", 0, 0
+}
+
+Sprite "SHOHC0", 79, 60
+{
+	Offset -111, -138
+	Patch "SHTDA0", 0, 0
+}
+
+Sprite "SHOHD0", 119, 121
+{
+	Offset -33, -77
+	Patch "SHTGB0", 0, 0
+}
+
+Sprite "SHOHE0", 87, 151
+{
+	Offset -20, -47
+	Patch "SHTGC0", 0, 0
+}
+
+Sprite "SHOHF0", 113, 131
+{
+	Offset -19, -67
+	Patch "SHTGD0", 0, 0
+}
+
+Sprite "SHOHG0", 79, 60
+{
+	Offset -124, -118
+	Patch "SHTDA0", 0, 0
+	{
+		FlipX
+	}
+}
+
+Sprite "SHOHH0", 79, 60
+{
+	Offset -128, -130
+	Patch "SHTDA0", 0, 0
+	{
+		FlipX
+	}
+}
+
+Sprite "SHOHI0", 79, 60
+{
+	Offset -131, -138
+	Patch "SHTDA0", 0, 0
+	{
+		FlipX
+	}
+}
+
+Sprite "SHOHJ0", 119, 121
+{
+	Offset -193, -77
+	Patch "SHTGB0", 0, 0
+	{
+		FlipX
+	}
+}
+
+Sprite "SHOHK0", 87, 151
+{
+	Offset -180, -47
+	Patch "SHTGC0", 0, 0
+	{
+		FlipX
+	}
+}
+
+Sprite "SHOHL0", 113, 131
+{
+	Offset -179, -67
+	Patch "SHTGD0", 0, 0
+	{
+		FlipX
+	}
+}
