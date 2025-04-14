@@ -327,6 +327,25 @@ class ddWeapon : Weapon
 		return;
 	} 
 	
+	// ##goto new weapon functions rewrite()
+		
+	action void A_DDCheckAmmo()
+	{
+		let ddp = ddPlayer(invoker.owner);		
+		let weap = ddWeapon(invoker);
+		let aType = (!weap.bAltFire) ? weap.AmmoType1 : weap.AmmoType2;
+		let res = weap.ModeCheck();
+		if(weap.mag < 1 && (ddp.CountInv(aType) < 1)) {					
+			if(ddp.dddebug & DBG_WEAPSEQUENCE) { ddp.A_Log("No ammo for Pistol fire"); } 
+			weap.SetState(weap.FindState("NoAmmo"));
+		}
+		if((res == RES_TWOHAND || res == RES_HASESOA)) { if(weap.mag < 1 || weap.ddWeaponFlags & PIS_RSEQ) { weap.weaponstatus = DDW_RELOADING; weap.SetState(weap.FindState("ReloadP")); } }
+		if(res == RES_DUALWLD) { if(weap.mag < 1 || weap.ddWeaponFlags & PIS_RSEQ) { weap.LowerToReloadWeapon(); } }
+		ddp.PlayAttacking(); 		
+	}
+	
+	
+	
 	// ##goto action button checks()
 	action bool A_PressingRightFire()
 	{
@@ -615,7 +634,7 @@ class ddWeapon : Weapon
 	{
 		let ddp = ddPlayer(invoker.owner);
 		if(ddp.ddWeaponState & DDW_NORIGHTSPRITECHANGE) { return; }
-		let rw = ddp.GetRightWeapon(ddp.rwx);
+		let rw = ddp.GetRightWeapon(ddp.rwx);		
 		let pspr = ddp.player.GetPSprite(PSP_RIGHTW);
 		String sp;
 		int fr;
@@ -640,6 +659,20 @@ class ddWeapon : Weapon
 	}
 	
 	//used for weapon states
+	
+	action void A_WeapSetState(statelabel st)
+	{
+		let own = ddPlayer(self);
+		if(own)
+		{
+			let weap = ddWeapon(invoker);
+			let psp = own.player.GetPSprite(weap.weaponside);
+			State wState = weap.FindState(st);
+			if(wState != null) { psp.SetState(wState); }
+			else { console.printf("state not found"); }
+		}
+	}
+	
 	action void A_WeapSetStateLeft()
 	{
 		let own = ddPlayer(invoker.owner);
@@ -750,7 +783,16 @@ class ddWeapon : Weapon
 		if(ddp.dddebug & DBG_WEAPSEQUENCE && ddp.dddebug & DBG_VERBOSE) { ddp.A_Log("Right alternative attack"); }
 		rWeap.AlternativeAttack(); }
 	}
-		
+	
+	action void A_DDFlash(statelabel st = "FlashP", bool nofunc = false)
+	{
+		let ddp = ddPlayer(self);
+		let weap = ddWeapon(invoker);
+		State fState = weap.FindState(st);
+		console.printf(""..weap.weaponside+1);
+		ddp.player.SetPSprite(weap.weaponside+1, fState);
+	}
+	
 	action void A_FlashLeft()
 	{
 		let ddp = ddPlayer(self);
@@ -1212,6 +1254,7 @@ class ddWeapon : Weapon
 		ddp.player.SetPSprite(PSP_RIGHTW, st);
 		mode.ChangeState('Ready');
 	}
+	
 	//called by weapons when they reload themselves
 	void LowerToReloadWeapon()
 	{

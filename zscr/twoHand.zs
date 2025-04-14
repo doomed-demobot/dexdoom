@@ -176,6 +176,8 @@ class twoHanding : ddWeapon
 		let ddp = ddPlayer(self);
 		let weap = ddp.GetRightWeapon(ddp.rwx);
 		let pspr = player.getpsprite(PSP_RIGHTW);
+		pspr.caller = weap;
+		//console.printf(""..pspr.caller.getclassname());
 		if(ddp.ddWeaponState & DDW_WANNAREPLACE) 
 		{ 
 			if(A_PressingRightFire() || A_PressingRightAltFire()) 
@@ -197,7 +199,7 @@ class twoHanding : ddWeapon
 					ddp.ddWeaponState &= ~DDW_RIGHTREADY;
 					ddp.ddWeaponState &= ~DDW_RIGHTBOBBING;
 					weap.bAltFire = false;
-					player.SetPSprite(PSP_RIGHTW, weap.GetAttackState());
+					weap.SetState(weap.GetAttackState());
 					if(!weap.bNoAlert)
 					{
 						SoundAlert(self);
@@ -217,7 +219,7 @@ class twoHanding : ddWeapon
 					weap.weaponStatus = DDW_ALTFIRING;
 					ddp.ddWeaponState &= ~DDW_RIGHTBOBBING;
 					weap.bAltFire = true;
-					player.SetPSprite(PSP_RIGHTW, weap.GetAttackState());
+					weap.SetState(weap.GetAttackState());
 					if(!weap.bNoAlert)
 					{
 						SoundAlert(self);
@@ -234,7 +236,7 @@ class twoHanding : ddWeapon
 					weap.weaponStatus = DDW_FIRING;
 					weap.bAltFire = false;
 					A_StartSound("weapons/chaingunspin", CHAN_BODY, CHANF_OVERLAP);
-					player.SetPSprite(PSP_RIGHTW, weap.FindState('NoAmmo'));
+					weap.SetState(weap.FindState('NoAmmo'));
 					ddp.ddWeaponState &= ~DDW_RIGHTREADY;
 					weap.weaponready = false;
 				}
@@ -243,7 +245,8 @@ class twoHanding : ddWeapon
 			{
 				if(ddp.ddWeaponState & DDW_RIGHTREADY)
 				{
-					player.SetPSprite(PSP_RIGHTW, weap.FindState('Select'));
+					player.SetPSprite(PSP_RIGHTW, weap.FindState('Select'));					
+					console.printf(""..pspr.caller.getclassname());
 					A_CheckRightWeaponMag();
 					weap.weaponready = false;
 					ddp.ddWeaponState &= ~DDW_RIGHTREADY;

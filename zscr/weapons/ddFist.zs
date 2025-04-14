@@ -99,6 +99,7 @@ class ddFist : ddWeapon replaces Fist
 		return "ddFist";
 	}
 	
+	//todo: figure out why right attack is dependent on left ready
 	override void DD_WeapAction(int no)
 	{
 		let ddp = ddPlayer(owner);

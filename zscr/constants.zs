@@ -16,8 +16,8 @@ enum KeyIdentities
 };
 enum WeaponSideIdentities
 {
-	CE_RIGHT = 0,
-	CE_LEFT  = 1,
+	CE_LEFT  = 2,
+	CE_RIGHT = 4,
 };
 enum ModeCheckResults
 {

@@ -438,6 +438,19 @@ class ddPistolLeft : ddPistol
 class ddPistolRight : ddPistol
 {
 	Default { ddweapon.weaponside CE_RIGHT; -DDWEAPON.GOESININV; }
+	
+	action void Fuk()
+	{
+		invoker.SetState(invoker.FindState("Ready"));
+	}
+	
+	void annon(int x)
+	{
+		if(x == 1) { console.printf("ass"); }
+		else if (x == 2) { console.printf("fuck"); }
+		else { console.printf("pizza"); }
+	}
+	
 	States
 	{
 		NoAmmo:
@@ -450,9 +463,9 @@ class ddPistolRight : ddPistol
 			PISD A 1 A_ChangeSpriteRight;
 			Loop;	
 		Fire:
-			#### A 1 A_WeapActionRight;
+			#### A 0 A_DDCheckAmmo;
 			#### A 1;
-			#### B 0 A_FlashRight;
+			#### B 1 A_WeapSetState("FireClassic");
 			#### B 2 A_FireRightWeapon;
 			#### # 0 A_ChangeSpriteRight;
 			#### C 2 A_WeapActionRight;
@@ -469,7 +482,7 @@ class ddPistolRight : ddPistol
 			#### B 5 A_ddRefireRight;
 			Goto Ready;				
 		AltFire:
-			#### A 1 A_WeapActionRight;
+			#### A 1 A_DDCheckAmmo;
 			#### A 4;
 		Burst:
 			#### B 0 A_FlashRight;

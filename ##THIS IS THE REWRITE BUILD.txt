@@ -1,0 +1,5 @@
+Notes:
+
+	When SetPSprite() is called by an readyweapon (twoHanding or dualWielding), it becomes the caller. When called by actual weapons, they become the caller
+	and can then call their own functions to it.
+	When a weapon is the caller, you can use SetState() instead of SetPSprite()
