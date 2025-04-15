@@ -345,6 +345,31 @@ class ddWeapon : Weapon
 	}
 	
 	
+	action void A_DDFlash(statelabel st = "FlashP", bool nofunc = false)
+	{
+		let ddp = ddPlayer(invoker.owner);
+		let weap = ddWeapon(invoker);
+		let pspf = ddp.player.GetPSprite(weap.weaponside+1);
+		//pspf.caller = weap;
+		State fState = weap.FindState(st);
+		console.printf(""..weap.weaponside+1);
+		//ddp.player.SetPSprite(weap.weaponside+1, fState); not this
+		if(fState != null) { weap.SetState(fState); }
+	}
+	
+	action void A_WeapSetState(statelabel st)
+	{
+		let own = ddPlayer(invoker.owner);
+		if(own)
+		{
+			let weap = ddWeapon(invoker);
+			let psp = own.player.GetPSprite(weap.weaponside);
+			console.printf(""..psp.id);
+			State wState = weap.FindState(st);
+			if(wState != null) { psp.SetState(wState); }
+			else { console.printf("state not found"); }
+		}
+	}
 	
 	// ##goto action button checks()
 	action bool A_PressingRightFire()
@@ -660,18 +685,6 @@ class ddWeapon : Weapon
 	
 	//used for weapon states
 	
-	action void A_WeapSetState(statelabel st)
-	{
-		let own = ddPlayer(self);
-		if(own)
-		{
-			let weap = ddWeapon(invoker);
-			let psp = own.player.GetPSprite(weap.weaponside);
-			State wState = weap.FindState(st);
-			if(wState != null) { psp.SetState(wState); }
-			else { console.printf("state not found"); }
-		}
-	}
 	
 	action void A_WeapSetStateLeft()
 	{
@@ -782,15 +795,6 @@ class ddWeapon : Weapon
 		else { 
 		if(ddp.dddebug & DBG_WEAPSEQUENCE && ddp.dddebug & DBG_VERBOSE) { ddp.A_Log("Right alternative attack"); }
 		rWeap.AlternativeAttack(); }
-	}
-	
-	action void A_DDFlash(statelabel st = "FlashP", bool nofunc = false)
-	{
-		let ddp = ddPlayer(self);
-		let weap = ddWeapon(invoker);
-		State fState = weap.FindState(st);
-		console.printf(""..weap.weaponside+1);
-		ddp.player.SetPSprite(weap.weaponside+1, fState);
 	}
 	
 	action void A_FlashLeft()

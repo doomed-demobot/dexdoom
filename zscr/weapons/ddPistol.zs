@@ -444,7 +444,7 @@ class ddPistolRight : ddPistol
 		invoker.SetState(invoker.FindState("Ready"));
 	}
 	
-	void annon(int x)
+	action void annon(int x)
 	{
 		if(x == 1) { console.printf("ass"); }
 		else if (x == 2) { console.printf("fuck"); }
@@ -464,8 +464,9 @@ class ddPistolRight : ddPistol
 			Loop;	
 		Fire:
 			#### A 0 A_DDCheckAmmo;
-			#### A 1;
-			#### B 1 A_WeapSetState("FireClassic");
+			#### A 1 annon(1);
+			#### A 1 A_DDFlash;
+			#### B 1 A_WeapSetState("Stupid");
 			#### B 2 A_FireRightWeapon;
 			#### # 0 A_ChangeSpriteRight;
 			#### C 2 A_WeapActionRight;
@@ -480,7 +481,10 @@ class ddPistolRight : ddPistol
 			#### B 6 A_FireRightWeapon;
 			#### C 4;
 			#### B 5 A_ddRefireRight;
-			Goto Ready;				
+			Goto Ready;
+		Stupid:
+			#### C 350;
+			Goto Ready;
 		AltFire:
 			#### A 1 A_DDCheckAmmo;
 			#### A 4;
@@ -519,6 +523,7 @@ class ddPistolRight : ddPistol
 			#### J 4;
 			Goto Ready;
 		FlashP:
+			PISF D 1 annon(3);
 			PISF # 2 Bright A_Light2;
 			Goto FlashDone;
 		FlashA:
