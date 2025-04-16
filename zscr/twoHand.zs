@@ -176,7 +176,9 @@ class twoHanding : ddWeapon
 		let ddp = ddPlayer(self);
 		let weap = ddp.GetRightWeapon(ddp.rwx);
 		let pspr = player.getpsprite(PSP_RIGHTW);
+		let psprf = player.getpsprite(PSP_RIGHTWF);
 		pspr.caller = weap;
+		psprf.caller = weap;
 		//console.printf(""..pspr.caller.getclassname());
 		if(ddp.ddWeaponState & DDW_WANNAREPLACE) 
 		{ 
@@ -200,6 +202,7 @@ class twoHanding : ddWeapon
 					ddp.ddWeaponState &= ~DDW_RIGHTBOBBING;
 					weap.bAltFire = false;
 					weap.SetState(weap.GetAttackState());
+					//weap.WeapSetState(weap.GetAttackState(), weap.weaponside);
 					if(!weap.bNoAlert)
 					{
 						SoundAlert(self);

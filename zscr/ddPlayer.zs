@@ -157,10 +157,6 @@ class ddPlayer : DoomPlayer
 			else
 			{
 				pspr.Tick();
-				if(pspr.id == 2) { pspr.caller = GetLeftWeapon(lwx); }
-				if(pspr.id == 3) { pspr.caller = GetLeftWeapon(lwx); }
-				if(pspr.id == 4) { pspr.caller = GetRightWeapon(rwx); }
-				if(pspr.id == 5) { pspr.caller = GetRightWeapon(rwx); }
 			}
 			pspr = pspr.Next;
 		}		

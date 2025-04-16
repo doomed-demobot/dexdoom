@@ -344,7 +344,6 @@ class ddWeapon : Weapon
 		ddp.PlayAttacking(); 		
 	}
 	
-	
 	action void A_DDFlash(statelabel st = "FlashP", bool nofunc = false)
 	{
 		let ddp = ddPlayer(invoker.owner);
@@ -352,9 +351,7 @@ class ddWeapon : Weapon
 		let pspf = ddp.player.GetPSprite(weap.weaponside+1);
 		//pspf.caller = weap;
 		State fState = weap.FindState(st);
-		console.printf(""..weap.weaponside+1);
-		//ddp.player.SetPSprite(weap.weaponside+1, fState); not this
-		if(fState != null) { weap.SetState(fState); }
+		weap.WeapSetState(fState, weap.weaponside+1);
 	}
 	
 	action void A_WeapSetState(statelabel st)
@@ -364,10 +361,22 @@ class ddWeapon : Weapon
 		{
 			let weap = ddWeapon(invoker);
 			let psp = own.player.GetPSprite(weap.weaponside);
-			console.printf(""..psp.id);
-			State wState = weap.FindState(st);
-			if(wState != null) { psp.SetState(wState); }
+			psp.caller = weap;
+			State newState = weap.FindState(st);
+			if(newState != null) { psp.SetState(newState); }
 			else { console.printf("state not found"); }
+		}
+	}
+	
+	void WeapSetState(State st, int layer)
+	{
+		let own = ddPlayer(owner);
+		if(own)
+		{
+			let weap = ddWeapon(self);
+			let psp = own.player.GetPSprite(layer);
+			psp.caller = weap;
+			if(st != null) { psp.SetState(st); }		 	
 		}
 	}
 	
