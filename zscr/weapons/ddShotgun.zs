@@ -42,6 +42,25 @@ class ddShotgun : ddWeapon
 		}
 	}*/
 	
+	//lame fix for dualWield refire states
+	override void onRefire()
+	{
+		if(owner.player.readyweapon is "dualWielding")
+		{
+			PSPrite psp;
+			if(weaponside == CE_RIGHT)
+			{
+				psp = owner.player.getpsprite(PSP_RIGHTW);
+				psp.sprite = GetSpriteIndex("SHTRA0");
+			}
+			else
+			{
+				psp = owner.player.getpsprite(PSP_LEFTW);
+				psp.sprite = GetSpriteIndex("SHTDA0");
+			}
+		}
+	}
+	
 	override void OnAutoReload()
 	{
 		ddWeaponFlags &= ~SHT_RSEQ;
