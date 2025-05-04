@@ -311,7 +311,8 @@ class ddShotgunLeft : ddShotgun
 			SHOH D 3 A_WeapActionLeft;
 			SHOH D 3;
 			SHOH CBA 3;
-			SHOH A 7 A_ddRefireLeftHeavy;
+			SHOH AAA 1 A_ddRefireLeftHeavy;
+			SHOH A 4;
 			Goto Ready;			
 		UnloadP:		
 			#### BC 5;
@@ -378,7 +379,8 @@ class ddShotgunRight : ddShotgun
 			SHOH J 3 A_WeapActionRight;
 			SHOH J 3;
 			SHOH IHG 3;
-			SHOH G 7 A_ddRefireRightHeavy;
+			SHOH GGG 1 A_ddRefireRightHeavy;
+			SHOH G 4;
 			Goto Ready;			
 		UnloadP:		
 			#### BC 5;
