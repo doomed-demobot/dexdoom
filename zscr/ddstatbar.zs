@@ -340,6 +340,8 @@ class ddStats : BaseStatusBar
 		{
 			DrawString(fa, "ins:"..FormatNumber(dPlay.instability), (-70, 70), DI_SCREEN_RIGHT_TOP);
 			DrawString(fa, "tim:"..FormatNumber(dPlay.instTimer), (-70, 80), DI_SCREEN_RIGHT_TOP);
+			DrawString(fa, "leftheld", (-70, 90), DI_SCREEN_RIGHT_TOP, (wep.leftheld) ? FONT.CR_GREEN : FONT.CR_RED);
+			DrawString(fa, "rightheld", (-70, 100), DI_SCREEN_RIGHT_TOP, (wep.rightheld) ? FONT.CR_GREEN : FONT.CR_RED);
 		}
 		if(dPlay.dddebug & DBG_WEAPONS)
 		{				
