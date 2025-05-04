@@ -1129,7 +1129,7 @@ class ESOA : Inventory
 		Inventory.MaxAmount 1;
 		Inventory.PickupSound "misc/secret";
 		Inventory.PickupMessage "Attached an extra set of arms!";
-		+INVENTORY.UNDROPPABLE;
+		//+INVENTORY.UNDROPPABLE;
 		+INVENTORY.UNTOSSABLE;
 		-INVENTORY.INVBAR;
 		+INVENTORY.IGNORESKILL;
