@@ -188,7 +188,7 @@ class ddPlasmaRifle : ddWeapon replaces PlasmaRifle
 	override State wannaReload()
 	{
 		let ddp = ddPlayer(owner);
-		if(mag < default.mag) { weaponstatus = DDW_RELOADING; SetCaseNumber(2); return FindState("ReloadP"); }
+		if(mag < default.mag) { weaponstatus = DDW_RELOADING; return FindState("ReloadP"); }
 		else { return FindState("DoNotJump"); }
 	}
 	

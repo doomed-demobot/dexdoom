@@ -138,10 +138,10 @@ class ddSuperShotgun : ddWeapon
 			ddPlayer(owner).ddWeaponState &= ~DDW_RIGHTREADY;			
 			weaponStatus = DDW_RELOADING;
 			
-			if(ddWeaponFlags & 4) { SetCaseNumber(2); return FindState("Reload2"); }
-			else if(ddWeaponFlags & 5) { SetCaseNumber(5); return FindState("Reload3"); }
-			else if(ddWeaponFlags & 6) { SetCaseNumber(2); return FindState("Reload2A"); }
-			else if(ddWeaponFlags & 7) { SetCaseNumber(5); return FindState("Reload3A"); }
+			if(ddWeaponFlags & 4) { return FindState("Reload2"); }
+			else if(ddWeaponFlags & 5) { return FindState("Reload3"); }
+			else if(ddWeaponFlags & 6) { return FindState("Reload2A"); }
+			else if(ddWeaponFlags & 7) { return FindState("Reload3A"); }
 			else { return FindState("Ready"); }
 		}
 		else { return FindState("Ready"); }
@@ -149,10 +149,10 @@ class ddSuperShotgun : ddWeapon
 	
 	override State wannaReload()
 	{
-		if(weaponstatus == DDW_UNLOADING) { SetCaseNumber(3); return FindState('UnloadP'); }
-		if(ddWeaponFlags & SST_RSEQ1) { SetCaseNumber(2); weaponStatus = DDW_RELOADING; return FindState('Reload2'); }
-		if(ddWeaponFlags & SST_RSEQ2) { SetCaseNumber(5); weaponStatus = DDW_RELOADING; return FindState('Reload3'); }
-		else if(mag < default.mag) { SetCaseNumber(4); weaponStatus = DDW_RELOADING; return FindState('ReloadP'); }
+		if(weaponstatus == DDW_UNLOADING) { return FindState('UnloadP'); }
+		if(ddWeaponFlags & SST_RSEQ1) { weaponStatus = DDW_RELOADING; return FindState('Reload2'); }
+		if(ddWeaponFlags & SST_RSEQ2) { weaponStatus = DDW_RELOADING; return FindState('Reload3'); }
+		else if(mag < default.mag) { weaponStatus = DDW_RELOADING; return FindState('ReloadP'); }
 		else { return FindState('DoNotJump'); }
 	}
 	

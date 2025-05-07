@@ -107,7 +107,7 @@ class ddShotgun : ddWeapon
 	override State GetReadyState()
 	{
 		if(ddWeaponFlags & SHT_RSEQ && ModeCheck(0) == (RES_TWOHAND || RES_HASESOA)) { 
-			ddPlayer(owner).ddWeaponState |= DDW_RIGHTNOBOBBING; ddPlayer(owner).ddWeaponState &= ~DDW_RIGHTREADY; SetCaseNumber(2); return FindState("Reload2"); 
+			ddPlayer(owner).ddWeaponState |= DDW_RIGHTNOBOBBING; ddPlayer(owner).ddWeaponState &= ~DDW_RIGHTREADY; return FindState("Reload2"); 
 		}
 		else { return FindState("Ready"); }
 	}
@@ -155,10 +155,10 @@ class ddShotgun : ddWeapon
 	
 	override State wannaReload()
 	{
-		if(mag > 0 && weaponstatus == DDW_UNLOADING) { SetCaseNumber(3); return FindState('UnloadP'); }
-		if(ddWeaponFlags & SHT_RSEQ) { weaponstatus = DDW_RELOADING; SetCaseNumber(2); return FindState("Reload2");	}
+		if(mag > 0 && weaponstatus == DDW_UNLOADING) { return FindState('UnloadP'); }
+		if(ddWeaponFlags & SHT_RSEQ) { weaponstatus = DDW_RELOADING; return FindState("Reload2");	}
 		if(mag > 0) { return FindState('DoNotJump'); }
-		else { SetCaseNumber(5); weaponStatus = DDW_RELOADING; return FindState('ReloadP'); }
+		else { weaponStatus = DDW_RELOADING; return FindState('ReloadP'); }
 	}
 	
 	override void primaryattack()
@@ -212,7 +212,7 @@ class ddShotgun : ddWeapon
 					break;
 				} 
 			case 2: //jump to reload if twohanding
-				if((res == RES_TWOHAND || res == RES_HASESOA || res == RES_CLASSIC) && ddp.CountInv("Shell") > 0) { weaponstatus = DDW_RELOADING; ChangeState("ReloadP", myside); SetCaseNumber(5); }
+				if((res == RES_TWOHAND || res == RES_HASESOA || res == RES_CLASSIC) && ddp.CountInv("Shell") > 0) { weaponstatus = DDW_RELOADING; ChangeState("ReloadP", myside); }
 				else { /*yes*/ }
 				break;			
 			case 3: //reload mag

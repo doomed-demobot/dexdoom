@@ -83,7 +83,7 @@ class ddRocketLauncher : ddWeapon replaces RocketLauncher
 	{
 		if(!owner) { return; }
 		if(held) { return; }
-		if(ddWeaponFlags & RKL_RLOD) { ddWeaponFlags &= ~RKL_RLOD; SetCaseNumber(5); ChangeState("RFinish", (weaponside) ? PSP_LEFTW : PSP_RIGHTW); }
+		if(ddWeaponFlags & RKL_RLOD) { ddWeaponFlags &= ~RKL_RLOD; ChangeState("RFinish", (weaponside) ? PSP_LEFTW : PSP_RIGHTW); }
 	}
 	
 	override String getParentType()
@@ -110,14 +110,14 @@ class ddRocketLauncher : ddWeapon replaces RocketLauncher
 	override State GetReadyState()
 	{
 		ddWeaponFlags &= ~RKL_RLOD;
-		if(ddWeaponFlags & RKL_RSEQ) { SetCaseNumber(5); weaponStatus = DDW_RELOADING; return FindState("RFinish"); }
+		if(ddWeaponFlags & RKL_RSEQ) { weaponStatus = DDW_RELOADING; return FindState("RFinish"); }
 		else { return FindState("Ready"); }
 	}
 	
 	override State wannaReload()
 	{
-		if(mag > 0 && weaponstatus == DDW_UNLOADING) { SetCaseNumber(4); return FindState("UnloadP"); }
-		if(mag < default.mag) { ddWeaponFlags |= RKL_RSEQ; SetCaseNumber(6); weaponStatus = DDW_RELOADING; return FindState('ReloadP'); }
+		if(mag > 0 && weaponstatus == DDW_UNLOADING) { return FindState("UnloadP"); }
+		if(mag < default.mag) { ddWeaponFlags |= RKL_RSEQ; weaponStatus = DDW_RELOADING; return FindState('ReloadP'); }
 		else { return FindState('DoNotJump'); }
 	}
 	
