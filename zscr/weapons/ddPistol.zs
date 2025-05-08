@@ -457,7 +457,7 @@ class ddPistolRight : ddPistol
 			#### # 0 A_ChangeSprite;
 			#### C 2 A_WeapActionRight;
 			#### # 1 A_ChangeSprite;
-			#### ######## 1 A_ddRefireRightHeavy;
+			#### ######## 1 A_DDHeavyRefire;
 			#### # 1;
 			Goto Ready;
 		FireClassic:

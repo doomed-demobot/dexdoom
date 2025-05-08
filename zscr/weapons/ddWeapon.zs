@@ -886,19 +886,59 @@ class ddWeapon : Weapon
 	{
 		let ddp = ddPlayer(self);
 		if(!ddp) { return; }
-		ddWeapon weapl
+		ddWeapon weap;
 		PSprite psp;
+		bool bPress;
 		if(stateinfo.mPSPIndex == PSP_LEFTW) { 
 			weap = ddp.GetLeftWeapon(ddp.lwx);
 			psp = ddp.player.GetPSprite(PSP_LEFTW);
+			bPress = (!weap.bAltFire) ? A_PressingLeftFire() : A_PressingLeftAltFire();
 		}
 		else if(stateinfo.mPSPIndex == PSP_RIGHTW) { 
 			weap = ddp.GetRightWeapon(ddp.rwx);
 			psp = ddp.player.GetPSprite(PSP_RIGHTW);
+			bPress = (!weap.bAltFire) ? A_PressingRightFire() : A_PressingRightAltFire();
 		}
 		State st = weap.GetRefireState();
 		if(player.ReadyWeapon is "playerInventory") { return; }
-		if(!(player.weaponState & (WF_QUICKLEFTOK | WF_QUICKRIGHTOK)) && invoker.bModeReady && !weap.bAltFire && 
+		if(!(player.weaponState & (WF_QUICKLEFTOK | WF_QUICKRIGHTOK)) && invoker.bModeReady && bPress && player.health > 0)
+		{
+			player.refire++;
+			if(st == weap.FindState('DoNotJump')) { return; }
+			else { weap.weaponStatus = (!weap.bAltFire) ? DDW_FIRING : DDW_ALTFIRING; psp.SetState(st); weap.OnRefire(); }
+		}
+	}
+	
+	action void A_DDHeavyRefire()
+	{
+		let ddp = ddPlayer(self);
+		if(!ddp) { return; }
+		let mode = ddWeapon(player.readyweapon);
+		ddWeapon weap;
+		PSprite psp;
+		bool bPress;
+		bool bHold;
+		if(stateinfo.mPSPIndex == PSP_LEFTW) {
+			weap = ddp.GetLeftWeapon(ddp.lwx);
+			psp = ddp.player.GetPSprite(PSP_LEFTW);
+			bPress = (!weap.bAltFire) ? A_PressingLeftFire() : A_PressingLeftAltFire();
+			bhold = mode.leftheld;
+		}
+		else if(stateinfo.mPSPIndex == PSP_RIGHTW) {
+			weap = ddp.GetRightWeapon(ddp.rwx);
+			psp = ddp.player.GetPSprite(PSP_RIGHTW);
+			bPress = (!weap.bAltFire) ? A_PressingRightFire() : A_PressingRightAltFire();
+			bHold = mode.rightheld;
+		}
+		if(bHold) { console.printf("fire button held"); return; }
+		State st = weap.GetRefireState();
+		if(player.ReadyWeapon is "playerInventory") { return; }
+		if(!(player.weaponState & (WF_QUICKLEFTOK | WF_QUICKRIGHTOK)) && invoker.bModeReady && bPress & player.health > 0)
+		{
+			player.refire++;
+			if(st == weap.FindState('DoNotJump')) { return; }
+			else { weap.weaponStatus = (!weap.bAltFire) ? DDW_FIRING : DDW_ALTFIRING; psp.SetState(st); weap.OnRefire(); }
+		}
 	}
 	
 	action void A_ddRefireLeft()
