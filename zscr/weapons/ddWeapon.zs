@@ -907,38 +907,40 @@ class ddWeapon : Weapon
 			if(st == weap.FindState('DoNotJump')) { return; }
 			else { weap.weaponStatus = (!weap.bAltFire) ? DDW_FIRING : DDW_ALTFIRING; psp.SetState(st); weap.OnRefire(); }
 		}
+		else { player.refire = 0; }
 	}
 	
 	action void A_DDHeavyRefire()
 	{
 		let ddp = ddPlayer(self);
 		if(!ddp) { return; }
-		let mode = ddWeapon(player.readyweapon);
+		let mode = ddWeapon(ddp.player.readyweapon);
 		ddWeapon weap;
 		PSprite psp;
 		bool bPress;
 		bool bHold;
 		if(stateinfo.mPSPIndex == PSP_LEFTW) {
 			weap = ddp.GetLeftWeapon(ddp.lwx);
-			psp = ddp.player.GetPSprite(PSP_LEFTW);
-			bPress = (!weap.bAltFire) ? A_PressingLeftFire() : A_PressingLeftAltFire();
-			bhold = mode.leftheld;
+			psp = ddp.player.GetPSprite(PSP_LEFTW);	
+			if(mode.leftheld) { return; }
+			bPress = (!weap.bAltFire) ? A_PressingLeftFire() : A_PressingLeftAltFire();		
 		}
 		else if(stateinfo.mPSPIndex == PSP_RIGHTW) {
 			weap = ddp.GetRightWeapon(ddp.rwx);
 			psp = ddp.player.GetPSprite(PSP_RIGHTW);
+			if(mode.rightheld) { return; }
 			bPress = (!weap.bAltFire) ? A_PressingRightFire() : A_PressingRightAltFire();
-			bHold = mode.rightheld;
 		}
-		if(bHold) { console.printf("fire button held"); return; }
+		else { return; }
 		State st = weap.GetRefireState();
 		if(player.ReadyWeapon is "playerInventory") { return; }
-		if(!(player.weaponState & (WF_QUICKLEFTOK | WF_QUICKRIGHTOK)) && invoker.bModeReady && bPress & player.health > 0)
+		if(!(player.weaponState & (WF_QUICKLEFTOK | WF_QUICKRIGHTOK)) && invoker.bModeReady && bPress && player.health > 0)
 		{
 			player.refire++;
 			if(st == weap.FindState('DoNotJump')) { return; }
 			else { weap.weaponStatus = (!weap.bAltFire) ? DDW_FIRING : DDW_ALTFIRING; psp.SetState(st); weap.OnRefire(); }
 		}
+		else { player.refire = 0; }
 	}
 	
 	action void A_ddRefireLeft()
@@ -1041,6 +1043,26 @@ class ddWeapon : Weapon
 		else { player.refire = 0; if(ddp.dddebug & DBG_WEAPSEQUENCE) { A_Log("Refire right ignored!"); } }			
 	}
 	
+	action void A_SetTicks()
+	{
+		let ddp = ddPlayer(self);
+		if(!ddp) { return; }
+		ddWeapon weap;
+		PSprite psp;
+		if(stateinfo.mPSPIndex == PSP_LEFTW) {
+			weap = ddp.GetLeftWeapon(ddp.lwx);
+			psp = ddp.player.GetPSprite(PSP_LEFTW);
+		}
+		else if(stateinfo.mPSPIndex == PSP_RIGHTW) {
+			weap = ddp.GetRightWeapon(ddp.rwx);
+			psp = ddp.player.GetPSprite(PSP_RIGHTW);
+		}
+		else { return; }
+		int ticks = weap.GetTicks();
+		psp.Tics = ticks;
+		if(ddp.dddebug & DBG_WEAPSEQUENCE && ddp.dddebug & DBG_VERBOSE) { A_Log((stateinfo.mPSPIndex == PSP_LEFTW) ? "Left " : "Right ".."weapon state set to "..ticks.." tics"); }		
+	}
+	
 	action void A_SetTicksLeft()
 	{
 		let ddp = ddPlayer(self);
@@ -1110,6 +1132,27 @@ class ddWeapon : Weapon
 	}
 	
 	//weapon sounds should be defined with the tics in the frame
+	
+	action void A_WeapSound()
+	{
+		let ddp = ddPlayer(self);
+		if(!ddp) { return; }
+		ddWeapon weap;
+		PSprite psp;
+		if(stateinfo.mPSPIndex == PSP_LEFTW) {
+			weap = ddp.GetLeftWeapon(ddp.lwx);
+			psp = ddp.player.GetPSprite(PSP_LEFTW);
+		}
+		else if(stateinfo.mPSPIndex == PSP_RIGHTW) {
+			weap = ddp.GetRightWeapon(ddp.rwx);
+			psp = ddp.player.GetPSprite(PSP_RIGHTW);
+		}
+		else { return; }
+		int no = psp.tics;
+		psp.tics = 0;
+		if(weap) { weap.DD_WeapSound(no); }
+	}
+	
 	action void A_WeapSoundLeft()
 	{
 		let ddp = ddPlayer(self);
@@ -1128,6 +1171,26 @@ class ddWeapon : Weapon
 		int no = pspr.tics;
 		pspr.tics = 0;
 		if(weap) { weap.DD_WeapSound(no); }
+	}
+	
+	action void A_WeapAction()
+	{
+		let ddp = ddPlayer(self);
+		if(!ddp) { return; }
+		ddWeapon weap;
+		PSprite psp;
+		if(stateinfo.mPSPIndex == PSP_LEFTW) {
+			weap = ddp.GetLeftWeapon(ddp.lwx);
+			psp = ddp.player.GetPSprite(PSP_LEFTW);
+		}
+		else if(stateinfo.mPSPIndex == PSP_RIGHTW) {
+			weap = ddp.GetRightWeapon(ddp.rwx);
+			psp = ddp.player.GetPSprite(PSP_RIGHTW);
+		}
+		else { return; }
+		int no = psp.tics;
+		psp.tics = 0;
+		if(weap) { weap.DD_WeapAction(no); }
 	}
 	
 	action void A_WeapActionLeft()

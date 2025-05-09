@@ -276,11 +276,11 @@ class ddChaingunRight : ddChaingun
 			CHGG A 0 A_ChainSpin;
 			CHGG A 0 A_FlashRight;
 			CHGG A 1 A_FireRightWeapon;
-			CHGG A 1 A_SetTicksRight;
+			CHGG A 1 A_SetTicks;
 			CHGG A 0 A_FlashRight;
 			CHGG B 0 A_ChainSpin;
 			CHGG B 1 A_FireRightWeapon;
-			CHGG A 1 A_SetTicksRight;
+			CHGG A 1 A_SetTicks;
 			CHGG B 0 A_ddRefireRight;
 			Goto Ready;
 		FireClassic:
@@ -295,13 +295,13 @@ class ddChaingunRight : ddChaingun
 			CHGG A 1 A_WeapActionRight;
 			CHGG A 1;
 			CHGG A 2 A_WeapActionRight;
-			CHGG A 1 A_SetTicksRight;
+			CHGG A 1 A_SetTicks;
 			CHGG B 0 A_ChainSpin;
 			CHGG B 0 A_ChainSpin;
 			CHGG B 1 A_WeapActionRight;
 			CHGG B 1;
 			CHGG B 2 A_WeapActionRight;
-			CHGG B 1 A_SetTicksRight;			
+			CHGG B 1 A_SetTicks;			
 			CHGG B 2 A_WeapActionRight;
 			CHGG B 0 A_ddRefireRight;
 			Goto Ready;

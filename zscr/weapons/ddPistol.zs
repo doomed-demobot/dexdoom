@@ -141,7 +141,7 @@ class ddPistol : ddWeapon replaces Pistol
 		if(ddWeaponFlags & PIS_RSEQ) { weaponstatus = DDW_RELOADING; return FindState("Reload2"); }
 		if(mag < default.mag) { weaponstatus = DDW_RELOADING; return FindState("ReloadP"); }
 		else { return FindState("DoNotJump"); }
-	}
+	}	
 	override String GetWeaponSprite()
 	{
 		return "PISTA0";
@@ -368,45 +368,45 @@ class ddPistolLeft : ddPistol
 			#### # 1 A_DDWeaponReady;
 			Loop;
 		Fire:
-			#### A 1 A_WeapActionLeft;
+			#### A 1 A_WeapAction;
 			#### A 1;
 			#### B 0 A_DDFlash;
 			#### B 2 A_FireDDWeapon;
 			#### C 0 A_ChangeSprite;
-			#### C 2 A_WeapActionLeft;
+			#### C 2 A_WeapAction;
 			#### # 1 A_ChangeSprite;
-			#### ######## 1 A_ddRefireLeftHeavy;
+			#### ######## 1 A_DDHeavyRefire;
 			#### # 1;
 			Goto Ready;
 		FireClassic:
-			#### A 1 A_WeapActionLeft;
+			#### A 1 A_WeapAction;
 			#### A 4;
 			#### B 0 A_DDFlash;
 			#### B 6 A_FireDDWeapon;
 			#### C 4;
-			#### B 5 A_ddRefireLeft;
+			#### B 5 A_DDRefire;
 			Goto Ready;	
 		Select:
-			PISD A 1 A_ChangeSpriteLeft;
+			PISD A 1 A_ChangeSprite;
 			Loop;	
 		AltFire:
-			#### A 1 A_WeapActionLeft;
+			#### A 1 A_WeapAction;
 			#### A 4;
 		Burst:
 			#### B 0 A_DDFlash;
 			#### B 1 A_FireDDWeapon;
 			#### C 0;
 			#### # 1 A_ChangeSprite;
-			#### # 3 A_WeapActionLeft;
+			#### # 3 A_WeapAction;
 			#### # 1;
 			#### # 3;
-			#### # 5 A_ddRefireLeft;
+			#### # 5 A_DDRefire;
 			Goto Ready;
 		ReloadP:
 			#### F 3;
 			#### H 2 A_PistolReload1;
 			#### G 2;
-			#### G 4 A_WeapActionLeft;
+			#### G 4 A_WeapAction;
 		Reload2:
 			#### G 4;
 			#### H 8;
@@ -414,7 +414,7 @@ class ddPistolLeft : ddPistol
 			#### I 1 A_SetWeapState;
 			#### J 10 A_PistolReload3;
 		Reload3:
-			#### J 5 A_WeapActionLeft;
+			#### J 5 A_WeapAction;
 			#### J 1;
 			#### J 4;
 			Goto Ready;		
@@ -422,7 +422,7 @@ class ddPistolLeft : ddPistol
 			#### F 5 A_PistolReload2;
 			#### G 5;
 			#### H 4 A_PistolReload3;
-			#### I 6 A_WeapActionLeft;
+			#### I 6 A_WeapAction;
 			#### I 4;
 			#### J 4;
 			Goto Ready;
@@ -450,42 +450,42 @@ class ddPistolRight : ddPistol
 			PISD A 1 A_ChangeSprite;
 			Loop;	
 		Fire:
-			#### A 1 A_WeapActionRight;
+			#### A 1 A_WeapAction;
 			#### A 1;
 			#### B 0 A_DDFlash;
 			#### B 2 A_FireDDWeapon;
 			#### # 0 A_ChangeSprite;
-			#### C 2 A_WeapActionRight;
+			#### C 2 A_WeapAction;
 			#### # 1 A_ChangeSprite;
 			#### ######## 1 A_DDHeavyRefire;
 			#### # 1;
 			Goto Ready;
 		FireClassic:
-			#### A 1 A_WeapActionRight;
+			#### A 1 A_WeapAction;
 			#### A 4;
 			#### B 0 A_DDFlash;
 			#### B 6 A_FireDDWeapon;
 			#### C 4;
-			#### B 5 A_ddRefireRight;
+			#### B 5 A_DDRefire;
 			Goto Ready;				
 		AltFire:
-			#### A 1 A_WeapActionRight;
+			#### A 1 A_WeapAction;
 			#### A 4;
 		Burst:
 			#### B 0 A_DDFlash;
 			#### B 1 A_FireDDWeapon;
 			#### C 0;
 			#### # 1 A_ChangeSprite;
-			#### # 3 A_WeapActionRight;
+			#### # 3 A_WeapAction;
 			#### # 1;
 			#### # 3;
-			#### # 5 A_ddRefireRight;
+			#### # 5 A_DDRefire;
 			Goto Ready;
 		ReloadP:
 			#### F 3;
 			#### H 2 A_PistolReload1;
 			#### G 2;
-			#### G 4 A_WeapActionRight;
+			#### G 4 A_WeapAction;
 		Reload2:
 			#### G 4;
 			#### H 8;
@@ -493,7 +493,7 @@ class ddPistolRight : ddPistol
 			#### I 1 A_SetWeapState;
 			#### J 10 A_PistolReload3;
 		Reload3:
-			#### J 5 A_WeapActionRight;
+			#### J 5 A_WeapAction;
 			#### J 1;
 			#### J 4;
 			Goto Ready;
@@ -501,7 +501,7 @@ class ddPistolRight : ddPistol
 			#### F 5 A_PistolReload2;
 			#### G 5;
 			#### H 4 A_PistolReload3;
-			#### I 6 A_WeapActionRight;
+			#### I 6 A_WeapAction;
 			#### I 4;
 			#### J 4;
 			Goto Ready;
