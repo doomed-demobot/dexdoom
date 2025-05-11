@@ -258,45 +258,45 @@ class ddRocketLauncherLeft : ddRocketLauncher
 		NoAmmo:
 			MISG A 10;
 		Ready:
-			MISG A 1 A_LeftWeaponReady;
+			MISG A 1 A_DDWeaponReady;
 			Loop;
 		Fire:
-			MISG A 1 A_WeapActionLeft;
-			MISG B 0 A_FlashLeft;
+			MISG A 1 A_WeapAction;
+			MISG B 0 A_DDFlash;
 			MISG B 8;
-			MISG B 12 A_FireLeftWeapon;
-			MISG B 2 A_WeapActionLeft;
-			MISG B 0 A_ddRefireLeft;
+			MISG B 12 A_FireDDWeapon;
+			MISG B 2 A_WeapAction;
+			MISG B 0 A_DDRefire;
 			Goto Ready;
 		Altfire:
-			MISG A 1 A_WeapActionLeft;
+			MISG A 1 A_WeapAction;
 			MISG A 1;
-			MISG B 14 A_FireLeftWeapon;
-			MISG B 2 A_WeapActionLeft;
-			MISG B 0 A_ddRefireLeft;
+			MISG B 14 A_FireDDWeapon;
+			MISG B 2 A_WeapAction;
+			MISG B 0 A_DDRefire;
 			Goto Ready;
 		ReloadA:
 		ReloadP:
 			MISG B 5;
-			MISG B 6 A_WeapActionLeft;
+			MISG B 6 A_WeapAction;
 			MISG B 1;
 		Load:
 			MISG B 10;
-			MISG B 3 A_WeapActionLeft;
+			MISG B 3 A_WeapAction;
 			MISG B 5;
-			MISG B 4 A_WeapActionLeft;
+			MISG B 4 A_WeapAction;
 			MISG B 1;
 		RFinish:
 			MISG A 5;
 			MISG A 5 A_RLPump1;
 			MISG A 2 A_RLPump2;
-			MISG A 7 A_WeapActionLeft;
+			MISG A 7 A_WeapAction;
 			Goto Ready;
 		UnloadP:
 			MISG B 5;
 		Unload:
 			MISG B 5;
-			MISG A 5 A_WeapActionLeft;
+			MISG A 5 A_WeapAction;
 			MISG A 10;
 			Goto Ready;
 			
@@ -311,45 +311,45 @@ class ddRocketLauncherRight : ddRocketLauncher
 		NoAmmo:
 			MISG A 10;
 		Ready:
-			MISG A 1 A_RightWeaponReady;
+			MISG A 1 A_DDWeaponReady;
 			Loop;
 		Fire:
-			MISG A 1 A_WeapActionRight;
-			MISG B 0 A_FlashRight;
+			MISG A 1 A_WeapAction;
+			MISG B 0 A_DDFlash;
 			MISG B 8;
-			MISG B 12 A_FireRightWeapon;
-			MISG B 2 A_WeapActionRight;
-			MISG B 0 A_ddRefireRight;
+			MISG B 12 A_FireDDWeapon;
+			MISG B 2 A_WeapAction;
+			MISG B 0 A_DDRefire;
 			Goto Ready;
 		Altfire:
-			MISG A 1 A_WeapActionRight;
+			MISG A 1 A_WeapAction;
 			MISG A 1;
-			MISG B 14 A_FireRightWeapon;
-			MISG B 2 A_WeapActionRight;
-			MISG B 0 A_ddRefireRight;
+			MISG B 14 A_FireDDWeapon;
+			MISG B 2 A_WeapAction;
+			MISG B 0 A_DDRefire;
 			Goto Ready;
 		ReloadA:
 		ReloadP:
 			MISG B 5;
-			MISG B 6 A_WeapActionRight;
+			MISG B 6 A_WeapAction;
 			MISG B 1;
 		Load:
 			MISG B 10;
-			MISG B 3 A_WeapActionRight;
+			MISG B 3 A_WeapAction;
 			MISG B 5;
-			MISG B 4 A_WeapActionRight;
+			MISG B 4 A_WeapAction;
 			MISG B 1;
 		RFinish:
 			MISG A 5;
 			MISG A 5 A_RLPump1;
 			MISG A 2 A_RLPump2;
-			MISG A 7 A_WeapActionRight;
+			MISG A 7 A_WeapAction;
 			Goto Ready;
 		UnloadP:
 			MISG B 5;
 		Unload:
 			MISG B 5;
-			MISG A 5 A_WeapActionRight;
+			MISG A 5 A_WeapAction;
 			MISG A 10;
 			Goto Ready;
 			

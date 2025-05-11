@@ -117,33 +117,33 @@ class ddPowerFistLeft : ddPowerFist
 		NoAmmo:
 			PFSF A 10;
 		Ready:
-			PFSF A 1 A_LeftWeaponReady;
+			PFSF A 1 A_DDWeaponReady;
 			Loop;
 		Select:
 			PFSF A 1;
 			Loop;
 		Fire:
-			PFSF AA 1 A_WeapActionLeft;
+			PFSF AA 1 A_WeapAction;
 			PFSF BC 2;
 			PFSF D 3 A_PFist1;
 			PFSF E 5 A_PFist2;
-			PFSF F 5 A_FireLeftWeapon;
+			PFSF F 5 A_FireDDWeapon;
 			PFSF G 3;
 			PFSF H 3;
 			TNT1 A 6;
 			PFSF CB 4;
-			PFSF A 0 A_ddRefireLeft;
+			PFSF A 0 A_DDRefire;
 			Goto Ready;
 		Double:
 			PFSF BC 2;
 			PFSF D 3 A_PFist1;
 			PFSF E 5 A_PFist2;
-			PFSF F 5 A_FireLeftWeapon;
+			PFSF F 5 A_FireDDWeapon;
 			PFSF G 5;
 			PFSF H 5;
 			TNT1 A 6;
 			PFSF CB 7;
-			PFSF A 0 A_ddRefireLeft;
+			PFSF A 0 A_DDRefire;
 			Goto Ready;
 	}
 }
@@ -160,33 +160,33 @@ class ddPowerFistRight : ddPowerFist
 		NoAmmo:
 			PFST A 10;
 		Ready:
-			PFST A 1 A_RightWeaponReady;
+			PFST A 1 A_DDWeaponReady;
 			Loop;
 		Select:
 			PFST A 1;
 			Loop;
 		Fire:
-			PFST AA 1 A_WeapActionRight;
+			PFST AA 1 A_WeapAction;
 			PFST BC 2;
 			PFST D 3 A_PFist1;
 			PFST E 5 A_PFist2;
-			PFST F 5 A_FireRightWeapon;
+			PFST F 5 A_FireDDWeapon;
 			PFST G 3;
 			PFST H 3;
 			TNT1 A 6;
 			PFST CB 4;
-			PFST A 0 A_ddRefireRight;
+			PFST A 0 A_DDRefire;
 			Goto Ready;
 		Double:
 			PFST BC 2;
 			PFST D 3 A_PFist1;
 			PFST E 5 A_PFist2;
-			PFST F 5 A_FireRightWeapon;
+			PFST F 5 A_FireDDWeapon;
 			PFST G 5;
 			PFST H 5;
 			TNT1 A 6;
 			PFST CB 7;
-			PFST A 0 A_ddRefireRight;
+			PFST A 0 A_DDRefire;
 			Goto Ready;
 	}
 }

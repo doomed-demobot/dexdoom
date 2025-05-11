@@ -264,27 +264,27 @@ class ddSuperShotgunLeft : ddSuperShotgun
 		NoAmmo:
 			#### A 10;
 		Ready:
-			SH2D A 0 A_ChangeSpriteLeft;
-			#### A 1 A_LeftWeaponReady;
+			SH2D A 0 A_ChangeSprite;
+			#### A 1 A_DDWeaponReady;
 			Loop;
 		Fire:
-			#### A 1 A_WeapActionLeft;
+			#### A 1 A_WeapAction;
 			#### A 3;
-			#### A 0 A_FlashLeft;
-			#### A 1 A_FireLeftWeapon;
+			#### A 0 A_DDFlash;
+			#### A 1 A_FireDDWeapon;
 			#### A 6;
-			#### A 2 A_WeapActionLeft;
+			#### A 2 A_WeapAction;
 			Goto Ready;
 		Select:
-			#### A 1 A_ChangeSpriteLeft;
+			#### A 1 A_ChangeSprite;
 			Loop;
 		Altfire:
-			#### A 1 A_WeapActionLeft;
+			#### A 1 A_WeapAction;
 			#### A 3;
-			#### A 0 A_FlashLeft;
-			#### A 1 A_FireLeftWeapon;
+			#### A 0 A_DDFlash;
+			#### A 1 A_FireDDWeapon;
 			#### A 6;
-			#### A 2 A_WeapActionLeft;
+			#### A 2 A_WeapAction;
 			Goto Ready;
 		Reload:
 		ReloadA:
@@ -292,27 +292,27 @@ class ddSuperShotgunLeft : ddSuperShotgun
 			#### B 7;
 			#### C 7;
 			#### D 1 A_OpenShotgun2;
-			#### D 5 A_WeapActionLeft;
+			#### D 5 A_WeapAction;
 			#### D 1;
 		Reload2:
 			#### D 5;
 			#### E 7;
 			#### F 0 A_LoadShotgun2;
-			#### F 3 A_WeapActionLeft;
+			#### F 3 A_WeapAction;
 			#### F 1;
 		Reload3:
 			#### F 6;
 			#### G 5;
 			#### G 1 A_CloseShotgun2;
-			#### H 6 A_WeapActionLeft;
-			#### H 6 A_ddRefireLeft;
+			#### H 6 A_WeapAction;
+			#### H 6 A_DDRefire;
 			#### A 5;
 			Goto Ready;
 		UnloadP:
 			#### BC 7;
 			#### D 7 A_OpenShotgun2;
 			#### F 5 A_LoadShotgun2;
-			#### E 4 A_WeapActionLeft;
+			#### E 4 A_WeapAction;
 			#### E 5;
 			#### G 6 A_CloseShotgun2;
 			#### HA 6;
@@ -337,27 +337,27 @@ class ddSuperShotgunRight : ddSuperShotgun
 		NoAmmo:
 			#### A 10;
 		Ready:
-			SH2D A 0 A_ChangeSpriteRight;
-			#### A 1 A_RightWeaponReady;
+			SH2D A 0 A_ChangeSprite;
+			#### A 1 A_DDWeaponReady;
 			Loop;
 		Select:
-			#### A 1 A_ChangeSpriteRight;
+			#### A 1 A_ChangeSprite;
 			Loop;
 		Fire:
-			#### A 1 A_WeapActionRight;
+			#### A 1 A_WeapAction;
 			#### A 3;
-			#### A 0 A_FlashRight;
-			#### A 1 A_FireRightWeapon;
+			#### A 0 A_DDFlash;
+			#### A 1 A_FireDDWeapon;
 			#### A 6;
-			#### A 2 A_WeapActionRight;
+			#### A 2 A_WeapAction;
 			Goto Ready;
 		Altfire:
-			#### A 1 A_WeapActionRight;
+			#### A 1 A_WeapAction;
 			#### A 3;
-			#### A 0 A_FlashRight;
-			#### A 1 A_FireRightWeapon;
+			#### A 0 A_DDFlash;
+			#### A 1 A_FireDDWeapon;
 			#### A 6;
-			#### A 2 A_WeapActionRight;
+			#### A 2 A_WeapAction;
 			Goto Ready;			
 		Reload:
 		ReloadA:
@@ -365,27 +365,27 @@ class ddSuperShotgunRight : ddSuperShotgun
 			#### B 7;
 			#### C 7;
 			#### D 1 A_OpenShotgun2;
-			#### D 5 A_WeapActionRight;
+			#### D 5 A_WeapAction;
 			#### D 1;
 		Reload2:
 			#### D 5;
 			#### E 7;
 			#### F 0 A_LoadShotgun2;
-			#### F 3 A_WeapActionRight;
+			#### F 3 A_WeapAction;
 			#### F 1;
 		Reload3:
 			#### F 6;
 			#### G 5;
 			#### G 1 A_CloseShotgun2;
-			#### H 6 A_WeapActionRight;
-			#### H 6 A_ddRefireRight;
+			#### H 6 A_WeapAction;
+			#### H 6 A_DDRefire;
 			#### A 5;
 			Goto Ready;
 		UnloadP:
 			#### BC 7;
 			#### D 7 A_OpenShotgun2;
 			#### F 5 A_LoadShotgun2;
-			#### E 4 A_WeapActionRight;
+			#### E 4 A_WeapAction;
 			#### G 6 A_CloseShotgun2;
 			#### HA 6;
 			Goto Ready;

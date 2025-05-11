@@ -124,15 +124,15 @@ class ddBFG9000Left : ddBFG9000
 		NoAmmo:
 			BFGG A 10;
 		Ready:
-			BFGG A 1 A_LeftWeaponReady;
+			BFGG A 1 A_DDWeaponReady;
 			Loop;
 		Fire:
-			BFGG A 1 A_WeapActionLeft;
+			BFGG A 1 A_WeapAction;
 			BFGG A 1;
 			BFGG A 20 A_BFGsound;
-			BFGG B 10 A_FlashLeft;
-			BFGG B 10 A_FireLeftWeapon;
-			BFGG B 20 A_ddRefireLeft;
+			BFGG B 10 A_DDFlash;
+			BFGG B 10 A_FireDDWeapon;
+			BFGG B 20 A_DDRefire;
 			Goto Ready;
 		AltFire:
 			Goto Ready;
@@ -162,15 +162,15 @@ class ddBFG9000Right : ddBFG9000
 		NoAmmo:
 			BFGG A 10;
 		Ready:
-			BFGG A 1 A_RightWeaponReady;
+			BFGG A 1 A_DDWeaponReady;
 			Loop;
 		Fire:
-			BFGG A 1 A_WeapActionRight;
+			BFGG A 1 A_WeapAction;
 			BFGG A 1;
 			BFGG A 20 A_BFGsound;
-			BFGG B 10 A_FlashRight;
-			BFGG B 10 A_FireRightWeapon;
-			BFGG B 20 A_ddRefireRight;
+			BFGG B 10 A_DDFlash;
+			BFGG B 10 A_FireDDWeapon;
+			BFGG B 20 A_DDRefire;
 			Goto Ready;
 		AltFire:
 			Goto Ready;

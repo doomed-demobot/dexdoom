@@ -293,47 +293,47 @@ class ddPlasmaRifleLeft : ddPlasmaRifle
 		NoAmmo:
 			PLSG A 10;
 		Ready:
-			PLSG A 1 A_LeftWeaponReady;
+			PLSG A 1 A_DDWeaponReady;
 			Loop;
 		Fire:
-			PLSG A 1 A_WeapActionLeft;
-			PLSG A 2 A_SetTicksLeft;
-			PLSG A 0 A_FlashLeft;
-			PLSG A 1 A_FireLeftWeapon;
-			PLSG A 2 A_WeapActionLeft;
-			PLSG A 2 A_ddRefireLeft;
+			PLSG A 1 A_WeapAction;
+			PLSG A 2 A_SetTicks;
+			PLSG A 0 A_DDFlash;
+			PLSG A 1 A_FireDDWeapon;
+			PLSG A 2 A_WeapAction;
+			PLSG A 2 A_DDRefire;
 			Goto Ready;
 		Altfire:
-			PLSG A 1 A_WeapActionLeft;
+			PLSG A 1 A_WeapAction;
 			PLSG A 5;
-			PLSG A 0 A_FlashLeft;
-			PLSG A 3 A_WeapActionLeft;
+			PLSG A 0 A_DDFlash;
+			PLSG A 3 A_WeapAction;
 			PLSG A 6;
-			PLSG A 3 A_WeapActionLeft;
+			PLSG A 3 A_WeapAction;
 			PLSG A 6;
-			PLSG A 3 A_WeapActionLeft;
+			PLSG A 3 A_WeapAction;
 			PLSG A 4;
-			PLSG A 3 A_WeapActionLeft;
+			PLSG A 3 A_WeapAction;
 			PLSG A 4;
 		Charging:
-			PLSG A 0 A_FlashLeft;
-			PLSG A 3 A_WeapActionLeft;
+			PLSG A 0 A_DDFlash;
+			PLSG A 3 A_WeapAction;
 			PLSG A 4;
-			PLSG A 2 A_ddRefireLeft;
-			PLSG A 25 A_FireLeftWeapon;
+			PLSG A 2 A_DDRefire;
+			PLSG A 25 A_FireDDWeapon;
 			Goto Ready;
 		FireClassic:
-			PLSG A 0 A_FlashLeft;
-			PLSG A 3 A_FireLeftWeapon;
-			PLSG B 20 A_ddRefireLeft;
+			PLSG A 0 A_DDFlash;
+			PLSG A 3 A_FireDDWeapon;
+			PLSG B 20 A_DDRefire;
 			Goto Ready;
 		ReloadP:
-			#### # 0 A_ChangeSpriteLeft;
-			#### # 0 A_FlashLeft;
+			#### # 0 A_ChangeSprite;
+			#### # 0 A_DDFlash;
 			#### # 5;
-			#### # 4 A_WeapActionLeft;
+			#### # 4 A_WeapAction;
 			#### # 5;
-			#### # 5 A_WeapActionLeft;
+			#### # 5 A_WeapAction;
 			#### # 10;
 			Goto Ready;
 	}
@@ -347,48 +347,48 @@ class ddPlasmaRifleRight : ddPlasmaRifle
 		NoAmmo:
 			PLSG A 10;
 		Ready:
-			PLSG A 1 A_RightWeaponReady;
+			PLSG A 1 A_DDWeaponReady;
 			Loop;
 		Fire:
-			PLSG A 1 A_WeapActionRight;
-			PLSG A 2 A_SetTicksRight;
-			PLSG A 0 A_FlashRight;
-			PLSG A 1 A_FireRightWeapon;
-			PLSG A 2 A_WeapActionRight;
-			PLSG A 2 A_ddRefireRight;
+			PLSG A 1 A_WeapAction;
+			PLSG A 2 A_SetTicks;
+			PLSG A 0 A_DDFlash;
+			PLSG A 1 A_FireDDWeapon;
+			PLSG A 2 A_WeapAction;
+			PLSG A 2 A_DDRefire;
 			Goto Ready;
 		Altfire:
-			PLSG A 1 A_WeapActionRight;
+			PLSG A 1 A_WeapAction;
 			PLSG A 5;
-			PLSG A 0 A_FlashRight;
-			PLSG A 3 A_WeapActionRight;
+			PLSG A 0 A_DDFlash;
+			PLSG A 3 A_WeapAction;
 			PLSG A 6;
-			PLSG A 3 A_WeapActionRight;
+			PLSG A 3 A_WeapAction;
 			PLSG A 6;
-			PLSG A 3 A_WeapActionRight;
+			PLSG A 3 A_WeapAction;
 			PLSG A 4;
-			PLSG A 3 A_WeapActionRight;
+			PLSG A 3 A_WeapAction;
 			PLSG A 4;
 		Charging:
-			PLSG A 0 A_FlashRight;
-			PLSG A 3 A_WeapActionRight;
+			PLSG A 0 A_DDFlash;
+			PLSG A 3 A_WeapAction;
 			PLSG A 4;
-			PLSG A 2 A_ddRefireRight;
-			PLSG A 25 A_FireRightWeapon;
+			PLSG A 2 A_DDRefire;
+			PLSG A 25 A_FireDDWeapon;
 			Goto Ready;
 		FireClassic:
-			PLSG A 1 A_WeapActionRight;
-			PLSG A 0 A_FlashRight;
-			PLSG A 3 A_FireRightWeapon;
-			PLGF B 20 A_ddRefireRight;
+			PLSG A 1 A_WeapAction;
+			PLSG A 0 A_DDFlash;
+			PLSG A 3 A_FireDDWeapon;
+			PLGF B 20 A_DDRefire;
 			Goto Ready;
 		ReloadP:
-			#### # 0 A_ChangeSpriteRight;
-			#### # 0 A_FlashRight;
+			#### # 0 A_ChangeSprite;
+			#### # 0 A_DDFlash;
 			#### # 5;
-			#### # 4 A_WeapActionRight;
+			#### # 4 A_WeapAction;
 			#### # 5;
-			#### # 5 A_WeapActionRight;
+			#### # 5 A_WeapAction;
 			#### # 10;
 			Goto Ready;
 	}

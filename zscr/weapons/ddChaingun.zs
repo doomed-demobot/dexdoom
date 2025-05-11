@@ -207,45 +207,45 @@ class ddChaingunLeft : ddChaingun
 		NoAmmo:
 			#### # 10;
 		Ready:
-			CHGG A 0 A_ChangeSpriteLeft;
-			#### # 1 A_LeftWeaponReady;
+			CHGG A 0 A_ChangeSprite;
+			#### # 1 A_DDWeaponReady;
 			Loop;
 		Select:
-			CHGG A 0 A_ChangeSpriteLeft;
+			CHGG A 0 A_ChangeSprite;
 			#### # 1;
 			Loop;
 		Fire:
 			CHGG A 0 A_ChainSpin;
-			CHGG A 0 A_FlashLeft;
-			CHGG A 1 A_FireLeftWeapon;
-			CHGG A 1 A_SetTicksLeft;
-			CHGG A 0 A_FlashLeft;			
+			CHGG A 0 A_DDFlash;
+			CHGG A 1 A_FireDDWeapon;
+			CHGG A 1 A_SetTicks;
+			CHGG A 0 A_DDFlash;			
 			CHGG A 0 A_ChainSpin;
-			CHGG B 1 A_FireLeftWeapon;
-			CHGG A 1 A_SetTicksLeft;
-			CHGG B 0 A_ddRefireLeft;
+			CHGG B 1 A_FireDDWeapon;
+			CHGG A 1 A_SetTicks;
+			CHGG B 0 A_DDRefire;
 			Goto Ready;
 		FireClassic:
-			CHGG A 0 A_FlashLeft;
-			CHGG A 4 A_FireLeftWeapon;
-			CHGG A 0 A_FlashLeft;
-			CHGG B 4 A_FireLeftWeapon;
-			CHGG B 0 A_ddRefireLeft;
+			CHGG A 0 A_DDFlash;
+			CHGG A 4 A_FireDDWeapon;
+			CHGG A 0 A_DDFlash;
+			CHGG B 4 A_FireDDWeapon;
+			CHGG B 0 A_DDRefire;
 			Goto Ready;
 		Altfire:
 			CHGG A 0 A_ChainSpin;
-			CHGG A 1 A_WeapActionLeft;
+			CHGG A 1 A_WeapAction;
 			CHGG A 1;
-			CHGG A 2 A_WeapActionLeft;
-			CHGG A 1 A_SetTicksLeft;
+			CHGG A 2 A_WeapAction;
+			CHGG A 1 A_SetTicks;
 			CHGG B 0 A_ChainSpin;
 			CHGG B 0 A_ChainSpin;
-			CHGG B 1 A_WeapActionLeft;
+			CHGG B 1 A_WeapAction;
 			CHGG B 1;
-			CHGG B 2 A_WeapActionLeft;
-			CHGG B 1 A_SetTicksLeft;
-			CHGG B 2 A_WeapActionLeft;
-			CHGG B 0 A_ddRefireLeft;
+			CHGG B 2 A_WeapAction;
+			CHGG B 1 A_SetTicks;
+			CHGG B 2 A_WeapAction;
+			CHGG B 0 A_DDRefire;
 			Goto Ready;
 			/*
 		Flash:
@@ -265,45 +265,45 @@ class ddChaingunRight : ddChaingun
 		NoAmmo:
 			#### # 10;
 		Ready:
-			CHGR A 0 A_ChangeSpriteRight;
-			#### # 1 A_RightWeaponReady;
+			CHGR A 0 A_ChangeSprite;
+			#### # 1 A_DDWeaponReady;
 			Loop;
 		Select:
-			CHGG A 0 A_ChangeSpriteRight;
+			CHGG A 0 A_ChangeSprite;
 			#### # 1;
 			Loop;
 		Fire:
 			CHGG A 0 A_ChainSpin;
-			CHGG A 0 A_FlashRight;
-			CHGG A 1 A_FireRightWeapon;
+			CHGG A 0 A_DDFlash;
+			CHGG A 1 A_FireDDWeapon;
 			CHGG A 1 A_SetTicks;
-			CHGG A 0 A_FlashRight;
+			CHGG A 0 A_DDFlash;
 			CHGG B 0 A_ChainSpin;
-			CHGG B 1 A_FireRightWeapon;
+			CHGG B 1 A_FireDDWeapon;
 			CHGG A 1 A_SetTicks;
 			CHGG B 0 A_ddRefireRight;
 			Goto Ready;
 		FireClassic:
-			CHGG A 0 A_FlashRight;
-			CHGG A 4 A_FireRightWeapon;
-			CHGG A 0 A_FlashRight;
-			CHGG B 4 A_FireRightWeapon;
-			CHGG B 0 A_ddRefireRight;
+			CHGG A 0 A_DDFlash;
+			CHGG A 4 A_FireDDWeapon;
+			CHGG A 0 A_DDFlash;
+			CHGG B 4 A_FireDDWeapon;
+			CHGG B 0 A_DDRefire;
 			Goto Ready;
 		Altfire:
 			CHGG A 0 A_ChainSpin;
-			CHGG A 1 A_WeapActionRight;
+			CHGG A 1 A_WeapAction;
 			CHGG A 1;
-			CHGG A 2 A_WeapActionRight;
+			CHGG A 2 A_WeapAction;
 			CHGG A 1 A_SetTicks;
 			CHGG B 0 A_ChainSpin;
 			CHGG B 0 A_ChainSpin;
-			CHGG B 1 A_WeapActionRight;
+			CHGG B 1 A_WeapAction;
 			CHGG B 1;
-			CHGG B 2 A_WeapActionRight;
+			CHGG B 2 A_WeapAction;
 			CHGG B 1 A_SetTicks;			
-			CHGG B 2 A_WeapActionRight;
-			CHGG B 0 A_ddRefireRight;
+			CHGG B 2 A_WeapAction;
+			CHGG B 0 A_DDRefire;
 			Goto Ready;
 			/*
 		Flash:

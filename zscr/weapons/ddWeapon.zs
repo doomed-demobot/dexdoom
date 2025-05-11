@@ -44,8 +44,6 @@ class ddWeapon : Weapon
 	int costMultiplier; //multiplier for reloadweaponmag
 	int xOffset;
 	uint lswaptarget, rswapTarget;
-	int caseno;
-	int sndno;
 	int fireMode; //true = alt; false = primary
 	class<Ammo> ClassicAmmoType1, ClassicAmmoType2;
 	ddWeapon swapHeld; //weapon stored here for pickupswapstore
@@ -765,8 +763,6 @@ class ddWeapon : Weapon
 		ddp.ddWeaponState &= ~DDW_LEFTNOBOBBING;
 		lw.weaponStatus = DDW_READY;
 		lw.weaponready = true;
-		lw.caseno = 0;
-		lw.sndno = 0;
 	}
 	
 	action void A_RightWeaponReady(bool playUpSound = true)
@@ -782,8 +778,6 @@ class ddWeapon : Weapon
 		ddp.ddWeaponState &= ~DDW_RIGHTNOBOBBING;
 		rw.weaponStatus = DDW_READY;
 		rw.weaponready = true;
-		rw.caseno = 0;
-		rw.sndno = 0;
 	}
 	
 	

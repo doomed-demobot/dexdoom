@@ -168,30 +168,30 @@ class ddFistLeft : ddFist
 		NoAmmo:
 			PUNG B 10;
 		Ready:
-			PUNG B 1 A_LeftWeaponReady;
+			PUNG B 1 A_DDWeaponReady;
 			Loop;
 		Select:
 			PUNG B 1;
 			Loop;
 		Fire:
-			PUNG B 1 A_WeapActionLeft;
+			PUNG B 1 A_WeapAction;
 			PUNG B 1;
 			PUNG C 1 A_Whoosh;
-			PUNG D 6 A_FireLeftWeapon;
+			PUNG D 6 A_FireDDWeapon;
 			PUNG C 1;
 			PUNG C 1 A_ComOneTwo;
 			PUNG B 4;
 			PUNG B 1 A_ClearCombo;
-			PUNG B 3 A_ddRefireLeft;	
+			PUNG B 3 A_DDRefire;	
 			Goto Ready;
 		Altfire:
 			Goto Ready;
 		FireClassic:
 			PUNG B 4;
-			PUNG C 4 A_FireLeftWeapon;
+			PUNG C 4 A_FireDDWeapon;
 			PUNG D 5;
 			PUNG C 4;
-			PUNG B 5 A_ddRefireLeft;
+			PUNG B 5 A_DDRefire;
 			Goto Ready;
 	}
 }
@@ -208,37 +208,37 @@ class ddFistRight : ddFist
 		NoAmmo:
 			PUNG A 10;
 		Ready:
-			PUNG A 1 A_RightWeaponReady;
+			PUNG A 1 A_DDWeaponReady;
 			Loop;
 		Select:
 			PUNG A 1;
 			Loop;
 		Fire:
-			TNT1 A 1 A_WeapActionRight;
+			TNT1 A 1 A_WeapAction;
 			TNT1 A 2;
 			PUNH A 1;
 			PUNH B 2 A_Whoosh;
 			PUNH CD 2;
-			PUNH E 5 A_FireRightWeapon;
+			PUNH E 5 A_FireDDWeapon;
 			PUNH FGH 2;
 			TNT1 A 2;
-			TNT1 A 2 A_ddRefireRight;
+			TNT1 A 2 A_DDRefire;
 			Goto Ready;	
 		Two:
 			TNT1 A 1 A_ClearCombo;
 			PUNH AB 1;
 			PUNH C 1 A_Whoosh;
 			PUNH D 1;
-			PUNH E 6 A_FireRightWeapon;
+			PUNH E 6 A_FireDDWeapon;
 			PUNH FGH 2;
 			TNT1 A 2;
 			Goto Ready;
 		FireClassic:
 			PUNF B 4;
-			PUNF C 4 A_FireRightWeapon;
+			PUNF C 4 A_FireDDWeapon;
 			PUNF D 5;
 			PUNF C 4;
-			PUNF B 5 A_ddRefireRight;
+			PUNF B 5 A_DDRefire;
 			Goto Ready;
 		Altfire:
 			Goto Ready;
