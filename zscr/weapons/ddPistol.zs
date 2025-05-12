@@ -178,7 +178,8 @@ class ddPistol : ddWeapon replaces Pistol
 		let ddp = ddPlayer(owner);
 		if(ddp.FindInventory("ClassicModeToken")) { return FindState("FlashC"); }
 		if(ddp.player.readyweapon is "dualWielding" || ddp.player.pendingweapon is "dualWielding" || ddp.lastmode is "dualWielding") {
-			ddp.player.GetPSprite(PSP_RIGHTWF).Frame = 2;
+			if(weaponside) { ddp.player.GetPSprite(PSP_LEFTWF).Frame = 1; }
+			else { ddp.player.GetPSprite(PSP_RIGHTWF).Frame = 2; }
 		}
 		return Super.GetFlashState();
 	}
@@ -319,46 +320,92 @@ class ddPistol : ddWeapon replaces Pistol
 	States
 	{
 		NoAmmo:
-			PISG A 10;
+			#### # 10 A_ChangeSprite;
 		Ready:
-			PISG A 1;
-			Loop;
-		Deselect:
-			PISG A 1;
-			Loop;
-		Select:
-			PISG A 1;
+			PISD A 0 A_ChangeSprite;
+			#### # 1 A_DDWeaponReady;
 			Loop;
 		Fire:
+			#### A 1 A_WeapAction;
+			#### A 1;
+			#### B 0 A_DDFlash;
+			#### B 2 A_FireDDWeapon;
+			#### C 0 A_ChangeSprite;
+			#### C 2 A_WeapAction;
+			#### # 1 A_ChangeSprite;
+			#### ######## 1 A_DDHeavyRefire;
+			#### # 1;
 			Goto Ready;
+		FireClassic:
+			#### A 1 A_WeapAction;
+			#### A 4;
+			#### B 0 A_DDFlash;
+			#### B 6 A_FireDDWeapon;
+			#### C 4;
+			#### B 5 A_DDRefire;
+			Goto Ready;
+		Select:
+			PISD A 1;
+			Loop;
+		Deselect:
+			PISD A 1;
+			Loop;
 		AltFire:
+			#### A 1 A_WeapAction;
+			#### A 4;
+		Burst:
+			#### B 0 A_DDFlash;
+			#### B 1 A_FireDDWeapon;
+			#### C 0;
+			#### # 1 A_ChangeSprite;
+			#### # 3 A_WeapAction;
+			#### # 1;
+			#### # 3;
+			#### # 5 A_DDRefire;
 			Goto Ready;
 		ReloadP:
+			#### F 3;
+			#### H 2 A_PistolReload1;
+			#### G 2;
+			#### G 4 A_WeapAction;
+		Reload2:
+			#### G 4;
+			#### H 8;
+			#### I 10 A_PistolReload2;
+			#### I 1 A_SetWeapState;
+			#### J 10 A_PistolReload3;
+		Reload3:
+			#### J 5 A_WeapAction;
+			#### J 1;
+			#### J 4;
+			Goto Ready;		
+		UnloadP:
+			#### F 5 A_PistolReload2;
+			#### G 5;
+			#### H 4 A_PistolReload3;
+			#### I 6 A_WeapAction;
+			#### I 4;
+			#### J 4;
 			Goto Ready;
 		FlashP:
-			PISF A 2 Bright A_Light1;
+			PISF # 2 Bright A_Light2;
 			Goto FlashDone;
 		FlashA:
-			PISF A 1 Bright A_Light1;
+			PISF # 1 Bright A_Light2;
 			Goto FlashDone;
-		FlashC:
-			PISF A 6 Bright A_Light1;
-			Goto FlashDone;
-		Spawn:
-			PIST A -1;
-			Stop;
 		Ind:
-			PISD A 0;
-			PIFD A 0;
-			PISL A 0;
-			PISE A 0;
+			PISD A 1;
+			PIFD A 1;
+			PISL A 1;
+			PISG A 1;
+			PISE A 1;
 			Stop;
 	}
 }
 // #Class ddPistolLeft : ddPistol()
 class ddPistolLeft : ddPistol
 {
-	Default { ddweapon.weaponside CE_LEFT; -DDWEAPON.GOESININV; }
+	Default { ddweapon.weaponside CE_LEFT; -DDWEAPON.GOESININV; }/*
 	States
 	{
 		NoAmmo:
@@ -432,12 +479,12 @@ class ddPistolLeft : ddPistol
 		FlashA:
 			PISF B 1 Bright A_Light2;
 			Goto FlashDone;
-	}
+	}*/
 }
 // #Class ddPistolRight : ddPistol()
 class ddPistolRight : ddPistol
 {
-	Default { ddweapon.weaponside CE_RIGHT; -DDWEAPON.GOESININV; }
+	Default { ddweapon.weaponside CE_RIGHT; -DDWEAPON.GOESININV; }/*
 	States
 	{
 		NoAmmo:
@@ -513,7 +560,7 @@ class ddPistolRight : ddPistol
 			Goto FlashDone;
 			
 			
-	}
+	}*/
 }
 // #Class d9mil : Ammo()
 class d9Mil : Ammo

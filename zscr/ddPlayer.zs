@@ -419,8 +419,9 @@ class ddPlayer : DoomPlayer
 							{
 								if(lWeap.RetItem(x) is item.GetClassName())
 								{
-									let weap = ddWeapon(Spawn(""..item.GetClassName().."Left"));
-									weap.AttachToOwner(self); weap.AmmoGive1 = 0; noIW = true;
+									//let weap = ddWeapon(Spawn(""..item.GetClassName().."Left"));
+									let weap = ddWeapon(Spawn(""..item.GetClassName()));
+									weap.AttachToOwner(self); weap.AmmoGive1 = 0; noIW = true; weap.weaponside = CE_LEFT;
 									if(self is "ddPlayerClassic") { weap.sFactor = 2; }
 									lWeap.SetItem(weap, x);
 								}
@@ -429,8 +430,9 @@ class ddPlayer : DoomPlayer
 							{
 								if(rWeap.RetItem(x - lWeap.size) is item.GetClassName())
 								{
-									let weap = ddWeapon(Spawn(""..item.GetClassName().."Right"));
-									weap.AttachToOwner(self); weap.AmmoGive1 = 0; noIW = true;
+									//let weap = ddWeapon(Spawn(""..item.GetClassName().."Right"));
+									let weap = ddWeapon(Spawn(""..item.GetClassName()));
+									weap.AttachToOwner(self); weap.AmmoGive1 = 0; noIW = true; weap.weaponside = CE_RIGHT;
 									if(self is "ddPlayerClassic") { weap.sFactor = 2; }
 									rWeap.SetItem(weap, x - lWeap.size);
 								}
