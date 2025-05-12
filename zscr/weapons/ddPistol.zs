@@ -393,13 +393,16 @@ class ddPistol : ddWeapon replaces Pistol
 		FlashA:
 			PISF # 1 Bright A_Light2;
 			Goto FlashDone;
+		Spawn:
+			PIST A -1;
+			Stop;
 		Ind:
 			PISD A 1;
 			PIFD A 1;
 			PISL A 1;
 			PISG A 1;
 			PISE A 1;
-			Stop;
+			Stop;			
 	}
 }
 // #Class ddPistolLeft : ddPistol()
