@@ -18,7 +18,8 @@ enum ComboFist
 class ddFist : ddWeapon replaces Fist
 {	
 	int fistFlags;
-	flagdef addMe : fistFlags, 0; //set true for parent types to be added to fInv, false for left/right counterparts
+	flagdef base : fistFlags, 0; //wont be used directly, only used for making clones for left/right weapon slot
+	flagdef addMe : fistFlags, 1; //set true for parent types to be added to fInv, false for left/right counterparts
 	Default
 	{
 		Weapon.AmmoType1 "NotAnAmmo";
@@ -59,14 +60,24 @@ class ddFist : ddWeapon replaces Fist
 	{
 		let ddp = ddPlayer(owner);
 		if(ddp.FindInventory("ClassicModeToken")) { return FindState('FireClassic'); }
-		else { return FindState('Fire'); }
+		else 
+		{ 
+			console.printf(""..weaponside);
+			if(weaponside) { return FindState('Jab'); }
+			else { return FindState('Hook'); }
+		}
 	}
 	
 	override State GetRefireState()
 	{
 		let ddp = ddPlayer(owner);
-		if(ddp.FindInventory("ClassicModeToken")) { return FindState('FireClassic'); }
-		else { return FindState('Fire'); }
+		if(ddp.FindInventory("ClassicModeToken")) { return FindState('FireClassic'); }		
+		else 
+		{ 
+			console.printf(""..weaponside);
+			if(weaponside) { return FindState('Jab'); }
+			else { return FindState('Hook'); }
+		}
 	}
 	
 	override void primaryattack()
@@ -137,19 +148,58 @@ class ddFist : ddWeapon replaces Fist
 	States
 	{
 		NoAmmo:
-			TNT1 A 10;
+			PUNG B 10;
 		Ready:
-			TNT1 A 1;
-			Loop;
-		Deselect:
-			PUNG A 1 A_Lower;
+			PUNG B 1 A_DDWeaponReady;
 			Loop;
 		Select:
-			PUNG A 1;
+			PUNG B 1;
+			Loop;
+		Deselect:
+			PUNG B 1;
 			Loop;
 		Fire:
+			PUNG A 1;
+			Loop;
+		Jab:
+			PUNG B 1 A_WeapAction;
+			PUNG B 1;
+			PUNG C 1 A_Whoosh;
+			PUNG D 6 A_FireDDWeapon;
+			PUNG C 1;
+			PUNG C 1 A_ComOneTwo;
+			PUNG B 4;
+			PUNG B 1 A_ClearCombo;
+			PUNG B 3 A_DDRefire;	
+			Goto Ready;
+		Hook:
+			TNT1 A 1 A_WeapAction;
+			TNT1 A 2;
+			PUNH A 1;
+			PUNH B 2 A_Whoosh;
+			PUNH CD 2;
+			PUNH E 5 A_FireDDWeapon;
+			PUNH FGH 2;
+			TNT1 A 2;
+			TNT1 A 2 A_DDRefire;
+			Goto Ready;
+		Two:
+			TNT1 A 1 A_ClearCombo;
+			PUNH AB 1;
+			PUNH C 1 A_Whoosh;
+			PUNH D 1;
+			PUNH E 6 A_FireDDWeapon;
+			PUNH FGH 2;
+			TNT1 A 2;
 			Goto Ready;
 		Altfire:
+			Goto Ready;
+		FireClassic:
+			PUNG B 4;
+			PUNG C 4 A_FireDDWeapon;
+			PUNG D 5;
+			PUNG C 4;
+			PUNG B 5 A_DDRefire;
 			Goto Ready;
 			
 	}
@@ -160,9 +210,8 @@ class ddFistLeft : ddFist
 	Default
 	{		
 		-DDFIST.ADDME;
-		ddweapon.weaponside CE_LEFT;
-		
-	}
+		ddweapon.weaponside CE_LEFT;		
+	}/*
 	States
 	{
 		NoAmmo:
@@ -193,7 +242,7 @@ class ddFistLeft : ddFist
 			PUNG C 4;
 			PUNG B 5 A_DDRefire;
 			Goto Ready;
-	}
+	}*/
 }
 // #Class ddFistRight : ddFist()
 class ddFistRight : ddFist
@@ -202,7 +251,7 @@ class ddFistRight : ddFist
 	{		
 		-DDFIST.ADDME;		
 		ddweapon.weaponside CE_RIGHT; 
-	}
+	}/*
 	States
 	{
 		NoAmmo:
@@ -223,7 +272,7 @@ class ddFistRight : ddFist
 			PUNH FGH 2;
 			TNT1 A 2;
 			TNT1 A 2 A_DDRefire;
-			Goto Ready;	
+			Goto Ready;
 		Two:
 			TNT1 A 1 A_ClearCombo;
 			PUNH AB 1;
@@ -243,7 +292,7 @@ class ddFistRight : ddFist
 		Altfire:
 			Goto Ready;
 			
-	}
+	}*/
 }
 
 extend class ddWeapon

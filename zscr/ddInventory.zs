@@ -292,6 +292,7 @@ class playerInventory : ddWeapon
 		let lWeap = ddp.GetLeftWeapons();
 		let rWeap = ddp.GetRightWeapons();
 		let pInv = ddp.GetWeaponsInventory();
+		let fLst = ddp.GetFistList();
 		if(inInventory)
 		{
 			if(pInv.RetItem(ix).weaponName != "emptie")
@@ -318,13 +319,13 @@ class playerInventory : ddWeapon
 				if(!(lWeap.RetItem(li) is "ddFist"))
 				{					
 					let lw = lWeap.RetItem(li);
-					let drp = ddWeapon(Spawn(lw.GetParentType()));
+					let drp = ddWeapon(Spawn(lw.GetClassName()));
 					drp.mag = lw.mag;
 					drp.ddWeaponFlags = lw.ddWeaponFlags;
 					drp.AmmoGive1 = 0;
 					drp.AttachToOwner(owner);
 					if(ddp.dddebug & DBG_INVENTORY && ddp.dddebug & DBG_VERBOSE) { ddp.A_Log("Left weapon replaced with "..ddp.GetFists().GetTag()); }
-					lWeap.SetItem(ddWeapon(ddp.GetFists(1)), li);
+					lWeap.SetItem(fLst.curFistLeft, li);
 					ddp.ddWeaponState &= ~DDW_LEFTISTH;
 					if(li == ddp.lwx)
 					{
@@ -347,13 +348,13 @@ class playerInventory : ddWeapon
 				if(!(rWeap.RetItem(ri) is "ddFist"))
 				{					
 					let rw = rWeap.RetItem(ri);
-					let drp = ddWeapon(Spawn(rw.GetParentType()));
+					let drp = ddWeapon(Spawn(rw.GetClassName()));
 					drp.mag = rw.mag;
 					drp.ddWeaponFlags = rw.ddWeaponFlags;
 					drp.AmmoGive1 = 0;
 					drp.AttachToOwner(owner);
 					if(ddp.dddebug & DBG_INVENTORY && ddp.dddebug & DBG_VERBOSE) { ddp.A_Log("Right weapon replaced with "..ddp.GetFists().GetTag()); }
-					rWeap.SetItem(ddWeapon(ddp.GetFists(0)), ri);
+					rWeap.SetItem(fLst.curFistRight), ri);
 					ddp.ddWeaponState &= ~DDW_RIGHTISTH;
 					if(ri == ddp.rwx)
 					{
@@ -368,7 +369,7 @@ class playerInventory : ddWeapon
 				else
 				{
 					ddp.A_StartSound("misc/boowomp", CHAN_WEAPON);
-					return null;						
+					return null;
 				}
 			}
 		}
@@ -693,7 +694,7 @@ class playerInventory : ddWeapon
 		inInventory = true;
 		if(ddPlayer(owner).dddebug & DBG_INVENTORY) { owner.A_Log("Inventory members cleared"); }
 	}
-	
+	//todo: have active fist weapons lower when cycled
 	action void A_FistCycle()
 	{
 		ddPlayer ddp = ddPlayer(self);
@@ -703,14 +704,31 @@ class playerInventory : ddWeapon
 		if(!invoker.bAltFire) { if(++ddp.fwx > flst.items.Size() - 1) { ddp.fwx = 0; } }
 		else { if(--ddp.fwx < 0) { ddp.fwx = flst.items.Size() -1; } }
 		
+		if(fLst.curFistLeft == null || fLst.curFistLeft != GetFists())
+		{
+			ddp.RemoveInventory(fLst.curFistLeft);
+			flst.curFistLeft = ddWeapon(Spawn(GetFists().GetClassName()));
+			ddFist(flst.curFistLeft).bAddMe = false;
+			flst.curFistLeft.AttachToOwner(self); 
+			flst.curFistLeft.weaponside = CE_LEFT;			
+		}
+		if(flst.curFistRight == null || flst.curFistRight != GetFists()) 
+		{
+			ddp.RemoveInventory(fLst.curFistRight);
+			flst.curFistRight = ddWeapon(Spawn(GetFists().GetClassName()));
+			ddFist(flst.curFistRight).bAddMe = false;
+			flst.curFistRight.AttachToOwner(self); 
+			flst.curFistRight.weaponside = CE_RIGHT; 
+		}
+		
 		A_StartSound("misc/chat2", CHAN_WEAPON, 0, 0.67);
 		//replaces fisted slots with new fists
 		for(int z = 0; z < (lWeap.size + rWeap.size); z++)
 		{
 			if(z < lWeap.size) { if(lWeap.RetItem(z) is "ddFist") 
-			{ lWeap.SetItem(ddWeapon(ddp.GetFists(1)), z); } }
+			{ lWeap.SetItem(fLst.curFistLeft, z); } }
 			else { if(rWeap.RetItem(z - lWeap.size) is "ddFist") 
-			{ rWeap.SetItem(ddWeapon(ddp.GetFists(0)), z - lWeap.size); } }
+			{ rWeap.SetItem(flst.curFistRight, z - lWeap.size); } }
 		}
 		rWeap.RetItem(ddp.rwx).companionpiece = lWeap.RetItem(ddp.lwx);
 		lWeap.RetItem(ddp.lwx).companionpiece = rWeap.RetItem(ddp.rwx);

@@ -133,7 +133,7 @@ class ddChaingun : ddWeapon replaces Chaingun
 	{
 		let ddp = ddPlayer(owner);
 		A_FireDDCGun();
-		spin += 5;
+		spin += 4;
 		spintimer = 35;
 		if(spin > 40) { spin = 40; }
 	}
@@ -144,7 +144,7 @@ class ddChaingun : ddWeapon replaces Chaingun
 		if(spin > 32) { return 2; }
 		else if(spin > 24) { return 3; }
 		else if(spin > 18) { return 4; }
-		else if(spin > 9) { return 5; }
+		else if(spin > 8) { return 5; }
 		else { return 12; } 
 	}
 	
@@ -179,7 +179,8 @@ class ddChaingun : ddWeapon replaces Chaingun
 			#### # 1 A_DDWeaponReady;
 			Loop;
 		Select:
-			CHGG A 1;
+			CHGG A 0 A_ChangeSprite;
+			CHGG # 1;
 			Loop;
 		Deselect:
 			CHGG A 1;

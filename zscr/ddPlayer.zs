@@ -44,9 +44,8 @@ class ddPlayer : DoomPlayer
 		Player.StartItem "unloadActivatorLeft";
 		Player.StartItem "playerInventory";
 		Player.StartItem "ddFist";
-		Player.StartItem "ddFistLeft";
-		Player.StartItem "ddFistRight";
 		Player.StartItem "ddPistol";
+		Player.StartItem "ddChaingun";
 		Player.StartItem "d9Mil", 64;
 		Player.StartItem "emptie";
 		Player.StartItem "inventoryWeapon";
@@ -106,20 +105,32 @@ class ddPlayer : DoomPlayer
 		let pInv = WeaponsInventory(FindInventory("WeaponsInventory"));
 		let flst = FistList(FindInventory("FistList"));
 		//only insert parent types
-		lWeap.additem(FindInventory("ddPistol"));
+		lWeap.additem(FindInventory("ddChaingun"));
 		if(lWeap.size > 1)
 		{
+			if(flst.curFistLeft == null || flst.curFistLeft != GetFists()) { 
+				flst.curFistLeft = ddWeapon(Spawn(GetFists().GetClassName()));
+				ddFist(flst.curFistLeft).bAddMe = false;
+				flst.curFistLeft.AttachToOwner(self); 
+				flst.curFistLeft.weaponside = CE_LEFT;
+			}
 			for(int x = 1; x < lWeap.size; x++)
 			{
-				lWeap.additem(FindInventory("emptie"));
+				lWeap.additem(flst.curFistLeft);
 			}
 		}
-		rWeap.additem(FindInventory("ddPistol"));
+		rWeap.additem(FindInventory("ddChaingun"));
 		if(rWeap.size > 1)
 		{
+			if(flst.curFistRight == null || flst.curFistRight != GetFists()) { 			
+				flst.curFistRight = ddWeapon(Spawn(GetFists().GetClassName()));
+				ddFist(flst.curFistRight).bAddMe = false;
+				flst.curFistRight.AttachToOwner(self); 
+				flst.curFistRight.weaponside = CE_RIGHT; 
+			}
 			for(int x = 1; x < rWeap.size; x++)
 			{
-				rWeap.additem(FindInventory("emptie"));
+				rWeap.additem(flst.curFistRight);
 			}
 		}
 		invtemp.construct("", 0, "", 0, 0, false);
@@ -463,16 +474,27 @@ class ddPlayer : DoomPlayer
 			
 		}
 		//replace emptie placeholders in weapon slots with respective ddFist weapons
-		
+		//todo: gotta give player multiple fists instead of copying the same one through GetFists()
+		/*
 		for(int c = 0; c < (lWeap.size + rWeap.size); c++)
 		{
-			if(c < lWeap.size) { if(lWeap.retitem(c) is "emptie")
-			{ lWeap.SetItem(ddWeapon(GetFists(1)), c); }
+			if(c < lWeap.size) { 
+				if(lWeap.retitem(c) is "emptie")
+				{ 
+					let fs = ddWeapon(Spawn(GetFists().GetClassName()));
+					fs.AttachToOwner(self); fs.weaponside = CE_LEFT;
+					lWeap.SetItem(fs, c); 
+				}
 			}
-			else { if(rWeap.retitem(c - lWeap.size) is "emptie") 
-			{ rWeap.SetItem(ddWeapon(GetFists(0)), c-lWeap.size); }
+			else { 
+				if(rWeap.retitem(c - lWeap.size) is "emptie") 
+				{ 
+					let fs = ddWeapon(Spawn(GetFists().GetClassName()));
+					fs.AttachToOwner(self); fs.weaponside = CE_RIGHT;
+					rWeap.SetItem(fs, c-lWeap.size);
+				}
 			}
-		}
+		}*/
 		
 		//set companion pieces [active weapon in other hand]
 		if(lWeap.RetItem(lwx)) { rWeap.RetItem(rwx).companionPiece = lWeap.RetItem(lwx); }
