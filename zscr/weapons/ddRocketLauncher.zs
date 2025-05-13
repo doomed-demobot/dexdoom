@@ -227,23 +227,58 @@ class ddRocketLauncher : ddWeapon replaces RocketLauncher
 		NoAmmo:
 			MISG A 10;
 		Ready:
-			MISG A 1;
-			Loop;
-		Deselect:
-			MISG A 1 A_Lower;
-			Loop;
-		Select:
-			MISG A 1;
+			MISG A 1 A_DDWeaponReady;
 			Loop;
 		Fire:
+			MISG A 1 A_WeapAction;
+			MISG B 0 A_DDFlash;
+			MISG B 8;
+			MISG B 12 A_FireDDWeapon;
+			MISG B 2 A_WeapAction;
+			MISG B 0 A_DDRefire;
 			Goto Ready;
 		Altfire:
+			MISG A 1 A_WeapAction;
+			MISG A 1;
+			MISG B 14 A_FireDDWeapon;
+			MISG B 2 A_WeapAction;
+			MISG B 0 A_DDRefire;
+			Goto Ready;
+		ReloadA:
+		ReloadP:
+			MISG B 5;
+			MISG B 6 A_WeapAction;
+			MISG B 1;
+		Load:
+			MISG B 10;
+			MISG B 3 A_WeapAction;
+			MISG B 5;
+			MISG B 4 A_WeapAction;
+			MISG B 1;
+		RFinish:
+			MISG A 5;
+			MISG A 5 A_RLPump1;
+			MISG A 2 A_RLPump2;
+			MISG A 7 A_WeapAction;
+			Goto Ready;
+		UnloadP:
+			MISG B 5;
+		Unload:
+			MISG B 5;
+			MISG A 5 A_WeapAction;
+			MISG A 10;
 			Goto Ready;
 		Flash:
 			MISF A 3 Bright A_Light1;
 			MISF B 4 Bright;
 			MISF CD 4 Bright A_Light2;
 			Goto FlashDone;
+		Select:
+			MISG A 1;
+			Loop;
+		Deselect:
+			MISG A 1;
+			Loop;
 		Spawn:
 			LAUN A -1;
 			Stop;
@@ -351,8 +386,7 @@ class ddRocketLauncherRight : ddRocketLauncher
 			MISG B 5;
 			MISG A 5 A_WeapAction;
 			MISG A 10;
-			Goto Ready;
-			
+			Goto Ready;			
 	}
 }
 

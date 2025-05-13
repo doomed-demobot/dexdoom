@@ -227,25 +227,73 @@ class ddSuperShotgun : ddWeapon
 	States
 	{
 		NoAmmo:
-			SHT2 A 10;
+			#### A 10;
 		Ready:
-			SHT2 A 1;
-			Loop;
-		Deselect:
-			SHT2 A 1;
-			Loop;
-		Select:
-			SHT2 A 1;
+			SH2D A 0 A_ChangeSprite;
+			#### A 1 A_DDWeaponReady;
 			Loop;
 		Fire:
+			#### A 1 A_WeapAction;
+			#### A 3;
+			#### A 0 A_DDFlash;
+			#### A 1 A_FireDDWeapon;
+			#### A 6;
+			#### A 2 A_WeapAction;
 			Goto Ready;
+		Select:
+			#### A 1 A_ChangeSprite;
+			Loop;
+		Deselect:
+			#### A 1 A_ChangeSprite;
+			Loop;
 		Altfire:
+			#### A 1 A_WeapAction;
+			#### A 3;
+			#### A 0 A_DDFlash;
+			#### A 1 A_FireDDWeapon;
+			#### A 6;
+			#### A 2 A_WeapAction;
 			Goto Ready;
-		ReloadP:		
-			Goto Ready;	
 		Reload:
-		ReloadA:	
+		ReloadA:
+		ReloadP:			
+			#### B 7;
+			#### C 7;
+			#### D 1 A_OpenShotgun2;
+			#### D 5 A_WeapAction;
+			#### D 1;
+		Reload2:
+			#### D 5;
+			#### E 7;
+			#### F 0 A_LoadShotgun2;
+			#### F 3 A_WeapAction;
+			#### F 1;
+		Reload3:
+			#### F 6;
+			#### G 5;
+			#### G 1 A_CloseShotgun2;
+			#### H 6 A_WeapAction;
+			#### H 6 A_DDRefire;
+			#### A 5;
 			Goto Ready;
+		UnloadP:
+			#### BC 7;
+			#### D 7 A_OpenShotgun2;
+			#### F 5 A_LoadShotgun2;
+			#### E 4 A_WeapAction;
+			#### E 5;
+			#### G 6 A_CloseShotgun2;
+			#### HA 6;
+			Goto Ready;			
+		FlashA:
+		Boom:
+			SH2F A 2 Bright A_Light1;
+			SH2F B 2 Bright A_Light1;
+			Goto FlashDone;
+		Blam:
+			SH2F C 2 Bright A_Light1;
+			SH2F D 2 Bright A_Light1;
+			Goto FlashDone;
 		FlashP:
 			SHT2 I 4 Bright A_Light1;
 			SHT2 J 3 Bright A_Light2;
@@ -258,7 +306,7 @@ class ddSuperShotgun : ddWeapon
 // #Class ddSuperShotgunLeft : ddSuperShotgun()
 class ddSuperShotgunLeft : ddSuperShotgun
 {
-	Default { ddweapon.weaponside CE_LEFT; -DDWEAPON.GOESININV; }
+	Default { ddweapon.weaponside CE_LEFT; -DDWEAPON.GOESININV; }/*
 	States
 	{
 		NoAmmo:
@@ -326,12 +374,12 @@ class ddSuperShotgunLeft : ddSuperShotgun
 			SH2F C 2 Bright A_Light1;
 			SH2F D 2 Bright A_Light1;
 			Goto FlashDone;
-	}
+	}*/
 }
 // #Class ddSuperShotgunRight : ddSuperShotgun()
 class ddSuperShotgunRight : ddSuperShotgun
 {
-	Default { ddweapon.weaponside CE_RIGHT; -DDWEAPON.GOESININV; }
+	Default { ddweapon.weaponside CE_RIGHT; -DDWEAPON.GOESININV; }/*
 	States
 	{
 		NoAmmo:
@@ -398,7 +446,7 @@ class ddSuperShotgunRight : ddSuperShotgun
 			SH2F C 2 Bright A_Light1;
 			SH2F D 2 Bright A_Light1;
 			Goto FlashDone;
-	}
+	}*/
 }
 // #Class BFS : Ammo()
 class BFS : Ammo

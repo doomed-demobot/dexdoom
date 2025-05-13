@@ -173,19 +173,49 @@ class ddChaingun : ddWeapon replaces Chaingun
 	States
 	{
 		NoAmmo:
-			CHGG A 10;
+			#### # 10;
 		Ready:
-			CHGG A 1;
-			Loop;
-		Deselect:
-			CHGG A 1 A_Lower;
+			CHGR A 0 A_ChangeSprite;
+			#### # 1 A_DDWeaponReady;
 			Loop;
 		Select:
 			CHGG A 1;
 			Loop;
+		Deselect:
+			CHGG A 1;
+			Loop;
 		Fire:
+			CHGG A 0 A_ChainSpin;
+			CHGG A 0 A_DDFlash;
+			CHGG A 1 A_FireDDWeapon;
+			CHGG A 1 A_SetTicks;
+			CHGG A 0 A_DDFlash;
+			CHGG B 0 A_ChainSpin;
+			CHGG B 1 A_FireDDWeapon;
+			CHGG A 1 A_SetTicks;
+			CHGG B 0 A_DDRefire;
+			Goto Ready;
+		FireClassic:
+			CHGG A 0 A_DDFlash;
+			CHGG A 4 A_FireDDWeapon;
+			CHGG A 0 A_DDFlash;
+			CHGG B 4 A_FireDDWeapon;
+			CHGG B 0 A_DDRefire;
 			Goto Ready;
 		Altfire:
+			CHGG A 0 A_ChainSpin;
+			CHGG A 1 A_WeapAction;
+			CHGG A 1;
+			CHGG A 2 A_WeapAction;
+			CHGG A 1 A_SetTicks;
+			CHGG B 0 A_ChainSpin;
+			CHGG B 0 A_ChainSpin;
+			CHGG B 1 A_WeapAction;
+			CHGG B 1;
+			CHGG B 2 A_WeapAction;
+			CHGG B 1 A_SetTicks;			
+			CHGG B 2 A_WeapAction;
+			CHGG B 0 A_DDRefire;
 			Goto Ready;
 		Flash:
 			CHGF A 5 Bright A_Light2;
@@ -201,7 +231,7 @@ class ddChaingun : ddWeapon replaces Chaingun
 // #Class ddChaingunLeft : ddChaingun()
 class ddChaingunLeft : ddChaingun
 {
-	Default { ddweapon.weaponside CE_LEFT; -DDWEAPON.GOESININV; }
+	Default { ddweapon.weaponside CE_LEFT; -DDWEAPON.GOESININV; }/*
 	States
 	{
 		NoAmmo:
@@ -253,13 +283,13 @@ class ddChaingunLeft : ddChaingun
 			Goto FlashDone;
 		Flash2:
 			CHGF # 5 Bright A_Light2;
-			Goto FlashDone;*/
-	}
+			Goto FlashDone;
+	}*/
 }
 // #Class ddChaingunRight : ddChaingun()
 class ddChaingunRight : ddChaingun
 {
-	Default { ddweapon.weaponside CE_RIGHT; -DDWEAPON.GOESININV; }
+	Default { ddweapon.weaponside CE_RIGHT; -DDWEAPON.GOESININV; }/*
 	States
 	{
 		NoAmmo:
@@ -281,7 +311,7 @@ class ddChaingunRight : ddChaingun
 			CHGG B 0 A_ChainSpin;
 			CHGG B 1 A_FireDDWeapon;
 			CHGG A 1 A_SetTicks;
-			CHGG B 0 A_ddRefireRight;
+			CHGG B 0 A_DDRefire;
 			Goto Ready;
 		FireClassic:
 			CHGG A 0 A_DDFlash;
@@ -311,8 +341,8 @@ class ddChaingunRight : ddChaingun
 			Goto FlashDone;
 		Flash2:
 			CHGF # 5 Bright A_Light2;
-			Goto FlashDone;*/
-	}
+			Goto FlashDone;
+	}*/
 }
 
 

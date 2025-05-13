@@ -51,12 +51,12 @@ class ddShotgun : ddWeapon
 			if(weaponside == CE_RIGHT)
 			{
 				psp = owner.player.getpsprite(PSP_RIGHTW);
-				psp.sprite = GetSpriteIndex("SHTRA0");
+				psp.sprite = GetSpriteIndex("SHH2A0");
 			}
 			else
 			{
 				psp = owner.player.getpsprite(PSP_LEFTW);
-				psp.sprite = GetSpriteIndex("SHTDA0");
+				psp.sprite = GetSpriteIndex("SHOHA2");
 			}
 		}
 	}
@@ -115,7 +115,11 @@ class ddShotgun : ddWeapon
 	override State GetFlashState()
 	{
 		let ddp = ddPlayer(owner);
-		if(ddp.player.readyweapon is "dualWielding" || ddp.player.pendingweapon is "dualWielding" || ddp.lastmode is "dualWielding") { return FindState("FlashDW"); }
+		if(ddp.player.readyweapon is "dualWielding" || ddp.player.pendingweapon is "dualWielding" || ddp.lastmode is "dualWielding") 
+		{ 
+			if(weaponside) { return FindState("FlashDW"); }
+			else { return FindState("FlashDW")+2; }
+		}
 		else { return Super.GetFlashState(); }
 	}
 	
@@ -128,11 +132,10 @@ class ddShotgun : ddWeapon
 			{ 
 				String sp; 
 				int frame = -1;
+				sp = (weaponside) ? "SHOHA0" : "SHH2A0";
 				if(ddWeaponFlags & SHT_RSEQ) { 
-					sp = "SHOHA0";
-					frame = ((weaponside) ? 5 : 11); 
+					frame = 5; 
 				}
-				else { sp = ((weaponside) ? "SHTDA0" : "SHTRA0"); }
 				return sp, frame;
 			}
 			else if(ddp.player.readyweapon is "twoHanding" || ddp.player.pendingweapon is "twoHanding" || ddp.lastmode is "twoHanding")  { return "SHTGA0", -1; }
@@ -232,25 +235,74 @@ class ddShotgun : ddWeapon
 	States
 	{
 		NoAmmo:
-			SHTG A 10;
+			#### A 10;
 		Ready:
-			SHTG A 1;
+			SHTD A 0 A_ChangeSprite;
+			#### # 1 A_DDWeaponReady;
+			Loop;
+		Altfire:
+		Fire:
+			#### A 1 A_WeapAction;
+			#### A 3;
+			#### A 0 A_DDFlash;
+			#### A 1 A_FireDDWeapon;
+			#### A 6;
+			#### A 2 A_WeapAction;
+			Goto Ready;	
+		Select:
+			SHTD A 1 A_ChangeSprite;
 			Loop;
 		Deselect:
-			SHTG A 1;
+			SHTD A 1 A_ChangeSprite;
 			Loop;
-		Select:
-			SHTG A 1;
-			Loop;
-		Fire:
-			Goto Ready;		
-		Altfire:
+		ReloadA:
+		ReloadP:			
+			#### BC 5;
+			#### D 4 A_RackShotgun;
+			#### C 6 A_WeapAction;
+			#### C 3;
+		Reload2:
+			#### C 2 A_SlideShotgun;
+			#### B 4;
+			#### B 3 A_WeapAction;
+			#### B 1;
+			#### A 2;
+			#### A 1;
+			#### A 7 A_DDRefire;
 			Goto Ready;
-		FlashA:
+		ReloadOneHanded:
+			SHH2 A 0 A_ChangeSprite;
+			#### ABCDE 2;
+			#### F 6 A_WeapAction;
+			#### F 1;
+			#### F 12 A_RackShotgun;
+		Reload2B:
+			#### E 6 A_SlideShotgun;
+			#### D 3 A_WeapAction;
+			#### D 3;
+			#### CBA 3;
+			#### AAA 1 A_DDHeavyRefire;
+			#### A 4;
+			Goto Ready;			
+		UnloadP:		
+			#### BC 5;
+			#### D 4 A_PumpShotgun;
+			#### C 4 A_WeapAction;
+			#### C 5;
+			#### B 5;
+			#### A 2;
+			#### A 1;
+			#### A 7;
+			Goto Ready;
 		FlashDW:
+			SHTF C 1 Bright A_Light1;
+			SHTF D 3 Bright A_Light2;
+			Goto FlashDone;
+			SHTF E 1 Bright A_Light1;
+			SHTF F 3 Bright A_Light2;
 			Goto FlashDone;
 		FlashP:
-			SHTF A 4 Bright A_Light1;
+			SHTF A 1 Bright A_Light1;
 			SHTF B 3 Bright A_Light2;
 			Goto FlashDone;	
 		Spawn:
@@ -258,6 +310,8 @@ class ddShotgun : ddWeapon
 			Stop;
 		Ind:
 			SHTR A 0;
+			SHOH A 0;
+			SHH2 A 0;
 			Stop;
 	}
 	
@@ -265,7 +319,7 @@ class ddShotgun : ddWeapon
 // #Class ddShotgunLeft : ddShotgun()
 class ddShotgunLeft : ddShotgun
 {
-	Default { ddweapon.weaponside CE_LEFT; -DDWEAPON.GOESININV; }
+	Default { ddweapon.weaponside CE_LEFT; -DDWEAPON.GOESININV; }/*
 	States
 	{
 		NoAmmo:
@@ -328,12 +382,12 @@ class ddShotgunLeft : ddShotgun
 			SHTF C 4 Bright A_Light1;
 			SHTF D 3 Bright A_Light2;
 			Goto FlashDone;
-	}
+	}*/
 }
 // #Class ddShotgunRight : ddShotgun()
 class ddShotgunRight : ddShotgun
 {
-	Default { ddweapon.weaponside CE_RIGHT; -DDWEAPON.GOESININV; }
+	Default { ddweapon.weaponside CE_RIGHT; -DDWEAPON.GOESININV; }/*
 	States
 	{
 		NoAmmo:
@@ -396,7 +450,7 @@ class ddShotgunRight : ddShotgun
 			SHTF E 4 Bright A_Light1;
 			SHTF F 3 Bright A_Light2;
 			Goto FlashDone;
-	}
+	}*/
 }
 // #Class ShotgunSpawner : RandomSpawner replaces Shotgun()
 class ShotgunSpawner : RandomSpawner replaces Shotgun

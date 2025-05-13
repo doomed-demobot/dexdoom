@@ -90,15 +90,21 @@ class ddBFG9000 : ddWeapon
 		NoAmmo:
 			BFGG A 10;
 		Ready:
-			BFGG A 1;
-			Loop;
-		Deselect:
-			BFGG A 1 A_Lower;
+			BFGG A 1 A_DDWeaponReady;
 			Loop;
 		Select:
 			BFGG A 1;
 			Loop;
+		Deselect:
+			BFGG A 1;
+			Loop;
 		Fire:
+			BFGG A 1 A_WeapAction;
+			BFGG A 1;
+			BFGG A 20 A_BFGsound;
+			BFGG B 10 A_DDFlash;
+			BFGG B 10 A_FireDDWeapon;
+			BFGG B 20 A_DDRefire;
 			Goto Ready;
 		Altfire:
 			Goto Ready;
@@ -118,7 +124,7 @@ class ddBFG9000 : ddWeapon
 // #Class ddBFG9000Left : ddBFG9000()
 class ddBFG9000Left : ddBFG9000
 {	
-	Default { ddweapon.weaponside CE_LEFT; -DDWEAPON.GOESININV; }
+	Default { ddweapon.weaponside CE_LEFT; -DDWEAPON.GOESININV; }/*
 	States
 	{
 		NoAmmo:
@@ -150,13 +156,13 @@ class ddBFG9000Left : ddBFG9000
 			BFGG A 3;
 			BFGG A 0 A_ddRefireLeft;
 			Goto Spindown;
-			*/
-	}
+			
+	}*/
 }
 // #Class ddBFG9000Right : ddBFG9000()
 class ddBFG9000Right : ddBFG9000
 {	
-	Default { ddweapon.weaponside CE_RIGHT; -DDWEAPON.GOESININV; }
+	Default { ddweapon.weaponside CE_RIGHT; -DDWEAPON.GOESININV; }/*
 	States
 	{
 		NoAmmo:
@@ -188,8 +194,8 @@ class ddBFG9000Right : ddBFG9000
 			BFGG A 3;
 			BFGG A 0 A_ddRefireRight;
 			Goto Spindown;
-			*/
-	}
+			
+	}*/
 }
 
 extend class ddWeapon

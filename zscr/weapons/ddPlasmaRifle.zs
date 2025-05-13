@@ -241,19 +241,55 @@ class ddPlasmaRifle : ddWeapon replaces PlasmaRifle
 		NoAmmo:
 			PLSG A 10;
 		Ready:
-			PLSG A 1;
-			Loop;
-		Deselect:
-			PLSG A 1 A_Lower;
+			PLSG A 1 A_DDWeaponReady;
 			Loop;
 		Select:
 			PLSG A 1;
 			Loop;
+		Deselect:
+			PLSG A 1;
+			Loop;
 		Fire:
-			Goto Ready;
-		FireClassic:
+			PLSG A 1 A_WeapAction;
+			PLSG A 2 A_SetTicks;
+			PLSG A 0 A_DDFlash;
+			PLSG A 1 A_FireDDWeapon;
+			PLSG A 2 A_WeapAction;
+			PLSG A 2 A_DDRefire;
 			Goto Ready;
 		Altfire:
+			PLSG A 1 A_WeapAction;
+			PLSG A 5;
+			PLSG A 0 A_DDFlash;
+			PLSG A 3 A_WeapAction;
+			PLSG A 6;
+			PLSG A 3 A_WeapAction;
+			PLSG A 6;
+			PLSG A 3 A_WeapAction;
+			PLSG A 4;
+			PLSG A 3 A_WeapAction;
+			PLSG A 4;
+		Charging:
+			PLSG A 0 A_DDFlash;
+			PLSG A 3 A_WeapAction;
+			PLSG A 4;
+			PLSG A 2 A_DDRefire;
+			PLSG A 25 A_FireDDWeapon;
+			Goto Ready;
+		FireClassic:
+			PLSG A 1 A_WeapAction;
+			PLSG A 0 A_DDFlash;
+			PLSG A 3 A_FireDDWeapon;
+			PLGF B 20 A_DDRefire;
+			Goto Ready;
+		ReloadP:
+			#### # 0 A_ChangeSprite;
+			#### # 0 A_DDFlash;
+			#### # 2;
+			#### # 4 A_WeapAction;
+			#### # 2;
+			#### # 5 A_WeapAction;
+			#### # 10;
 			Goto Ready;
 		Flash:
 			PLSF A 3 Bright A_Light2;
@@ -287,7 +323,7 @@ class ddPlasmaRifle : ddWeapon replaces PlasmaRifle
 // #Class ddPlasmaRifleLeft : ddPlasmaRifle()
 class ddPlasmaRifleLeft : ddPlasmaRifle
 {
-	Default { ddweapon.weaponside CE_LEFT; -DDWEAPON.GOESININV; }
+	Default { ddweapon.weaponside CE_LEFT; -DDWEAPON.GOESININV; }/*
 	States
 	{
 		NoAmmo:
@@ -336,12 +372,12 @@ class ddPlasmaRifleLeft : ddPlasmaRifle
 			#### # 5 A_WeapAction;
 			#### # 10;
 			Goto Ready;
-	}
+	}*/
 }
 // #Class ddPlasmaRifleRight : ddPlasmaRifle()
 class ddPlasmaRifleRight : ddPlasmaRifle
 {
-	Default { ddweapon.weaponside CE_RIGHT; -DDWEAPON.GOESININV; }
+	Default { ddweapon.weaponside CE_RIGHT; -DDWEAPON.GOESININV; }/*
 	States
 	{
 		NoAmmo:
@@ -391,7 +427,7 @@ class ddPlasmaRifleRight : ddPlasmaRifle
 			#### # 5 A_WeapAction;
 			#### # 10;
 			Goto Ready;
-	}
+	}*/
 }
 
 extend class ddWeapon

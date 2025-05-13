@@ -345,7 +345,8 @@ class ddPistol : ddWeapon replaces Pistol
 			#### B 5 A_DDRefire;
 			Goto Ready;
 		Select:
-			PISD A 1;
+			PISD A 0 A_ChangeSprite;
+			#### # 1;
 			Loop;
 		Deselect:
 			PISD A 1;
@@ -370,7 +371,7 @@ class ddPistol : ddWeapon replaces Pistol
 			#### G 4 A_WeapAction;
 		Reload2:
 			#### G 4;
-			#### H 8;
+			#### H 6;
 			#### I 10 A_PistolReload2;
 			#### I 1 A_SetWeapState;
 			#### J 10 A_PistolReload3;
@@ -405,6 +406,7 @@ class ddPistol : ddWeapon replaces Pistol
 			Stop;			
 	}
 }
+//left and right deprecated
 // #Class ddPistolLeft : ddPistol()
 class ddPistolLeft : ddPistol
 {
