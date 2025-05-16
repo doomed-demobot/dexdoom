@@ -600,10 +600,12 @@ class ddWeapon : Weapon
 		ddWeapon weap;
 		PSprite psp;
 		if(stateinfo.mPSPIndex == PSP_LEFTW) {
+			if(ddp.ddWeaponState & DDW_NOLEFTSPRITECHANGE) { return; } 
 			weap = ddp.GetLeftWeapon(ddp.lwx);
 			psp = ddp.player.GetPSprite(PSP_LEFTW);
 		}
 		else if(stateinfo.mPSPIndex == PSP_RIGHTW) {
+			if(ddp.ddWeaponState & DDW_NORIGHTSPRITECHANGE) { return; }
 			weap = ddp.GetRightWeapon(ddp.rwx);
 			psp = ddp.player.GetPSprite(PSP_RIGHTW);
 		}

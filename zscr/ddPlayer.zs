@@ -868,7 +868,7 @@ class ddPlayer : DoomPlayer
 			!FindInventory("ClassicModeToken")) { 
 				fst = ddWeapon(FindInventory(flst.RetItem(0).GetClassName()..((side) ? "Left" : "Right")));; 
 			}
-			else { fst = ddWeapon(FindInventory(flst.RetItem(fwx).GetClassName()..((side) ? "Left" : "Right"))); }
+			else { if(side) { fst = flst.curfistleft; } else { fst = flst.curfistright; } }
 			return fst;
 		}
 	}

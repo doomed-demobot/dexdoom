@@ -354,7 +354,7 @@ class playerInventory : ddWeapon
 					drp.AmmoGive1 = 0;
 					drp.AttachToOwner(owner);
 					if(ddp.dddebug & DBG_INVENTORY && ddp.dddebug & DBG_VERBOSE) { ddp.A_Log("Right weapon replaced with "..ddp.GetFists().GetTag()); }
-					rWeap.SetItem(fLst.curFistRight), ri);
+					rWeap.SetItem(fLst.curFistRight, ri);
 					ddp.ddWeaponState &= ~DDW_RIGHTISTH;
 					if(ri == ddp.rwx)
 					{
@@ -704,18 +704,18 @@ class playerInventory : ddWeapon
 		if(!invoker.bAltFire) { if(++ddp.fwx > flst.items.Size() - 1) { ddp.fwx = 0; } }
 		else { if(--ddp.fwx < 0) { ddp.fwx = flst.items.Size() -1; } }
 		
-		if(fLst.curFistLeft == null || fLst.curFistLeft != GetFists())
+		if(fLst.curFistLeft == null || fLst.curFistLeft != ddp.GetFists())
 		{
 			ddp.RemoveInventory(fLst.curFistLeft);
-			flst.curFistLeft = ddWeapon(Spawn(GetFists().GetClassName()));
+			flst.curFistLeft = ddWeapon(Spawn(ddp.GetFists().GetClassName()));
 			ddFist(flst.curFistLeft).bAddMe = false;
 			flst.curFistLeft.AttachToOwner(self); 
 			flst.curFistLeft.weaponside = CE_LEFT;			
 		}
-		if(flst.curFistRight == null || flst.curFistRight != GetFists()) 
+		if(flst.curFistRight == null || flst.curFistRight != ddp.GetFists()) 
 		{
 			ddp.RemoveInventory(fLst.curFistRight);
-			flst.curFistRight = ddWeapon(Spawn(GetFists().GetClassName()));
+			flst.curFistRight = ddWeapon(Spawn(ddp.GetFists().GetClassName()));
 			ddFist(flst.curFistRight).bAddMe = false;
 			flst.curFistRight.AttachToOwner(self); 
 			flst.curFistRight.weaponside = CE_RIGHT; 
@@ -770,7 +770,7 @@ class playerInventory : ddWeapon
 			i.storedSpot = (i.inInventory) ? Pocket(pInv) : ((i.weapside) ? Pocket(lWeap) : Pocket(rWeap));
 			if(weap is "ddWeapon") { 
 				let sel = ddWeapon(weap);
-				String nam = (sel is "ddFist") ? "emptie" : sel.GetParentType();
+				String nam = (sel is "ddFist") ? "emptie" : sel.GetClassName();
 				i.sW.construct(nam, sel.rating, sel.GetWeaponSprite(), sel.mag, sel.ddWeaponFlags, false);
 			}
 			else { 
@@ -791,7 +791,7 @@ class playerInventory : ddWeapon
 			i.targetSpot = (i.inInventory) ? Pocket(pInv) : ((i.weapside) ? Pocket(lWeap) : Pocket(rWeap));
 			if(weap2 is "ddWeapon") { 
 				let sel = ddWeapon(weap2);
-				String nam = (sel is "ddFist") ? "emptie" : sel.GetParentType();
+				String nam = (sel is "ddFist") ? "emptie" : sel.GetClassName();
 				i.tW.construct(nam, sel.rating, sel.GetWeaponSprite(), sel.mag, sel.ddWeaponFlags, false);
 			}
 			else { 
@@ -810,7 +810,7 @@ class playerInventory : ddWeapon
 			else
 			{
 				String new = (i.tW.weaponName == "emptie") ? ddp.GetFists().GetClassName() : i.tW.weaponName;
-				new = (i.storedside) ? new.."left" : new.."right";
+				//new = (i.storedside) ? new.."left" : new.."right";
 				let newWeap = ddWeapon(Spawn(new));
 				newWeap.ddWeaponFlags = i.tW.ddWeaponFlags;
 				newWeap.mag = i.tW.mag;
@@ -818,6 +818,21 @@ class playerInventory : ddWeapon
 				newWeap.AmmoGive2 = 0;
 				newWeap.AttachToOwner(self);
 				if((newWeap.btwoHander && i.storedside) && ddp.gethelp) { ddp.A_Log("You can't use a twohanded weapon in your left hand!"); }
+				if(!i.storedSide)
+				{
+					if(i.storedIndex == ddp.rwx) { 
+						ddp.ddWeaponState |= DDW_NORIGHTSPRITECHANGE; i.lowerR = 1; i.heldRight = rWeap.RetItem(i.storedIndex); ddp.ddWeaponState |= DDW_RIGHTNOBOBBING;
+					} 
+					else { i.lowerR = -1; if(i.sW.weaponName != "emptie") { RemoveInventory(rWeap.RetItem(i.storedIndex)); } rWeap.SetItem(newWeap, i.storedIndex); }
+				}
+				else
+				{
+					if(i.storedIndex == ddp.lwx) {
+						ddp.ddWeaponState |= DDW_NOLEFTSPRITECHANGE; i.lowerL = 1; i.heldLeft = lWeap.RetItem(i.storedIndex); ddp.ddWeaponState |= DDW_LEFTNOBOBBING;
+					}
+					else { i.lowerL = -1; if(i.sW.weaponName != "emptie") { RemoveInventory(lWeap.RetItem(i.storedIndex)); } lWeap.SetItem(newWeap, i.storedIndex); }
+				}
+				/*
 				switch(i.storedSide)
 				{
 					case 0: //right
@@ -845,7 +860,7 @@ class playerInventory : ddWeapon
 						}
 						break;
 					default: break;
-				}			
+				}*/
 			}
 			
 			if(i.targetSpot is "weaponsInventory")
