@@ -2086,6 +2086,7 @@ class WeaponsInventory : Pocket
 class FistList : Pocket 
 { 
 	ddWeapon curFistLeft, curFistRight;
+	ddWeapon defFistLeft, defFistRight;
 	Default { pocket.size 0; } 
 	override ddWeapon RetItem(int slot)
 	{		

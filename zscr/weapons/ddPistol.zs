@@ -389,7 +389,7 @@ class ddPistol : ddWeapon replaces Pistol
 			#### J 4;
 			Goto Ready;
 		FlashP:
-			PISF # 2 Bright A_Light2;
+			PISF # 1 Bright A_Light2;
 			Goto FlashDone;
 		FlashA:
 			PISF # 1 Bright A_Light2;

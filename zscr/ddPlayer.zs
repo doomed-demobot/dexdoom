@@ -45,7 +45,6 @@ class ddPlayer : DoomPlayer
 		Player.StartItem "playerInventory";
 		Player.StartItem "ddFist";
 		Player.StartItem "ddPistol";
-		Player.StartItem "ddChaingun";
 		Player.StartItem "d9Mil", 64;
 		Player.StartItem "emptie";
 		Player.StartItem "inventoryWeapon";
@@ -104,29 +103,39 @@ class ddPlayer : DoomPlayer
 		let rWeap = RightWeapons(FindInventory("RightWeapons"));
 		let pInv = WeaponsInventory(FindInventory("WeaponsInventory"));
 		let flst = FistList(FindInventory("FistList"));
+		if(flst.defFistLeft == null)
+		{
+			ddFist fl = ddFist(Spawn('ddFist'));
+			fl.bAddMe = false;
+			fl.AttachToOwner(self);
+			fl.weaponside = CE_LEFT;
+			flst.defFistLeft = fl;
+		}
+		if(flst.defFistRight == null)
+		{
+			ddFist fr = ddFist(Spawn('ddFist'));
+			fr.bAddMe = false;
+			fr.AttachToOwner(self);
+			fr.weaponside = CE_RIGHT;
+			flst.defFistRight = fr;
+		}
 		//only insert parent types
-		lWeap.additem(FindInventory("ddChaingun"));
+		lWeap.additem(FindInventory("ddPistol"));
 		if(lWeap.size > 1)
 		{
-			if(flst.curFistLeft == null || flst.curFistLeft != GetFists()) { 
-				flst.curFistLeft = ddWeapon(Spawn(GetFists().GetClassName()));
-				ddFist(flst.curFistLeft).bAddMe = false;
-				flst.curFistLeft.AttachToOwner(self); 
-				flst.curFistLeft.weaponside = CE_LEFT;
+			if(flst.curFistLeft == null) { 
+				flst.curFistLeft = flst.defFistLeft;
 			}
 			for(int x = 1; x < lWeap.size; x++)
 			{
 				lWeap.additem(flst.curFistLeft);
 			}
 		}
-		rWeap.additem(FindInventory("ddChaingun"));
+		rWeap.additem(FindInventory("ddPistol"));
 		if(rWeap.size > 1)
 		{
 			if(flst.curFistRight == null || flst.curFistRight != GetFists()) { 			
-				flst.curFistRight = ddWeapon(Spawn(GetFists().GetClassName()));
-				ddFist(flst.curFistRight).bAddMe = false;
-				flst.curFistRight.AttachToOwner(self); 
-				flst.curFistRight.weaponside = CE_RIGHT; 
+				flst.curFistRight = flst.defFistRight;
 			}
 			for(int x = 1; x < rWeap.size; x++)
 			{

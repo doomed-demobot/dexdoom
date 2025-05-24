@@ -770,7 +770,7 @@ class playerInventory : ddWeapon
 			i.storedSpot = (i.inInventory) ? Pocket(pInv) : ((i.weapside) ? Pocket(lWeap) : Pocket(rWeap));
 			if(weap is "ddWeapon") { 
 				let sel = ddWeapon(weap);
-				String nam = (sel is "ddFist") ? "emptie" : sel.GetClassName();
+				name nam = (sel is "ddFist") ? 'emptie' : sel.GetClassName();
 				i.sW.construct(nam, sel.rating, sel.GetWeaponSprite(), sel.mag, sel.ddWeaponFlags, false);
 			}
 			else { 
@@ -791,7 +791,7 @@ class playerInventory : ddWeapon
 			i.targetSpot = (i.inInventory) ? Pocket(pInv) : ((i.weapside) ? Pocket(lWeap) : Pocket(rWeap));
 			if(weap2 is "ddWeapon") { 
 				let sel = ddWeapon(weap2);
-				String nam = (sel is "ddFist") ? "emptie" : sel.GetClassName();
+				name nam = (sel is "ddFist") ? 'emptie' : sel.GetClassName();
 				i.tW.construct(nam, sel.rating, sel.GetWeaponSprite(), sel.mag, sel.ddWeaponFlags, false);
 			}
 			else { 
