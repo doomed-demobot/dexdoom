@@ -73,8 +73,7 @@ class ddFist : ddWeapon replaces Fist
 		let ddp = ddPlayer(owner);
 		if(ddp.FindInventory("ClassicModeToken")) { return FindState('FireClassic'); }		
 		else 
-		{ 
-			console.printf(""..weaponside);
+		{
 			if(weaponside) { return FindState('Jab'); }
 			else { return FindState('Hook'); }
 		}
@@ -204,6 +203,7 @@ class ddFist : ddWeapon replaces Fist
 			
 	}
 }
+//sided weapons deprecated
 // #Class ddFistLeft : ddFist()
 class ddFistLeft : ddFist
 {

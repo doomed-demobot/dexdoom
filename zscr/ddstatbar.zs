@@ -355,8 +355,10 @@ class ddStats : BaseStatusBar
 			int lwc, rwc;
 			[rws, rwc] = GetddWeaponStatus(rw.weaponstatus);
 			[lws, lwc] = GetddWeaponStatus(lw.weaponstatus);
+			DrawString(fa, ((rw.weaponside) ? "Left" : "Right"), (-50, -122), DI_SCREEN_RIGHT_BOTTOM | DI_TEXT_ALIGN_CENTER);
 			DrawString(fa, rws, (-50, -115), DI_SCREEN_RIGHT_BOTTOM | DI_TEXT_ALIGN_CENTER, rwc);
 			DrawString(fa, rwfs2, (-50, -106), DI_SCREEN_RIGHT_BOTTOM | DI_TEXT_ALIGN_CENTER, FONT.CR_RED);
+			DrawString(fa, ((lw.weaponside) ? "Left" : "Right"), (50, -122), DI_SCREEN_LEFT_BOTTOM | DI_TEXT_ALIGN_CENTER);
 			DrawString(fa, lws, (50, -115), DI_SCREEN_LEFT_BOTTOM | DI_TEXT_ALIGN_CENTER, lwc);
 			DrawString(fa, lwfs2, (50, -106), DI_SCREEN_LEFT_BOTTOM | DI_TEXT_ALIGN_CENTER, FONT.CR_RED);
 		}
