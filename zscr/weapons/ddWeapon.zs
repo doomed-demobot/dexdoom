@@ -152,6 +152,7 @@ class ddWeapon : Weapon
 		ddWeapon goner;
 		if(ddp.ddWeaponState & DDW_WANNAREPLACE)
 		{
+			//todo: see if you can collapse this; shouldnt need copies of the same function for a simple side difference; especially since the update
 			if(ddp.ddWeaponState & DDW_REPLACELEFT)
 			{
 				goner = ddWeapon(lWeap.RetItem(ddp.lwx));

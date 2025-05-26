@@ -809,30 +809,20 @@ class playerInventory : ddWeapon
 			}
 			else
 			{
-				String new = (i.tW.weaponName == "emptie") ? ddp.GetFists().GetClassName() : i.tW.weaponName;
-				//new = (i.storedside) ? new.."left" : new.."right";
-				let newWeap = ddWeapon(Spawn(new));
+				ddWeapon newWeap;
+				if(i.tW.weaponName == "emptie") {
+					newWeap = ddp.GetFists(i.storedSide);
+				}
+				else {
+					newWeap = ddWeapon(Spawn(i.tW.weaponName));
+				}
 				newWeap.ddWeaponFlags = i.tW.ddWeaponFlags;
 				newWeap.mag = i.tW.mag;
 				newWeap.AmmoGive1 = 0;
 				newWeap.AmmoGive2 = 0;
+				newWeap.weaponside = (i.storedSide) ? CE_LEFT : CE_RIGHT;
 				newWeap.AttachToOwner(self);
 				if((newWeap.btwoHander && i.storedside) && ddp.gethelp) { ddp.A_Log("You can't use a twohanded weapon in your left hand!"); }
-				if(!i.storedSide)
-				{
-					if(i.storedIndex == ddp.rwx) { 
-						ddp.ddWeaponState |= DDW_NORIGHTSPRITECHANGE; i.lowerR = 1; i.heldRight = rWeap.RetItem(i.storedIndex); ddp.ddWeaponState |= DDW_RIGHTNOBOBBING;
-					} 
-					else { i.lowerR = -1; if(i.sW.weaponName != "emptie") { RemoveInventory(rWeap.RetItem(i.storedIndex)); } rWeap.SetItem(newWeap, i.storedIndex); }
-				}
-				else
-				{
-					if(i.storedIndex == ddp.lwx) {
-						ddp.ddWeaponState |= DDW_NOLEFTSPRITECHANGE; i.lowerL = 1; i.heldLeft = lWeap.RetItem(i.storedIndex); ddp.ddWeaponState |= DDW_LEFTNOBOBBING;
-					}
-					else { i.lowerL = -1; if(i.sW.weaponName != "emptie") { RemoveInventory(lWeap.RetItem(i.storedIndex)); } lWeap.SetItem(newWeap, i.storedIndex); }
-				}
-				/*
 				switch(i.storedSide)
 				{
 					case 0: //right
@@ -860,7 +850,7 @@ class playerInventory : ddWeapon
 						}
 						break;
 					default: break;
-				}*/
+				}
 			}
 			
 			if(i.targetSpot is "weaponsInventory")
@@ -873,13 +863,19 @@ class playerInventory : ddWeapon
 			}
 			else
 			{
-				String old = (i.sW.weaponName == "emptie") ? ddp.GetFists().GetClassName() : i.sW.weaponName;
-				old = (i.weapside) ? old.."left" : old.."right";
-				let oldWeap = ddWeapon(Spawn(old));
+				
+				ddWeapon oldWeap;
+				if(i.sW.weaponName == "emptie") {
+					oldWeap = ddp.GetFists(i.targetSide);
+				}
+				else {
+					oldWeap = ddWeapon(Spawn(i.sW.weaponName));
+				}
 				oldWeap.ddWeaponFlags = i.sW.ddWeaponFlags;
 				oldWeap.mag = i.sW.mag;
 				oldWeap.AmmoGive1 = 0;
 				oldWeap.AmmoGive2 = 0;
+				oldWeap.weaponSide = (i.targetSide) ? CE_LEFT : CE_RIGHT;
 				oldWeap.AttachToOwner(self);
 				if((oldWeap.btwoHander && i.targetside) && ddp.gethelp) { ddp.A_Log("You can't use a twohanded weapon in your left hand!"); }
 				switch(i.targetSide)
