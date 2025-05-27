@@ -25,11 +25,12 @@ class ddBFG9000 : ddWeapon
 	
 	override void InventoryInfo(ddStats ddhud)
 	{
+		if(ddPlayer(owner).dddebug & DBG_INVENTORY) { Super.InventoryInfo(ddhud); return; }
 		let hud = ddhud;		
-		hud.DrawString(hud.fa, GetTag(), (30, 45), hud.DI_SCREEN_CENTER | hud.DI_TEXT_ALIGN_LEFT);
-		hud.DrawString(hud.fa, "level "..hud.FormatNumber(rating).." heavy cannon", (30, 55), hud.DI_SCREEN_CENTER | hud.DI_TEXT_ALIGN_LEFT);
-		hud.DrawString(hud.fa, "twohander", (30, 65), hud.DI_SCREEN_CENTER | hud.DI_TEXT_ALIGN_LEFT);
-		hud.DrawString(hud.fa, "no mag", (30, 75), hud.DI_SCREEN_CENTER | hud.DI_TEXT_ALIGN_LEFT);
+		hud.DrawString(hud.fa, GetTag(), (32, 45), hud.DI_SCREEN_CENTER | hud.DI_TEXT_ALIGN_LEFT);
+		hud.DrawString(hud.fa, "level "..hud.FormatNumber(rating).." heavy cannon", (32, 55), hud.DI_SCREEN_CENTER | hud.DI_TEXT_ALIGN_LEFT);
+		hud.DrawString(hud.fa, "twohander", (32, 65), hud.DI_SCREEN_CENTER | hud.DI_TEXT_ALIGN_LEFT);
+		hud.DrawString(hud.fa, "no mag", (32, 75), hud.DI_SCREEN_CENTER | hud.DI_TEXT_ALIGN_LEFT);
 	}
 	
 	override void PreviewInfo(ddStats ddhud)

@@ -32,10 +32,11 @@ class ddPistol : ddWeapon replaces Pistol
 	
 	override void InventoryInfo(ddStats ddhud)
 	{
+		if(ddPlayer(owner).dddebug & DBG_INVENTORY) { Super.InventoryInfo(ddhud); return; }
 		let hud = ddhud;		
-		hud.DrawString(hud.fa, GetTag(), (30, 45), hud.DI_SCREEN_CENTER | hud.DI_TEXT_ALIGN_LEFT);
-		hud.DrawString(hud.fa, "level "..hud.FormatNumber(rating).." light handgun", (30, 55), hud.DI_SCREEN_CENTER | hud.DI_TEXT_ALIGN_LEFT);
-		hud.DrawString(hud.fa, hud.FormatNumber(mag).."/"..hud.FormatNumber(default.mag), (30, 65), hud.DI_SCREEN_CENTER | hud.DI_TEXT_ALIGN_LEFT);
+		hud.DrawString(hud.fa, GetTag(), (32, 45), hud.DI_SCREEN_CENTER | hud.DI_TEXT_ALIGN_LEFT);
+		hud.DrawString(hud.fa, "level "..hud.FormatNumber(rating).." light handgun", (32, 55), hud.DI_SCREEN_CENTER | hud.DI_TEXT_ALIGN_LEFT);
+		hud.DrawString(hud.fa, hud.FormatNumber(mag).."/"..hud.FormatNumber(default.mag), (32, 65), hud.DI_SCREEN_CENTER | hud.DI_TEXT_ALIGN_LEFT);
 	}
 	
 	override void HUDA(ddStats hude)

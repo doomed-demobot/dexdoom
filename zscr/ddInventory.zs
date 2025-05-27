@@ -317,7 +317,7 @@ class playerInventory : ddWeapon
 			if(weapSide)
 			{
 				if(!(lWeap.RetItem(li) is "ddFist"))
-				{					
+				{
 					let lw = lWeap.RetItem(li);
 					let drp = ddWeapon(Spawn(lw.GetClassName()));
 					drp.mag = lw.mag;
@@ -346,7 +346,7 @@ class playerInventory : ddWeapon
 			else
 			{
 				if(!(rWeap.RetItem(ri) is "ddFist"))
-				{					
+				{
 					let rw = rWeap.RetItem(ri);
 					let drp = ddWeapon(Spawn(rw.GetClassName()));
 					drp.mag = rw.mag;
@@ -590,52 +590,24 @@ class playerInventory : ddWeapon
 		hude.DrawString(hude.fa, ""..ou.." : Sort", (-88, 46), hude.DI_SCREEN_CENTER | hude.DI_TEXT_ALIGN_CENTER, (ddp.player.cmd.buttons & BT_ZOOM) ? Font.CR_ICE : Font.CR_OLIVE);
 		
 		//draw selWeap info
-		int pos;
-		if(inInventory) { if(ddp is "ddPlayerNormal") {
-			pos = ix;
-			if(!(ddp.dddebug & DBG_INVENTORY)) { pos++; }
-			hude.DrawString(hude.fa, "I"..hude.FormatNumber(pos)..": ", (12, 45), hude.DI_SCREEN_CENTER | hude.DI_TEXT_ALIGN_LEFT);
-			pInv.RetItem(ix).GetInventoryInfo(hude); 
-			if(ddp.dddebug & DBG_INVENTORY) 
-			{
-				int iwfs;
-				String iwfs2;
-				iwfs = pi.ddweaponflags;
-				while(iwfs > 0) { iwfs2 = (iwfs % 2)..iwfs2; iwfs >>= 1; }	
-				hude.DrawString(hude.fa, iwfs2, (-50, 60), hude.DI_SCREEN_CENTER);
-			}
-			} 
-		}
-		else { if(ddp is "ddPlayerNormal") { 
-				if(weapside) { 
-					pos = li;
-					if(!(ddp.dddebug & DBG_INVENTORY)) { pos++; }
-					hude.DrawString(hude.fa, "L"..hude.FormatNumber(pos)..": ", (12, 45), hude.DI_SCREEN_CENTER | hude.DI_TEXT_ALIGN_LEFT);
-					lWeap.RetItem(li).InventoryInfo(hude); 
-					if(ddp.dddebug & DBG_INVENTORY) 
-					{
-						int lwfs;
-						String lwfs2;
-						lwfs = lw.ddweaponflags;
-						while(lwfs > 0) { lwfs2 = (lwfs % 2)..lwfs2; lwfs >>= 1; }	
-						hude.DrawString(hude.fa, lwfs2, (-50, 60), hude.DI_SCREEN_CENTER);
-					}
-				} 
-				else { 
-					pos = ri;
-					if(!(ddp.dddebug & DBG_INVENTORY)) { pos++; }
-					hude.DrawString(hude.fa, "R"..hude.FormatNumber(pos)..": ", (12, 45), hude.DI_SCREEN_CENTER | hude.DI_TEXT_ALIGN_LEFT);
-					rWeap.RetItem(ri).InventoryInfo(hude); 
-					if(ddp.dddebug & DBG_INVENTORY) 
-					{
-						int rwfs;
-						String rwfs2;
-						rwfs = rw.ddweaponflags;
-						while(rwfs > 0) { rwfs2 = (rwfs % 2)..rwfs2; rwfs >>= 1; }	
-						hude.DrawString(hude.fa, rwfs2, (-50, 60), hude.DI_SCREEN_CENTER);
-					}
-				} 
-			}				
+		int pos, ind;
+		Pocket weapInfo;
+		if(inInventory) { weapInfo = pInv; pos = ix; }
+		else { weapInfo = (weapside) ? Pocket(lWeap) : Pocket(rWeap); pos = (weapside) ? li : ri; }
+		hude.DrawString(hude.fa, 
+			((inInventory) ? "I" : ((weapside) ? "L" : "R"))..
+			hude.FormatNumber(pos)..": ", (12, 45), hude.DI_SCREEN_CENTER | hude.DI_TEXT_ALIGN_LEFT);
+		if(weapInfo is "weaponsInventory") { InventoryWeapon(weapinfo.RetItem(pos)).GetInventoryInfo(hude); }
+		else { ddWeapon(weapinfo.RetItem(pos)).InventoryInfo(hude); } 
+		if(ddp.dddebug & DBG_INVENTORY)
+		{
+			int flagbits;
+			String flagStr;
+			//little hacky but still way less lines B)
+			if(weapInfo is "weaponsInventory") { flagbits = InventoryWeapon(weapinfo.RetItem(pos)).ddWeaponFlags; }
+			else { flagbits = ddWeapon(weapinfo.RetItem(pos)).ddWeaponFlags; }
+			while(flagbits > 0) { flagStr = (flagbits % 2)..flagStr; flagbits >>= 1; }
+			hude.DrawString(hude.fa, flagStr, (-50, 60), hude.DI_SCREEN_CENTER);
 		}
 		
 		//draw ammo

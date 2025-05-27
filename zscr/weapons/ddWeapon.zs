@@ -569,7 +569,20 @@ class ddWeapon : Weapon
 	virtual ui void InventoryInfo(ddStats ddhud)
 	{
 		let hud = ddhud;
-		hud.DrawString(hud.fa, "n/a", (30, 45), hud.DI_SCREEN_CENTER | hud.DI_TEXT_ALIGN_LEFT);
+		let ddp = ddPlayer(owner);
+		if(!(ddp.dddebug & DBG_INVENTORY)) { hud.DrawString(hud.fa, "n/a", (32, 45), hud.DI_SCREEN_CENTER | hud.DI_TEXT_ALIGN_LEFT); }
+		else
+		{
+			hud.DrawString(hud.fa, "Name: "..getclassname().." '"..GetTag().."'", (32, 45), hud.DI_SCREEN_CENTER | hud.DI_TEXT_ALIGN_LEFT);
+			hud.DrawString(hud.fa, "Rating: "..hud.FormatNumber(rating), (32, 55), hud.DI_SCREEN_CENTER | hud.DI_TEXT_ALIGN_LEFT);
+			hud.DrawString(hud.fa, "Type: "..weaponType, (32, 65), hud.DI_SCREEN_CENTER | hud.DI_TEXT_ALIGN_LEFT);
+			hud.DrawString(hud.fa, "Mag: "..hud.FormatNumber(mag).."/"..hud.FormatNumber(default.mag), (32, 75), hud.DI_SCREEN_CENTER | hud.DI_TEXT_ALIGN_LEFT);
+			hud.DrawString(hud.fa, "Speed Factor: "..hud.FormatNumber(sFactor), (32, 85), hud.DI_SCREEN_CENTER | hud.DI_TEXT_ALIGN_LEFT);
+			hud.DrawString(hud.fa, "Ammo Types: "..AmmoType1.GetClassName()..", "..AmmoType2.GetClassName(), (32, 95), hud.DI_SCREEN_CENTER | hud.DI_TEXT_ALIGN_LEFT);
+			hud.DrawString(hud.fa, "Altfire?: "..((weaponside) ? "Yes" : "No"), (32, 105), hud.DI_SCREEN_CENTER | hud.DI_TEXT_ALIGN_LEFT);
+			hud.DrawString(hud.fa, "Side: "..((weaponside) ? "Left" : "Right"), (32, 115), hud.DI_SCREEN_CENTER | hud.DI_TEXT_ALIGN_LEFT);				
+			hud.DrawString(hud.fa, "Two Hander: "..((bTwoHander) ? "Yes" : "No"), (32, 125), hud.DI_SCREEN_CENTER | hud.DI_TEXT_ALIGN_LEFT);
+		}
 	}
 	
 	// ##goto weapon setters() 
@@ -2053,6 +2066,7 @@ class WeaponsInventory : Pocket
 			{
 				ddWeapon nu = ddWeapon(it);
 				inventoryWeapon(items[x]).construct(nu.GetParentType(), nu.rating, nu.GetWeaponSprite(), nu.mag, nu.ddWeaponFlags, true);
+				nu.owner = owner;
 				return true;
 			}
 		}
