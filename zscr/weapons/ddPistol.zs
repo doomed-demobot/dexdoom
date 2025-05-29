@@ -30,9 +30,10 @@ class ddPistol : ddWeapon replaces Pistol
 		Tag "$TAG_PISTOL";
 	}
 	
-	override void InventoryInfo(ddStats ddhud)
+	
+	override void InventoryInfo(ddStats ddhud, bool debug)
 	{
-		if(ddPlayer(owner).dddebug & DBG_INVENTORY) { Super.InventoryInfo(ddhud); return; }
+		if(debug) { Super.InventoryInfo(ddhud, debug); return; }
 		let hud = ddhud;		
 		hud.DrawString(hud.fa, GetTag(), (32, 45), hud.DI_SCREEN_CENTER | hud.DI_TEXT_ALIGN_LEFT);
 		hud.DrawString(hud.fa, "level "..hud.FormatNumber(rating).." light handgun", (32, 55), hud.DI_SCREEN_CENTER | hud.DI_TEXT_ALIGN_LEFT);

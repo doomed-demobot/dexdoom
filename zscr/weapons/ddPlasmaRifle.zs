@@ -27,8 +27,9 @@ class ddPlasmaRifle : ddWeapon replaces PlasmaRifle
 		Tag "$TAG_PLASMARIFLE";
 	}
 	
-	override void InventoryInfo(ddStats ddhud)
+	override void InventoryInfo(ddStats ddhud, bool debug)
 	{
+		if(debug) { Super.InventoryInfo(ddhud, debug); return; }
 		let hud = ddhud;		
 		hud.DrawString(hud.fa, GetTag(), (30, 45), hud.DI_SCREEN_CENTER | hud.DI_TEXT_ALIGN_LEFT);
 		hud.DrawString(hud.fa, "level "..hud.FormatNumber(rating).." rifle", (30, 55), hud.DI_SCREEN_CENTER | hud.DI_TEXT_ALIGN_LEFT);

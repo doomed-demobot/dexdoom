@@ -566,11 +566,10 @@ class ddWeapon : Weapon
 		hud.DrawString(hud.fa, "n/a", (30, 45), hud.DI_SCREEN_CENTER | hud.DI_TEXT_ALIGN_LEFT);		
 	}
 	
-	virtual ui void InventoryInfo(ddStats ddhud)
+	virtual ui void InventoryInfo(ddStats ddhud, bool debug)
 	{
 		let hud = ddhud;
-		let ddp = ddPlayer(owner);
-		if(!(ddp.dddebug & DBG_INVENTORY)) { hud.DrawString(hud.fa, "n/a", (32, 45), hud.DI_SCREEN_CENTER | hud.DI_TEXT_ALIGN_LEFT); }
+		if(!debug) { hud.DrawString(hud.fa, "n/a", (32, 45), hud.DI_SCREEN_CENTER | hud.DI_TEXT_ALIGN_LEFT); }
 		else
 		{
 			hud.DrawString(hud.fa, "Name: "..getclassname().." '"..GetTag().."'", (32, 45), hud.DI_SCREEN_CENTER | hud.DI_TEXT_ALIGN_LEFT);
@@ -2185,7 +2184,8 @@ class inventoryWeapon : Inventory
 	
 	ui void GetInventoryInfo(ddStats ddhud)
 	{
-		if (ref) { ref.InventoryInfo(ddhud); }
+		let ddp = ddPlayer(owner);
+		if (ref) { ref.InventoryInfo(ddhud, (ddp.dddebug & DBG_INVENTORY)); }
 		else { ddhud.DrawString(ddhud.fa, "n/a", (30, 45), ddhud.DI_SCREEN_CENTER | ddhud.DI_TEXT_ALIGN_LEFT); }
 	}
 }

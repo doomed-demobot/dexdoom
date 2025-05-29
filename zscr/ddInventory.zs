@@ -598,7 +598,7 @@ class playerInventory : ddWeapon
 			((inInventory) ? "I" : ((weapside) ? "L" : "R"))..
 			hude.FormatNumber(pos)..": ", (12, 45), hude.DI_SCREEN_CENTER | hude.DI_TEXT_ALIGN_LEFT);
 		if(weapInfo is "weaponsInventory") { InventoryWeapon(weapinfo.RetItem(pos)).GetInventoryInfo(hude); }
-		else { ddWeapon(weapinfo.RetItem(pos)).InventoryInfo(hude); } 
+		else { ddWeapon(weapinfo.RetItem(pos)).InventoryInfo(hude, (ddp.dddebug & DBG_INVENTORY)); } 
 		if(ddp.dddebug & DBG_INVENTORY)
 		{
 			int flagbits;

@@ -39,8 +39,9 @@ class ddFist : ddWeapon replaces Fist
 		Tag "$TAG_FIST";
 	}
 	
-	override void InventoryInfo(ddStats ddhud)
+	override void InventoryInfo(ddStats ddhud, bool debug)
 	{
+		if(debug) { Super.InventoryInfo(ddhud, debug); return; }
 		let hud = ddhud;
 		hud.DrawString(hud.fa, GetTag(), (30, 45), hud.DI_SCREEN_CENTER | hud.DI_TEXT_ALIGN_LEFT);
 		hud.DrawString(hud.fa, "Fist Weapon", (30, 55), hud.DI_SCREEN_CENTER | hud.DI_TEXT_ALIGN_LEFT);

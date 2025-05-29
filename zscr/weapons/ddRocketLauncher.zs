@@ -29,9 +29,10 @@ class ddRocketLauncher : ddWeapon replaces RocketLauncher
 		Tag "$TAG_ROCKETLAUNCHER";
 	}
 	
-	override void InventoryInfo(ddStats ddhud)
+	override void InventoryInfo(ddStats ddhud, bool debug)
 	{
-		let hud = ddhud;		
+		if(debug) { Super.InventoryInfo(ddhud, debug); return; }
+		let hud = ddhud;
 		hud.DrawString(hud.fa, GetTag(), (30, 45), hud.DI_SCREEN_CENTER | hud.DI_TEXT_ALIGN_LEFT);
 		hud.DrawString(hud.fa, "level "..hud.FormatNumber(rating).." heavy launcher", (30, 55), hud.DI_SCREEN_CENTER | hud.DI_TEXT_ALIGN_LEFT);
 		hud.DrawString(hud.fa, hud.FormatNumber(mag).."/"..hud.FormatNumber(default.mag), (30, 65), hud.DI_SCREEN_CENTER | hud.DI_TEXT_ALIGN_LEFT);
