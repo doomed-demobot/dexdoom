@@ -399,7 +399,7 @@ class ddPlayer : DoomPlayer
 		tepos = re.hitlocation;
 		if(!myte) { myte = TouchEntity(Spawn("TouchEntity")); myte.owner = self; }
 		if(myte) { if(myte.closest) { desire = ddWeapon(myte.closest); } else { desire = null; } }
-		if(desire) { if(player.cmd.buttons & BT_USE) { desire.PickMeUp(self); } }
+		if(desire && !desire.bInvisible) { if(player.cmd.buttons & BT_USE) { desire.PickMeUp(self); } }
 		if(waitToPickup != 0 && mode.weaponstatus != DDM_SWAPPING) { waitToPickup++; }
 		if(waitToPickup >= 35) { waitToPickup = 0; }
 		//physical and visual recoil control

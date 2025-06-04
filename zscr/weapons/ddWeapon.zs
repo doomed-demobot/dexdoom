@@ -123,7 +123,7 @@ class ddWeapon : Weapon
 						playerInventory(ddp.player.readyweapon).sW.nullify();
 						playerInventory(ddp.player.readyweapon).storedIndex = -1;				
 				}
-				self.GoAway();
+				self.GoAwayAndDie();
 				return true;
 			}
 			else
@@ -133,6 +133,18 @@ class ddWeapon : Weapon
 			}
 		}
 		
+	}
+	
+	ddWeapon CreateDDCopy()
+	{
+		ddWeapon copy;
+		copy = DDWeapon(Spawn(self.GetClassName()));
+		copy.ddWeaponFlags = ddWeaponFlags;
+		copy.mag = mag;
+		copy.Amount = Amount;
+		copy.MaxAmount = MaxAmount;
+		copy.weaponside = weaponside;
+		return copy;
 	}
 	
 	
@@ -148,10 +160,6 @@ class ddWeapon : Weapon
 		PSprite psp, pspf;
 		Pocket targetPocket;
 		int pocketIndex;
-		let pspl = ddp.player.GetPSprite(PSP_LEFTW);
-		let psplf = ddp.player.GetPSprite(PSP_LEFTWF);
-		let pspr = ddp.player.GetPSprite(PSP_RIGHTW);
-		let psprf = ddp.player.GetPSprite(PSP_RIGHTWF);
 		let mode = ddWeapon(ddp.player.readyweapon);
 		if(ddp.ddWeaponState & DDW_WANNAREPLACE)
 		{
@@ -185,8 +193,9 @@ class ddWeapon : Weapon
 					invIndex = x;
 					break;
 				}
-			}	
-			self.AttachToOwner(ddp);
+			}
+			let cc = CreateDDCopy();
+			cc.AttachToOwner(ddp);
 			//drop because no empty slot was found
 			if(invIndex == -1)
 			{
@@ -205,25 +214,23 @@ class ddWeapon : Weapon
 					ddp.A_Print("Stored "..goner.GetTag());
 					pInv.RetItem(invIndex).construct(goner.getclassname(), goner.rating, goner.GetWeaponSprite(), goner.mag, goner.ddWeaponFlags); 
 				}
-				mode.swapheld = ddWeapon(self);
+				mode.swapheld = cc;
 			}
-			if(bTwoHander) 
-			{ 
+			if(bTwoHander) { 
 				if(weaponside) { ddp.ddWeaponState |= DDW_LEFTISTH; }
 				else { ddp.ddWeaponState |= DDW_RIGHTISTH; }
 			}
-			else 
-			{
+			else {
 				if(weaponside) { ddp.ddWeaponState &= ~DDW_LEFTISTH; }
 				else { ddp.ddWeaponState &= ~DDW_RIGHTISTH; }
 			}
 			if(invIndex == -1)
 			{
-				targetPocket.SetItem(ddWeapon(self), pocketIndex);
+				targetPocket.SetItem(cc, pocketIndex);
 				rWeap.RetItem(ddp.rwx).companionpiece = lWeap.RetItem(ddp.lwx);
 				lWeap.RetItem(ddp.lwx).companionpiece = rWeap.RetItem(ddp.rwx);
 				psp.y = 128; pspf.y = 128;
-				psp.SetState(self.GetUpState());
+				psp.SetState(cc.GetUpState());
 			}
 			else { psp.SetState(ddweapon(targetpocket.retitem(pocketIndex)).GetUpState()); }
 			//if(comer.UpSound) { wanter.A_StartSound(comer.UpSound, CHAN_WEAPON); } move to swapdrop
