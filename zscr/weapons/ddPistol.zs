@@ -108,6 +108,7 @@ class ddPistol : ddWeapon replaces Pistol
 	override String, int GetSprites(int forcemode)
 	{
 		let ddp = ddPlayer(owner);
+		if(!ddp) { return "TNT1A0", -1; }
 		if(forcemode < 0)
 		{
 			if(ddp.player.readyweapon is "dualWielding" || ddp.player.pendingweapon is "dualWielding" || ddp.lastmode is "dualWielding") {

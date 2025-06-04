@@ -123,7 +123,7 @@ class ddWeapon : Weapon
 						playerInventory(ddp.player.readyweapon).sW.nullify();
 						playerInventory(ddp.player.readyweapon).storedIndex = -1;				
 				}
-				self.GoAwayAndDie();
+				self.GoAway();
 				return true;
 			}
 			else
@@ -144,145 +144,94 @@ class ddWeapon : Weapon
 		let rWeap = ddp.GetRightWeapons();
 		let pInv = ddp.GetWeaponsInventory();
 		let flst = ddp.GetFistList();
+		ddWeapon goner; //weapon that is being replaced
+		PSprite psp, pspf;
+		Pocket targetPocket;
+		int pocketIndex;
 		let pspl = ddp.player.GetPSprite(PSP_LEFTW);
 		let psplf = ddp.player.GetPSprite(PSP_LEFTWF);
 		let pspr = ddp.player.GetPSprite(PSP_RIGHTW);
 		let psprf = ddp.player.GetPSprite(PSP_RIGHTWF);
 		let mode = ddWeapon(ddp.player.readyweapon);
-		ddWeapon goner;
 		if(ddp.ddWeaponState & DDW_WANNAREPLACE)
 		{
 			//todo: see if you can collapse this; shouldnt need copies of the same function for a simple side difference; especially since the update
 			if(ddp.ddWeaponState & DDW_REPLACELEFT)
 			{
 				goner = ddWeapon(lWeap.RetItem(ddp.lwx));
-				for(int x = 0; x < pInv.items.size(); x++)
-				{
-					if(pInv.RetItem(x).weaponName == "emptie")
-					{
-						//store
-						if(!(goner is "ddFist")) { 
-							ddp.A_Print("Stored "..goner.GetTag());
-							pInv.RetItem(x).construct(goner.GetParentType(), goner.rating, goner.GetWeaponSprite(), goner.mag, goner.ddWeaponFlags); 
-						}
-						let comer = ddWeapon(Spawn(self.GetClassName().."Left"));
-						if(wanter is "ddPlayerClassic") { comer.sFactor = 1.0; }
-						comer.AmmoGive1 = self.AmmoGive1;
-						comer.mag = self.mag;
-						comer.ddWeaponFlags = self.ddWeaponFlags;
-						comer.AttachToOwner(wanter);
-						if(comer.bTwoHander) { ddp.ddWeaponState |= DDW_LEFTISTH; }
-						else { ddp.ddWeaponState &= ~DDW_LEFTISTH; }
-						wanter.player.setpsprite(PSP_LEFTW, ddp.GetLeftWeapon(ddp.lwx).GetUpState());
-						mode.swapHeld = ddWeapon(comer);
-						wanter.A_Print(""..goner.GetTag().." stored, replaced with "..comer.GetTag());
-						ddp.ddWeaponState |= DDW_LEFTNOBOBBING;
-						ddp.ddWeaponState &= ~DDW_LEFTREADY;
-						ddp.ddWeaponState &= ~DDW_WANNAREPLACE;
-						mode.bmodeready = false;
-						mode.ChangeState("PickupSwapStore");
-						return true;
-					}
-				}
-				//drop
-				if(!(lWeap.RetItem(ddp.lwx) is "ddFist"))
-				{
-					goner = ddWeapon(Spawn(lWeap.RetItem(ddp.lwx).GetParentType()));
-					goner.AmmoGive1 = 0;
-					goner.mag = ddWeapon(lWeap.RetItem(ddp.lwx)).mag;
-					goner.ddWeaponFlags = ddWeapon(lWeap.RetItem(ddp.lwx)).ddWeaponFlags;
-					goner.AttachToOwner(ddp);
-					ddp.DropInventory(goner);
-					ddp.RemoveInventory(lWeap.RetItem(ddp.lwx));
-					wanter.A_Print(""..goner.GetTag().." dropped.");
-				}
-				let comer = ddWeapon(Spawn(self.GetClassName().."Left"));
-				if(wanter is "ddPlayerClassic") { comer.sFactor = 1.0; }
-				comer.AmmoGive1 = self.AmmoGive1;
-				comer.mag = self.mag;
-				comer.ddWeaponFlags = self.ddWeaponFlags;
-				comer.AttachToOwner(wanter);
-				if(comer.bTwoHander) { ddp.ddWeaponState |= DDW_LEFTISTH; }
-				else { ddp.ddWeaponState &= ~DDW_LEFTISTH; }
-				pspl.y = 128; psplf.y = 128;
-				lWeap.SetItem(ddWeapon(comer), ddp.lwx);
-				rWeap.RetItem(ddp.rwx).companionpiece = lWeap.RetItem(ddp.lwx);
-				lWeap.RetItem(ddp.lwx).companionpiece = rWeap.RetItem(ddp.rwx);
-				wanter.player.setpsprite(PSP_LEFTW, ddp.GetLeftWeapon(ddp.lwx).GetUpState());
-				if(comer.UpSound) { wanter.A_StartSound(comer.UpSound, CHAN_WEAPON); }
+				targetPocket = ddp.GetLeftWeapons();
+				pocketIndex = ddp.lwx;
+				psp = ddp.player.GetPSprite(PSP_LEFTW);
+				pspf = ddp.player.GetPSprite(PSP_LEFTWF);
 				ddp.ddWeaponState |= DDW_LEFTNOBOBBING;
-				ddp.ddWeaponState &= ~DDW_WANNAREPLACE;
-				mode.bmodeready = false;
-				mode.ChangeState("PickupSwapDrop");
-				return true;
+				self.weaponside = CE_LEFT;
 			}
-			
 			else if(ddp.ddWeaponState & DDW_REPLACERIGHT)
 			{
-				goner = ddWeapon(rWeap.RetItem(ddp.rwx)); 
-				for(int x = 0; x < pInv.items.size(); x++)
+				goner = ddWeapon(rWeap.RetItem(ddp.rwx));
+				targetPocket = ddp.GetRightWeapons();
+				pocketIndex = ddp.rwx;
+				psp = ddp.player.GetPSprite(PSP_RIGHTW);
+				pspf = ddp.player.GetPSprite(PSP_RIGHTWF);
+				ddp.ddWeaponState |= DDW_RIGHTNOBOBBING;
+				self.weaponside = CE_RIGHT;
+			}
+			else { return false; }
+			int invIndex = -1;			
+			for(int x = 0; x < pInv.items.size(); x++)
+			{
+				if(pInv.RetItem(x).weaponName == "emptie")
 				{
-					if(pInv.RetItem(x).weaponName == "emptie")
-					{
-						//store
-						if(!(goner is "ddFist")) {
-							ddp.A_Print("Stored "..goner.GetTag());
-							pInv.RetItem(x).construct(goner.GetParentType(), goner.rating, goner.GetWeaponSprite(), goner.mag, goner.ddWeaponFlags);
-						}
-						let comer = ddWeapon(Spawn(self.GetClassName().."Right"));
-						if(wanter is "ddPlayerClassic") { comer.sFactor = 1.0; }
-						comer.AmmoGive1 = self.AmmoGive1;
-						comer.mag = self.mag;
-						comer.ddWeaponFlags = self.ddWeaponFlags;
-						comer.AttachToOwner(wanter);
-						if(comer.bTwoHander) { ddp.ddWeaponState |= DDW_RIGHTISTH; }
-						else { ddp.ddWeaponState &= ~DDW_RIGHTISTH; }
-						wanter.player.setpsprite(PSP_RIGHTW, ddp.GetRightWeapon(ddp.rwx).GetUpState());
-						mode.swapHeld = ddWeapon(comer);
-						wanter.A_Print(""..goner.GetTag().." stored, replaced with "..comer.GetTag());
-						ddp.ddWeaponState &= ~DDW_RIGHTREADY;
-						ddp.ddWeaponState |= DDW_RIGHTNOBOBBING;
-						ddp.ddWeaponState &= ~DDW_WANNAREPLACE;
-						mode.bmodeready = false;
-						mode.ChangeState("PickupSwapStore");
-						return true;
-					}
+					invIndex = x;
+					break;
 				}
-				//drop
-				if(!(rWeap.RetItem(ddp.rwx) is "ddFist"))
+			}	
+			self.AttachToOwner(ddp);
+			//drop because no empty slot was found
+			if(invIndex == -1)
+			{
+				if(!(goner is "ddFist"))
 				{
-					ddp.A_Log("Dropped "..goner.GetTag());
-					goner = ddWeapon(Spawn(rWeap.RetItem(ddp.rwx).GetParentType()));
-					goner.AmmoGive1 = 0;
-					goner.mag = ddWeapon(rWeap.RetItem(ddp.rwx)).mag;
-					goner.ddWeaponFlags = ddWeapon(rWeap.RetItem(ddp.rwx)).ddWeaponFlags;
-					goner.AttachToOwner(ddp);
+					goner.weaponside = -1;
 					ddp.DropInventory(goner);
-					ddp.RemoveInventory(rWeap.RetItem(ddp.rwx));
+					//ddp.RemoveInventory(goner);
 					wanter.A_Print(""..goner.GetTag().." dropped.");
 				}
-				let comer = ddWeapon(Spawn(self.GetClassName().."Right"));
-				if(wanter is "ddPlayerClassic") { comer.sFactor = 1.0; }
-				comer.AmmoGive1 = self.AmmoGive1;
-				comer.mag = self.mag;
-				comer.ddWeaponFlags = self.ddWeaponFlags;
-				comer.AttachToOwner(wanter);
-				if(comer.bTwoHander) { ddp.ddWeaponState |= DDW_RIGHTISTH; }
-				else { ddp.ddWeaponState &= ~DDW_RIGHTISTH; }
-				pspr.y = 128; psprf.y = 128;
-				rWeap.SetItem(ddWeapon(comer), ddp.rwx);
-				rWeap.RetItem(ddp.rwx).companionpiece = lWeap.RetItem(ddp.lwx);
-				lWeap.RetItem(ddp.lwx).companionpiece = rWeap.RetItem(ddp.rwx);						
-				wanter.player.setpsprite(PSP_RIGHTW, ddp.GetRightWeapon(ddp.rwx).GetUpState());	
-				if(comer.UpSound) { wanter.A_StartSound(comer.UpSound, CHAN_WEAPON); }
-				ddp.ddWeaponState |= DDW_RIGHTNOBOBBING;
-				ddp.ddWeaponState &= ~DDW_WANNAREPLACE;
-				mode.bmodeready = false;
-				mode.ChangeState("PickupSwapDrop");	
-				return true;			
 			}
-			
-			else { return false; }
+			//store because there was
+			else
+			{
+				if(!(goner is "ddFist")) { 
+					ddp.A_Print("Stored "..goner.GetTag());
+					pInv.RetItem(invIndex).construct(goner.getclassname(), goner.rating, goner.GetWeaponSprite(), goner.mag, goner.ddWeaponFlags); 
+				}
+				mode.swapheld = ddWeapon(self);
+			}
+			if(bTwoHander) 
+			{ 
+				if(weaponside) { ddp.ddWeaponState |= DDW_LEFTISTH; }
+				else { ddp.ddWeaponState |= DDW_RIGHTISTH; }
+			}
+			else 
+			{
+				if(weaponside) { ddp.ddWeaponState &= ~DDW_LEFTISTH; }
+				else { ddp.ddWeaponState &= ~DDW_RIGHTISTH; }
+			}
+			if(invIndex == -1)
+			{
+				targetPocket.SetItem(ddWeapon(self), pocketIndex);
+				rWeap.RetItem(ddp.rwx).companionpiece = lWeap.RetItem(ddp.lwx);
+				lWeap.RetItem(ddp.lwx).companionpiece = rWeap.RetItem(ddp.rwx);
+				psp.y = 128; pspf.y = 128;
+				psp.SetState(self.GetUpState());
+			}
+			else { psp.SetState(ddweapon(targetpocket.retitem(pocketIndex)).GetUpState()); }
+			//if(comer.UpSound) { wanter.A_StartSound(comer.UpSound, CHAN_WEAPON); } move to swapdrop
+			ddp.ddWeaponState &= ~DDW_WANNAREPLACE;
+			mode.bmodeready = false;
+			if(invIndex == -1) { mode.ChangeState("PickupSwapDrop"); }
+			else { mode.ChangeState("PickupSwapStore"); }
+			return true;
 		}
 		else
 		{
@@ -1825,7 +1774,7 @@ class ddWeapon : Weapon
 			if(pspr.y > 127) 
 			{ 
 				pspr.y = 128; psprf.y = 128; 
-				ddp.ddWeaponState &= ~DDW_REPLACERIGHT; 
+				ddp.ddWeaponState &= ~DDW_REPLACERIGHT;
 				if(!(rightw.RetItem(ddp.rwx) is "ddFist")) { ddp.RemoveInventory(rightw.RetItem(ddp.rwx)); }
 				rightw.SetItem(invoker.swapHeld, ddp.rwx);
 				rightw.RetItem(ddp.rwx).companionpiece = leftw.RetItem(ddp.lwx);
