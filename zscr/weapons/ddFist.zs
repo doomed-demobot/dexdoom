@@ -63,7 +63,6 @@ class ddFist : ddWeapon replaces Fist
 		if(ddp.FindInventory("ClassicModeToken")) { return FindState('FireClassic'); }
 		else 
 		{ 
-			console.printf(""..weaponside);
 			if(weaponside) { return FindState('Jab'); }
 			else { return FindState('Hook'); }
 		}
@@ -122,6 +121,7 @@ class ddFist : ddWeapon replaces Fist
 		switch(no)
 		{
 			case 1: //init/ready check
+				console.printf("poopoo");
 				if(weaponside)
 				{
 					if(!(ddp.ddWeaponState & DDW_RIGHTREADY)) { ChangeState("Ready", myside); }
@@ -203,97 +203,6 @@ class ddFist : ddWeapon replaces Fist
 			Goto Ready;
 			
 	}
-}
-//sided weapons deprecated
-// #Class ddFistLeft : ddFist()
-class ddFistLeft : ddFist
-{
-	Default
-	{		
-		-DDFIST.ADDME;
-		ddweapon.weaponside CE_LEFT;		
-	}/*
-	States
-	{
-		NoAmmo:
-			PUNG B 10;
-		Ready:
-			PUNG B 1 A_DDWeaponReady;
-			Loop;
-		Select:
-			PUNG B 1;
-			Loop;
-		Fire:
-			PUNG B 1 A_WeapAction;
-			PUNG B 1;
-			PUNG C 1 A_Whoosh;
-			PUNG D 6 A_FireDDWeapon;
-			PUNG C 1;
-			PUNG C 1 A_ComOneTwo;
-			PUNG B 4;
-			PUNG B 1 A_ClearCombo;
-			PUNG B 3 A_DDRefire;	
-			Goto Ready;
-		Altfire:
-			Goto Ready;
-		FireClassic:
-			PUNG B 4;
-			PUNG C 4 A_FireDDWeapon;
-			PUNG D 5;
-			PUNG C 4;
-			PUNG B 5 A_DDRefire;
-			Goto Ready;
-	}*/
-}
-// #Class ddFistRight : ddFist()
-class ddFistRight : ddFist
-{
-	Default
-	{		
-		-DDFIST.ADDME;		
-		ddweapon.weaponside CE_RIGHT; 
-	}/*
-	States
-	{
-		NoAmmo:
-			PUNG A 10;
-		Ready:
-			PUNG A 1 A_DDWeaponReady;
-			Loop;
-		Select:
-			PUNG A 1;
-			Loop;
-		Fire:
-			TNT1 A 1 A_WeapAction;
-			TNT1 A 2;
-			PUNH A 1;
-			PUNH B 2 A_Whoosh;
-			PUNH CD 2;
-			PUNH E 5 A_FireDDWeapon;
-			PUNH FGH 2;
-			TNT1 A 2;
-			TNT1 A 2 A_DDRefire;
-			Goto Ready;
-		Two:
-			TNT1 A 1 A_ClearCombo;
-			PUNH AB 1;
-			PUNH C 1 A_Whoosh;
-			PUNH D 1;
-			PUNH E 6 A_FireDDWeapon;
-			PUNH FGH 2;
-			TNT1 A 2;
-			Goto Ready;
-		FireClassic:
-			PUNF B 4;
-			PUNF C 4 A_FireDDWeapon;
-			PUNF D 5;
-			PUNF C 4;
-			PUNF B 5 A_DDRefire;
-			Goto Ready;
-		Altfire:
-			Goto Ready;
-			
-	}*/
 }
 
 extend class ddWeapon

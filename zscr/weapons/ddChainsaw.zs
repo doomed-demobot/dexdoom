@@ -61,56 +61,23 @@ class ddChainsaw : ddFist
 	States
 	{
 		Ready:
-			SAWG CD 4;
+			SAWG CD 4 A_DDWeaponReady;
+			Loop;
+		Select:
+			SAWG B 1;
 			Loop;
 		Deselect:
-		Select:
-			Goto Ready;
-		Fire:
-			Goto Ready;
-	}
-}
-
-class ddChainsawLeft : ddChainsaw 
-{
-	Default { Inventory.MaxAmount 1; -DDFIST.ADDME; ddweapon.weaponside CE_LEFT; }
-	
-	States
-	{
-		Ready:
-			SAWG CD 4 A_LeftWeaponReady;
-			Loop;
-		Select:
 			SAWG B 1;
 			Loop;
-		Fire:
-			SAWG AB 4 A_FireLeftWeapon;
-			SAWG B 0 A_ddRefireLeft;
-			Goto Ready;	
 		Altfire:
+		Fire:
+			SAWG AB 4 A_FireDDWeapon;
+			SAWB B 0 A_DDRefire;
 			Goto Ready;
-	}
-}
-
-class ddChainsawRight : ddChainsaw 
-{	
-	Default { Inventory.MaxAmount 1; -DDFIST.ADDME; ddweapon.weaponside CE_RIGHT; }
-	
-	States
-	{
-		Ready:
-			SAWG C 4 A_RightWeaponReady;
-			SAWG D 4;
-			Loop;
-		Select:
-			SAWG B 1;
-			Loop;
-		Fire:
-			SAWG AB 4 A_FireRightWeapon;
-			SAWG B 0 A_ddRefireRight;
-			Goto Ready;	
-		Altfire:
-			Goto Ready;	
+		ReloadP:
+			Goto Ready;
+		UnloadP:
+			Goto Ready;
 	}
 }
 
@@ -135,8 +102,6 @@ class ChainsawPK : CustomInventory replaces Chainsaw
 			Stop;
 		Pickup:
 			TNT1 A 1 A_GiveInventory("ddChainsaw", 1);
-			TNT1 A 0 A_GiveInventory("ddChainsawLeft", 1);
-			TNT1 A 0 A_GiveInventory("ddChainsawRight", 1);
 			Stop;
 	}
 	

@@ -1171,7 +1171,7 @@ class ddWeapon : Weapon
 				pspr.y = 128; psprf.y = 128;	
 				State st = lWeap.wannaReload();
 				if(st == lWeap.FindState('DoNotJump')) { bmodeReady = true; lWeap.weaponready = true; return; }
-				lWeap.A_ChangeSpriteLeft(1);
+				lWeap.A_ChangeSprite(1);
 				mode.weaponstatus = lWeap.weaponStatus;
 				ddp.player.SetPSprite(PSP_LEFTW, st);
 				return;
@@ -1287,7 +1287,7 @@ class ddWeapon : Weapon
 					if(st == rWeap.FindState('DoNotJump')) { bmodeReady = true; rWeap.weaponready = true; return; }
 					ddp.player.SetPSprite(PSP_RIGHTW, st);
 					mode.weaponstatus = rWeap.weaponstatus;
-					rWeap.A_ChangeSpriteRight(1);
+					rWeap.A_ChangeSprite(1);
 					if(ddp.player.pendingweapon is "twoHanding") { 
 						ddWeapon thd = ddWeapon(ddp.FindInventory("twoHanding"));
 						thd.lSwapTarget = mode.lSwapTarget;

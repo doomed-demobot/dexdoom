@@ -67,6 +67,7 @@ class ddKnife : ddFist
 		switch(no)
 		{
 			case 1:
+				console.printf("ass");
 				if(weaponside) {
 					if(ddp.combo == COM_QUICK) { ChangeState("QuickJab", myside); break; } 
 					if(!(ddp.ddWeaponState & DDW_RIGHTREADY)) { ChangeState("Ready", myside); }
@@ -88,22 +89,32 @@ class ddKnife : ddFist
 	// ## ddKnife States()
 	States
 	{
-		NoAmmo:
-			KNFR A 10;
 		Ready:
-			KNFR A 1;
+			KNFL A 1 A_DDWeaponReady;
 			Loop;
 		Select:
-			Goto Ready;
-		Deselect:
-			Goto Ready;
+			KNFL A 1;
+			Loop;
 		Fire:
+			KNFL A 1 A_WeapAction;
+			KNFL BC 2;
+			KNFL CD 1;
+			KNFL E 1 A_Whoosh2;
+			KNFL F 4;
+			KNFL G 4 A_Stab;
+			KNFL HI 4;
+			KNFL A 0 A_DDRefire;
 			Goto Ready;
-		AltFire:
-			Goto Ready;
-		
+		QuickJab:
+			KNFL C 0 A_ClearCombo;
+			KNFL CD 1;
+			KNFL E 1 A_Whoosh;
+			KNFL F 1;
+			KNFL G 5 A_Stab;
+			KNFL HI 2;
+			Goto Ready;		
 	}
-}
+}/*
 // #Class ddKnifeLeft : ddKnife()
 class ddKnifeLeft : ddKnife
 {
@@ -176,7 +187,7 @@ class ddKnifeRight : ddKnife
 			KNFR A 0 A_DDRefire;
 			Goto Ready;
 	}
-}
+}*/
 
 // #Class Knife : CustomInventory()
 class Knife : CustomInventory
@@ -199,8 +210,6 @@ class Knife : CustomInventory
 			Stop;
 		Pickup:
 			TNT1 A 1 A_GiveInventory("ddKnife", 1);
-			TNT1 A 0 A_GiveInventory("ddKnifeLeft", 1);
-			TNT1 A 0 A_GiveInventory("ddKnifeRight", 1);
 			Stop;
 	}
 	
@@ -216,7 +225,7 @@ extend class ddWeapon
 		if(ddp.player == null) { return; }
 
 		int damage = random[Punch](5, 18) << 1;
-
+		console.printf("stab");
 		if (FindInventory("PowerStrength")) { damage *= 3; }
 
 		double ang = angle + Random2[Punch]() * (5.625 / 256);

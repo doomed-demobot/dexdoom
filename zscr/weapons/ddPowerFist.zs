@@ -86,35 +86,6 @@ class ddPowerFist : ddFist
 	States
 	{
 		NoAmmo:
-			PFST A 10;
-		Ready:
-			PFST A 1;
-			Loop;
-		Deselect:
-			PUNG A 1 A_Lower;
-			Loop;
-		Select:
-			PFST A 1;
-			Loop;
-		Fire:
-			Goto Ready;
-		Altfire:
-			Goto Ready;
-		Double:
-			Goto Ready;
-	}
-}
-// #Class ddPowerFistLeft : ddPowerFist()
-class ddPowerFistLeft : ddPowerFist
-{
-	Default
-	{		
-		-DDFIST.ADDME;
-		ddweapon.weaponside CE_LEFT;
-	}
-	States
-	{
-		NoAmmo:
 			PFSF A 10;
 		Ready:
 			PFSF A 1 A_DDWeaponReady;
@@ -144,49 +115,6 @@ class ddPowerFistLeft : ddPowerFist
 			TNT1 A 6;
 			PFSF CB 7;
 			PFSF A 0 A_DDRefire;
-			Goto Ready;
-	}
-}
-// #Class ddPowerFistRight : ddPowerFist()
-class ddPowerFistRight : ddPowerFist
-{
-	Default
-	{		
-		-DDFIST.ADDME;
-		ddweapon.weaponside CE_RIGHT;
-	}
-	States
-	{
-		NoAmmo:
-			PFST A 10;
-		Ready:
-			PFST A 1 A_DDWeaponReady;
-			Loop;
-		Select:
-			PFST A 1;
-			Loop;
-		Fire:
-			PFST AA 1 A_WeapAction;
-			PFST BC 2;
-			PFST D 3 A_PFist1;
-			PFST E 5 A_PFist2;
-			PFST F 5 A_FireDDWeapon;
-			PFST G 3;
-			PFST H 3;
-			TNT1 A 6;
-			PFST CB 4;
-			PFST A 0 A_DDRefire;
-			Goto Ready;
-		Double:
-			PFST BC 2;
-			PFST D 3 A_PFist1;
-			PFST E 5 A_PFist2;
-			PFST F 5 A_FireDDWeapon;
-			PFST G 5;
-			PFST H 5;
-			TNT1 A 6;
-			PFST CB 7;
-			PFST A 0 A_DDRefire;
 			Goto Ready;
 	}
 }
@@ -236,8 +164,6 @@ class PowerFist : CustomInventory
 			Stop;
 		Pickup:
 			TNT1 A 1 A_GiveInventory("ddPowerFist", 1);
-			TNT1 A 0 A_GiveInventory("ddPowerFistLeft", 1);
-			TNT1 A 0 A_GiveInventory("ddPowerFistRight", 1);
 			Stop;
 	}
 	
