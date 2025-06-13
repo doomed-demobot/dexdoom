@@ -121,7 +121,6 @@ class ddFist : ddWeapon replaces Fist
 		switch(no)
 		{
 			case 1: //init/ready check
-				console.printf("poopoo");
 				if(weaponside)
 				{
 					if(!(ddp.ddWeaponState & DDW_RIGHTREADY)) { ChangeState("Ready", myside); }

@@ -586,6 +586,30 @@ class ddWeapon : Weapon
 		if(fr > 0) { psp.Frame = fr; }
 	}
 	
+	void ChangeSprite(int side, int forcemode = -1)
+	{
+		let ddp = ddPlayer(owner);
+		if(!ddp) { return; }
+		ddWeapon weap;
+		PSprite psp;
+		if(side == CE_LEFT) {
+			if(ddp.ddWeaponState & DDW_NOLEFTSPRITECHANGE) { return; }
+			weap = ddp.GetLeftWeapon(ddp.lwx);
+			psp = ddp.player.GetPSprite(PSP_LEFTW);
+		}
+		else if(side == CE_RIGHT) {
+			if(ddp.ddWeaponState & DDW_NORIGHTSPRITECHANGE) { return; }
+			weap = ddp.GetRightWeapon(ddp.rwx);
+			psp = ddp.player.GetPSprite(PSP_RIGHTW);
+		}
+		else { return; }
+		String sp;
+		int fr;
+		[sp, fr] = weap.GetSprites(forcemode);
+		psp.Sprite = GetSpriteIndex(sp);
+		if(fr > 0) { psp.Frame = fr; }
+	}
+	
 	void ChangeState(statelabel st, int layer = PSP_WEAPON)
 	{
 		let own = ddPlayer(owner);
@@ -1171,7 +1195,7 @@ class ddWeapon : Weapon
 				pspr.y = 128; psprf.y = 128;	
 				State st = lWeap.wannaReload();
 				if(st == lWeap.FindState('DoNotJump')) { bmodeReady = true; lWeap.weaponready = true; return; }
-				lWeap.A_ChangeSprite(1);
+				lWeap.ChangeSprite(CE_LEFT, 1);
 				mode.weaponstatus = lWeap.weaponStatus;
 				ddp.player.SetPSprite(PSP_LEFTW, st);
 				return;
@@ -1287,7 +1311,7 @@ class ddWeapon : Weapon
 					if(st == rWeap.FindState('DoNotJump')) { bmodeReady = true; rWeap.weaponready = true; return; }
 					ddp.player.SetPSprite(PSP_RIGHTW, st);
 					mode.weaponstatus = rWeap.weaponstatus;
-					rWeap.A_ChangeSprite(1);
+					rWeap.ChangeSprite(CE_RIGHT, 1);
 					if(ddp.player.pendingweapon is "twoHanding") { 
 						ddWeapon thd = ddWeapon(ddp.FindInventory("twoHanding"));
 						thd.lSwapTarget = mode.lSwapTarget;

@@ -708,6 +708,10 @@ class playerInventory : ddWeapon
 		else { ddp.ddWeaponState &= ~DDW_RIGHTISTH; }
 		if(lWeap.RetItem(ddp.lwx).bTwoHander) { ddp.ddWeaponState |= DDW_LEFTISTH; }
 		else { ddp.ddWeaponState &= ~DDW_LEFTISTH; }
+		if(lWeap.RetItem(ddp.lwx) == fLst.curFistLeft) { 
+			ddp.player.GetPSprite(PSP_LEFTW).SetState(fLst.curFistLeft.GetReadyState()); }		
+		if(rWeap.RetItem(ddp.rwx) == fLst.curFistRight) { 
+			ddp.player.GetPSprite(PSP_RIGHTW).SetState(fLst.curFistRight.GetReadyState()); }
 	}
 	
 	action void A_ChangeSide()

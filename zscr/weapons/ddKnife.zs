@@ -44,7 +44,14 @@ class ddKnife : ddFist
 	override String GetParentType()
 	{
 		return "ddKnife";
-	}	
+	}
+	
+	override State GetAttackState()
+	{
+		if(weaponside) { return FindState('QuickJab'); } 
+		else { return FindState('Fire'); } 
+	}
+	
 	//a little hacky is it not?
 	override State GetRefireState()
 	{
@@ -67,7 +74,6 @@ class ddKnife : ddFist
 		switch(no)
 		{
 			case 1:
-				console.printf("ass");
 				if(weaponside) {
 					if(ddp.combo == COM_QUICK) { ChangeState("QuickJab", myside); break; } 
 					if(!(ddp.ddWeaponState & DDW_RIGHTREADY)) { ChangeState("Ready", myside); }
@@ -89,6 +95,8 @@ class ddKnife : ddFist
 	// ## ddKnife States()
 	States
 	{
+		NoAmmo:
+			KNFL A 10;
 		Ready:
 			KNFL A 1 A_DDWeaponReady;
 			Loop;
