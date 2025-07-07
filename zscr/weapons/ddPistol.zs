@@ -222,7 +222,7 @@ class ddPistol : ddWeapon replaces Pistol
 		let psplf = ddp.player.GetPSprite(PSP_LEFTWF);
 		let pspr = ddp.player.GetPSprite(PSP_RIGHTW);
 		let psprf = ddp.player.GetPSprite(PSP_RIGHTWF);
-		int myside = (weaponside) ? PSP_LEFTW : PSP_RIGHTW; 
+		int myside = (weaponside) ? PSP_LEFTW : PSP_RIGHTW;
 		int flashside = (weaponside) ? PSP_LEFTWF : PSP_RIGHTWF;
 		let res = ModeCheck();
 		switch(no)
@@ -243,6 +243,7 @@ class ddPistol : ddWeapon replaces Pistol
 				ddp.PlayAttacking(); 
 				break;
 			case 2: //primary
+				//ddWeaponOffset(myside, 0, 0, WOF_KEEPX);
 				if((res == RES_TWOHAND || res == RES_HASESOA) && ddp.CountInv(type) > 1 && mag < 1) { weaponstatus = DDW_RELOADING; ChangeState("ReloadP", myside); }				
 				break;
 			case 3: //alt burstcounter check
@@ -259,6 +260,9 @@ class ddPistol : ddWeapon replaces Pistol
 				break;
 			case 6:
 				UnloadWeaponMag();
+				break;
+			case 7:
+				ddWeaponOffset(myside, 0, 48, 4, WOF_KEEPX);
 				break;
 			default: ddp.A_Log("No action defined for tic "..no); break;
 		}
@@ -332,6 +336,7 @@ class ddPistol : ddWeapon replaces Pistol
 			#### A 1 A_WeapAction;
 			#### A 1;
 			#### B 0 A_DDFlash;
+			#### B 7 A_WeapAction;
 			#### B 2 A_FireDDWeapon;
 			#### C 0 A_ChangeSprite;
 			#### C 2 A_WeapAction;

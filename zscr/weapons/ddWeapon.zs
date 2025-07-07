@@ -45,6 +45,8 @@ class ddWeapon : Weapon
 	int xOffset;
 	uint lswaptarget, rswapTarget;
 	int fireMode; //true = alt; false = primary
+	int offsetLength; //how many tics PSprite will offset for
+	int offsetStepLengthX, offsetStepLengthY; //amount PSprite will offset; stepLength / length
 	class<Ammo> ClassicAmmoType1, ClassicAmmoType2;
 	ddWeapon swapHeld; //weapon stored here for pickupswapstore
 	property ClassicAmmoType : ClassicAmmoType1;
@@ -97,6 +99,49 @@ class ddWeapon : Weapon
 		+DDWEAPON.GOESININV;
 		-DDWEAPON.MODEREADY;
 		-DDWEAPON.NOLOWER;
+	}
+	//hate doing this
+	override void Tick()
+	{
+		Super.Tick();
+		let ddp = ddPlayer(owner);
+		if(ddp)
+		{
+			PSprite myPSp = ddp.player.GetPSprite((weaponside) ? PSP_LEFTW : PSP_RIGHTW);
+			if(myPsp)
+			{
+				if(offsetLength > -1)
+				{
+					myPSp.firstTic = false;
+					myPSp.x += offsetStepLengthX;
+					myPSp.y += offsetStepLengthY;
+					offsetLength--;
+				}
+				else
+				{
+					offsetLength = -1;
+					offsetStepLengthX = 0; offsetStepLengthY = 0;
+				}
+			}
+		}
+	}
+	
+	void DDWeaponOffset(int layer, int xoff, int yoff, int offLength = 1, int dofflags = 0)
+	{
+		let ddp = ddPlayer(owner);
+		let weap = ddWeapon(self);
+		if(!ddp) { return; }
+		if(offLength < 1) { console.printf(GetClassName().." offset length cannot be less than 1"); return; }
+		PSprite psp = ddp.player.GetPSprite(layer);
+		weap.offsetLength = offLength-1;
+		if(!(dofflags & WOF_KEEPX))
+		{
+			weap.offsetStepLengthX = (psp.x + xoff) / offLength;
+		}
+		if(!(dofflags & WOF_KEEPY))
+		{
+			weap.offsetStepLengthY = (psp.y + yoff) / offLength;		
+		}
 	}
 	
 	virtual ui void HUDA(ddStats hude) {} //screensize 11; minimal
@@ -690,6 +735,7 @@ class ddWeapon : Weapon
 	}
 	
 	action void A_SetModeReady() { ddWeapon(player.readyweapon).bModeReady = true; }
+	
 	
 	virtual void primaryattack() {}
 	

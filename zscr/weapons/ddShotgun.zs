@@ -216,6 +216,7 @@ class ddShotgun : ddWeapon
 					break;
 				} 
 			case 2: //jump to reload if twohanding
+				ddWeaponOffset(myside, 0, 0, WOF_KEEPX);
 				if((res == RES_TWOHAND || res == RES_HASESOA || res == RES_CLASSIC) && ddp.CountInv("Shell") > 0) { weaponstatus = DDW_RELOADING; ChangeState("ReloadP", myside); }
 				else { /*yes*/ }
 				break;			
@@ -227,6 +228,9 @@ class ddShotgun : ddWeapon
 				AddRecoil(0.0, 5, 0.0); ReloadWeaponMag(1); break;
 			case 6: //reload checkpoint (tm)
 				ddWeaponFlags |= SHT_RSEQ;
+				break;
+			case 7:
+				ddWeaponOffset(myside, 0, -10, WOF_KEEPX);
 				break;
 			default: ddp.A_Log("No action defined for tic "..no); break;
 		}		
@@ -246,6 +250,7 @@ class ddShotgun : ddWeapon
 			#### A 1 A_WeapAction;
 			#### A 3;
 			#### A 0 A_DDFlash;
+			#### A 7 A_WeapAction;
 			#### A 1 A_FireDDWeapon;
 			#### A 6;
 			#### A 2 A_WeapAction;
