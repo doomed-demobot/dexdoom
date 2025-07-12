@@ -180,6 +180,20 @@ class ddShotgun : ddWeapon
 	
 	override void alternativeattack() { primaryattack(); } 
 	
+	override int, int, int, int GetOffsets(int no)
+	{
+		if(!owner) { return Super.GetOffsets(no); }
+		switch(no)
+		{
+			case 1:
+				if(owner.player.readyweapon is "twohanding") { return 0, 12, 2, (WOF_KEEPX | WOF_INTERPOLATE | WOF_MOVEFLASH); }
+				else if(owner.player.readyweapon is "dualWielding") { return -4, 12, 2, (WOF_ADD | WOF_INTERPOLATE | WOF_MOVEFLASH); }
+				else { return Super.GetOffsets(no); }
+			default:
+				return Super.GetOffsets(no);
+		}
+	}
+	
 	override void DD_WeapAction(int no)
 	{
 		let ddp = ddPlayer(owner);
@@ -216,7 +230,6 @@ class ddShotgun : ddWeapon
 					break;
 				} 
 			case 2: //jump to reload if twohanding
-				ddWeaponOffset(myside, 0, 0, WOF_KEEPX);
 				if((res == RES_TWOHAND || res == RES_HASESOA || res == RES_CLASSIC) && ddp.CountInv("Shell") > 0) { weaponstatus = DDW_RELOADING; ChangeState("ReloadP", myside); }
 				else { /*yes*/ }
 				break;			
@@ -228,9 +241,6 @@ class ddShotgun : ddWeapon
 				AddRecoil(0.0, 5, 0.0); ReloadWeaponMag(1); break;
 			case 6: //reload checkpoint (tm)
 				ddWeaponFlags |= SHT_RSEQ;
-				break;
-			case 7:
-				ddWeaponOffset(myside, 0, -10, WOF_KEEPX);
 				break;
 			default: ddp.A_Log("No action defined for tic "..no); break;
 		}		
@@ -250,7 +260,7 @@ class ddShotgun : ddWeapon
 			#### A 1 A_WeapAction;
 			#### A 3;
 			#### A 0 A_DDFlash;
-			#### A 7 A_WeapAction;
+			#### A 1 A_DDWeaponOffset;
 			#### A 1 A_FireDDWeapon;
 			#### A 6;
 			#### A 2 A_WeapAction;
@@ -309,7 +319,7 @@ class ddShotgun : ddWeapon
 			Goto FlashDone;
 		FlashP:
 			SHTF A 1 Bright A_Light1;
-			SHTF B 3 Bright A_Light2;
+			SHTF B 2 Bright A_Light2;
 			Goto FlashDone;	
 		Spawn:
 			SHOT A -1;

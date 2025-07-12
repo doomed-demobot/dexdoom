@@ -211,6 +211,20 @@ class ddPistol : ddWeapon replaces Pistol
 		burstcounter = 3;
 	}
 	
+	override int, int, int, int GetOffsets(int no)
+	{
+		switch(no)
+		{
+			case 1:
+				return 0, -2, 1, (WOF_KEEPX | WOF_MOVEFLASH | WOF_STARTATORIGIN);
+			case 2:
+				return 0, 8, 3, (WOF_KEEPX | WOF_INTERPOLATE | WOF_MOVEFLASH);
+			default:
+				return Super.GetOffsets(no);
+		}
+		return Super.GetOffsets(no);
+	}
+	
 	override void DD_WeapAction(int no)
 	{		
 		let ddp = ddPlayer(owner);
@@ -240,7 +254,7 @@ class ddPistol : ddWeapon replaces Pistol
 				}
 				if((res == RES_TWOHAND || res == RES_HASESOA)) { if(mag < 1 || ddWeaponFlags & PIS_RSEQ) { weaponstatus = DDW_RELOADING; ChangeState("ReloadP", myside); break; } }
 				if(res == RES_DUALWLD) { if(mag < 1 || ddWeaponFlags & PIS_RSEQ) { LowerToReloadWeapon(); break; } }				
-				ddp.PlayAttacking(); 
+				ddp.PlayAttacking();
 				break;
 			case 2: //primary
 				//ddWeaponOffset(myside, 0, 0, WOF_KEEPX);
@@ -260,9 +274,6 @@ class ddPistol : ddWeapon replaces Pistol
 				break;
 			case 6:
 				UnloadWeaponMag();
-				break;
-			case 7:
-				ddWeaponOffset(myside, 0, 48, 4, WOF_KEEPX);
 				break;
 			default: ddp.A_Log("No action defined for tic "..no); break;
 		}
@@ -336,8 +347,9 @@ class ddPistol : ddWeapon replaces Pistol
 			#### A 1 A_WeapAction;
 			#### A 1;
 			#### B 0 A_DDFlash;
-			#### B 7 A_WeapAction;
+			#### B 1 A_DDWeaponOffset;
 			#### B 2 A_FireDDWeapon;
+			#### B 2 A_DDWeaponOffset;
 			#### C 0 A_ChangeSprite;
 			#### C 2 A_WeapAction;
 			#### # 1 A_ChangeSprite;

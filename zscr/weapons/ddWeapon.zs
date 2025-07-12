@@ -47,6 +47,8 @@ class ddWeapon : Weapon
 	int fireMode; //true = alt; false = primary
 	int offsetLength; //how many tics PSprite will offset for
 	int offsetStepLengthX, offsetStepLengthY; //amount PSprite will offset; stepLength / length
+	int offsetInterp;
+	bool offsetFlashState;
 	class<Ammo> ClassicAmmoType1, ClassicAmmoType2;
 	ddWeapon swapHeld; //weapon stored here for pickupswapstore
 	property ClassicAmmoType : ClassicAmmoType1;
@@ -108,25 +110,67 @@ class ddWeapon : Weapon
 		if(ddp)
 		{
 			PSprite myPSp = ddp.player.GetPSprite((weaponside) ? PSP_LEFTW : PSP_RIGHTW);
+			PSprite myFlash = ddp.player.GetPSprite((weaponside) ? PSP_LEFTWF : PSP_RIGHTWF);
 			if(myPsp)
 			{
 				if(offsetLength > -1)
 				{
-					myPSp.firstTic = false;
+					ddp.ddWeaponState |= (weaponside) ? DDW_LEFTNOBOBBING : DDW_RIGHTNOBOBBING;
+					myPSp.firstTic = offsetInterp;
 					myPSp.x += offsetStepLengthX;
 					myPSp.y += offsetStepLengthY;
+					if(offsetFlashState)
+					{						
+						myFlash.x += offsetStepLengthX;
+						myFlash.y += offsetStepLengthY;
+					}
 					offsetLength--;
 				}
 				else
 				{
-					offsetLength = -1;
+					if(offsetLength == -1) { ddp.ddWeaponState &= (weaponside) ? ~DDW_LEFTNOBOBBING : ~DDW_RIGHTNOBOBBING; }
+					offsetLength = -2;
 					offsetStepLengthX = 0; offsetStepLengthY = 0;
 				}
 			}
 		}
 	}
 	
-	void DDWeaponOffset(int layer, int xoff, int yoff, int offLength = 1, int dofflags = 0)
+	//todo: find way to add remainders to offset.
+	action void A_DDWeaponOffset()
+	{
+		let ddp = ddPlayer(self);
+		if(!ddp) { return; }
+		let i = invoker;
+		ddWeapon weap;
+		PSprite psp;
+		if(stateinfo.mPSPIndex == PSP_LEFTW) {
+			weap = ddp.GetLeftWeapon(ddp.lwx);
+			psp = ddp.player.GetPSprite(PSP_LEFTW);
+		}
+		else if(stateinfo.mPSPIndex == PSP_RIGHTW) {
+			weap = ddp.GetRightWeapon(ddp.rwx);
+			psp = ddp.player.GetPSprite(PSP_RIGHTW);
+		}
+		else { return; }
+		int no = psp.tics;
+		psp.tics = 0;
+		int xoff, yoff, offLength, dofflags;
+		if(weap)
+		{ 
+			[xoff, yoff, offLength, dofflags] = weap.GetOffsets(no);
+			weap.DoDDWeaponOffset(stateinfo.mPSPIndex, xoff, yoff, offLength, dofflags);
+		}
+	}
+	
+	virtual int, int, int, int GetOffsets(int no)
+	{
+		console.printf("No offsets defined for tic "..no);
+		return 0, 0, 1, 0;
+	}
+	
+	//math not adding up :*
+	private void DoDDWeaponOffset(int layer, int xoff, int yoff, int offLength = 1, int dofflags = 0)
 	{
 		let ddp = ddPlayer(owner);
 		let weap = ddWeapon(self);
@@ -134,14 +178,23 @@ class ddWeapon : Weapon
 		if(offLength < 1) { console.printf(GetClassName().." offset length cannot be less than 1"); return; }
 		PSprite psp = ddp.player.GetPSprite(layer);
 		weap.offsetLength = offLength-1;
+		if(dofFlags & WOF_INTERPOLATE || dofflags & WOF_ADD) { weap.offsetInterp = true; }
+		else { weap.offsetInterp = false; }
+		if(dofFlags & WOF_MOVEFLASH) { weap.offsetFlashState = true; }
+		else { weap.offsetFlashState = false; }
 		if(!(dofflags & WOF_KEEPX))
 		{
-			weap.offsetStepLengthX = (psp.x + xoff) / offLength;
+			if(dofflags & WOF_STARTATORIGIN) { psp.x = (ddp.player.readyweapon is "dualWielding") ? ((weaponside) ? -65 : 65) : 0; }
+			if(dofflags & WOF_ADD)  { weap.offsetStepLengthX = (psp.x + xoff) / offLength; }
+			else { weap.offsetStepLengthX = (xoff - psp.x) / offLength; }
 		}
 		if(!(dofflags & WOF_KEEPY))
 		{
-			weap.offsetStepLengthY = (psp.y + yoff) / offLength;		
+			if(dofflags & WOF_STARTATORIGIN) { psp.y = 0; }
+			if(dofflags & WOF_ADD) { weap.offsetStepLengthY = (psp.y + yoff) / offLength; }
+			else { weap.offsetStepLengthY = (yoff - psp.y) / offLength; }
 		}
+		
 	}
 	
 	virtual ui void HUDA(ddStats hude) {} //screensize 11; minimal
@@ -693,6 +746,7 @@ class ddWeapon : Weapon
 		else { psp.SetState(st); }
 	}
 	
+	//does this need to be action?
 	action void AddRecoil(double pitch, int angle, double desFOV)
 	{
 		let ddp = ddPlayer(invoker.owner);
@@ -709,7 +763,7 @@ class ddWeapon : Weapon
 		ddp.AddAngle = ((random2() * angle) >> 8);
 	}
 	
-	//todo: wrap ddWeaponState flag switching to a function similar to base WeaponReady
+	//should weapons be returned to default position on weaponready?
 	action void A_DDWeaponReady(bool playUpSound = true)
 	{
 		let ddp = ddPlayer(self);
@@ -730,6 +784,7 @@ class ddWeapon : Weapon
 		if(weap.ReadySound && playUpSound) {
 			if(weap.bReadySndHalf || random() < 128) { ddp.A_StartSound(weap.ReadySound, CHAN_WEAPON); }
 		}
+		weap.offsetLength = -1;
 		weap.weaponStatus = DDW_READY;
 		weap.weaponReady = true;
 	}
@@ -1003,7 +1058,7 @@ class ddWeapon : Weapon
 		ddp.LineAttack(ang + extraAngle, PLAYERMISSILERANGE, pitch + extraPitch, damage, 'hitscan', pufftype, 0, null, zoff);
 	}
 	
-	//ddw_rightnobobbing unset while weapons are bobbing
+	//bug: lowertoreloadleft doesnt work when called this way
 	action void A_CheckLeftWeaponMag()
 	{
 		let ddp = ddPlayer(invoker.owner);
@@ -1055,11 +1110,11 @@ class ddWeapon : Weapon
 		if(!ddp.CheckESOA(cost) && (!lWeap.bNoLower && ddp.player.readyweapon is "dualWielding")) 
 		{ 
 			if(ddp.dddebug & DBG_WEAPSEQUENCE) { A_Log("Lowering weapons to reload left weapon"); }
-			ddp.player.SetPSprite(PSP_LEFTW, lweap.FindState('Select'));
-			ddp.player.SetPSprite(PSP_RIGHTW, rweap.FindState('Select'));
 			ddp.ddWeaponState |= DDW_LEFTNOBOBBING;
 			ddp.ddWeaponState |= DDW_RIGHTNOBOBBING;
 			ddp.ddWeaponState |= DDW_LEFTLOWERTOREL;
+			ddp.player.SetPSprite(PSP_LEFTW, lweap.FindState('Select'));
+			ddp.player.SetPSprite(PSP_RIGHTW, rweap.FindState('Select'));
 			//mode.ChangeState('LowerToReloadLeft');
 			return; 
 		}
@@ -1131,11 +1186,11 @@ class ddWeapon : Weapon
 		if(!ddp.CheckESOA(cost) && (!rWeap.bNoLower && ddp.player.readyweapon is "dualWielding")) 
 		{ 
 			if(ddp.dddebug & DBG_WEAPSEQUENCE) { A_Log("Lowering weapons to reload right weapon"); }
-			ddp.player.SetPSprite(PSP_LEFTW, lweap.FindState('Select'));
-			ddp.player.SetPSprite(PSP_RIGHTW, rweap.FindState('Select'));
 			ddp.ddWeaponState |= DDW_LEFTNOBOBBING;
 			ddp.ddWeaponState |= DDW_RIGHTNOBOBBING;
 			ddp.ddWeaponState |= DDW_RIGHTLOWERTOREL;
+			ddp.player.SetPSprite(PSP_LEFTW, lweap.FindState('Select'));
+			ddp.player.SetPSprite(PSP_RIGHTW, rweap.FindState('Select'));
 			//mode.ChangeState('LowerToReloadRight'); 
 			return;
 		}

@@ -524,9 +524,10 @@ class dualWielding : ddWeapon
 				}*/
 				if(ddp.ddWeaponState & DDW_LEFTREADY)
 				{
-					A_CheckLeftWeaponMag();
 					lw.weaponready = false;
-					rw.weaponready = false;		
+					rw.weaponready = false;
+					lw.weaponstatus = DDW_RELOADING;
+					A_CheckLeftWeaponMag();
 				}
 			}
 		}

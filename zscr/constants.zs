@@ -33,6 +33,12 @@ enum ExtraStates
 	WF_QUICKRIGHTOK = 1 << 13,
 };
 
+enum ExtraWOFFlags
+{
+	WOF_MOVEFLASH = 1 << 6,
+	WOF_STARTATORIGIN = 1 << 7,
+};
+
 enum ddWeaponStatus
 {
 	DDW_RIGHTREADY	= 1 << 0,
