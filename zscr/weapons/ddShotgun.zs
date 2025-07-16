@@ -182,15 +182,15 @@ class ddShotgun : ddWeapon
 	
 	override int, int, int, int GetOffsets(int no)
 	{
-		if(!owner) { return Super.GetOffsets(no); }
+		if(!owner) { return Super.GetOffsets(no), 0, 1, 0; }
 		switch(no)
 		{
 			case 1:
-				if(owner.player.readyweapon is "twohanding") { return 0, 12, 2, (WOF_KEEPX | WOF_INTERPOLATE | WOF_MOVEFLASH); }
+				if(owner.player.readyweapon is "twohanding") { return 0, 12, 2, (WOF_KEEPX | WOF_INTERPOLATE | WOF_MOVEFLASH | WOF_STARTATORIGIN); }
 				else if(owner.player.readyweapon is "dualWielding") { return -4, 12, 2, (WOF_ADD | WOF_INTERPOLATE | WOF_MOVEFLASH); }
-				else { return Super.GetOffsets(no); }
+				else { return Super.GetOffsets(no), 0, 1, 0; }
 			default:
-				return Super.GetOffsets(no);
+				return Super.GetOffsets(no), 0, 1, 0;
 		}
 	}
 	

@@ -105,7 +105,7 @@ class ddSuperShotgun : ddWeapon
 		{
 			if(ddp.player.readyweapon is "dualWielding" || ddp.player.pendingweapon is "dualWielding" || ddp.lastmode is "dualWielding")  { return "SH2DA0", -1; }
 			else if(ddp.player.readyweapon is "twoHanding" || ddp.player.pendingweapon is "twoHanding" || ddp.lastmode is "twoHanding")   { return "SHT2A0", -1; }
-			else { return "TNT1A0"; }
+			else { return "TNT1A0", -1; }
 		}
 		else if(forcemode == 2) { return "SH2DA0", -1; }
 		else if(forcemode == 1) { return "SHT2A0", -1; }

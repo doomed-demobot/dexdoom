@@ -399,7 +399,7 @@ class ddStats : BaseStatusBar
 			case 3: return "ALTFIRING", Font.CR_LIGHTBLUE;
 			case 4: return "MODE SWAPPING", FONT.CR_RED;
 			case 5: return "UNLOADING", FONT.CR_CREAM;
-			default: return "undefined";
+			default: return "undefined", FONT.CR_RED;
 		}
 	}
 }

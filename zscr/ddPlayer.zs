@@ -734,7 +734,7 @@ class ddPlayer : DoomPlayer
 		let psprf = player.GetPSprite(PSP_RIGHTWF);
 		let mode = player.GetPSprite(PSP_WEAPON);
 		lastmode = ddWeapon(FindInventory("twoHanding"));
-		player.SetPSprite(PSP_LEFTW, lw.FindState('Ready'));
+		player.SetPSprite(PSP_LEFTW, lw.FindState('Select'));
 		player.SetPSprite(PSP_RIGHTW, rw.FindState('Select'));
 		pspr.x = 0; psprf.x = 0;
 		pspr.y = 128; psprf.y = 128;

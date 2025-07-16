@@ -126,7 +126,7 @@ class ddPistol : ddWeapon replaces Pistol
 				//return "PISDA0", fr; 
 			}
 			else { 
-				return "TNT1A0"; }
+				return "TNT1A0", -1; }
 		}
 		else if(forcemode == 2) { return "PISLA0", ((ddweaponflags & PIS_RSEQ) ? 10 : 0); }
 		else if(forcemode == 1) {
@@ -220,9 +220,8 @@ class ddPistol : ddWeapon replaces Pistol
 			case 2:
 				return 0, 8, 3, (WOF_KEEPX | WOF_INTERPOLATE | WOF_MOVEFLASH);
 			default:
-				return Super.GetOffsets(no);
+				return Super.GetOffsets(no), 0, 1, 0;
 		}
-		return Super.GetOffsets(no);
 	}
 	
 	override void DD_WeapAction(int no)

@@ -33,7 +33,7 @@ class ddKnife : ddFist
 	
 	override String, int GetSprites()
 	{
-		return "KNFGA0";
+		return "KNFGA0", -1;
 	}
 	
 	override String GetWeaponSprite()

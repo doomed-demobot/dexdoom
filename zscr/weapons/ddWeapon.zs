@@ -169,7 +169,6 @@ class ddWeapon : Weapon
 		return 0, 0, 1, 0;
 	}
 	
-	//math not adding up :*
 	private void DoDDWeaponOffset(int layer, int xoff, int yoff, int offLength = 1, int dofflags = 0)
 	{
 		let ddp = ddPlayer(owner);
@@ -177,6 +176,7 @@ class ddWeapon : Weapon
 		if(!ddp) { return; }
 		if(offLength < 1) { console.printf(GetClassName().." offset length cannot be less than 1"); return; }
 		PSprite psp = ddp.player.GetPSprite(layer);
+		PSprite pspf = ddp.player.GetPSprite(layer+1);
 		weap.offsetLength = offLength-1;
 		if(dofFlags & WOF_INTERPOLATE || dofflags & WOF_ADD) { weap.offsetInterp = true; }
 		else { weap.offsetInterp = false; }
@@ -184,14 +184,16 @@ class ddWeapon : Weapon
 		else { weap.offsetFlashState = false; }
 		if(!(dofflags & WOF_KEEPX))
 		{
-			if(dofflags & WOF_STARTATORIGIN) { psp.x = (ddp.player.readyweapon is "dualWielding") ? ((weaponside) ? -65 : 65) : 0; }
-			if(dofflags & WOF_ADD)  { weap.offsetStepLengthX = (psp.x + xoff) / offLength; }
+			if(dofflags & WOF_STARTATORIGIN) { 
+				psp.x = pspf.x = (ddp.player.readyweapon is "dualWielding") ? ((weaponside) ? -65 : 65) : 0;
+			}
+			if(dofflags & WOF_ADD)  { weap.offsetStepLengthX = (xoff / offLength); }
 			else { weap.offsetStepLengthX = (xoff - psp.x) / offLength; }
 		}
 		if(!(dofflags & WOF_KEEPY))
 		{
-			if(dofflags & WOF_STARTATORIGIN) { psp.y = 0; }
-			if(dofflags & WOF_ADD) { weap.offsetStepLengthY = (psp.y + yoff) / offLength; }
+			if(dofflags & WOF_STARTATORIGIN) { psp.y = pspf.y = 0; }
+			if(dofflags & WOF_ADD) { weap.offsetStepLengthY = (yoff / offLength); }
 			else { weap.offsetStepLengthY = (yoff - psp.y) / offLength; }
 		}
 		
@@ -659,7 +661,8 @@ class ddWeapon : Weapon
 	
 	//apply bonuses during berserk
 	virtual void WhileBerserk() {} 
-		
+	
+	//if frame needs to be greater than 0, does that mean frame A is unusable?
 	action void A_ChangeSprite(int forcemode = -1)
 	{
 		let ddp = ddPlayer(invoker.owner);
@@ -769,21 +772,28 @@ class ddWeapon : Weapon
 		let ddp = ddPlayer(self);
 		if(!ddp) { return; }
 		ddWeapon weap;
+		PSprite psp, pspf;
 		if(stateinfo.mPSPIndex == PSP_LEFTW) { 
 			weap = ddp.GetLeftWeapon(ddp.lwx);
 			ddp.ddWeaponState |= DDW_LEFTREADY;
 			ddp.ddWeaponState |= DDW_LEFTBOBBING;
 			ddp.ddWeaponState &= ~DDW_LEFTNOBOBBING;
+			psp = ddp.player.GetPSprite(PSP_LEFTW);
+			pspf = ddp.player.GetPSprite(PSP_LEFTWF);
 		}
 		else if(stateinfo.mPSPIndex == PSP_RIGHTW) { 
 			weap = ddp.GetRightWeapon(ddp.rwx);
 			ddp.ddWeaponState |= DDW_RIGHTREADY;
 			ddp.ddWeaponState |= DDW_RIGHTBOBBING;
 			ddp.ddWeaponState &= ~DDW_RIGHTNOBOBBING;
+			psp = ddp.player.GetPSprite(PSP_RIGHTW);
+			pspf = ddp.player.GetPSprite(PSP_RIGHTWF);
 		}
 		if(weap.ReadySound && playUpSound) {
 			if(weap.bReadySndHalf || random() < 128) { ddp.A_StartSound(weap.ReadySound, CHAN_WEAPON); }
 		}
+		psp.x = pspf.x = (ddp.player.readyweapon is "dualWielding") ? ((weap.weaponside) ? -65 : 65) : 0;
+		psp.y = pspf.y = 0;
 		weap.offsetLength = -1;
 		weap.weaponStatus = DDW_READY;
 		weap.weaponReady = true;

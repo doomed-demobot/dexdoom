@@ -27,7 +27,7 @@ class ddPowerFist : ddFist
 	
 	override String, int GetSprites()
 	{
-		return "IMPAA0";
+		return "IMPAA0", -1;
 	}
 	
 	override String GetWeaponSprite()
