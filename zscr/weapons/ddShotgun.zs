@@ -28,6 +28,7 @@ class ddShotgun : ddWeapon
 		Inventory.PickupMessage "$GOTSHOTGUN";
 		Obituary "$OB_MPSHOTGUN";
 		Tag "$TAG_SHOTGUN";
+		+DDWEAPON.BOBWHENREADY;
 	}
 	
 	/*
@@ -186,8 +187,12 @@ class ddShotgun : ddWeapon
 		switch(no)
 		{
 			case 1:
-				if(owner.player.readyweapon is "twohanding") { return 0, 12, 2, (WOF_KEEPX | WOF_INTERPOLATE | WOF_MOVEFLASH | WOF_STARTATORIGIN); }
-				else if(owner.player.readyweapon is "dualWielding") { return -4, 12, 2, (WOF_ADD | WOF_INTERPOLATE | WOF_MOVEFLASH); }
+				if(owner.player.readyweapon is "twohanding") { return 0, 12, 1, (WOF_KEEPX | WOF_INTERPOLATE | WOF_MOVEFLASH | WOF_STARTATORIGIN); }
+				else if(owner.player.readyweapon is "dualWielding") { return -4, 12, 1, (WOF_ADD | WOF_INTERPOLATE | WOF_MOVEFLASH); }
+				else { return Super.GetOffsets(no), 0, 1, 0; }
+			case 2:
+				if(owner.player.readyweapon is "twoHanding") { return 0, 0, 3, (WOF_KEEPX | WOF_INTERPOLATE | WOF_MOVEFLASH); }
+				else if(owner.player.readyweapon is "dualWielding") { return 4, 0, 3, (WOF_ADD | WOF_INTERPOLATE | WOF_MOVEFLASH); }
 				else { return Super.GetOffsets(no), 0, 1, 0; }
 			default:
 				return Super.GetOffsets(no), 0, 1, 0;
@@ -262,6 +267,7 @@ class ddShotgun : ddWeapon
 			#### A 0 A_DDFlash;
 			#### A 1 A_DDWeaponOffset;
 			#### A 1 A_FireDDWeapon;
+			#### A 2 A_DDWeaponOffset;
 			#### A 6;
 			#### A 2 A_WeapAction;
 			Goto Ready;	

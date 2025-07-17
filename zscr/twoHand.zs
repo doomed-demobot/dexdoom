@@ -197,6 +197,7 @@ class twoHanding : ddWeapon
 					ddp.ddWeaponState &= ~DDW_RIGHTREADY;
 					ddp.ddWeaponState &= ~DDW_RIGHTBOBBING;
 					weap.bAltFire = false;
+					if(weap.bBobWhenReady) { ddp.ddWeaponState |= DDW_RIGHTNOBOBBING; }
 					player.SetPSprite(PSP_RIGHTW, weap.GetAttackState());
 					if(!weap.bNoAlert)
 					{
@@ -217,6 +218,7 @@ class twoHanding : ddWeapon
 					weap.weaponStatus = DDW_ALTFIRING;
 					ddp.ddWeaponState &= ~DDW_RIGHTBOBBING;
 					weap.bAltFire = true;
+					if(weap.bBobWhenReady) { ddp.ddWeaponState |= DDW_RIGHTNOBOBBING; }
 					player.SetPSprite(PSP_RIGHTW, weap.GetAttackState());
 					if(!weap.bNoAlert)
 					{
@@ -243,6 +245,7 @@ class twoHanding : ddWeapon
 			{
 				if(ddp.ddWeaponState & DDW_RIGHTREADY)
 				{
+					if(weap.bBobWhenReady) { ddp.ddWeaponState |= DDW_RIGHTNOBOBBING; }
 					player.SetPSprite(PSP_RIGHTW, weap.FindState('Select'));
 					A_CheckRightWeaponMag();
 					weap.weaponready = false;

@@ -149,6 +149,20 @@ class ddChaingun : ddWeapon replaces Chaingun
 		else { return 12; } 
 	}
 	
+	override int, int, int, int GetOffsets(int no)
+	{
+		if(owner.CountInv("Clip") < 1) { return Super.GetOffsets(no), 0, 1, 0; }
+		switch(no)
+		{
+			case 1:
+				return 0, 4, 1, (WOF_KEEPX | WOF_INTERPOLATE | WOF_MOVEFLASH | WOF_STARTATORIGIN);
+			case 2:
+				return 0, -2, 1, (WOF_KEEPX | WOF_INTERPOLATE | WOF_MOVEFLASH);
+			default:
+				return Super.GetOffsets(no), 0, 1, 0;
+		}
+	}
+	
 	override void DD_WeapAction(int no)
 	{
 		let ddp = ddPlayer(owner);
@@ -188,12 +202,16 @@ class ddChaingun : ddWeapon replaces Chaingun
 			Loop;
 		Fire:
 			CHGG A 0 A_ChainSpin;
+			CHGG A 1 A_DDWeaponOffset;
 			CHGG A 0 A_DDFlash;
 			CHGG A 1 A_FireDDWeapon;
+			CHGG A 2 A_DDWeaponOffset;
 			CHGG A 1 A_SetTicks;
+			CHGG A 1 A_DDWeaponOffset;
 			CHGG A 0 A_DDFlash;
 			CHGG B 0 A_ChainSpin;
 			CHGG B 1 A_FireDDWeapon;
+			CHGG A 2 A_DDWeaponOffset;
 			CHGG A 1 A_SetTicks;
 			CHGG B 0 A_DDRefire;
 			Goto Ready;

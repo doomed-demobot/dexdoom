@@ -28,6 +28,7 @@ class ddPistol : ddWeapon replaces Pistol
 		Obituary "$OB_MPPISTOL";
 		Inventory.Pickupmessage "$PICKUP_PISTOL_DROPPED";
 		Tag "$TAG_PISTOL";
+		+DDWEAPON.BOBWHENREADY;
 	}
 	
 	

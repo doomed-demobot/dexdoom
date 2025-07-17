@@ -76,6 +76,7 @@ class ddWeapon : Weapon
 	flagdef noReload     : prFlags, 2; //weapon mag isn't check with reload key
 	flagdef twoHander	 : prFlags, 3; //weapon can only be used in twoHanding; replaced with fists if equipped in dualWielding
 	flagdef goesInInv	 : prFlags, 4; //weapon goes into playerInventory;
+	flagdef bobWhenReady : prFlags, 5; //weapon will active nobobbing during states
 	Default
 	{
 		Weapon.MinSelectionAmmo1  0;
@@ -99,6 +100,7 @@ class ddWeapon : Weapon
 		+DONTTHRUST;
 		+INVULNERABLE;
 		+DDWEAPON.GOESININV;
+		-DDWEAPON.BOBWHENREADY;
 		-DDWEAPON.MODEREADY;
 		-DDWEAPON.NOLOWER;
 	}
@@ -117,6 +119,7 @@ class ddWeapon : Weapon
 				{
 					ddp.ddWeaponState |= (weaponside) ? DDW_LEFTNOBOBBING : DDW_RIGHTNOBOBBING;
 					myPSp.firstTic = offsetInterp;
+					myFlash.firstTic = offsetInterp;
 					myPSp.x += offsetStepLengthX;
 					myPSp.y += offsetStepLengthY;
 					if(offsetFlashState)
@@ -128,7 +131,7 @@ class ddWeapon : Weapon
 				}
 				else
 				{
-					if(offsetLength == -1) { ddp.ddWeaponState &= (weaponside) ? ~DDW_LEFTNOBOBBING : ~DDW_RIGHTNOBOBBING; }
+					if(offsetLength == -1 && !bBobWhenReady) { ddp.ddWeaponState &= (weaponside) ? ~DDW_LEFTNOBOBBING : ~DDW_RIGHTNOBOBBING; }
 					offsetLength = -2;
 					offsetStepLengthX = 0; offsetStepLengthY = 0;
 				}
@@ -794,7 +797,7 @@ class ddWeapon : Weapon
 		}
 		psp.x = pspf.x = (ddp.player.readyweapon is "dualWielding") ? ((weap.weaponside) ? -65 : 65) : 0;
 		psp.y = pspf.y = 0;
-		weap.offsetLength = -1;
+		weap.offsetLength = -2;
 		weap.weaponStatus = DDW_READY;
 		weap.weaponReady = true;
 	}

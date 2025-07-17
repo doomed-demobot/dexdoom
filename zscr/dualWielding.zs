@@ -398,6 +398,7 @@ class dualWielding : ddWeapon
 						ddp.ddWeaponState &= ~DDW_LEFTREADY;
 						ddp.ddWeaponState &= ~DDW_LEFTBOBBING;
 						lw.bAltFire = false;
+						if(lw.bBobWhenReady) { ddp.ddWeaponState |= DDW_LEFTNOBOBBING; }
 						player.SetPSprite(PSP_LEFTW, lw.GetAttackState());
 						if(!lw.bNoAlert)
 						{
@@ -416,6 +417,7 @@ class dualWielding : ddWeapon
 						ddp.ddWeaponState &= ~DDW_LEFTREADY;
 						ddp.ddWeaponState &= ~DDW_LEFTBOBBING;
 						lw.bAltFire = true;
+						if(lw.bBobWhenReady) { ddp.ddWeaponState |= DDW_LEFTNOBOBBING; }
 						player.SetPSprite(PSP_LEFTW, lw.GetAttackState());
 						if(!lw.bNoAlert)
 						{
@@ -449,6 +451,7 @@ class dualWielding : ddWeapon
 						ddp.ddWeaponState &= ~DDW_RIGHTREADY;
 						ddp.ddWeaponState &= ~DDW_RIGHTBOBBING;
 						rw.bAltFire = false;
+						if(rw.bBobWhenReady) { ddp.ddWeaponState |= DDW_RIGHTNOBOBBING; }
 						player.SetPSprite(PSP_RIGHTW, rw.GetAttackState());
 						if(!rw.bNoAlert)
 						{
@@ -467,6 +470,7 @@ class dualWielding : ddWeapon
 						ddp.ddWeaponState &= ~DDW_RIGHTREADY;
 						ddp.ddWeaponState &= ~DDW_RIGHTBOBBING;
 						rw.bAltFire = true;
+						if(rw.bBobWhenReady) { ddp.ddWeaponState |= DDW_RIGHTNOBOBBING; }
 						player.SetPSprite(PSP_RIGHTW, rw.GetAttackState());
 						if(!rw.bNoAlert)
 						{
