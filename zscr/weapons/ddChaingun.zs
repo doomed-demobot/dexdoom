@@ -151,7 +151,7 @@ class ddChaingun : ddWeapon replaces Chaingun
 	
 	override int, int, int, int GetOffsets(int no)
 	{
-		if(owner.CountInv("Clip") < 1) { return Super.GetOffsets(no), 0, 1, 0; }
+		if(owner.CountInv("Clip") < 1) { return 0, 0, 1, (WOF_ADD); }
 		switch(no)
 		{
 			case 1:

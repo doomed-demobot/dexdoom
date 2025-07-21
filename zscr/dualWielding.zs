@@ -583,7 +583,6 @@ class dualWielding : ddWeapon
 				{
 					pspl.y = 0; psplf.y = 0;
 					if(rw) { lw.companionpiece = rw; rw.companionpiece = rw; }
-					player.SetPSprite(PSP_LEFTW, lw.GetReadyState());
 					ddp.altModeL = lw.fireMode;
 					mode.blraised = true;
 				}
@@ -618,7 +617,6 @@ class dualWielding : ddWeapon
 				{
 					pspr.y = 0; psprf.y = 0;
 					if(lw) { rw.companionpiece = lw; lw.companionpiece = rw; }
-					player.SetPSprite(PSP_RIGHTW, rw.GetReadyState());
 					ddp.altModeR = rw.fireMode;
 					mode.brraised = true;
 				}
@@ -628,6 +626,8 @@ class dualWielding : ddWeapon
 			{
 				invoker.bModeReady = true;
 				invoker.weaponStatus = DDW_READY;
+				player.SetPSprite(PSP_LEFTW, lw.GetReadyState());
+				player.SetPSprite(PSP_RIGHTW, rw.GetReadyState());
 				A_ChangeState('Ready');
 			}
 		}

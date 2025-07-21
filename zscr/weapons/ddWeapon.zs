@@ -795,7 +795,7 @@ class ddWeapon : Weapon
 		if(weap.ReadySound && playUpSound) {
 			if(weap.bReadySndHalf || random() < 128) { ddp.A_StartSound(weap.ReadySound, CHAN_WEAPON); }
 		}
-		psp.x = pspf.x = (ddp.player.readyweapon is "dualWielding") ? ((weap.weaponside) ? -65 : 65) : 0;
+		psp.x = pspf.x = (ddp.player.readyweapon is "dualWielding" || ddp.lastmode is "dualWielding") ? ((weap.weaponside) ? -65 : 65) : 0;
 		psp.y = pspf.y = 0;
 		weap.offsetLength = -2;
 		weap.weaponStatus = DDW_READY;
