@@ -266,7 +266,6 @@ class ddWeapon : Weapon
 		let mode = ddWeapon(ddp.player.readyweapon);
 		if(ddp.ddWeaponState & DDW_WANNAREPLACE)
 		{
-			//todo: see if you can collapse this; shouldnt need copies of the same function for a simple side difference; especially since the update
 			if(ddp.ddWeaponState & DDW_REPLACELEFT)
 			{
 				goner = ddWeapon(lWeap.RetItem(ddp.lwx));
@@ -875,7 +874,7 @@ class ddWeapon : Weapon
 		if(!(player.weaponState & (WF_QUICKLEFTOK | WF_QUICKRIGHTOK)) && invoker.bModeReady && bPress && player.health > 0)
 		{
 			player.refire++;
-			if(st == weap.FindState('DoNotJump')) { return; }
+			if(st == weap.FindState('DoNotJump')) { player.refire = 0; return; }
 			else { weap.weaponStatus = (!weap.bAltFire) ? DDW_FIRING : DDW_ALTFIRING; psp.SetState(st); weap.OnRefire(); }
 		}
 		else { player.refire = 0; }
@@ -1569,7 +1568,8 @@ class ddWeapon : Weapon
 		else 
 		{ 
 			mode.bmodeready = true;
-			pspl.SetState(lWeap.GetReadyState());
+			if(mode is "dualWielding" || ddp.lastmode is "dualWielding") { pspl.SetState(lWeap.GetReadyState()); }
+			else { pspl.SetState(lWeap.GetUpState()); }
 			pspr.SetState(rWeap.GetReadyState());
 			A_ChangeState("Ready"); 
 		} 
