@@ -1,5 +1,12 @@
 //The base player
 // #Class ddPlayer : DoomPlayer()
+enum modeNames{
+	UNKN = -1,
+	TWOHAND = 0,
+	DUALWIELD = 1,
+	PINVENTORY = 2,
+};
+
 class ddPlayer : DoomPlayer
 {	
 	int rwx, lwx; //weapon slots, right and left;
@@ -545,6 +552,25 @@ class ddPlayer : DoomPlayer
 			ReportInventory();
 		}
 	}
+	
+	//check which firemode is currently active. lastmode checks if mode was the last one selected.
+	int GetFireMode(bool isPending, bool wasLastMode = true)
+	{
+		if(player.readyweapon is "twoHanding" || (wasLastMode && lastmode is "twoHanding") || (isPending && player.pendingWeapon is "twoHanding"))
+		{
+			return TWOHAND;
+		}
+		else if(player.readyweapon is "dualWielding" || (wasLastMode && lastmode is "dualWielding") || (isPending && player.pendingWeapon is "dualWielding"))
+		{
+			return DUALWIELD;
+		}
+		else if(player.readyweapon is "playerInventory" || (wasLastMode && lastmode is "playerInventory") || (isPending && player.pendingWeapon is "playerInventory"))
+		{
+			return PINVENTORY;
+		}
+		else { return UNKN; }
+	}
+	
 	
 	void CheckSwapButtons()
 	{

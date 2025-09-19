@@ -77,6 +77,7 @@ class ddWeapon : Weapon
 	flagdef twoHander	 : prFlags, 3; //weapon can only be used in twoHanding; replaced with fists if equipped in dualWielding
 	flagdef goesInInv	 : prFlags, 4; //weapon goes into playerInventory;
 	flagdef bobWhenReady : prFlags, 5; //weapon will active nobobbing during states
+	flagdef flipOffsets : prFlags, 6; //xoffset for ddweaponoffset flips depending on weaponside
 	Default
 	{
 		Weapon.MinSelectionAmmo1  0;
@@ -162,6 +163,7 @@ class ddWeapon : Weapon
 		if(weap)
 		{ 
 			[xoff, yoff, offLength, dofflags] = weap.GetOffsets(no);
+			if(weap.bflipoffsets && weap.weaponside == CE_LEFT) { xoff *= -1; }
 			weap.DoDDWeaponOffset(stateinfo.mPSPIndex, xoff, yoff, offLength, dofflags);
 		}
 	}

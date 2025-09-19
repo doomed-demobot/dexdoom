@@ -182,7 +182,12 @@ class ddStats : BaseStatusBar
 				}
 			}
 			DrawString(fa, "]", (95 + dis, -15), DI_SCREEN_CENTER_BOTTOM, Font.CR_TEAL);
+			//when scaling, make sure its not based on ui fields, as they dont pause
+			Screen.DrawTexture(TexMan.CheckForTexture("reticler"), false, 300, 200, DTA_Alpha, 0.5, DTA_ScaleX, (1.0 + (1.0 * sin(oscilator))), DTA_ScaleY, (1.0 + (1.0 * sin(oscilator))));
+			Screen.DrawTexture(TexMan.CheckForTexture("reticlel"), false, 300, 200, DTA_Alpha, 0.5);
 			
+			Screen.DrawTexture(TexMan.CheckForTexture("reticler"), false, 30, 0, DTA_Alpha, 0.5);
+			Screen.DrawTexture(TexMan.CheckForTexture("reticlel"), false, 30, 10, DTA_Alpha, 0.5);
 		}
 	}
 	
