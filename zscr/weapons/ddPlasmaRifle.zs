@@ -199,8 +199,8 @@ class ddPlasmaRifle : ddWeapon replaces PlasmaRifle
 		let mode = ddWeapon(ddp.player.readyweapon);
 		let me = ddWeapon(self);
 		let cpiece = ddWeapon(me.companionpiece);
-		int myside = (weaponside) ? PSP_LEFTW : PSP_RIGHTW; 
-		int flashside = (weaponside) ? PSP_LEFTWF : PSP_RIGHTWF;
+		int myside = (weaponside) ? PSP_LEFTW0 : PSP_RIGHTW0; 
+		int flashside = (weaponside) ? PSP_LEFTWF0 : PSP_RIGHTWF0;
 		switch(no)
 		{
 			case 1: //init/ammo check

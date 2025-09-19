@@ -36,8 +36,8 @@ class ddSuperShotgun : ddWeapon
 		if(owner is "ddPlayerNormal")
 		{
 			//speed up states when berserk
-			let myside = (weaponside) ? owner.player.getpsprite(PSP_LEFTW) : owner.player.getpsprite(PSP_RIGHTW);
-			let myflash = (weaponside) ? owner.player.getpsprite(PSP_LEFTWF) : owner.player.getpsprite(PSP_RIGHTWF);
+			let myside = (weaponside) ? owner.player.getpsprite(PSP_LEFTW0) : owner.player.getpsprite(PSP_RIGHTW0);
+			let myflash = (weaponside) ? owner.player.getpsprite(PSP_LEFTWF0) : owner.player.getpsprite(PSP_RIGHTWF0);
 			if(weaponstatus == DDW_RELOADING) { if(myside.tics > 3) { myside.tics--; } if(myflash.tics > 1) { myflash.tics--; } }
 		}
 	}
@@ -172,14 +172,36 @@ class ddSuperShotgun : ddWeapon
 		else { }
 	}
 	
+	override int, int, int, int GetOffsets(int no)
+	{
+		if(!owner) { return Super.GetOffsets(no), 0, 1, 0; }
+		switch(no)
+		{
+			case 1: //primary
+				if(owner.player.readyweapon is "twohanding") { return random(-4, 4), 16, 1, (WOF_ADD | WOF_INTERPOLATE | WOF_MOVEFLASH | WOF_STARTATORIGIN); }
+				else if(owner.player.readyweapon is "dualWielding") { return random(-6, 6), 20, 1, (WOF_ADD | WOF_INTERPOLATE | WOF_MOVEFLASH); }
+				else { return Super.GetOffsets(no), 0, 1, 0; }
+			case 2: //alternative
+				if(owner.player.readyweapon is "twohanding") { return 0, 12, 1, (WOF_KEEPX | WOF_INTERPOLATE | WOF_MOVEFLASH | WOF_STARTATORIGIN); }
+				else if(owner.player.readyweapon is "dualWielding") { return 0, 12, 1, (WOF_KEEPX | WOF_INTERPOLATE | WOF_MOVEFLASH); }
+				else { return Super.GetOffsets(no), 0, 1, 0; }
+			case 3:				
+				if(owner.player.readyweapon is "twoHanding") { return 0, 0, 3, (WOF_KEEPX | WOF_INTERPOLATE | WOF_MOVEFLASH); }
+				else if(owner.player.readyweapon is "dualWielding") { return 4, 0, 3, (WOF_ADD | WOF_INTERPOLATE | WOF_MOVEFLASH); }
+				else { return Super.GetOffsets(no), 0, 1, 0; }
+			default:
+				return Super.GetOffsets(no), 0, 1, 0;
+		}
+	}
+	
 	override void DD_WeapAction(int no)
 	{
 		let ddp = ddPlayer(owner);
 		let mode = ddWeapon(ddp.player.readyweapon);
 		let me = ddWeapon(self);
 		let cpiece = ddWeapon(me.companionpiece);
-		int myside = (weaponside) ? PSP_LEFTW : PSP_RIGHTW; 
-		int flashside = (weaponside) ? PSP_LEFTWF : PSP_RIGHTWF;
+		int myside = (weaponside) ? PSP_LEFTW0 : PSP_RIGHTW0; 
+		int flashside = (weaponside) ? PSP_LEFTWF0 : PSP_RIGHTWF0;
 		let res = ModeCheck();
 		switch(no)
 		{
@@ -237,7 +259,9 @@ class ddSuperShotgun : ddWeapon
 			#### A 1 A_WeapAction;
 			#### A 3;
 			#### A 0 A_DDFlash;
+			#### A 1 A_DDWeaponOffset;
 			#### A 1 A_FireDDWeapon;
+			#### A 3 A_DDWeaponOffset;
 			#### A 6;
 			#### A 2 A_WeapAction;
 			Goto Ready;
@@ -251,7 +275,9 @@ class ddSuperShotgun : ddWeapon
 			#### A 1 A_WeapAction;
 			#### A 3;
 			#### A 0 A_DDFlash;
+			#### A 2 A_DDWeaponOffset;
 			#### A 1 A_FireDDWeapon;
+			#### A 3 A_DDWeaponOffset;
 			#### A 6;
 			#### A 2 A_WeapAction;
 			Goto Ready;
@@ -428,8 +454,8 @@ extend class ddWeapon
 		for(int x = 0; x < 10; x++)
 		{
 			dam = 5 * random(1,3);
-			if(pen) { eA = Random2() * (8.75 / 256); eP = Random2() * (9.25 / 256); }
-			else { eA = Random2() * (6.75 / 256); eP = Random2() * (5.097 / 256); }
+			if(pen) { eA = Random2() * (5.65 / 256); eP = Random2() * (6.66 / 256); }
+			else { eA = Random2() * (4.75 / 256); eP = Random2() * (5.097 / 256); }
 			ddShot(false, "BulletPuff", dam, eA, eP, weap.weaponside, kick);
 		}	
 		if(pen) { AddRecoil(15., 6, 4.); }

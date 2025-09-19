@@ -65,12 +65,12 @@ class ddKnife : ddFist
 	override void DD_WeapAction(int no)
 	{		
 		let ddp = ddPlayer(owner);
-		let pspl = ddp.player.GetPSprite(PSP_LEFTW);
-		let psplf = ddp.player.GetPSprite(PSP_LEFTWF);
-		let pspr = ddp.player.GetPSprite(PSP_RIGHTW);
-		let psprf = ddp.player.GetPSprite(PSP_RIGHTWF);
-		int myside = (weaponside) ? PSP_LEFTW : PSP_RIGHTW; 
-		int flashside = (weaponside) ? PSP_LEFTWF : PSP_RIGHTWF;
+		let pspl = ddp.player.GetPSprite(PSP_LEFTW0);
+		let psplf = ddp.player.GetPSprite(PSP_LEFTWF0);
+		let pspr = ddp.player.GetPSprite(PSP_RIGHTW0);
+		let psprf = ddp.player.GetPSprite(PSP_RIGHTWF0);
+		int myside = (weaponside) ? PSP_LEFTW0 : PSP_RIGHTW0; 
+		int flashside = (weaponside) ? PSP_LEFTWF0 : PSP_RIGHTWF0;
 		switch(no)
 		{
 			case 1:

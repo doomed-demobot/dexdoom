@@ -84,7 +84,7 @@ class ddRocketLauncher : ddWeapon replaces RocketLauncher
 	{
 		if(!owner) { return; }
 		if(held) { return; }
-		if(ddWeaponFlags & RKL_RLOD) { ddWeaponFlags &= ~RKL_RLOD; ChangeState("RFinish", (weaponside) ? PSP_LEFTW : PSP_RIGHTW); }
+		if(ddWeaponFlags & RKL_RLOD) { ddWeaponFlags &= ~RKL_RLOD; ChangeState("RFinish", (weaponside) ? PSP_LEFTW0 : PSP_RIGHTW0); }
 	}
 	
 	override String getParentType()
@@ -145,8 +145,8 @@ class ddRocketLauncher : ddWeapon replaces RocketLauncher
 		let mode = ddWeapon(ddp.player.readyweapon);
 		let me = ddWeapon(self);
 		let cpiece = ddWeapon(me.companionpiece);
-		int myside = (weaponside) ? PSP_LEFTW : PSP_RIGHTW; 
-		int flashside = (weaponside) ? PSP_LEFTWF : PSP_RIGHTWF;
+		int myside = (weaponside) ? PSP_LEFTW0 : PSP_RIGHTW0; 
+		int flashside = (weaponside) ? PSP_LEFTWF0 : PSP_RIGHTWF0;
 		let res = ModeCheck();
 		switch(no)
 		{

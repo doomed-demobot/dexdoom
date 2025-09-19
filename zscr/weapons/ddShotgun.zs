@@ -38,8 +38,8 @@ class ddShotgun : ddWeapon
 		if(owner is "ddPlayerNormal")
 		{
 			//speed up states when berserk
-			let myside = (weaponside) ? owner.player.getpsprite(PSP_LEFTW) : owner.player.getpsprite(PSP_RIGHTW);
-			let myflash = (weaponside) ? owner.player.getpsprite(PSP_LEFTWF) : owner.player.getpsprite(PSP_RIGHTWF);
+			let myside = (weaponside) ? owner.player.getpsprite(PSP_LEFTW0) : owner.player.getpsprite(PSP_RIGHTW0);
+			let myflash = (weaponside) ? owner.player.getpsprite(PSP_LEFTWF0) : owner.player.getpsprite(PSP_RIGHTWF0);
 			if(weaponstatus == DDW_RELOADING || weaponstatus == DDW_UNLOADING) { if(myside.tics > 3) { myside.tics--; } if(myflash.tics > 1) { myflash.tics--; } }
 		}
 	}*/
@@ -52,12 +52,12 @@ class ddShotgun : ddWeapon
 			PSPrite psp;
 			if(weaponside == CE_RIGHT)
 			{
-				psp = owner.player.getpsprite(PSP_RIGHTW);
+				psp = owner.player.getpsprite(PSP_RIGHTW0);
 				psp.sprite = GetSpriteIndex("SHH2A0");
 			}
 			else
 			{
-				psp = owner.player.getpsprite(PSP_LEFTW);
+				psp = owner.player.getpsprite(PSP_LEFTW0);
 				psp.sprite = GetSpriteIndex("SHOHA2");
 			}
 		}
@@ -229,8 +229,8 @@ class ddShotgun : ddWeapon
 		let mode = ddWeapon(ddp.player.readyweapon);
 		let me = ddWeapon(self);
 		let cpiece = ddWeapon(me.companionpiece);
-		int myside = (weaponside) ? PSP_LEFTW : PSP_RIGHTW; 
-		int flashside = (weaponside) ? PSP_LEFTWF : PSP_RIGHTWF;
+		int myside = (weaponside) ? PSP_LEFTW0 : PSP_RIGHTW0; 
+		int flashside = (weaponside) ? PSP_LEFTWF0 : PSP_RIGHTWF0;
 		let res = ModeCheck();
 		switch(no)
 		{

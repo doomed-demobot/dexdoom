@@ -118,9 +118,6 @@ class ddChaingun : ddWeapon replaces Chaingun
 	{
 		let ddp = ddPlayer(owner);
 		ddWeapon mode = ddWeapon(ddp.player.readyweapon);
-		/*if(mode is "dualWielding" || ddp.player.pendingweapon is "dualWielding" || ddp.lastmode is "dualWielding") {
-			ddp.player.GetPSprite(PSP_RIGHTWF).Frame = ((safeflasher) ? 5 : 4); 
-		}*/
 		if(!safeflasher) { safeflasher = !safeflasher; if(owner.CountInv(AmmoType1.GetClassName()) >= AmmoUse1) { return FindState('Flash'); } else { return FindState('NoFlash'); } }
 		else { safeflasher = !safeflasher; if(owner.CountInv(AmmoType1.GetClassName()) >= AmmoUse1) { return FindState('Flash2'); } else { return FindState('NoFlash'); } } 
 	}
@@ -155,7 +152,7 @@ class ddChaingun : ddWeapon replaces Chaingun
 		switch(no)
 		{
 			case 1:
-				return 0, 4, 1, (WOF_KEEPX | WOF_INTERPOLATE | WOF_MOVEFLASH | WOF_STARTATORIGIN);
+				return (spin > 18) ? random(-2, 2) : 0, 4, 1, (WOF_ADD | WOF_INTERPOLATE | WOF_MOVEFLASH | WOF_STARTATORIGIN);
 			case 2:
 				return 0, -2, 1, (WOF_KEEPX | WOF_INTERPOLATE | WOF_MOVEFLASH);
 			default:

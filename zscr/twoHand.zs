@@ -121,8 +121,8 @@ class twoHanding : ddWeapon
 		let lWeap = ddp.GetLeftWeapons();
 		let rWeap = ddp.GetRightWeapons();
 		let pInv = ddp.GetWeaponsInventory();
-		let pspr = ddp.player.getpsprite(PSP_RIGHTW);
-		let psprf = ddp.player.getpsprite(PSP_RIGHTWF);
+		let pspr = ddp.player.getpsprite(PSP_RIGHTW0);
+		let psprf = ddp.player.getpsprite(PSP_RIGHTWF0);
 		let weap = rWeap.RetItem(ddp.rwx);
 		if(weap is "ddFist") { ddp.A_Print("no can do", 1); ddp.A_StartSound("misc/boowomp", CHAN_BODY, CHANF_OVERLAP); return null; }
 		for(int x = 0; x < pInv.items.Size(); x++)
@@ -138,7 +138,7 @@ class twoHanding : ddWeapon
 				rSwapTarget = ddp.rwx;
 				rWeap.RetItem(ddp.rwx).companionpiece = lWeap.RetItem(ddp.lwx);
 				lWeap.RetItem(ddp.lwx).companionpiece = rWeap.RetItem(ddp.rwx);
-				ddp.player.setpsprite(PSP_RIGHTW, rWeap.RetItem(ddp.rwx).GetUpState());
+				ddp.player.setpsprite(PSP_RIGHTW0, rWeap.RetItem(ddp.rwx).GetUpState());
 				ddp.ddWeaponState &= ~DDW_RIGHTREADY;
 				bmodeready = false;
 				pspr.y = 128;
@@ -159,7 +159,7 @@ class twoHanding : ddWeapon
 		rSwapTarget = ddp.rwx;
 		rWeap.RetItem(ddp.rwx).companionpiece = lWeap.RetItem(ddp.lwx);
 		lWeap.RetItem(ddp.lwx).companionpiece = rWeap.RetItem(ddp.rwx);	
-		ddp.player.setpsprite(PSP_RIGHTW, rWeap.RetItem(ddp.rwx).GetUpState());
+		ddp.player.setpsprite(PSP_RIGHTW0, rWeap.RetItem(ddp.rwx).GetUpState());
 		ddp.ddWeaponState &= ~DDW_RIGHTREADY;
 		bmodeready = false;
 		pspr.y = 128;
@@ -175,7 +175,7 @@ class twoHanding : ddWeapon
 	{
 		let ddp = ddPlayer(self);
 		let weap = ddp.GetRightWeapon(ddp.rwx);
-		let pspr = player.getpsprite(PSP_RIGHTW);
+		let pspr = player.getpsprite(PSP_RIGHTW0);
 		if(ddp.ddWeaponState & DDW_WANNAREPLACE) 
 		{ 
 			if(A_PressingRightFire() || A_PressingRightAltFire()) 
@@ -198,7 +198,7 @@ class twoHanding : ddWeapon
 					ddp.ddWeaponState &= ~DDW_RIGHTBOBBING;
 					weap.bAltFire = false;
 					if(weap.bBobWhenReady) { ddp.ddWeaponState |= DDW_RIGHTNOBOBBING; }
-					player.SetPSprite(PSP_RIGHTW, weap.GetAttackState());
+					player.SetPSprite(PSP_RIGHTW0, weap.GetAttackState());
 					if(!weap.bNoAlert)
 					{
 						SoundAlert(self);
@@ -219,7 +219,7 @@ class twoHanding : ddWeapon
 					ddp.ddWeaponState &= ~DDW_RIGHTBOBBING;
 					weap.bAltFire = true;
 					if(weap.bBobWhenReady) { ddp.ddWeaponState |= DDW_RIGHTNOBOBBING; }
-					player.SetPSprite(PSP_RIGHTW, weap.GetAttackState());
+					player.SetPSprite(PSP_RIGHTW0, weap.GetAttackState());
 					if(!weap.bNoAlert)
 					{
 						SoundAlert(self);
@@ -236,7 +236,7 @@ class twoHanding : ddWeapon
 					weap.weaponStatus = DDW_FIRING;
 					weap.bAltFire = false;
 					A_StartSound("weapons/chaingunspin", CHAN_BODY, CHANF_OVERLAP);
-					player.SetPSprite(PSP_RIGHTW, weap.FindState('NoAmmo'));
+					player.SetPSprite(PSP_RIGHTW0, weap.FindState('NoAmmo'));
 					ddp.ddWeaponState &= ~DDW_RIGHTREADY;
 					weap.weaponready = false;
 				}
@@ -246,7 +246,7 @@ class twoHanding : ddWeapon
 				if(ddp.ddWeaponState & DDW_RIGHTREADY)
 				{
 					if(weap.bBobWhenReady) { ddp.ddWeaponState |= DDW_RIGHTNOBOBBING; }
-					player.SetPSprite(PSP_RIGHTW, weap.FindState('Select'));
+					player.SetPSprite(PSP_RIGHTW0, weap.FindState('Select'));
 					A_CheckRightWeaponMag();
 					weap.weaponready = false;
 					ddp.ddWeaponState &= ~DDW_RIGHTREADY;
@@ -262,10 +262,10 @@ class twoHanding : ddWeapon
 		let rWeap = ddp.GetRightWeapons();
 		let lw = ddp.GetLeftWeapon(ddp.lwx);
 		let rw = ddp.GetRightWeapon(ddp.rwx);
-		let pspl = player.GetPSprite(PSP_LEFTW);
-		let psplf = player.GetPSprite(PSP_LEFTWF);
-		let pspr = player.GetPSprite(PSP_RIGHTW);
-		let psprf = player.GetPSprite(PSP_RIGHTWF);
+		let pspl = player.GetPSprite(PSP_LEFTW0);
+		let psplf = player.GetPSprite(PSP_LEFTWF0);
+		let pspr = player.GetPSprite(PSP_RIGHTW0);
+		let psprf = player.GetPSprite(PSP_RIGHTWF0);
 		double sFactor;
 		if(rw) 
 		{
@@ -284,8 +284,8 @@ class twoHanding : ddWeapon
 					pspr.x = 0;
 					psprf.x = 0;
 					if(rw.UpSound) { ddp.A_StartSound(rw.UpSound, CHAN_WEAPON); }
-					player.SetPSprite(PSP_RIGHTW, rw.GetUpState());
-					player.SetPSprite(PSP_RIGHTWF, null);
+					player.SetPSprite(PSP_RIGHTW0, rw.GetUpState());
+					player.SetPSprite(PSP_RIGHTWF0, null);
 				}
 			}
 			else //raise right weapon
@@ -296,7 +296,7 @@ class twoHanding : ddWeapon
 				{
 					pspr.y = 0; psprf.y = 0;
 					if(lw) { rw.companionpiece = lw; lw.companionpiece = rw; }
-					player.SetPSprite(PSP_RIGHTW, rw.GetReadyState());
+					player.SetPSprite(PSP_RIGHTW0, rw.GetReadyState());
 					ddp.altModeR = rw.fireMode;
 					invoker.bModeReady = true;
 					invoker.weaponStatus = DDW_READY;
@@ -316,10 +316,10 @@ class twoHanding : ddWeapon
 		let rWeap = ddp.GetRightWeapons();
 		let lw = ddp.GetLeftWeapon(ddp.lwx);
 		let rw = ddp.GetRightWeapon(ddp.rwx);
-		let pspl = player.getpsprite(PSP_LEFTW);
-		let psplf = player.getpsprite(PSP_LEFTWF);
-		let pspr = player.getpsprite(PSP_RIGHTW);
-		let psprf = player.getpsprite(PSP_RIGHTWF);
+		let pspl = player.getpsprite(PSP_LEFTW0);
+		let psplf = player.getpsprite(PSP_LEFTWF0);
+		let pspr = player.getpsprite(PSP_RIGHTW0);
+		let psprf = player.getpsprite(PSP_RIGHTWF0);
 		double sFactor = rw.sFactor;
 		if(ddp.ddWeaponState & DDW_RIGHTISTH && pspr.y > 0)
 		{
@@ -337,8 +337,8 @@ class twoHanding : ddWeapon
 			invoker.bmodeReady = true;
 			ddp.ddWeaponState &= ~DDW_LEFTNOBOBBING;
 			ddp.ddWeaponState &= ~DDW_RIGHTNOBOBBING;
-			if(lWeap.items.Size()) { player.setpsprite(PSP_LEFTW, lw.GetUpState()); }
-			if(rWeap.items.Size()) { player.setpsprite(PSP_RIGHTW, rw.GetReadyState()); }
+			if(lWeap.items.Size()) { player.setpsprite(PSP_LEFTW0, lw.GetUpState()); }
+			if(rWeap.items.Size()) { player.setpsprite(PSP_RIGHTW0, rw.GetReadyState()); }
 			ddp.ddWeaponState |= DDW_LEFTREADY;
 			invoker.weaponstatus = DDW_READY;
 			A_ChangeState("Ready");
@@ -359,10 +359,10 @@ class twoHanding : ddWeapon
 		ddp.ddWeaponState &= ~DDW_REPLACERIGHT;
 		let lw = ddp.GetLeftWeapon(ddp.lwx);
 		let rw = ddp.GetRightWeapon(ddp.rwx);
-		let pspl = player.GetPSprite(PSP_LEFTW);
-		let psplf = player.GetPSprite(PSP_LEFTWF);
-		let pspr = player.GetPSprite(PSP_RIGHTW);
-		let psprf = player.GetPSprite(PSP_RIGHTWF);	
+		let pspl = player.GetPSprite(PSP_LEFTW0);
+		let psplf = player.GetPSprite(PSP_LEFTWF0);
+		let pspr = player.GetPSprite(PSP_RIGHTW0);
+		let psprf = player.GetPSprite(PSP_RIGHTWF0);	
 		double bsk = (ddp.FindInventory("PowerBerserk")) ? 2.0 : 1.0;
 		double sFactor = ((lw.sFactor + rw.sFactor + 1) / 2.0) * bsk;
 		if(ddp.ddWeaponState & DDW_RIGHTISTH && pspr.y < 128)
@@ -387,7 +387,7 @@ class twoHanding : ddWeapon
 			player.readyweapon = dwd;
 			ddp.lastmode = dwd;
 			let rw = ddp.GetRightWeapon(ddp.rwx);
-			player.setpsprite(PSP_RIGHTW, rw.GetUpState());
+			player.setpsprite(PSP_RIGHTW0, rw.GetUpState());
 			player.SetPSprite(PSP_WEAPON, dwd.GetUpState());
 		}
 		return;
@@ -399,10 +399,10 @@ class twoHanding : ddWeapon
 		let lWeap = ddp.GetLeftWeapon(ddp.lwx);
 		let rWeap = ddp.GetRightWeapon(ddp.rwx);
 		let lw = ddp.GetLeftWeapons();
-		let pspl = player.getpsprite(PSP_LEFTW);
-		let psplf = player.getpsprite(PSP_LEFTWF);
-		let pspr = player.getpsprite(PSP_RIGHTW);
-		let psprf = player.getpsprite(PSP_RIGHTWF);
+		let pspl = player.getpsprite(PSP_LEFTW0);
+		let psplf = player.getpsprite(PSP_LEFTWF0);
+		let pspr = player.getpsprite(PSP_RIGHTW0);
+		let psprf = player.getpsprite(PSP_RIGHTWF0);
 		pspr.y = 0; psprf.y = 0;
 		pspr.x = 0; psprf.x = 0;
 		if(ddp.lwx != invoker.lSwapTarget)
@@ -411,11 +411,11 @@ class twoHanding : ddWeapon
 			lWeap = lw.RetItem(ddp.lwx);
 			if(lWeap.bTwoHander && !ddp.CheckESOA(2)) { ddp.ddWeaponState |= DDW_LEFTISTH; }
 			else { ddp.ddWeaponState &= ~DDW_LEFTISTH; }
-			player.SetPSprite(PSP_LEFTW, lWeap.GetUpState());
+			player.SetPSprite(PSP_LEFTW0, lWeap.GetUpState());
 		}
 		if(ddp.dddebug & DBG_WEAPONS) { A_Log("mode ready"); }
 		invoker.bmodeready = true;  
-		player.SetPSprite(PSP_LEFTW, lWeap.FindState('Ready'));
+		player.SetPSprite(PSP_LEFTW0, lWeap.FindState('Ready'));
 		ddp.ddWeaponState &= ~DDW_LEFTNOBOBBING;
 		ddp.ddWeaponState &= ~DDW_RIGHTNOBOBBING;
 		invoker.weaponstatus = DDW_READY;

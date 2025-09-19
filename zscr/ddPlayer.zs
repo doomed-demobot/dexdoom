@@ -169,8 +169,8 @@ class ddPlayer : DoomPlayer
 	{
 		let player = self.player;
 		let weap = ddWeapon(player.readyweapon);
-		let psplw = player.GetPSprite(PSP_LEFTW);
-		let psprw = player.GetPSprite(PSP_RIGHTW);
+		let psplw = player.GetPSprite(PSP_LEFTW0);
+		let psprw = player.GetPSprite(PSP_RIGHTW0);
 		let pspr = player.psprites;
 		while(pspr)
 		{
@@ -238,8 +238,8 @@ class ddPlayer : DoomPlayer
 					if(FindInventory("ClassicModeToken")) { ddWeaponState &= ~DDW_LEFTISTH; ddWeaponState &= ~DDW_RIGHTISTH; }
 					ddWeaponState |= DDW_LEFTNOBOBBING;
 					ddWeaponState |= DDW_RIGHTNOBOBBING;
-					player.SetPSprite(PSP_LEFTW, lw.GetUpState());
-					player.SetPSprite(PSP_RIGHTW, rw.GetUpState());
+					player.SetPSprite(PSP_LEFTW0, lw.GetUpState());
+					player.SetPSprite(PSP_RIGHTW0, rw.GetUpState());
 					mode.bmodeready = false;
 					player.SetPSprite(PSP_WEAPON, player.readyweapon.GetDownState());		
 				}
@@ -248,8 +248,8 @@ class ddPlayer : DoomPlayer
 					if(FindInventory("ClassicModeToken")) { ddWeaponState &= ~DDW_LEFTISTH; ddWeaponState &= ~DDW_RIGHTISTH; }
 					ddWeaponState |= DDW_LEFTNOBOBBING;
 					ddWeaponState |= DDW_RIGHTNOBOBBING;
-					player.SetPSprite(PSP_LEFTW, lw.GetUpState());
-					player.SetPSprite(PSP_RIGHTW, rw.GetUpState());
+					player.SetPSprite(PSP_LEFTW0, lw.GetUpState());
+					player.SetPSprite(PSP_RIGHTW0, rw.GetUpState());
 					mode.bmodeready = false;
 					player.SetPSprite(PSP_WEAPON, player.readyweapon.GetDownState());
 					
@@ -625,14 +625,14 @@ class ddPlayer : DoomPlayer
 					else { ddWeaponState &= ~DDW_LEFTISTH; }
 					lw.companionpiece = rw;
 					rw.companionpiece = lw;
-					player.SetPSprite(PSP_LEFTW, lw.GetUpState());
-					player.SetPSprite(PSP_LEFTWF, null);
+					player.SetPSprite(PSP_LEFTW0, lw.GetUpState());
+					player.SetPSprite(PSP_LEFTWF0, null);
 				}
 			}
 			if((rwx != weap.rSwapTarget) && weap.weaponStatus == DDW_READY)
 			{
 				if(rw.weaponstatus == DDW_FIRING) { return; }
-				player.SetPSprite(PSP_RIGHTW, rw.GetUpState());
+				player.SetPSprite(PSP_RIGHTW0, rw.GetUpState());
 				ddWeaponState &= ~DDW_RIGHTREADY;
 				weap.bmodeready = false;
 				weap.weaponStatus = DDM_SWAPPING;
@@ -646,8 +646,8 @@ class ddPlayer : DoomPlayer
 			if((lwx != weap.lSwapTarget || rwx != weap.rSwapTarget) && weap.weaponStatus == DDW_READY)
 			{
 				if(lw.weaponstatus == DDW_FIRING || rw.weaponstatus == DDW_FIRING) { return; }
-				player.SetPSprite(PSP_LEFTW, lw.GetUpState());
-				player.SetPSprite(PSP_RIGHTW, rw.GetUpState());
+				player.SetPSprite(PSP_LEFTW0, lw.GetUpState());
+				player.SetPSprite(PSP_RIGHTW0, rw.GetUpState());
 				ddWeaponState &= ~DDW_LEFTREADY;
 				ddWeaponState &= ~DDW_RIGHTREADY;
 				dualWielding(weap).blraised = false;
@@ -754,14 +754,14 @@ class ddPlayer : DoomPlayer
 		rw.onInit();
 		let lw = GetLeftWeapon(lwx);
 		lw.onInit();
-		let pspl = player.GetPSprite(PSP_LEFTW);
-		let psplf = player.GetPSprite(PSP_LEFTWF);
-		let pspr = player.GetPSprite(PSP_RIGHTW);
-		let psprf = player.GetPSprite(PSP_RIGHTWF);
+		let pspl = player.GetPSprite(PSP_LEFTW0);
+		let psplf = player.GetPSprite(PSP_LEFTWF0);
+		let pspr = player.GetPSprite(PSP_RIGHTW0);
+		let psprf = player.GetPSprite(PSP_RIGHTWF0);
 		let mode = player.GetPSprite(PSP_WEAPON);
 		lastmode = ddWeapon(FindInventory("twoHanding"));
-		player.SetPSprite(PSP_LEFTW, lw.FindState('Select'));
-		player.SetPSprite(PSP_RIGHTW, rw.FindState('Select'));
+		player.SetPSprite(PSP_LEFTW0, lw.FindState('Select'));
+		player.SetPSprite(PSP_RIGHTW0, rw.FindState('Select'));
 		pspr.x = 0; psprf.x = 0;
 		pspr.y = 128; psprf.y = 128;
 		pspl.x = -64 - lw.xoffset; psplf.x = -64 - lw.xoffset;
@@ -794,14 +794,14 @@ class ddPlayer : DoomPlayer
 		rw.onInit();
 		let lw = GetLeftWeapon(lwx);
 		lw.onInit();
-		let pspl = player.GetPSprite(PSP_LEFTW);
-		let psplf = player.GetPSprite(PSP_LEFTWF);
-		let pspr = player.GetPSprite(PSP_RIGHTW);
-		let psprf = player.GetPSprite(PSP_RIGHTWF);
+		let pspl = player.GetPSprite(PSP_LEFTW0);
+		let psplf = player.GetPSprite(PSP_LEFTWF0);
+		let pspr = player.GetPSprite(PSP_RIGHTW0);
+		let psprf = player.GetPSprite(PSP_RIGHTWF0);
 		let mode = player.GetPSprite(PSP_WEAPON);
 		lastmode = ddWeapon(FindInventory("dualWielding"));
-		player.SetPSprite(PSP_LEFTW, lw.FindState('Select'));
-		player.SetPSprite(PSP_RIGHTW, rw.FindState('Select'));
+		player.SetPSprite(PSP_LEFTW0, lw.FindState('Select'));
+		player.SetPSprite(PSP_RIGHTW0, rw.FindState('Select'));
 		pspr.x = -64; psprf.x = -64;
 		pspr.y = 128; psprf.y = 128;
 		pspr.x = 64 + rw.xOffset; psprf.x = 64 + rw.xOffset;
@@ -816,10 +816,10 @@ class ddPlayer : DoomPlayer
 	{
 		let mode = ddWeapon(player.readyweapon);	
 		if(mode == null) { return; }
-		let pspl = player.GetPSprite(PSP_LEFTW);
-		let psplf = player.GetPSprite(PSP_LEFTWF);
-		let pspr = player.GetPSPrite(PSP_RIGHTW);
-		let psprf = player.GetPSprite(PSP_RIGHTWF);
+		let pspl = player.GetPSprite(PSP_LEFTW0);
+		let psplf = player.GetPSprite(PSP_LEFTWF0);
+		let pspr = player.GetPSPrite(PSP_RIGHTW0);
+		let psprf = player.GetPSprite(PSP_RIGHTWF0);
 		ddWeapon lw = GetLeftWeapon(lwx);
 		double LWBobSpeed = lw.BobSpeed;
 		double LWBobX = lw.BobRangeX;

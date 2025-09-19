@@ -299,14 +299,15 @@ class ddStats : BaseStatusBar
 		return inp;
 	}
 	
+	//todo: add ability to see offsets + coords of different layers for psprite sides.
 	void DPlayDebug()
 	{
 		let wep = ddWeapon(dPlay.player.ReadyWeapon);
 		ddWeapon rw, lw;
 		let lWeap = dPlay.GetLeftWeapons();
 		let rWeap = dPlay.GetRightWeapons();
-		let pspl = dPlay.player.GetPSprite(PSP_LEFTW);
-		let pspr = dPlay.player.GetPSprite(PSP_RIGHTW);
+		let pspl = dPlay.player.GetPSprite(PSP_LEFTW0);
+		let pspr = dPlay.player.GetPSprite(PSP_RIGHTW0);
 		rw = dPlay.GetRightWeapon(dPlay.rwx);
 		lw = dPlay.GetLeftWeapon(dPlay.lwx);
 		if(dPlay.dddebug & DBG_VERBOSE)

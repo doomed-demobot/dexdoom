@@ -79,6 +79,15 @@ class ddFist : ddWeapon replaces Fist
 		}
 	}
 	
+	override String, int GetSprites(int forcemode)
+	{
+		let ddp = ddPlayer(owner);
+		if(!ddp) { return "TNT1A0", -1; }
+		if(weaponside == CE_LEFT) { return "FSTLA0", 0; }
+		else if(weaponside == CE_RIGHT) { return "FSTRA0", 0; }
+		else { return "TNT1A0", -1; }
+	}
+	
 	override void primaryattack()
 	{	
 		let ddp = ddPlayer(owner);
@@ -112,12 +121,12 @@ class ddFist : ddWeapon replaces Fist
 	override void DD_WeapAction(int no)
 	{
 		let ddp = ddPlayer(owner);
-		let pspl = ddp.player.GetPSprite(PSP_LEFTW);
-		let psplf = ddp.player.GetPSprite(PSP_LEFTWF);
-		let pspr = ddp.player.GetPSprite(PSP_RIGHTW);
-		let psprf = ddp.player.GetPSprite(PSP_RIGHTWF);
-		int myside = (weaponside) ? PSP_LEFTW : PSP_RIGHTW; 
-		int flashside = (weaponside) ? PSP_LEFTWF : PSP_RIGHTWF;
+		let pspl = ddp.player.GetPSprite(PSP_LEFTW0);
+		let psplf = ddp.player.GetPSprite(PSP_LEFTWF0);
+		let pspr = ddp.player.GetPSprite(PSP_RIGHTW0);
+		let psprf = ddp.player.GetPSprite(PSP_RIGHTWF0);
+		int myside = (weaponside) ? PSP_LEFTW0 : PSP_RIGHTW0; 
+		int flashside = (weaponside) ? PSP_LEFTWF0 : PSP_RIGHTWF0;
 		switch(no)
 		{
 			case 1: //init/ready check
@@ -149,13 +158,16 @@ class ddFist : ddWeapon replaces Fist
 		NoAmmo:
 			PUNG B 10;
 		Ready:
-			PUNG B 1 A_DDWeaponReady;
+			PUNG A 0 A_ChangeSprite;
+			#### A 1 A_DDWeaponReady;
 			Loop;
 		Select:
-			PUNG B 1;
+			PUNG A 0 A_ChangeSprite;
+			#### A 1;
 			Loop;
 		Deselect:
-			PUNG B 1;
+			PUNG A 0 A_ChangeSprite;
+			#### A 1;
 			Loop;
 		Fire:
 			PUNG A 1;
@@ -200,6 +212,10 @@ class ddFist : ddWeapon replaces Fist
 			PUNG C 4;
 			PUNG B 5 A_DDRefire;
 			Goto Ready;
+		Ind:
+			FSTL A 1;
+			FSTR A 1;
+			Stop;
 			
 	}
 }

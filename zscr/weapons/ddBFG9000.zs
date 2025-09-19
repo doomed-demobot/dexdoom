@@ -66,14 +66,26 @@ class ddBFG9000 : ddWeapon
 		return "ddBFG9000";
 	}
 	
+	override int, int, int, int GetOffsets(int no)
+	{
+		if(!owner) { return Super.GetOffsets(no), 0, 1, 0; }
+		switch(no)
+		{
+			case 1:
+				return 0, 16, 6, (WOF_KEEPX | WOF_INTERPOLATE | WOF_MOVEFLASH);
+			default:
+				return Super.GetOffsets(no), 0, 1, 0;
+		}
+	}
+	
 	override void DD_WeapAction(int no)
 	{
 		let ddp = ddPlayer(owner);
 		let mode = ddWeapon(ddp.player.readyweapon);
 		let me = ddWeapon(self);
 		let cpiece = ddWeapon(me.companionpiece);
-		int myside = (weaponside) ? PSP_LEFTW : PSP_RIGHTW; 
-		int flashside = (weaponside) ? PSP_LEFTWF : PSP_RIGHTWF;
+		int myside = (weaponside) ? PSP_LEFTW0 : PSP_RIGHTW0; 
+		int flashside = (weaponside) ? PSP_LEFTWF0 : PSP_RIGHTWF0;
 		let res = ModeCheck();
 		switch(no)
 		{
@@ -104,6 +116,7 @@ class ddBFG9000 : ddWeapon
 			BFGG A 1;
 			BFGG A 20 A_BFGsound;
 			BFGG B 10 A_DDFlash;
+			BFGG B 1 A_DDWeaponOffset;
 			BFGG B 10 A_FireDDWeapon;
 			BFGG B 20 A_DDRefire;
 			Goto Ready;

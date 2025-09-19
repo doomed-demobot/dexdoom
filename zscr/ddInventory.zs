@@ -18,8 +18,8 @@ class inventoryOpener : CustomInventory
 	action void A_ToggleInv()
 	{
 		let ddp = ddPlayer(self);
-		let pspr = player.GetPSprite(PSP_RIGHTW);
-		let psprf = player.GetPSprite(PSP_RIGHTWF);
+		let pspr = player.GetPSprite(PSP_RIGHTW0);
+		let psprf = player.GetPSprite(PSP_RIGHTWF0);
 		let mode = ddWeapon(player.readyweapon);
 		if(!mode.bmodeready) { 
 			if(ddp.dddebug & DBG_INVENTORY) { A_Log("Mode not ready"); } return; }
@@ -140,10 +140,10 @@ class playerInventory : ddWeapon
 		let pInv = ddp.GetWeaponsInventory();
 		let lWeap = ddp.GetLeftWeapons();
 		let rWeap = ddp.GetRightWeapons();
-		let pspl = ddp.player.GetPSprite(PSP_LEFTW);
-		let psplf = ddp.player.GetPSprite(PSP_LEFTWF);
-		let pspr = ddp.player.GetPSprite(PSP_RIGHTW);
-		let psprf = ddp.player.GetPSprite(PSP_RIGHTWF);
+		let pspl = ddp.player.GetPSprite(PSP_LEFTW0);
+		let psplf = ddp.player.GetPSprite(PSP_LEFTWF0);
+		let pspr = ddp.player.GetPSprite(PSP_RIGHTW0);
+		let psprf = ddp.player.GetPSprite(PSP_RIGHTWF0);
 		if(selDir != 0)
 		{
 			if(inInventory)
@@ -240,7 +240,7 @@ class playerInventory : ddWeapon
 						lWeap.RetItem(ddp.lwx).companionpiece = rWeap.RetItem(ddp.rwx);	
 						ddp.ddWeaponState &= ~DDW_LEFTNOBOBBING;
 						ddp.ddWeaponState &= ~DDW_NOLEFTSPRITECHANGE;
-						ddp.player.SetPSprite(PSP_LEFTW, ddp.GetLeftWeapon(ddp.lwx).FindState('Ready'));
+						ddp.player.SetPSprite(PSP_LEFTW0, ddp.GetLeftWeapon(ddp.lwx).FindState('Ready'));
 						lowerL = -1;
 					}					
 				}
@@ -256,7 +256,7 @@ class playerInventory : ddWeapon
 						else { ddp.ddWeaponState &= ~DDW_RIGHTISTH; }
 						rWeap.RetItem(ddp.rwx).companionpiece = lWeap.RetItem(ddp.lwx);
 						lWeap.RetItem(ddp.lwx).companionpiece = rWeap.RetItem(ddp.rwx);
-						ddp.player.SetPSprite(PSP_RIGHTW, ddp.GetRightWeapon(ddp.rwx).GetUpState());
+						ddp.player.SetPSprite(PSP_RIGHTW0, ddp.GetRightWeapon(ddp.rwx).GetUpState());
 						if(!(hole is "ddFist")) {
 						if(ddp.dddebug & DBG_INVENTORY && ddp.dddebug & DBG_VERBOSE) { A_Log("Previous right weapon "..hole.GetTag().." removed"); } 
 						ddp.RemoveInventory(hole); }
@@ -278,7 +278,7 @@ class playerInventory : ddWeapon
 						pspr.y = 0;
 						lowerR = -1;
 						ddp.ddWeaponState &= ~DDW_RIGHTNOBOBBING;
-						ddp.player.SetPSprite(PSP_RIGHTW, ddp.GetRightWeapon(ddp.rwx).GetReadyState());
+						ddp.player.SetPSprite(PSP_RIGHTW0, ddp.GetRightWeapon(ddp.rwx).GetReadyState());
 					}
 				}
 				else {}
@@ -332,7 +332,7 @@ class playerInventory : ddWeapon
 						rWeap.RetItem(ddp.rwx).companionpiece = lWeap.RetItem(ddp.lwx);
 						lWeap.RetItem(ddp.lwx).companionpiece = rWeap.RetItem(ddp.rwx);
 					}
-					ddp.player.SetPSprite(PSP_LEFTW, lWeap.RetItem(li).FindState('Ready'));
+					ddp.player.SetPSprite(PSP_LEFTW0, lWeap.RetItem(li).FindState('Ready'));
 					if(ddp.dddebug & DBG_INVENTORY) { ddp.A_Log(""..lw.GetTag().." removed from inventory"); }
 					ddp.RemoveInventory(lw);
 					return ddWeapon(drp.CreateTossable());
@@ -361,7 +361,7 @@ class playerInventory : ddWeapon
 						rWeap.RetItem(ddp.rwx).companionpiece = lWeap.RetItem(ddp.lwx);
 						lWeap.RetItem(ddp.lwx).companionpiece = rWeap.RetItem(ddp.rwx);
 					}
-					ddp.player.SetPSprite(PSP_RIGHTW, rWeap.RetItem(ri).FindState('Ready'));
+					ddp.player.SetPSprite(PSP_RIGHTW0, rWeap.RetItem(ri).FindState('Ready'));
 					if(ddp.dddebug & DBG_INVENTORY) { ddp.A_Log(""..rw.GetTag().." removed from inventory"); }
 					ddp.RemoveInventory(rw);
 					return ddWeapon(drp.CreateTossable());
@@ -381,14 +381,14 @@ class playerInventory : ddWeapon
 		if(lowerL == 1) 
 		{ 
 			if(!(heldLeft is "ddFist")) { ddp.RemoveInventory(heldLeft); }
-			ddp.player.SetPSprite(PSP_LEFTW, ddp.GetLeftWeapon(ddp.lwx).GetUpState());
+			ddp.player.SetPSprite(PSP_LEFTW0, ddp.GetLeftWeapon(ddp.lwx).GetUpState());
 			ddp.ddWeaponState &= ~DDW_NOLEFTSPRITECHANGE;
 			lowerL = 0;
 		}
 		if(lowerR == 1)
 		{
 			if(!(heldRight is "ddFist")) { ddp.RemoveInventory(heldRight); }
-			ddp.player.SetPSprite(PSP_RIGHTW, ddp.GetRightWeapon(ddp.rwx).GetUpState());
+			ddp.player.SetPSprite(PSP_RIGHTW0, ddp.GetRightWeapon(ddp.rwx).GetUpState());
 			ddp.ddWeaponState &= ~DDW_NORIGHTSPRITECHANGE;
 			lowerR = 0;
 		}
@@ -636,8 +636,8 @@ class playerInventory : ddWeapon
 	action void EnterInventory()
 	{
 		let ddp = ddPlayer(self);
-		let pspr = player.GetPSprite(PSP_RIGHTW);
-		let psprf = player.GetPSprite(PSP_RIGHTWF);		
+		let pspr = player.GetPSprite(PSP_RIGHTW0);
+		let psprf = player.GetPSprite(PSP_RIGHTWF0);		
 		if(ddp.dddebug & DBG_INVENTORY) 
 		{ 
 			ddp.ReportInventory();
@@ -709,9 +709,9 @@ class playerInventory : ddWeapon
 		if(lWeap.RetItem(ddp.lwx).bTwoHander) { ddp.ddWeaponState |= DDW_LEFTISTH; }
 		else { ddp.ddWeaponState &= ~DDW_LEFTISTH; }
 		if(lWeap.RetItem(ddp.lwx) == fLst.curFistLeft) { 
-			ddp.player.GetPSprite(PSP_LEFTW).SetState(fLst.curFistLeft.GetReadyState()); }		
+			ddp.player.GetPSprite(PSP_LEFTW0).SetState(fLst.curFistLeft.GetReadyState()); }		
 		if(rWeap.RetItem(ddp.rwx) == fLst.curFistRight) { 
-			ddp.player.GetPSprite(PSP_RIGHTW).SetState(fLst.curFistRight.GetReadyState()); }
+			ddp.player.GetPSprite(PSP_RIGHTW0).SetState(fLst.curFistRight.GetReadyState()); }
 	}
 	
 	action void A_ChangeSide()
@@ -736,8 +736,8 @@ class playerInventory : ddWeapon
 		let rWeap = ddp.GetRightWeapons();
 		let pInv = ddp.GetWeaponsInventory();
 		let i = invoker;
-		let pspl = ddp.player.GetPSprite(PSP_LEFTW);
-		let pspr = ddp.player.GetPSprite(PSP_RIGHTW);
+		let pspl = ddp.player.GetPSprite(PSP_LEFTW0);
+		let pspr = ddp.player.GetPSprite(PSP_RIGHTW0);
 		if(i.sW.weaponName == "")
 		{
 			let weap = (i.inInventory) ? Inventory(pInv.RetItem(i.ix)) : ((i.weapside) ? Inventory(lWeap.RetItem(i.li)) : Inventory(rWeap.RetItem(i.ri)));
@@ -953,8 +953,8 @@ class playerInventory : ddWeapon
 	action void SortInventoryIfYouWant()
 	{
 		let ddp = ddPlayer(self);
-		let pspl = player.GetPSprite(PSP_LEFTW);
-		let pspr = player.GetPSprite(PSP_RIGHTW);
+		let pspl = player.GetPSprite(PSP_LEFTW0);
+		let pspr = player.GetPSprite(PSP_RIGHTW0);
 		//use these to determine whether to lower side and dont return until both are true
 		if(player.cmd.buttons & BT_ZOOM) 
 		{ 

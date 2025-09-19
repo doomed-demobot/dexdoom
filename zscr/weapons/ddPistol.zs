@@ -99,8 +99,8 @@ class ddPistol : ddWeapon replaces Pistol
 		if(owner is "ddPlayerNormal")
 		{
 			//speed up reloading/unloading when berserk
-			let myside = (weaponside) ? owner.player.getpsprite(PSP_LEFTW) : owner.player.getpsprite(PSP_RIGHTW);
-			let myflash = (weaponside) ? owner.player.getpsprite(PSP_LEFTWF) : owner.player.getpsprite(PSP_RIGHTWF);
+			let myside = (weaponside) ? owner.player.getpsprite(PSP_LEFTW0) : owner.player.getpsprite(PSP_RIGHTW0);
+			let myflash = (weaponside) ? owner.player.getpsprite(PSP_LEFTWF0) : owner.player.getpsprite(PSP_RIGHTWF0);
 			if(owner.FindInventory("PowerBerserk") && (weaponstatus == DDW_UNLOADING || weaponstatus == DDW_RELOADING)) 
 			{ if(myside.tics > 3) { myside.tics--; } if(myflash.tics > 1) { myflash.tics--; } }
 		}
@@ -182,8 +182,8 @@ class ddPistol : ddWeapon replaces Pistol
 		let ddp = ddPlayer(owner);
 		if(ddp.FindInventory("ClassicModeToken")) { return FindState("FlashC"); }
 		if(ddp.player.readyweapon is "dualWielding" || ddp.player.pendingweapon is "dualWielding" || ddp.lastmode is "dualWielding") {
-			if(weaponside) { ddp.player.GetPSprite(PSP_LEFTWF).Frame = 1; }
-			else { ddp.player.GetPSprite(PSP_RIGHTWF).Frame = 2; }
+			if(weaponside) { ddp.player.GetPSprite(PSP_LEFTWF0).Frame = 1; }
+			else { ddp.player.GetPSprite(PSP_RIGHTWF0).Frame = 2; }
 		}
 		return Super.GetFlashState();
 	}
@@ -232,12 +232,12 @@ class ddPistol : ddWeapon replaces Pistol
 		let type = (ddp.FindInventory("ClassicModeToken")) ?
 		((!bAltFire) ? ClassicAmmoType1 : ClassicAmmoType2) :
 		((!bAltFire) ? AmmoType1 : AmmoType2);
-		let pspl = ddp.player.GetPSprite(PSP_LEFTW);
-		let psplf = ddp.player.GetPSprite(PSP_LEFTWF);
-		let pspr = ddp.player.GetPSprite(PSP_RIGHTW);
-		let psprf = ddp.player.GetPSprite(PSP_RIGHTWF);
-		int myside = (weaponside) ? PSP_LEFTW : PSP_RIGHTW;
-		int flashside = (weaponside) ? PSP_LEFTWF : PSP_RIGHTWF;
+		let pspl = ddp.player.GetPSprite(PSP_LEFTW0);
+		let psplf = ddp.player.GetPSprite(PSP_LEFTWF0);
+		let pspr = ddp.player.GetPSprite(PSP_RIGHTW0);
+		let psprf = ddp.player.GetPSprite(PSP_RIGHTWF0);
+		int myside = (weaponside) ? PSP_LEFTW0 : PSP_RIGHTW0;
+		int flashside = (weaponside) ? PSP_LEFTWF0 : PSP_RIGHTWF0;
 		let res = ModeCheck();
 		switch(no)
 		{
