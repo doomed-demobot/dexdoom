@@ -183,12 +183,28 @@ class ddStats : BaseStatusBar
 			}
 			DrawString(fa, "]", (95 + dis, -15), DI_SCREEN_CENTER_BOTTOM, Font.CR_TEAL);
 			//when scaling, make sure its not based on ui fields, as they dont pause
-			Screen.DrawTexture(TexMan.CheckForTexture("reticler"), false, 300, 200, DTA_Alpha, 0.5, DTA_ScaleX, (1.0 + (1.0 * sin(oscilator))), DTA_ScaleY, (1.0 + (1.0 * sin(oscilator))));
-			Screen.DrawTexture(TexMan.CheckForTexture("reticlel"), false, 300, 200, DTA_Alpha, 0.5);
-			
-			Screen.DrawTexture(TexMan.CheckForTexture("reticler"), false, 30, 0, DTA_Alpha, 0.5);
-			Screen.DrawTexture(TexMan.CheckForTexture("reticlel"), false, 30, 10, DTA_Alpha, 0.5);
+			DrawCrosshair();
 		}
+	}
+	
+	void DrawCrosshair()
+	{
+		let hscale = GetHUDScale();
+		int scX = int(hscale.X);
+		int scY = int(hscale.Y);
+		int ht = Screen.GetHeight() / scX;
+		int wd = Screen.GetWidth() / scX;
+		int xpos = wd / 2; int ypos = ht / 2;
+		Screen.DrawTexture(TexMan.CheckForTexture("reticle1"), false, xpos, ypos, DTA_Alpha, 0.5, DTA_KeepRatio, true,
+		DTA_VirtualWidth, wd, DTA_VirtualHeight, ht, DTA_Color, 0xFFFF0000,
+		DTA_ScaleX, (0.25 + (0.25 * (double(dPlay.rightInstability) / 200) ) + (0.2 * (double(dPlay.insTimerRight / 2) / 20 ) ) ), 
+		DTA_ScaleY, (0.25 + (0.25 * (double(dPlay.rightInstability) / 200) ) + (0.2 * (double(dPlay.insTimerRight / 2) / 20 ) ) ) );
+		
+		Screen.DrawTexture(TexMan.CheckForTexture("reticle1"), false, xpos, ypos, DTA_Alpha, 0.5, DTA_KeepRatio, true,
+		DTA_VirtualWidth, wd, DTA_VirtualHeight, ht, DTA_Color, 0xFF0000FF,
+		DTA_ScaleX, (0.25 + (0.25 * (double(dPlay.leftInstability) / 200) ) + (0.2 * (double(dPlay.insTimerLeft / 2) / 20 ) ) ), 
+		DTA_ScaleY, (0.25 + (0.25 * (double(dPlay.leftInstability) / 200) ) + (0.2 * (double(dPlay.insTimerLeft / 2) / 20 ) ) ) );
+		
 	}
 	
 	//draw hud
@@ -344,10 +360,12 @@ class ddStats : BaseStatusBar
 		}
 		if(dPlay.dddebug & DBG_PLAYER)
 		{
-			DrawString(fa, "ins:"..FormatNumber(dPlay.instability), (-70, 70), DI_SCREEN_RIGHT_TOP);
-			DrawString(fa, "tim:"..FormatNumber(dPlay.instTimer), (-70, 80), DI_SCREEN_RIGHT_TOP);
-			DrawString(fa, "leftheld", (-70, 90), DI_SCREEN_RIGHT_TOP, (wep.leftheld) ? FONT.CR_GREEN : FONT.CR_RED);
-			DrawString(fa, "rightheld", (-70, 100), DI_SCREEN_RIGHT_TOP, (wep.rightheld) ? FONT.CR_GREEN : FONT.CR_RED);
+			DrawString(fa, "lins:"..FormatNumber(dPlay.leftInstability), (-70, 70), DI_SCREEN_RIGHT_TOP);
+			DrawString(fa, "ltim:"..FormatNumber(dPlay.insTimerLeft), (-70, 80), DI_SCREEN_RIGHT_TOP);
+			DrawString(fa, "rins:"..FormatNumber(dPlay.rightInstability), (-70, 90), DI_SCREEN_RIGHT_TOP);
+			DrawString(fa, "rtim:"..FormatNumber(dPlay.insTimerRight), (-70, 100), DI_SCREEN_RIGHT_TOP);
+			DrawString(fa, "leftheld", (-70, 110), DI_SCREEN_RIGHT_TOP, (wep.leftheld) ? FONT.CR_GREEN : FONT.CR_RED);
+			DrawString(fa, "rightheld", (-70, 120), DI_SCREEN_RIGHT_TOP, (wep.rightheld) ? FONT.CR_GREEN : FONT.CR_RED);
 		}
 		if(dPlay.dddebug & DBG_WEAPONS)
 		{				

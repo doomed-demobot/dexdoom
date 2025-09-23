@@ -1018,7 +1018,7 @@ class ddWeapon : Weapon
 	}
 	
 	//-1 = side independent; kick = added instability
-	action void ddShot(bool accurate, Class<Actor> pufftype, int damage, double eAngle = 0, double ePitch = 0, int iSide = -1, int kick = 0)
+	action void ddShot(bool accurate, Class<Actor> pufftype, int damage, double eAngle = 0, double ePitch = 0, int iSide = -1, int kick = 0, int insTimer = 20)
 	{	
 		let ddp = ddPlayer(invoker.owner);
 		let weap = ddWeapon(self);
@@ -1040,16 +1040,21 @@ class ddWeapon : Weapon
 			}
 			else { if(ddp.dddebug & DBG_WEAPONS && ddp.dddebug & DBG_VERBOSE) { ddp.A_Log("no movement penalties"); } }
 			//instability penalties
-			if(ddp.instability > 1)
-			{
-				double ip = random2()*((5.0 * (ddp.instability / 100)) / 256);
-				extraAngle += ip;
+			double ip = random2()*((5.0 * (double(weap.weaponside ? ddp.leftInstability : ddp.rightInstability) / 100)) / 256);
+			extraAngle += ip;
+			extraPitch += (ip / 2);
+			if(ip != 0) {
 				if(ddp.dddebug & DBG_WEAPONS && ddp.dddebug & DBG_VERBOSE) { ddp.A_Log("+instability to extraAngle:"..extraangle); }
-				extraPitch += (ip / 2);
 				if(ddp.dddebug & DBG_WEAPONS && ddp.dddebug & DBG_VERBOSE) { ddp.A_Log("+instability to extraPitch:"..extraPitch); }
 			}
-			else { if(ddp.dddebug & DBG_WEAPONS && ddp.dddebug & DBG_VERBOSE) { ddp.A_Log("no instability penalties"); } }
-			if(kick) { ddp.instability += kick; ddp.instability = clamp(ddp.instability, 0, 100); ddp.instTimer = 20; }
+			else {
+				if(ddp.dddebug & DBG_WEAPONS && ddp.dddebug & DBG_VERBOSE) { ddp.A_Log("no instability penalties"); } 
+			}
+			
+			if(kick) { 
+				if(weap.weaponside) { ddp.leftInstability = clamp((kick + ddp.leftInstability), 0, 100); ddp.insTimerLeft = insTimer; }
+				else { ddp.rightInstability = clamp((kick + ddp.rightInstability), 0, 100); ddp.insTimerRight = insTimer; }
+			}
 			if(accurate)
 			{
 				extraAngle /= 2;

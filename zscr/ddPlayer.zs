@@ -27,7 +27,9 @@ class ddPlayer : DoomPlayer
 	uint8 dddebug;
 	bool debuggin, visrec, phyrec, gethelp, autoreload; //cvars
 	float plFOV;
-	int instability, instTimer; //instability penalty
+	int leftInstability, insTimerLeft;
+	int rightInstability, insTimerRight;
+	int instability, instTimer; //instability penalty [dep]
 	//other
 	ddweapon desire;
 	Vector3 tepos;
@@ -395,6 +397,10 @@ class ddPlayer : DoomPlayer
 		}
 		if(comboTimer != 0) { comboTimer--; }
 		if(comboTimer <= 0) { combo = 0; comboTimer = 0; }
+		if(insTimerLeft != 0) { insTimerLeft--; }
+		if(insTimerLeft <= 0) { insTimerLeft = 0; if(leftInstability > 0) { leftInstability = clamp(leftInstability - 5, 0, leftInstability); } }
+		if(insTimerRight != 0) { insTimerRight--; }
+		if(insTimerRight <= 0) { insTimerRight = 0; if(rightInstability > 0) { rightInstability = clamp(rightInstability - 5, 0, rightInstability); } }
  		if(instTimer != 0) { instTimer--; }
 		if(instTimer <= 0) { instTimer = 0; if(instability > 0) { instability-=5; } else { instability = 0; } }
 		plFOV = fouv.GetFloat();
