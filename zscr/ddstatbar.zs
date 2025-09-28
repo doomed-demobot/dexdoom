@@ -189,21 +189,26 @@ class ddStats : BaseStatusBar
 	
 	void DrawCrosshair()
 	{
+		let lWeap = dPlay.GetLeftWeapon(dPlay.lwx);
+		let rWeap = dPlay.GetRightWeapon(dPlay.rwx);
 		let hscale = GetHUDScale();
 		int scX = int(hscale.X);
 		int scY = int(hscale.Y);
 		int ht = Screen.GetHeight() / scX;
 		int wd = Screen.GetWidth() / scX;
-		int xpos = wd / 2; int ypos = ht / 2;
-		Screen.DrawTexture(TexMan.CheckForTexture("reticle1"), false, xpos, ypos, DTA_Alpha, 0.5, DTA_KeepRatio, true,
+		int xposR = (wd / 2) - (rweap.myInfo.aimOffsetAngle * ( Screen.GetWidth() / 360. )); 
+		int yposR = (ht / 2) + (rweap.myInfo.aimOffsetPitch * ( Screen.GetHeight() / 180. ));
+		int xposL = (wd / 2) - (lweap.myInfo.aimOffsetAngle * ( Screen.GetWidth() / 360. ));
+		int yposL = (ht / 2) + (lweap.myInfo.aimOffsetPitch * ( Screen.GetHeight() / 180. ));
+		Screen.DrawTexture(TexMan.CheckForTexture(rWeap.reticlename), false, xposR, yposR, DTA_Alpha, 0.80, DTA_KeepRatio, true,
 		DTA_VirtualWidth, wd, DTA_VirtualHeight, ht, DTA_Color, 0xFFFF0000,
-		DTA_ScaleX, (0.25 + (0.25 * (double(dPlay.rightInstability) / 200) ) + (0.2 * (double(dPlay.insTimerRight / 2) / 20 ) ) ), 
-		DTA_ScaleY, (0.25 + (0.25 * (double(dPlay.rightInstability) / 200) ) + (0.2 * (double(dPlay.insTimerRight / 2) / 20 ) ) ) );
+		DTA_ScaleX, (0.25 + (0.25 * (double(dPlay.rightInstability) / 200) ) + (0.2 * (double(dPlay.insTimerRight / 2) / 20 ) ) ) * rWeap.reticleScale, 
+		DTA_ScaleY, (0.25 + (0.25 * (double(dPlay.rightInstability) / 200) ) + (0.2 * (double(dPlay.insTimerRight / 2) / 20 ) ) ) * rWeap.reticleScale );
 		
-		Screen.DrawTexture(TexMan.CheckForTexture("reticle1"), false, xpos, ypos, DTA_Alpha, 0.5, DTA_KeepRatio, true,
+		Screen.DrawTexture(TexMan.CheckForTexture(lWeap.reticlename), false, xposL, yposL, DTA_Alpha, 0.80, DTA_KeepRatio, true,
 		DTA_VirtualWidth, wd, DTA_VirtualHeight, ht, DTA_Color, 0xFF0000FF,
-		DTA_ScaleX, (0.25 + (0.25 * (double(dPlay.leftInstability) / 200) ) + (0.2 * (double(dPlay.insTimerLeft / 2) / 20 ) ) ), 
-		DTA_ScaleY, (0.25 + (0.25 * (double(dPlay.leftInstability) / 200) ) + (0.2 * (double(dPlay.insTimerLeft / 2) / 20 ) ) ) );
+		DTA_ScaleX, (0.25 + (0.25 * (double(dPlay.leftInstability) / 200) ) + (0.2 * (double(dPlay.insTimerLeft / 2) / 20 ) ) ) * lWeap.reticleScale, 
+		DTA_ScaleY, (0.25 + (0.25 * (double(dPlay.leftInstability) / 200) ) + (0.2 * (double(dPlay.insTimerLeft / 2) / 20 ) ) ) * lWeap.reticleScale );
 		
 	}
 	
@@ -379,9 +384,11 @@ class ddStats : BaseStatusBar
 			int lwc, rwc;
 			[rws, rwc] = GetddWeaponStatus(rw.weaponstatus);
 			[lws, lwc] = GetddWeaponStatus(lw.weaponstatus);
+			DrawString(fa, ("x: "..rw.myInfo.aimOffsetAngle.." y: "..rw.myInfo.aimOffsetPitch), (-50, -130), DI_SCREEN_RIGHT_BOTTOM | DI_TEXT_ALIGN_CENTER);
 			DrawString(fa, ((rw.weaponside) ? "Left" : "Right"), (-50, -122), DI_SCREEN_RIGHT_BOTTOM | DI_TEXT_ALIGN_CENTER);
 			DrawString(fa, rws, (-50, -115), DI_SCREEN_RIGHT_BOTTOM | DI_TEXT_ALIGN_CENTER, rwc);
 			DrawString(fa, rwfs2, (-50, -106), DI_SCREEN_RIGHT_BOTTOM | DI_TEXT_ALIGN_CENTER, FONT.CR_RED);
+			DrawString(fa, ("x: "..lw.myInfo.aimOffsetAngle.." y: "..lw.myInfo.aimOffsetPitch), (50, -130), DI_SCREEN_LEFT_BOTTOM | DI_TEXT_ALIGN_CENTER);
 			DrawString(fa, ((lw.weaponside) ? "Left" : "Right"), (50, -122), DI_SCREEN_LEFT_BOTTOM | DI_TEXT_ALIGN_CENTER);
 			DrawString(fa, lws, (50, -115), DI_SCREEN_LEFT_BOTTOM | DI_TEXT_ALIGN_CENTER, lwc);
 			DrawString(fa, lwfs2, (50, -106), DI_SCREEN_LEFT_BOTTOM | DI_TEXT_ALIGN_CENTER, FONT.CR_RED);

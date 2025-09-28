@@ -365,6 +365,8 @@ class ddPlayer : DoomPlayer
 		}
 		Super.Tick();
 		let mode = ddWeapon(player.readyweapon);
+		let rWeap = GetRightWeapon(rwx);
+		let lWeap = GetLeftWeapon(lwx);
 		debuggin = CVar.GetCVar("pl_debug", player).GetBool();
 		phyrec = CVar.GetCVar("pl_phyrecoil", player).GetBool();
 		visrec = CVar.GetCVar("pl_visrecoil", player).GetBool();
@@ -398,9 +400,20 @@ class ddPlayer : DoomPlayer
 		if(comboTimer != 0) { comboTimer--; }
 		if(comboTimer <= 0) { combo = 0; comboTimer = 0; }
 		if(insTimerLeft != 0) { insTimerLeft--; }
-		if(insTimerLeft <= 0) { insTimerLeft = 0; if(leftInstability > 0) { leftInstability = clamp(leftInstability - 5, 0, leftInstability); } }
+		if(insTimerLeft <= 0) { insTimerLeft = 0; 
+			if(leftInstability > 0) { leftInstability = clamp(leftInstability - 5, 0, leftInstability); } 
+			else { rWeap.myInfo.aimOffsetPitch /= 2;
+				rWeap.myInfo.aimOffsetAngle /= 2;
+			}
+		}
 		if(insTimerRight != 0) { insTimerRight--; }
-		if(insTimerRight <= 0) { insTimerRight = 0; if(rightInstability > 0) { rightInstability = clamp(rightInstability - 5, 0, rightInstability); } }
+		if(insTimerRight <= 0) { insTimerRight = 0; 
+			if(rightInstability > 0) { rightInstability = clamp(rightInstability - 5, 0, rightInstability); } 
+			else { lWeap.myInfo.aimOffsetPitch /= 2;
+				lWeap.myInfo.aimOffsetAngle /= 2;
+			}
+		
+		}
  		if(instTimer != 0) { instTimer--; }
 		if(instTimer <= 0) { instTimer = 0; if(instability > 0) { instability-=5; } else { instability = 0; } }
 		plFOV = fouv.GetFloat();

@@ -23,6 +23,16 @@ class NoBlood : Blood
 	}
 	
 }
+
+struct WeaponInfo
+{
+	int aimOffsetPitch, aimOffsetAngle; 
+	ddWeapon theWeapon;
+	//adjusts firing angle in ddShot/ddProjectileFunction (unfinished), e.g. right weapon fires and adds pitch to player,
+	//that pitch difference is used when firing left weapon so its as if the left weapon is firing as it would before the right did.
+	//TODO: add other non-initiated fields here.
+}
+
 //Weapons must be ddWeapon to be used
 // #Class ddWeapon : Weapon()
 class ddWeapon : Weapon
@@ -49,6 +59,9 @@ class ddWeapon : Weapon
 	int offsetStepLengthX, offsetStepLengthY; //amount PSprite will offset; stepLength / length
 	int offsetInterp;
 	bool offsetFlashState;
+	Name reticleName;
+	double reticleScale;
+	WeaponInfo myInfo;
 	class<Ammo> ClassicAmmoType1, ClassicAmmoType2;
 	ddWeapon swapHeld; //weapon stored here for pickupswapstore
 	property ClassicAmmoType : ClassicAmmoType1;
@@ -68,6 +81,8 @@ class ddWeapon : Weapon
 	property ChargeUse2 : ChargeUse2;
 	property xOffset : xOffset;
 	property initialddWFlags : ddWeaponFlags;
+	property reticle : reticleName;
+	property reticleScale : reticleScale;
 	//flags
 	int ddweaponflags;
 	int prFlags;
@@ -95,6 +110,8 @@ class ddWeapon : Weapon
 		ddWeapon.costMulti 1;
 		ddWeapon.xOffset 0;
 		ddweapon.initialddWFlags 2<<6;
+		ddWeapon.reticle 'reticle1';
+		ddWeapon.reticleScale 1.0;
 		BloodType "NoBlood";
 		Decal "BulletChip"; //todo: see if this respects a ddWeapon's custom decals
 		+NOBLOODDECALS;
@@ -760,6 +777,8 @@ class ddWeapon : Weapon
 	action void AddRecoil(double pitch, int angle, double desFOV)
 	{
 		let ddp = ddPlayer(invoker.owner);
+		let weap = ddWeapon(invoker);
+		let com = ddWeapon(weap.companionpiece);
 		if(ddp.FindInventory("ClassicModeToken")) { return; }
 		//visual recoil decrements when addpitch is zero, so physical recoil is 
 		//disabled in ddPlayer.Tick()
@@ -768,9 +787,17 @@ class ddWeapon : Weapon
 			int dF = clamp(desFOV, 0.1, 5.0);
 			if(ddp.player.FOV < (ddp.plFOV + 5.)) { ddp.player.DesiredFOV += dF; } 
 			else { ddp.player.DesiredFOV = (ddp.plFOV + 5.); }			
-		}		
+		}
+		let newAngle = ((random2() * angle) >> 8);
+		if(ddp.GetFireMode(false) == DUALWIELD)
+		{
+			com.myInfo.aimOffsetPitch += pitch;
+			com.myInfo.aimOffsetAngle += newAngle;
+			weap.myInfo.aimOffsetPitch -= pitch;
+			weap.myInfo.aimOffsetAngle -= newAngle;
+		}
 		ddp.AddPitch = pitch;
-		ddp.AddAngle = ((random2() * angle) >> 8);
+		ddp.AddAngle = newAngle;
 	}
 	
 	//should weapons be returned to default position on weaponready?
@@ -1077,7 +1104,7 @@ class ddWeapon : Weapon
 		{ 
 			ddp.A_Log("final extraAngle:"..extraangle.."\nfinal extraPitch:"..extrapitch.."\n=======");
 		}
-		ddp.LineAttack(ang + extraAngle, PLAYERMISSILERANGE, pitch + extraPitch, damage, 'hitscan', pufftype, 0, null, zoff);
+		ddp.LineAttack(ang + extraAngle + weap.myInfo.aimOffsetAngle, PLAYERMISSILERANGE, pitch + extraPitch + weap.myInfo.aimOffsetPitch, damage, 'hitscan', pufftype, 0, null, zoff);
 	}
 	
 	//bug: lowertoreloadleft doesnt work when called this way

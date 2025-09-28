@@ -25,6 +25,7 @@ class ddPistol : ddWeapon replaces Pistol
 		ddWeapon.initialmag 16;
 		ddWeapon.maguse1 1;
 		ddWeapon.maguse2 1;
+		ddWeapon.reticleScale 0.75;
 		Obituary "$OB_MPPISTOL";
 		Inventory.Pickupmessage "$PICKUP_PISTOL_DROPPED";
 		Tag "$TAG_PISTOL";
