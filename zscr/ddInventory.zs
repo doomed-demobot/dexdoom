@@ -636,8 +636,10 @@ class playerInventory : ddWeapon
 	action void EnterInventory()
 	{
 		let ddp = ddPlayer(self);
-		let pspr = player.GetPSprite(PSP_RIGHTW0);
-		let psprf = player.GetPSprite(PSP_RIGHTWF0);		
+		for(int x = 1; x < 18; x++)
+		{
+			ddp.player.GetPSprite(x);
+		}
 		if(ddp.dddebug & DBG_INVENTORY) 
 		{ 
 			ddp.ReportInventory();

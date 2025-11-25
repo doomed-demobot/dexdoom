@@ -226,6 +226,33 @@ class ddPistol : ddWeapon replaces Pistol
 		}
 	}
 	
+	override void SetDDTransformations(int no, PSpriteInfo &pspi)
+	{
+		switch(no)
+		{
+			case 1:
+				pspi.translTarget.x = 0;
+				pspi.translTarget.y = 8;
+				pspi.scaleTarget.x = 0;
+				pspi.scaleTarget.y = 20;
+				pspi.rotTarget = 0.;
+				pspi.translationLength = 4;
+				return;
+			case 2:
+				pspi.translTarget.x = 0;
+				pspi.translTarget.y = 0;
+				pspi.scaleTarget.x = 0;
+				pspi.scaleTarget.y = 0;
+				pspi.rotTarget = 0;
+				pspi.translationLength = 1;
+				pspi.transFlags |= (TFL_TRANS_NOINTERP | TFL_TRANS_ORIGIN);
+				return;
+			default:
+				return;			
+		}
+		return;
+	}
+	
 	override void DD_WeapAction(int no)
 	{		
 		let ddp = ddPlayer(owner);
@@ -345,13 +372,16 @@ class ddPistol : ddWeapon replaces Pistol
 			#### # 1 A_DDWeaponReady;
 			Loop;
 		Fire:
+			#### A 3 A_DDTransformation;
 			#### A 1 A_WeapAction;
 			#### A 1;
-			#### B 0 A_DDFlash;
-			#### B 1 A_DDWeaponOffset;
-			#### B 2 A_FireDDWeapon;
-			#### B 2 A_DDWeaponOffset;
-			#### C 0 A_ChangeSprite;
+			#### A 1 A_DDTransformation;
+			#### A 0 A_DDFlash;
+			//#### B 1 A_DDWeaponOffset;
+			#### C 1 A_FireDDWeapon;
+			#### B 1;
+			//#### B 2 A_DDWeaponOffset;
+			#### B 0 A_ChangeSprite;
 			#### C 2 A_WeapAction;
 			#### # 1 A_ChangeSprite;
 			#### ######## 1 A_DDHeavyRefire;
@@ -410,6 +440,7 @@ class ddPistol : ddWeapon replaces Pistol
 			#### J 4;
 			Goto Ready;
 		FlashP:
+			PISF # 1 Bright A_DDTransformation;
 			PISF # 1 Bright A_Light2;
 			Goto FlashDone;
 		FlashA:

@@ -8,6 +8,13 @@ enum WeaponStatus
 	DDW_UNLOADING
 };
 
+enum TransformationFlags{
+	TFL_TRANS_NOINTERP = 1 << 0,	//disable interpolation
+	TFL_TRANS_ABS = 1 << 1,			//interpret value as coordinate
+	TFL_TRANS_MIRROR = 1 << 2,		//mirror translation for left side
+	TFL_TRANS_ORIGIN = 1 << 3,		//interpret 0, 0 as return to origin
+};
+
 class NoBlood : Blood
 {
 	Default 
@@ -122,7 +129,7 @@ class ddWeapon : Weapon
 		-DDWEAPON.MODEREADY;
 		-DDWEAPON.NOLOWER;
 	}
-	//can maybe do this with an attached thinker? iunno
+	//moving this to tickpsprites
 	override void Tick()
 	{
 		Super.Tick();
@@ -157,6 +164,44 @@ class ddWeapon : Weapon
 		}
 	}
 	
+	//weapon action function for translations, scaling, and rotation
+	action void A_DDTransformation()
+	{
+		let ddp = ddPlayer(self);
+		if(!ddp) { return; }
+		let i = invoker;
+		ddWeapon weap;
+		PSprite psp;
+		PSpriteInfo pspi;
+		if((stateinfo.mPSPIndex >= PSP_LEFTW0) && (stateinfo.mPSPIndex <= PSP_LEFTWF3)) {
+			weap = ddp.GetLeftWeapon(ddp.lwx);
+		}
+		else if((stateinfo.mPSPIndex >= PSP_RIGHTW0) && (stateinfo.mPSPIndex <= PSP_RIGHTWF3)){
+			weap = ddp.GetRightWeapon(ddp.rwx);
+		}
+		else { return; }
+		psp = ddp.player.GetPSprite(stateinfo.mPSPIndex);
+		pspi = ddp.GetPSpriteInfo(stateinfo.mPSPIndex, self);
+		pspi.ResetTransformations();
+		int no = psp.tics;
+		psp.tics = 0;
+		if(weap)
+		{
+			weap.SetDDTransformations(no, pspi);
+			pspi.translationTimer = pspi.translationLength;
+			//if after the call, no non-addition flags are activated and values remain 0, then we know no transformation is taking place.
+			if((pspi.translTarget.x != 0 || pspi.translTarget.y != 0) || 
+			(pspi.transFlags & (TFL_TRANS_ABS | TFL_TRANS_ORIGIN))) { pspi.PSPStatus |= PSPS_TRANSLATING; }
+			if((pspi.scaleTarget.x != 0 || pspi.scaleTarget.y != 0)) { pspi.PSPStatus |= PSPS_SCALING; }
+		}
+	}
+	
+	virtual void SetDDTransformations(int no, PSpriteInfo &pspi)
+	{
+		Console.printf("no translations defined for tic "..no);
+		return;
+	}
+	
 	//todo: find way to add remainders to offset.
 	action void A_DDWeaponOffset()
 	{
@@ -165,16 +210,22 @@ class ddWeapon : Weapon
 		let i = invoker;
 		ddWeapon weap;
 		PSprite psp;
+		PSpriteInfo pspi;
 		int pspf;
+		PSpriteInfo pspfi;
 		if(stateinfo.mPSPIndex == PSP_LEFTW0) {
 			weap = ddp.GetLeftWeapon(ddp.lwx);
 			psp = ddp.player.GetPSprite(PSP_LEFTW0);
+			pspi = ddp.GetPSpriteInfo(PSP_LEFTW0, self);
 			pspf = PSP_LEFTWF0;
+			pspfi = ddp.GetPSpriteInfo(PSP_LEFTWF0, self);
 		}
 		else if(stateinfo.mPSPIndex == PSP_RIGHTW0) {
 			weap = ddp.GetRightWeapon(ddp.rwx);
 			psp = ddp.player.GetPSprite(PSP_RIGHTW0);
+			pspi = ddp.GetPSpriteInfo(PSP_RIGHTW0, self);
 			pspf = PSP_RIGHTWF0;
+			pspfi = ddp.GetPSpriteInfo(PSP_RIGHTWF0, self);
 		}
 		else { return; }
 		int no = psp.tics;
@@ -835,6 +886,40 @@ class ddWeapon : Weapon
 	
 	action void A_SetModeReady() { ddWeapon(player.readyweapon).bModeReady = true; }
 	
+	void ResetPSpriteTransformations(bool allthem = false)
+	{
+		let ddp = ddPlayer(owner);
+		if(!ddp) { return; }
+		PSprite psp;
+		if(allthem)
+		{
+			for(int x = 2; x < 18; x++)
+			{
+				psp = ddp.player.FindPSprite(x);
+				if(!psp) { continue; }
+				if((x >= PSP_LEFTW0) && (x <= PSP_LEFTWF3))
+				{
+					psp.x = -64; 
+					switch(ddp.GetFireMode(false))
+					{
+						case TWOHAND: psp.y = 128; break;
+						case DUALWIELD: psp.y = 0; break;
+						default: break;
+					}
+				}
+				else if((x >= PSP_RIGHTW0) && (x <= PSP_RIGHTWF3))
+				{
+					psp.x = 64; 
+					switch(ddp.GetFireMode(false))
+					{
+						case TWOHAND: psp.x = 0; break;
+						case DUALWIELD: psp.x = 64; break;
+						default: break;
+					}
+				}			
+			}
+		}
+	}
 	
 	virtual void primaryattack() {}
 	
@@ -891,17 +976,18 @@ class ddWeapon : Weapon
 		ddWeapon weap;
 		PSprite psp;
 		bool bPress;
-		if(stateinfo.mPSPIndex == PSP_LEFTW0) { 
+		if((stateinfo.mPSPIndex >= PSP_LEFTW0) && (stateinfo.mPSPIndex <= PSP_LEFTWF3)) { 
 			weap = ddp.GetLeftWeapon(ddp.lwx);
 			psp = ddp.player.GetPSprite(PSP_LEFTW0);
 			bPress = (!weap.bAltFire) ? A_PressingLeftFire() : A_PressingLeftAltFire();
 		}
-		else if(stateinfo.mPSPIndex == PSP_RIGHTW0) { 
+		else if((stateinfo.mPSPIndex >= PSP_RIGHTW0) && (stateinfo.mPSPIndex <= PSP_RIGHTWF3)) { 
 			weap = ddp.GetRightWeapon(ddp.rwx);
 			psp = ddp.player.GetPSprite(PSP_RIGHTW0);
 			bPress = (!weap.bAltFire) ? A_PressingRightFire() : A_PressingRightAltFire();
 		}
 		State st = weap.GetRefireState();
+		PSpriteInfo pspi = ddp.GetPSpriteInfo(psp.ID, self);
 		if(player.ReadyWeapon is "playerInventory") { return; }
 		if(!(player.weaponState & (WF_QUICKLEFTOK | WF_QUICKRIGHTOK)) && invoker.bModeReady && bPress && player.health > 0)
 		{
@@ -1104,9 +1190,11 @@ class ddWeapon : Weapon
 		{ 
 			ddp.A_Log("final extraAngle:"..extraangle.."\nfinal extraPitch:"..extrapitch.."\n=======");
 		}
-		ddp.LineAttack(ang + extraAngle + weap.myInfo.aimOffsetAngle, PLAYERMISSILERANGE, pitch + extraPitch + weap.myInfo.aimOffsetPitch, damage, 'hitscan', pufftype, 0, null, zoff);
+		//ddp.LineAttack(ang + extraAngle + weap.myInfo.aimOffsetAngle, PLAYERMISSILERANGE, pitch + extraPitch + weap.myInfo.aimOffsetPitch, damage, 'hitscan', pufftype, 0, null, zoff);
+		ddp.LineAttack(ang + extraAngle, PLAYERMISSILERANGE, pitch + extrapitch, damage, 'Hitscan', pufftype, 0, null, zoff);
 	}
 	
+
 	//bug: lowertoreloadleft doesnt work when called this way
 	action void A_CheckLeftWeaponMag()
 	{

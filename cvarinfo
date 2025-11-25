@@ -1,6 +1,7 @@
 //display debug info
 user noarchive cheat bool pl_debug = false;
 user noarchive int pl_dmode = 0;
+user noarchive int pl_pspriteInd = 0;
 //sort inventory after weapon acquisition
 user bool pl_autosort = true;
 //set bweaponready to true to escape stuck sequences [deprecated]

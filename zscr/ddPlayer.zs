@@ -24,12 +24,13 @@ class ddPlayer : DoomPlayer
 	ddWeapon lastmode; //remember previous mode [dual or 2h] todo: put in pocket so it doesnt get cleared on death
 	bool swapDown;
 	float helpme; // holds transparency of help text
-	uint8 dddebug;
+	uint8 dddebug, dddebug_psprites;
 	bool debuggin, visrec, phyrec, gethelp, autoreload; //cvars
 	float plFOV;
 	int leftInstability, insTimerLeft;
 	int rightInstability, insTimerRight;
 	int instability, instTimer; //instability penalty [dep]
+	PSpriteInfo psinfo;
 	//other
 	ddweapon desire;
 	Vector3 tepos;
@@ -99,6 +100,7 @@ class ddPlayer : DoomPlayer
 		combo = COM_SHOT;
 		combotimer = 0;
 		desire = null;
+		
 	}
 	//todo: gdi doesnt set readyweapon to ddfistright. find what does
 	override void GiveDefaultInventory()
@@ -167,15 +169,41 @@ class ddPlayer : DoomPlayer
 		if(fst) { fst.items.clear(); }
 	}
 	
+	//ideally, tickpsprites should know when a psprite/pspriteinfo created by getpsprite or otherwise is not in use and destroy it; it does not.
 	override void TickPSprites()
 	{
 		let player = self.player;
 		let weap = ddWeapon(player.readyweapon);
-		let psplw = player.GetPSprite(PSP_LEFTW0);
-		let psprw = player.GetPSprite(PSP_RIGHTW0);
 		let pspr = player.psprites;
+		let pspi = psInfo;
+		PSpriteInfo inf = null;
 		while(pspr)
 		{
+			while(pspi)
+			{
+				if(pspi.ID == pspr.ID) { inf = pspi; break; }
+				pspi = pspi.next;
+			}
+			if(inf == null) 
+			{ 
+				bool add; 
+				[inf, add] = PSpriteInfo.Create(self);
+				if(inf != null)
+				{
+					inf.ID = pspr.ID;
+					if(add) 
+					{
+						pspi = psInfo;
+						while(pspi)
+						{
+							if(pspi.next == null) { pspi.next = inf; break; }
+							pspi = pspi.next;
+						}
+					}
+					else { psInfo = inf; }
+				}
+			}
+		
 			if(pspr.Caller == null ||
 			(pspr.Caller is "Inventory" && Inventory(pspr.Caller).Owner != pspr.Owner.Mo)
 			|| (pspr.Caller is "Weapon" && pspr.Caller != pspr.Owner.ReadyWeapon))
@@ -185,8 +213,11 @@ class ddPlayer : DoomPlayer
 			else
 			{
 				pspr.Tick();
+				if(inf) { inf.DoTransformations(); }
 			}
 			pspr = pspr.Next;
+			inf = null;
+			pspi = psInfo;
 		}		
 		if ((health > 0) || (player.ReadyWeapon != null && !player.ReadyWeapon.bNoDeathInput))
 		{
@@ -221,6 +252,40 @@ class ddPlayer : DoomPlayer
 			player.SetPSprite(PSP_WEAPON, weap.FindState('DeathLower'));
 		}
 	}
+	/*
+	private void DoTransformations(PSprite psp, PSpriteInfo pspi)
+	{
+		if(psp.id != pspi.id) { console.printf("PSprite does not match PSpriteInfo"); return; }
+		if(pspi.translationTimer == -1) { return; }
+		if(pspi.PSPStatus & PSPS_TRANSLATING)
+		{
+			if(pspi.transFlags & TFL_TRANS_ORIGIN && (pspi.translTarget.x == 0 && pspi.translTarget.y == 0))
+			{
+				psp.x += double(0 - psp.x) / pspi.translationLength;
+				psp.y += double(0 - psp.y) / pspi.translationLength;
+			}
+			else if(pspi.transFlags & TFL_TRANS_ABS)
+			{
+				psp.x += double(pspi.translTarget.x - psp.x) / pspi.translationLength;
+			}
+			else
+			{
+				psp.x += double(pspi.translTarget.x) / pspi.translationLength;
+				psp.y += double(pspi.translTarget.y) / pspi.translationLength;
+			}
+		}
+		if(pspi.PSPSTatus & PSPS_SCALING)
+		{
+			psp.scale.x += double(pspi.scaleTarget.x * 0.01) / pspi.translationLength;
+			psp.scale.y += double(pspi.scaleTarget.y * 0.01) / pspi.translationLength;
+			console.printf(""..double(pspi.scaleTarget.y * 0.01));
+		}
+		if(--pspi.translationTimer <= 0)
+		{
+			pspi.ResetTransformations();
+			pspi.translationTimer = -1;
+		}
+	}*/
 	
 	override void CheckWeaponChange()
 	{
@@ -356,6 +421,19 @@ class ddPlayer : DoomPlayer
 		}
 	}
 	
+	PSpriteInfo GetPSpriteInfo(int id, Actor player)
+	{
+		let ddp = ddPlayer(player);
+		if(!ddp) { return null; }
+		let pspi = psInfo;
+		while(pspi)
+		{
+			if(pspi.id == id) { return pspi; }
+			pspi = pspi.next;
+		}
+		return null;
+	}
+	
 	override void Tick()
 	{
 		if(!player || !player.mo || player.mo != self)
@@ -379,15 +457,16 @@ class ddPlayer : DoomPlayer
 		if(debuggin)
 		{ 
 			//use signal bit for one-time print of current options
-			if(dddebug & 32) { 
+			if(dddebug & 64) { 
 			A_Log("DDDebug active: "..
 			((dddebug & DBG_VERBOSE) ? "Verbose\n":"\n")..
 			((dddebug & DBG_PLAYER) ? "Player trace\n" : "")..
 			((dddebug & DBG_WEAPSEQUENCE) ? "Weapon sequence trace\n" : "")..
 			((dddebug & DBG_WEAPONS) ? "Weapon trace\n" : "")..
-			((dddebug & DBG_INVENTORY) ? "Inventory trace\n" : "")
+			((dddebug & DBG_INVENTORY) ? "Inventory trace\n" : "")..
+			((dddebug & DBG_PSPRITES) ? "PSprite info\n" : "")
 			);			
-			dddebug &= 31; }
+			dddebug &= 63; }
 			int dbt = CVar.GetCVar("pl_dmode", player).GetInt();
 			dddebug ^= dbt;
 			CVar.GetCVar("pl_dmode", player).SetInt(0);
@@ -1154,6 +1233,123 @@ class ddPlayer : DoomPlayer
 		}		
 	}
 }
+
+enum IntepolationMethods{
+
+	INTR_LINEAR = 0,
+	INTR_EXPO,
+	INTR_LOGR,
+};
+enum PSPStatus{
+	
+	PSPS_TRANSLATING = 1<<0,
+	PSPS_SCALING = 1<<1,
+	PSPS_ROTATING = 1<<2,
+};
+
+class PSpriteInfo : Thinker
+{
+	ddPlayer owner;
+	int ID;
+	int iMethod;
+	int8 PSPStatus;
+	Vector2 translTarget;
+	Vector2 scaleTarget; //hold percentage i.e. target x = 1 means target x = 1% = 0.01;
+	double rotTarget;
+	int translationLength;
+	int translationTimer; //same as translationLength, but gets decremented in DoTransformations.
+	int16 transFlags;
+	PSpriteInfo next;
+	FVector2 whatever;
+	
+	//return false if list is empty and this PSpriteInfo is the first, true to put it in next.
+	static PSpriteInfo, bool Create(Actor own)
+	{
+		if(!(own is "ddPlayer")) { return null, false; }
+		let p = New('PSpriteInfo');
+		if(p)
+		{
+			p.owner = ddPlayer(own);
+			let pp = ddPlayer(own).psInfo;
+			if(pp == null) { return p, false; }
+			else
+			{
+				while(pp)
+				{
+					if(pp.next == null)
+					{
+						return p, true;
+					}
+					pp = pp.next;
+				}
+			} 
+		}
+		return null, false;
+	}
+	
+	void DoTransformations()
+	{
+		let psp = owner.player.GetPSprite(id);
+		if(translationTimer == -1) { return; }
+		if(PSPStatus & PSPS_TRANSLATING)
+		{
+			if(transFlags & TFL_TRANS_ORIGIN && (translTarget.x == 0 && translTarget.y == 0))
+			{
+				psp.x += double(0 - psp.x) / translationLength;
+				psp.y += double(0 - psp.y) / translationLength;
+			}
+			else if(transFlags & TFL_TRANS_ABS)
+			{
+				psp.x += double(translTarget.x - psp.x) / translationLength;
+			}
+			else
+			{
+				psp.x += double(translTarget.x) / translationLength;
+				psp.y += double(translTarget.y) / translationLength;
+			}
+		}
+		if(PSPSTatus & PSPS_SCALING)
+		{
+			psp.scale.x += double(scaleTarget.x * 0.01) / translationLength;
+			psp.scale.y += double(scaleTarget.y * 0.01) / translationLength;
+		}
+		if(--translationTimer <= 0)
+		{
+			ResetTransformations();
+			translationTimer = -1;
+		}
+	}
+	
+	void ResetTransformations()
+	{
+		let psp = owner.player.FindPSprite(id);
+		translTarget.x = 0;
+		translTarget.y = 0;
+		scaleTarget.x = 0;
+		scaleTarget.y = 0;
+		rotTarget = 0.;
+		transFlags = 0;
+		translationLength = -1;
+		PSPStatus = 0;
+		if(psp)
+		{			
+			psp.scale.x = 1.; psp.scale.y = 1.;
+			if((psp.id >= PSP_LEFTW0) && (psp.id <= PSP_LEFTWF3)) {
+				psp.x = -64;
+				if(owner.GetFireMode(false) == DUALWIELD) {	psp.y = 0; }
+				else { psp.y = 128; }
+			}
+			else if((psp.id >= PSP_RIGHTW0) && (psp.id <= PSP_RIGHTWF3)) {
+				psp.y = 0;
+				if(owner.GetFireMode(false) == DUALWIELD) {	psp.x = 64; }
+				else { psp.x = 0; }
+			}
+			else { return; }
+		}
+	}	
+}
+
+
 // #Class ddPlayerNormal : ddPlayer()
 class ddPlayerNormal : ddPlayer 
 {
@@ -1195,7 +1391,8 @@ enum DebugState
 	DBG_WEAPSEQUENCE = 1 << 1,
 	DBG_WEAPONS = 1 << 2,
 	DBG_INVENTORY = 1 << 3,
-	DBG_VERBOSE = 1 << 4,
+	DBG_PSPRITES = 1 << 4,
+	DBG_VERBOSE = 1 << 5,
 };
 
 //extra set of arms; if held, treat readyweapon as if its twohanding

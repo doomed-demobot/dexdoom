@@ -182,11 +182,12 @@ class ddStats : BaseStatusBar
 				}
 			}
 			DrawString(fa, "]", (95 + dis, -15), DI_SCREEN_CENTER_BOTTOM, Font.CR_TEAL);
-			//when scaling, make sure its not based on ui fields, as they dont pause
+			
 			DrawCrosshair();
 		}
 	}
 	
+	//todo: learn math because this needs math
 	void DrawCrosshair()
 	{
 		let lWeap = dPlay.GetLeftWeapon(dPlay.lwx);
@@ -196,10 +197,10 @@ class ddStats : BaseStatusBar
 		int scY = int(hscale.Y);
 		int ht = Screen.GetHeight() / scX;
 		int wd = Screen.GetWidth() / scX;
-		int xposR = (wd / 2) - (rweap.myInfo.aimOffsetAngle * ( Screen.GetWidth() / 360. )); 
-		int yposR = (ht / 2) + (rweap.myInfo.aimOffsetPitch * ( Screen.GetHeight() / 180. ));
-		int xposL = (wd / 2) - (lweap.myInfo.aimOffsetAngle * ( Screen.GetWidth() / 360. ));
-		int yposL = (ht / 2) + (lweap.myInfo.aimOffsetPitch * ( Screen.GetHeight() / 180. ));
+		int xposR = (wd / 2);// - (rweap.myInfo.aimOffsetAngle * ( Screen.GetWidth() / 360. )); 
+		int yposR = (ht / 2);// + (rweap.myInfo.aimOffsetPitch * ( Screen.GetHeight() / 180. ));
+		int xposL = (wd / 2);// - (lweap.myInfo.aimOffsetAngle * ( Screen.GetWidth() / 360. ));
+		int yposL = (ht / 2);// + (lweap.myInfo.aimOffsetPitch * ( Screen.GetHeight()  / 180. ));
 		Screen.DrawTexture(TexMan.CheckForTexture(rWeap.reticlename), false, xposR, yposR, DTA_Alpha, 0.80, DTA_KeepRatio, true,
 		DTA_VirtualWidth, wd, DTA_VirtualHeight, ht, DTA_Color, 0xFFFF0000,
 		DTA_ScaleX, (0.25 + (0.25 * (double(dPlay.rightInstability) / 200) ) + (0.2 * (double(dPlay.insTimerRight / 2) / 20 ) ) ) * rWeap.reticleScale, 
@@ -209,7 +210,6 @@ class ddStats : BaseStatusBar
 		DTA_VirtualWidth, wd, DTA_VirtualHeight, ht, DTA_Color, 0xFF0000FF,
 		DTA_ScaleX, (0.25 + (0.25 * (double(dPlay.leftInstability) / 200) ) + (0.2 * (double(dPlay.insTimerLeft / 2) / 20 ) ) ) * lWeap.reticleScale, 
 		DTA_ScaleY, (0.25 + (0.25 * (double(dPlay.leftInstability) / 200) ) + (0.2 * (double(dPlay.insTimerLeft / 2) / 20 ) ) ) * lWeap.reticleScale );
-		
 	}
 	
 	//draw hud
@@ -416,7 +416,75 @@ class ddStats : BaseStatusBar
 			DrawString(fa, FormatNumber(wep.lSwapTarget), (70, 10), DI_SCREEN_LEFT_CENTER, Font.CR_ORANGE);
 			DrawString(fa, FormatNumber(dPlay.rwx), (-70, 0), DI_SCREEN_RIGHT_CENTER);
 			DrawString(fa, FormatNumber(wep.rSwapTarget), (-70, 10), DI_SCREEN_RIGHT_CENTER, Font.CR_ORANGE);		
-		}		
+		}
+		if(dPlay.dddebug & DBG_PSPRITES)
+		{
+			PSprite pp = dPlay.player.FindPSprite(CVar.GetCvar("pl_pspriteInd", dPlay.player).GetInt());
+			PSpriteInfo pi;
+			let t = dPlay.psInfo;
+			while(t)
+			{
+				if(t.ID == CVar.GetCvar("pl_pspriteInd", dPlay.player).GetInt()) { pi = t; break; }
+				t = t.next;
+			}
+			if(pp) 
+			{
+				DrawString(fa, "CALLER: "..pp.caller.getclassname(), (80,-96), DI_SCREEN_LEFT_BOTTOM);
+				DrawString(fa, "ID: "..FormatNumber(pp.id).." "..IdSpriteIndex(pp.id), (80, -88), DI_SCREEN_LEFT_BOTTOM);
+				DrawString(fa, "SPRITE: "..pp.Sprite, (80, -80), DI_SCREEN_LEFT_BOTTOM);
+				DrawString(fa, "FRAME: "..(String.Format("%c", pp.frame + 65)), (80, -72), DI_SCREEN_LEFT_BOTTOM);
+				if(pi)
+				{					
+					DrawString(fa, "I_ID: "..FormatNumber(pi.ID), (80, -64), DI_SCREEN_LEFT_BOTTOM);
+					DrawString(fa, "I_TARTRANS: ("..FormatNumber(pi.translTarget.x)..", "..FormatNumber(pi.translTarget.y)..")", (80, -56), DI_SCREEN_LEFT_BOTTOM);
+					DrawString(fa, "I_TARSCALE: ("..FormatNumber(pi.scaleTarget.x)..", "..FormatNumber(pi.scaleTarget.y)..")", (80, -48), DI_SCREEN_LEFT_BOTTOM);
+					DrawString(fa, "I_TARROT: "..FormatNumber(pi.rotTarget), (80, -40), DI_SCREEN_LEFT_BOTTOM);
+					DrawString(fa, "I_TSTATUS: "..StatusToBin(pi.PSPStatus, 3), (80, -32), DI_SCREEN_LEFT_BOTTOM);
+					DrawString(fa, "RST", (154, -24), DI_SCREEN_LEFT_BOTTOM);
+					DrawString(fa, "I_FLAGS: "..StatusToBin(pi.transFlags, 4), (80, -16), DI_SCREEN_LEFT_BOTTOM);
+				}
+				else { DrawString(fa, "ERR:NO PSPINFO", (80, -64), DI_SCREEN_LEFT_BOTTOM);}
+			}
+			else
+			{
+				DrawString(fa, "ERR:NO PSPRITE ID "..FormatNumber(CVar.GetCvar("pl_pspriteInd", dPlay.player).GetInt()), (80, -96), DI_SCREEN_LEFT_BOTTOM);
+			}
+		}
+	}
+	
+	String StatusToBin(int thread, int len)
+	{
+		string spindle;
+		for(int x = len-1; x > -1; x--)
+		{
+			spindle = spindle..((thread & 1<<x) ? "X" : "O");
+		}
+		return spindle;
+	}
+	
+	String IDSpriteIndex(int id)
+	{
+		switch(id)
+		{
+			case 1: return "(READYWEAPON)";
+			case 2: return "(LEFTW0)";
+			case 3: return "(LEFTW1)";
+			case 4: return "(LEFTW2)";
+			case 5: return "(LEFTW3)";
+			case 6: return "(LEFTWF0)";
+			case 7: return "(LEFTWF1)";
+			case 8: return "(LEFTWF2)";
+			case 9: return "(LEFTWF3)";
+			case 10: return "(RIGHTW0)";
+			case 11: return "(RIGHTW1)";
+			case 12: return "(RIGHTW2)";
+			case 13: return "(RIGHTW3)";
+			case 14: return "(RIGHTWF0)";
+			case 15: return "(RIGHTWF1)";
+			case 16: return "(RIGHTWF2)";
+			case 17: return "(RIGHTWF3)";
+			default: return "";
+		}
 	}
 	
 	String, int GetddWeaponStatus(int id)
