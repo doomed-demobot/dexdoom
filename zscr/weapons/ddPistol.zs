@@ -237,6 +237,7 @@ class ddPistol : ddWeapon replaces Pistol
 				pspi.scaleTarget.y = 20;
 				pspi.rotTarget = 0.;
 				pspi.translationLength = 4;
+				pspi.iMethod = INTR_INVEXP;
 				return;
 			case 2:
 				pspi.translTarget.x = 0;
@@ -372,7 +373,6 @@ class ddPistol : ddWeapon replaces Pistol
 			#### # 1 A_DDWeaponReady;
 			Loop;
 		Fire:
-			#### A 3 A_DDTransformation;
 			#### A 1 A_WeapAction;
 			#### A 1;
 			#### A 1 A_DDTransformation;

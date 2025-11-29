@@ -189,7 +189,10 @@ class ddWeapon : Weapon
 		{
 			weap.SetDDTransformations(no, pspi);
 			pspi.translationTimer = pspi.translationLength;
+			pspi.transDelta.x = (pspi.translTarget.x - psp.x) + 1;
+			pspi.transDelta.y = (pspi.translTarget.y - psp.y) + 1;
 			//if after the call, no non-addition flags are activated and values remain 0, then we know no transformation is taking place.
+			//todo: use functions instead
 			if((pspi.translTarget.x != 0 || pspi.translTarget.y != 0) || 
 			(pspi.transFlags & (TFL_TRANS_ABS | TFL_TRANS_ORIGIN))) { pspi.PSPStatus |= PSPS_TRANSLATING; }
 			if((pspi.scaleTarget.x != 0 || pspi.scaleTarget.y != 0)) { pspi.PSPStatus |= PSPS_SCALING; }

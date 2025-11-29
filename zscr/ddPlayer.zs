@@ -1238,7 +1238,7 @@ enum IntepolationMethods{
 
 	INTR_LINEAR = 0,
 	INTR_EXPO,
-	INTR_LOGR,
+	INTR_INVEXP
 };
 enum PSPStatus{
 	
@@ -1254,6 +1254,7 @@ class PSpriteInfo : Thinker
 	int iMethod;
 	int8 PSPStatus;
 	Vector2 translTarget;
+	Vector2 transDelta; //used for exponential interpolation; [target - initial] + 1;
 	Vector2 scaleTarget; //hold percentage i.e. target x = 1 means target x = 1% = 0.01;
 	double rotTarget;
 	int translationLength;
@@ -1290,13 +1291,22 @@ class PSpriteInfo : Thinker
 	void DoTransformations()
 	{
 		let psp = owner.player.GetPSprite(id);
-		if(translationTimer == -1) { return; }
+		if(translationTimer <= 0) 
+		{ 
+			if(translationTimer != -1) { ResetTransformations(); }
+			translationTimer = -1;
+			return;
+		}
 		if(PSPStatus & PSPS_TRANSLATING)
 		{
 			if(transFlags & TFL_TRANS_ORIGIN && (translTarget.x == 0 && translTarget.y == 0))
 			{
-				psp.x += double(0 - psp.x) / translationLength;
-				psp.y += double(0 - psp.y) / translationLength;
+				if(iMethod == INTR_LINEAR)
+				{
+					psp.x += double(0 - psp.x) / translationLength;
+					psp.y += double(0 - psp.y) / translationLength;
+				}
+				else {}
 			}
 			else if(transFlags & TFL_TRANS_ABS)
 			{
@@ -1304,8 +1314,26 @@ class PSpriteInfo : Thinker
 			}
 			else
 			{
-				psp.x += double(translTarget.x) / translationLength;
-				psp.y += double(translTarget.y) / translationLength;
+				if(iMethod == INTR_LINEAR)
+				{
+					psp.x += double(translTarget.x) / translationLength;
+					psp.y += double(translTarget.y) / translationLength;
+				}
+				else if(iMethod == INTR_EXPO)
+				{
+					psp.x += ( 1. / ( 1 / ( transDelta.x**( 1. / translationLength ) ) ** (abs(translationTimer - (translationLength + 1) ) ) ) ) - 
+							( 1. / ( 1 / ( transDelta.x**( 1. / translationLength ) ) ** ((abs(translationTimer - (translationLength + 1) ) ) - 1) ) );
+					psp.y += ( 1. / ( 1 / ( transDelta.y**( 1. / translationLength ) ) ** (abs(translationTimer - (translationLength + 1) ) ) ) ) - 
+							( 1. / ( 1 / ( transDelta.y**( 1. / translationLength ) ) ** ((abs(translationTimer - (translationLength + 1) ) ) - 1) ) );
+				}
+				else if(iMethod == INTR_INVEXP)
+				{
+					psp.x += ( 1. / ( 1 / ( transDelta.x**( 1. / translationLength ) ) ** ((translationTimer) ) ) ) - 
+							( 1. / ( 1 / ( transDelta.x**( 1. / translationLength ) ) ** (((translationTimer) ) - 1) ) );
+					psp.y += ( 1. / ( 1 / ( transDelta.y**( 1. / translationLength ) ) ** ((translationTimer) ) ) ) - 
+							( 1. / ( 1 / ( transDelta.y**( 1. / translationLength ) ) ** (((translationTimer) ) - 1) ) );					
+				}
+				
 			}
 		}
 		if(PSPSTatus & PSPS_SCALING)
@@ -1313,11 +1341,17 @@ class PSpriteInfo : Thinker
 			psp.scale.x += double(scaleTarget.x * 0.01) / translationLength;
 			psp.scale.y += double(scaleTarget.y * 0.01) / translationLength;
 		}
+		translationTimer--;
+		/*
 		if(--translationTimer <= 0)
 		{
-			ResetTransformations();
-			translationTimer = -1;
-		}
+			console.printf("done ID "..id.." "..translationTimer.." "..translationLength);
+		}*/
+	}
+	
+	void SetTranslations(int xtar, int ytar, int translFlags)
+	{
+		
 	}
 	
 	void ResetTransformations()
