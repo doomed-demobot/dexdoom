@@ -252,40 +252,6 @@ class ddPlayer : DoomPlayer
 			player.SetPSprite(PSP_WEAPON, weap.FindState('DeathLower'));
 		}
 	}
-	/*
-	private void DoTransformations(PSprite psp, PSpriteInfo pspi)
-	{
-		if(psp.id != pspi.id) { console.printf("PSprite does not match PSpriteInfo"); return; }
-		if(pspi.translationTimer == -1) { return; }
-		if(pspi.PSPStatus & PSPS_TRANSLATING)
-		{
-			if(pspi.transFlags & TFL_TRANS_ORIGIN && (pspi.translTarget.x == 0 && pspi.translTarget.y == 0))
-			{
-				psp.x += double(0 - psp.x) / pspi.translationLength;
-				psp.y += double(0 - psp.y) / pspi.translationLength;
-			}
-			else if(pspi.transFlags & TFL_TRANS_ABS)
-			{
-				psp.x += double(pspi.translTarget.x - psp.x) / pspi.translationLength;
-			}
-			else
-			{
-				psp.x += double(pspi.translTarget.x) / pspi.translationLength;
-				psp.y += double(pspi.translTarget.y) / pspi.translationLength;
-			}
-		}
-		if(pspi.PSPSTatus & PSPS_SCALING)
-		{
-			psp.scale.x += double(pspi.scaleTarget.x * 0.01) / pspi.translationLength;
-			psp.scale.y += double(pspi.scaleTarget.y * 0.01) / pspi.translationLength;
-			console.printf(""..double(pspi.scaleTarget.y * 0.01));
-		}
-		if(--pspi.translationTimer <= 0)
-		{
-			pspi.ResetTransformations();
-			pspi.translationTimer = -1;
-		}
-	}*/
 	
 	override void CheckWeaponChange()
 	{
@@ -421,6 +387,7 @@ class ddPlayer : DoomPlayer
 		}
 	}
 	
+	//find and return pspriteinfo for given id. if none found, create one and return
 	PSpriteInfo GetPSpriteInfo(int id, Actor player)
 	{
 		let ddp = ddPlayer(player);
@@ -430,6 +397,26 @@ class ddPlayer : DoomPlayer
 		{
 			if(pspi.id == id) { return pspi; }
 			pspi = pspi.next;
+		}
+		if(!pspi)
+		{
+			PSpriteInfo newpspi; bool add;
+			[newpspi, add] = PSpriteInfo.Create(player);
+			if(newpspi != null)
+			{
+				newpspi.ID = id;
+				if(add)
+				{
+					let pp = psInfo;
+					while(pp)
+					{
+						if(pp.next == null) { pp.next = newpspi; newpspi.ResetTransformations(); return newpspi; }
+						pp = pp.next;
+					}
+				}
+				else { psInfo = newpspi; newpspi.ResetTransformations(); return newpspi; }
+			}
+			else { return null; }
 		}
 		return null;
 	}
@@ -1236,9 +1223,15 @@ class ddPlayer : DoomPlayer
 
 enum IntepolationMethods{
 
-	INTR_LINEAR = 0,
-	INTR_EXPO,
-	INTR_INVEXP
+	INTR_TRANS_LINEAR = 1,
+	INTR_TRANS_EXPO = 2,
+	INTR_TRANS_INVEXPO = 3,
+	INTR_SCALE_LINEAR = 4,
+	INTR_SCALE_EXPO = 8,
+	INTR_SCALE_INVEXPO = 12,
+	INTR_ROTAT_LINEAR = 16,
+	INTR_ROTAT_EXPO = 32,
+	INTR_ROTAT_INVEXPO = 48,
 };
 enum PSPStatus{
 	
@@ -1254,7 +1247,7 @@ class PSpriteInfo : Thinker
 	int iMethod;
 	int8 PSPStatus;
 	Vector2 translTarget;
-	Vector2 transDelta; //used for exponential interpolation; [target - initial] + 1;
+	Vector2 transDelta, scaleDelta, rotDelta;
 	Vector2 scaleTarget; //hold percentage i.e. target x = 1 means target x = 1% = 0.01;
 	double rotTarget;
 	int translationLength;
@@ -1262,6 +1255,7 @@ class PSpriteInfo : Thinker
 	int16 transFlags;
 	PSpriteInfo next;
 	FVector2 whatever;
+	bool resetOnTransform;
 	
 	//return false if list is empty and this PSpriteInfo is the first, true to put it in next.
 	static PSpriteInfo, bool Create(Actor own)
@@ -1293,67 +1287,114 @@ class PSpriteInfo : Thinker
 		let psp = owner.player.GetPSprite(id);
 		if(translationTimer <= 0) 
 		{ 
-			if(translationTimer != -1) { ResetTransformations(); }
+			if(resetOnTransform && translationTimer != -1) { ResetTransformations(); }
 			translationTimer = -1;
 			return;
 		}
 		if(PSPStatus & PSPS_TRANSLATING)
 		{
-			if(transFlags & TFL_TRANS_ORIGIN && (translTarget.x == 0 && translTarget.y == 0))
+			if((iMethod & 3) == INTR_TRANS_EXPO)
 			{
-				if(iMethod == INTR_LINEAR)
-				{
-					psp.x += double(0 - psp.x) / translationLength;
-					psp.y += double(0 - psp.y) / translationLength;
-				}
-				else {}
+				psp.x += (transDelta.x < 0 ? -1 : 1) * ( ( 1. / ( 1 / ( (transDelta.x + 1)**( 1. / translationLength ) ) ** (abs(translationTimer - (translationLength + 1) ) ) ) ) - 
+						( 1. / ( 1 / ( (transDelta.x + 1)**( 1. / translationLength ) ) ** ((abs(translationTimer - (translationLength + 1) ) ) - 1) ) ) );
+				psp.y += (transDelta.y < 0 ? -1 : 1) * ( ( 1. / ( 1 / ( (transDelta.y + 1)**( 1. / translationLength ) ) ** (abs(translationTimer - (translationLength + 1) ) ) ) ) - 
+						( 1. / ( 1 / ( (transDelta.y + 1)**( 1. / translationLength ) ) ** ((abs(translationTimer - (translationLength + 1) ) ) - 1) ) ) );
 			}
-			else if(transFlags & TFL_TRANS_ABS)
+			else if((iMethod & 3) == INTR_TRANS_LINEAR)
 			{
-				psp.x += double(translTarget.x - psp.x) / translationLength;
+				console.printf("id: "..id.." "..psp.y);
+				psp.x += double(transDelta.x) / translationLength;
+				psp.y += double(transDelta.y) / translationLength;
 			}
-			else
+			else if((iMethod & 3) == INTR_TRANS_INVEXPO)
 			{
-				if(iMethod == INTR_LINEAR)
-				{
-					psp.x += double(translTarget.x) / translationLength;
-					psp.y += double(translTarget.y) / translationLength;
-				}
-				else if(iMethod == INTR_EXPO)
-				{
-					psp.x += ( 1. / ( 1 / ( transDelta.x**( 1. / translationLength ) ) ** (abs(translationTimer - (translationLength + 1) ) ) ) ) - 
-							( 1. / ( 1 / ( transDelta.x**( 1. / translationLength ) ) ** ((abs(translationTimer - (translationLength + 1) ) ) - 1) ) );
-					psp.y += ( 1. / ( 1 / ( transDelta.y**( 1. / translationLength ) ) ** (abs(translationTimer - (translationLength + 1) ) ) ) ) - 
-							( 1. / ( 1 / ( transDelta.y**( 1. / translationLength ) ) ** ((abs(translationTimer - (translationLength + 1) ) ) - 1) ) );
-				}
-				else if(iMethod == INTR_INVEXP)
-				{
-					psp.x += ( 1. / ( 1 / ( transDelta.x**( 1. / translationLength ) ) ** ((translationTimer) ) ) ) - 
-							( 1. / ( 1 / ( transDelta.x**( 1. / translationLength ) ) ** (((translationTimer) ) - 1) ) );
-					psp.y += ( 1. / ( 1 / ( transDelta.y**( 1. / translationLength ) ) ** ((translationTimer) ) ) ) - 
-							( 1. / ( 1 / ( transDelta.y**( 1. / translationLength ) ) ** (((translationTimer) ) - 1) ) );					
-				}
-				
+				psp.x += (transDelta.x < 0 ? -1 : 1) * ( ( 1. / ( 1 / ( (abs(transDelta.x) + 1)**( 1. / translationLength ) ) ** ((translationTimer) ) ) ) - 
+						( 1. / ( 1 / ( (abs(transDelta.x) + 1)**( 1. / translationLength ) ) ** (((translationTimer) ) - 1) ) ) );
+				psp.y += (transDelta.y < 0 ? -1 : 1) * ( ( 1. / ( 1 / ( (abs(transDelta.y) + 1)**( 1. / translationLength ) ) ** ((translationTimer) ) ) ) - 
+						( 1. / ( 1 / ( (abs(transDelta.y) + 1)**( 1. / translationLength ) ) ** (((translationTimer) ) - 1) ) ) );
 			}
 		}
 		if(PSPSTatus & PSPS_SCALING)
 		{
-			psp.scale.x += double(scaleTarget.x * 0.01) / translationLength;
-			psp.scale.y += double(scaleTarget.y * 0.01) / translationLength;
+			if((iMethod & 12) == INTR_SCALE_EXPO)
+			{
+				psp.scale.x += ( 1. / ( 1 / ( ((scaleDelta.x / 100) + 1)**( 1. / translationLength ) ) ** (abs(translationTimer - (translationLength + 1) ) ) ) ) - 
+						( 1. / ( 1 / ( ((scaleDelta.x / 100) + 1)**( 1. / translationLength ) ) ** ((abs(translationTimer - (translationLength + 1) ) ) - 1) ) );
+				psp.scale.y += ( 1. / ( 1 / ( ((scaleDelta.y / 100) + 1)**( 1. / translationLength ) ) ** (abs(translationTimer - (translationLength + 1) ) ) ) ) - 
+						( 1. / ( 1 / ( ((scaleDelta.y / 100) + 1)**( 1. / translationLength ) ) ** ((abs(translationTimer - (translationLength + 1) ) ) - 1) ) );
+			}
+			else if((iMethod & 12) == INTR_SCALE_LINEAR)
+			{
+				psp.scale.x += double(scaleDelta.x) / translationLength;
+				psp.scale.y += double(scaleDelta.y) / translationLength;
+			}
+			else if((iMethod & 12) == INTR_SCALE_INVEXPO)
+			{
+				psp.scale.x += ( 1. / ( 1 / ( ((scaleDelta.x / 100) + 1)**( 1. / translationLength ) ) ** ((translationTimer) ) ) ) - 
+						( 1. / ( 1 / ( ((scaleDelta.x / 100) + 1)**( 1. / translationLength ) ) ** (((translationTimer) ) - 1) ) );
+				psp.scale.y += ( 1. / ( 1 / ( ((scaleDelta.y / 100) + 1)**( 1. / translationLength ) ) ** ((translationTimer) ) ) ) - 
+						( 1. / ( 1 / ( ((scaleDelta.y / 100) + 1)**( 1. / translationLength ) ) ** (((translationTimer) ) - 1) ) );
+			}
+		}
+		if(PSPStatus & PSPS_ROTATING)
+		{
+			if((iMethod & 48) == INTR_ROTAT_EXPO)
+			{
+				psp.rotation += (rotTarget < 0 ? -1 : 1) * ( ( 1. / ( 1 / ( (abs(rotTarget) + 1)**( 1. / translationLength ) ) ** ((translationTimer) ) ) ) - 
+						( 1. / ( 1 / ( (abs(rotTarget) + 1)**( 1. / translationLength ) ) ** (((translationTimer) ) - 1) ) ) );
+			}
+			else if((iMethod & 48) == INTR_ROTAT_LINEAR)
+			{
+				psp.rotation += double(rotTarget) / translationLength;
+			}
+			else if((iMethod & 48) == INTR_ROTAT_INVEXPO)
+			{
+				psp.rotation += (rotTarget < 0 ? -1 : 1) * ( ( 1. / ( 1 / ( (abs(rotTarget) + 1)**( 1. / translationLength ) ) ** ((translationTimer) ) ) ) - 
+						( 1. / ( 1 / ( (abs(rotTarget) + 1)**( 1. / translationLength ) ) ** (((translationTimer) ) - 1) ) ) );
+			}
+		
 		}
 		translationTimer--;
-		/*
-		if(--translationTimer <= 0)
-		{
-			console.printf("done ID "..id.." "..translationTimer.." "..translationLength);
-		}*/
 	}
 	
-	void SetTranslations(int xtar, int ytar, int translFlags)
+	void SetTransformationProperties(int tLength = 1, bool resetOnTrans = false, int tMethods = 0)
 	{
-		
+		if(tMethods > 0) { iMethod |= tMethods; }
+		translationLength = tLength;
+		resetOnTransform = resetOnTrans;
 	}
 	
+	void SetTranslations(int xtar, int ytar, int translFlags = 0)
+	{
+		let psp = owner.player.FindPSprite(id);
+		if(!psp) { return; }
+		if(translFlags & TFL_TRANS_ORIGIN && ((translTarget.x == 0 && translTarget.y == 0)))
+		{
+			transDelta.x = (0 - xtar); transDelta.y = (0 - ytar);
+		}
+		else if(translFlags & TFL_TRANS_ABS)
+		{
+			transDelta.x = (xtar - psp.x); transDelta.y = (ytar - psp.y);
+		}
+		else
+		{
+			transDelta.x = xtar; transDelta.y = ytar;
+		}
+		PSPStatus |= PSPS_TRANSLATING;
+	}
+	
+	void SetScaling(int xtar, int ytar, int scaleFlags = 0)
+	{
+		scaleDelta.x = xtar; scaleDelta.y = ytar;
+		PSPStatus |= PSPS_SCALING;
+	}
+	
+	void SetRotation(int rtar, int rotFlags = 0)
+	{
+		rotTarget = rtar;
+		PSPStatus |= PSPS_ROTATING;
+	}
+
 	void ResetTransformations()
 	{
 		let psp = owner.player.FindPSprite(id);
@@ -1365,15 +1406,18 @@ class PSpriteInfo : Thinker
 		transFlags = 0;
 		translationLength = -1;
 		PSPStatus = 0;
+		iMethod = (INTR_TRANS_LINEAR | INTR_SCALE_LINEAR | INTR_ROTAT_LINEAR);
 		if(psp)
-		{			
+		{		
+			psp.halign = pspa_center;
 			psp.scale.x = 1.; psp.scale.y = 1.;
-			if((psp.id >= PSP_LEFTW0) && (psp.id <= PSP_LEFTWF3)) {
+			psp.rotation = 0;
+			if((psp.id >= PSP_LEFTW3) && (psp.id <= PSP_LEFTWF0)) {
 				psp.x = -64;
 				if(owner.GetFireMode(false) == DUALWIELD) {	psp.y = 0; }
 				else { psp.y = 128; }
 			}
-			else if((psp.id >= PSP_RIGHTW0) && (psp.id <= PSP_RIGHTWF3)) {
+			else if((psp.id >= PSP_RIGHTW3) && (psp.id <= PSP_RIGHTWF0)) {
 				psp.y = 0;
 				if(owner.GetFireMode(false) == DUALWIELD) {	psp.x = 64; }
 				else { psp.x = 0; }

@@ -165,6 +165,8 @@ class ddWeapon : Weapon
 	}
 	
 	//weapon action function for translations, scaling, and rotation
+	//1-tic length definitions still require an extra tic for transformation due to fall through. maybe find a way to allow transformations to go through before
+	//advancing to next state.
 	action void A_DDTransformation()
 	{
 		let ddp = ddPlayer(self);
@@ -173,29 +175,23 @@ class ddWeapon : Weapon
 		ddWeapon weap;
 		PSprite psp;
 		PSpriteInfo pspi;
-		if((stateinfo.mPSPIndex >= PSP_LEFTW0) && (stateinfo.mPSPIndex <= PSP_LEFTWF3)) {
+		if((stateinfo.mPSPIndex >= PSP_LEFTW3) && (stateinfo.mPSPIndex <= PSP_LEFTWF0)) {
 			weap = ddp.GetLeftWeapon(ddp.lwx);
 		}
-		else if((stateinfo.mPSPIndex >= PSP_RIGHTW0) && (stateinfo.mPSPIndex <= PSP_RIGHTWF3)){
+		else if((stateinfo.mPSPIndex >= PSP_RIGHTW3) && (stateinfo.mPSPIndex <= PSP_RIGHTWF0)){
 			weap = ddp.GetRightWeapon(ddp.rwx);
 		}
 		else { return; }
 		psp = ddp.player.GetPSprite(stateinfo.mPSPIndex);
 		pspi = ddp.GetPSpriteInfo(stateinfo.mPSPIndex, self);
-		pspi.ResetTransformations();
+		if(pspi.resetOnTransform) { pspi.ResetTransformations(); }
 		int no = psp.tics;
 		psp.tics = 0;
 		if(weap)
 		{
 			weap.SetDDTransformations(no, pspi);
+			if(pspi.translationLength == -1) { console.printf("Translation Length not set for tic "..no..". Use SetTransformationProperties()"); return; } 
 			pspi.translationTimer = pspi.translationLength;
-			pspi.transDelta.x = (pspi.translTarget.x - psp.x) + 1;
-			pspi.transDelta.y = (pspi.translTarget.y - psp.y) + 1;
-			//if after the call, no non-addition flags are activated and values remain 0, then we know no transformation is taking place.
-			//todo: use functions instead
-			if((pspi.translTarget.x != 0 || pspi.translTarget.y != 0) || 
-			(pspi.transFlags & (TFL_TRANS_ABS | TFL_TRANS_ORIGIN))) { pspi.PSPStatus |= PSPS_TRANSLATING; }
-			if((pspi.scaleTarget.x != 0 || pspi.scaleTarget.y != 0)) { pspi.PSPStatus |= PSPS_SCALING; }
 		}
 	}
 	

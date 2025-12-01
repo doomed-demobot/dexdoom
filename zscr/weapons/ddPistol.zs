@@ -183,8 +183,8 @@ class ddPistol : ddWeapon replaces Pistol
 		let ddp = ddPlayer(owner);
 		if(ddp.FindInventory("ClassicModeToken")) { return FindState("FlashC"); }
 		if(ddp.player.readyweapon is "dualWielding" || ddp.player.pendingweapon is "dualWielding" || ddp.lastmode is "dualWielding") {
-			if(weaponside) { ddp.player.GetPSprite(PSP_LEFTWF0).Frame = 1; }
-			else { ddp.player.GetPSprite(PSP_RIGHTWF0).Frame = 2; }
+			if(weaponside) { ddp.player.FindPSprite(PSP_LEFTWF0).Frame = 1; }
+			else { ddp.player.FindPSprite(PSP_RIGHTWF0).Frame = 2; }
 		}
 		return Super.GetFlashState();
 	}
@@ -228,25 +228,37 @@ class ddPistol : ddWeapon replaces Pistol
 	
 	override void SetDDTransformations(int no, PSpriteInfo &pspi)
 	{
+		let ddp = ddPlayer(owner);
+		if(!ddp) { return; }
+		int i = (weaponside) ? ddp.leftinstability : ddp.rightinstability;
 		switch(no)
 		{
 			case 1:
-				pspi.translTarget.x = 0;
-				pspi.translTarget.y = 8;
-				pspi.scaleTarget.x = 0;
-				pspi.scaleTarget.y = 20;
-				pspi.rotTarget = 0.;
-				pspi.translationLength = 4;
-				pspi.iMethod = INTR_INVEXP;
+				pspi.SetTransformationProperties(4, true, (INTR_TRANS_EXPO | INTR_SCALE_EXPO | INTR_ROTAT_INVEXPO));
+				pspi.SetTranslations(0, 12);
+				pspi.SetScaling(0, -12);
+				pspi.SetRotation(random2(2.5)*(1 + (i/100.)));
 				return;
 			case 2:
-				pspi.translTarget.x = 0;
-				pspi.translTarget.y = 0;
-				pspi.scaleTarget.x = 0;
-				pspi.scaleTarget.y = 0;
-				pspi.rotTarget = 0;
-				pspi.translationLength = 1;
-				pspi.transFlags |= (TFL_TRANS_NOINTERP | TFL_TRANS_ORIGIN);
+				pspi.SetTransformationProperties(6, false, (INTR_TRANS_INVEXPO));
+				pspi.SetTranslations(-4, 16);
+				pspi.SetRotation(6);
+				//this sucks, needs a move structured way of utilizing these substates without necessitating this haphazard, hard to follow breadcrumb approach of
+				//hard initializations.
+				ddp.player.SetPSprite(PSP_RIGHTW1, FindState("HandReload"));
+				return;
+			case 3: 
+				pspi.SetTransformationProperties(8, true, (INTR_TRANS_INVEXPO | INTR_ROTAT_INVEXPO));
+				pspi.SetRotation(-6);
+				pspi.SetTranslations(4, -8);
+				return;
+			case 4:
+				pspi.SetTransformationProperties(1, false, (INTR_TRANS_LINEAR));
+				pspi.SetTranslations(0, 32);
+				return;
+			case 5:
+				pspi.SetTransformationProperties(6, false, (INTR_TRANS_EXPO));
+				pspi.SetTranslations(0,-20);
 				return;
 			default:
 				return;			
@@ -377,10 +389,8 @@ class ddPistol : ddWeapon replaces Pistol
 			#### A 1;
 			#### A 1 A_DDTransformation;
 			#### A 0 A_DDFlash;
-			//#### B 1 A_DDWeaponOffset;
 			#### C 1 A_FireDDWeapon;
 			#### B 1;
-			//#### B 2 A_DDWeaponOffset;
 			#### B 0 A_ChangeSprite;
 			#### C 2 A_WeapAction;
 			#### # 1 A_ChangeSprite;
@@ -416,16 +426,18 @@ class ddPistol : ddWeapon replaces Pistol
 			#### # 5 A_DDRefire;
 			Goto Ready;
 		ReloadP:
+			#### F 2 A_DDTransformation;
 			#### F 3;
-			#### H 2 A_PistolReload1;
-			#### G 2;
-			#### G 4 A_WeapAction;
+			#### F 2 A_PistolReload1;
+			#### F 2;
+			#### F 3 A_DDTransformation;
+			#### F 4 A_WeapAction;
 		Reload2:
-			#### G 4;
-			#### H 6;
-			#### I 10 A_PistolReload2;
-			#### I 1 A_SetWeapState;
-			#### J 10 A_PistolReload3;
+			#### F 4;
+			#### F 6;
+			#### F 10 A_PistolReload2;
+			#### F 1 A_SetWeapState;
+			#### F 10 A_PistolReload3;
 		Reload3:
 			#### J 5 A_WeapAction;
 			#### J 1;
@@ -439,6 +451,12 @@ class ddPistol : ddWeapon replaces Pistol
 			#### I 4;
 			#### J 4;
 			Goto Ready;
+		HandReload:
+			TNT1 A 4 A_DDTransformation;
+			TNT1 A 15;
+			PIMH A 5 A_DDTransformation;
+			#### # 12;
+			Stop;
 		FlashP:
 			PISF # 1 Bright A_DDTransformation;
 			PISF # 1 Bright A_Light2;

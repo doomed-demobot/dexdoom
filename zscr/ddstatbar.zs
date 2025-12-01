@@ -429,10 +429,14 @@ class ddStats : BaseStatusBar
 			}
 			if(pp) 
 			{
-				DrawString(fa, "CALLER: "..pp.caller.getclassname(), (80,-96), DI_SCREEN_LEFT_BOTTOM);
-				DrawString(fa, "ID: "..FormatNumber(pp.id).." "..IdSpriteIndex(pp.id), (80, -88), DI_SCREEN_LEFT_BOTTOM);
-				DrawString(fa, "SPRITE: "..pp.Sprite, (80, -80), DI_SCREEN_LEFT_BOTTOM);
-				DrawString(fa, "FRAME: "..(String.Format("%c", pp.frame + 65)), (80, -72), DI_SCREEN_LEFT_BOTTOM);
+				DrawString(fa, "CALLER: "..pp.caller.getclassname(), (80,-176), DI_SCREEN_LEFT_BOTTOM);
+				DrawString(fa, "ID: "..FormatNumber(pp.id).." "..IdSpriteIndex(pp.id), (80, -168), DI_SCREEN_LEFT_BOTTOM);
+				DrawString(fa, "SPRITE: "..pp.Sprite, (80, -160), DI_SCREEN_LEFT_BOTTOM);
+				DrawString(fa, "FRAME: "..(String.Format("%c", pp.frame + 65)), (80, -152), DI_SCREEN_LEFT_BOTTOM);
+				//WHY CAN'T YOU FORMAT DOUBLES?????
+				DrawString(fa, "X: "..FormatNumber(pp.x).."."..FormatNumber((pp.x-floor(pp.x)) * 1000).." Y: "..FormatNumber(pp.y).."."..FormatNumber((pp.y-floor(pp.y)) * 1000), (80, -144), DI_SCREEN_LEFT_BOTTOM);
+				DrawString(fa, "SX: "..FormatNumber(pp.scale.x).."."..FormatNumber((pp.scale.y-floor(pp.scale.y)) * 1000).." SY: "..FormatNumber(pp.scale.y).."."..FormatNumber((pp.scale.y-floor(pp.scale.y)) * 1000), (80, -136), DI_SCREEN_LEFT_BOTTOM);
+				DrawString(fa, "ROTD: "..FormatNumber(pp.rotation).."."..FormatNumber((pp.rotation-floor(pp.rotation))*1000), (80, -128), DI_SCREEN_LEFT_BOTTOM);
 				if(pi)
 				{					
 					DrawString(fa, "I_ID: "..FormatNumber(pi.ID), (80, -64), DI_SCREEN_LEFT_BOTTOM);
@@ -467,22 +471,22 @@ class ddStats : BaseStatusBar
 		switch(id)
 		{
 			case 1: return "(READYWEAPON)";
-			case 2: return "(LEFTW0)";
-			case 3: return "(LEFTW1)";
-			case 4: return "(LEFTW2)";
-			case 5: return "(LEFTW3)";
-			case 6: return "(LEFTWF0)";
-			case 7: return "(LEFTWF1)";
-			case 8: return "(LEFTWF2)";
-			case 9: return "(LEFTWF3)";
-			case 10: return "(RIGHTW0)";
-			case 11: return "(RIGHTW1)";
-			case 12: return "(RIGHTW2)";
-			case 13: return "(RIGHTW3)";
-			case 14: return "(RIGHTWF0)";
-			case 15: return "(RIGHTWF1)";
-			case 16: return "(RIGHTWF2)";
-			case 17: return "(RIGHTWF3)";
+			case 2: return "(LEFTW3)";
+			case 3: return "(LEFTW2)";
+			case 4: return "(LEFTW1)";
+			case 5: return "(LEFTW0)";
+			case 6: return "(LEFTWF3)";
+			case 7: return "(LEFTWF2)";
+			case 8: return "(LEFTWF1)";
+			case 9: return "(LEFTWF0)";
+			case 10: return "(RIGHTW3)";
+			case 11: return "(RIGHTW2)";
+			case 12: return "(RIGHTW1)";
+			case 13: return "(RIGHTW0)";
+			case 14: return "(RIGHTWF3)";
+			case 15: return "(RIGHTWF2)";
+			case 16: return "(RIGHTWF1)";
+			case 17: return "(RIGHTWF0)";
 			default: return "";
 		}
 	}
