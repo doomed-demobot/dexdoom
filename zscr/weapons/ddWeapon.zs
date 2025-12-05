@@ -165,8 +165,6 @@ class ddWeapon : Weapon
 	}
 	
 	//weapon action function for translations, scaling, and rotation
-	//1-tic length definitions still require an extra tic for transformation due to fall through. maybe find a way to allow transformations to go through before
-	//advancing to next state.
 	action void A_DDTransformation()
 	{
 		let ddp = ddPlayer(self);
@@ -190,8 +188,8 @@ class ddWeapon : Weapon
 		if(weap)
 		{
 			weap.SetDDTransformations(no, pspi);
-			if(pspi.translationLength == -1) { console.printf("Translation Length not set for tic "..no..". Use SetTransformationProperties()"); return; } 
-			pspi.translationTimer = pspi.translationLength;
+			if(pspi.transformationLength == -1) { console.printf("Translation Length not set for tic "..no..". Use SetTransformationProperties()"); return; } 
+			pspi.transformationTimer = pspi.transformationLength;
 		}
 	}
 	
@@ -201,7 +199,22 @@ class ddWeapon : Weapon
 		return;
 	}
 	
-	//todo: find way to add remainders to offset.
+	protected PSpriteInfo SetSubSprite(PSpriteInfo &pspi, int ix, int iy, int pSpriteID, StateLabel iState = null)
+	{
+		let ddp = ddPlayer(owner);
+		if(!ddp) { return null; }
+		let newPSP = ddp.player.GetPSprite(pSpriteID);
+		let newInfo = ddp.GetPSpriteInfO(pSpriteID, ddp);
+		newInfo.superInfo = pspi;
+		newInfo.ResetTransformations();
+		newPSP.firstTic = true;
+		newPSP.x = ix; newPSP.y = iy;
+		if(iState != null)
+		{ newPSP.SetState(FindState(iState)); }
+		return newInfo;
+	}
+	
+	//[deprecated]
 	action void A_DDWeaponOffset()
 	{
 		let ddp = ddPlayer(self);

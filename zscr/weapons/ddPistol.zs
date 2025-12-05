@@ -240,25 +240,26 @@ class ddPistol : ddWeapon replaces Pistol
 				pspi.SetRotation(random2(2.5)*(1 + (i/100.)));
 				return;
 			case 2:
-				pspi.SetTransformationProperties(6, false, (INTR_TRANS_INVEXPO));
+				pspi.SetTransformationProperties(4, false, (INTR_TRANS_INVEXPO | INTR_SCALE_INVEXPO));
 				pspi.SetTranslations(-4, 16);
-				pspi.SetRotation(6);
-				//this sucks, needs a move structured way of utilizing these substates without necessitating this haphazard, hard to follow breadcrumb approach of
-				//hard initializations.
-				ddp.player.SetPSprite(PSP_RIGHTW1, FindState("HandReload"));
+				pspi.SetScaling(10, 0);
+				pspi.SetRotation(8);
+				SetSubSprite(pspi, 0, 32, PSP_RIGHTW1, "HandReload");
 				return;
 			case 3: 
-				pspi.SetTransformationProperties(8, true, (INTR_TRANS_INVEXPO | INTR_ROTAT_INVEXPO));
+				pspi.SetTransformationProperties(8, true, (INTR_TRANS_INVEXPO | INTR_SCALE_INVEXPO | INTR_ROTAT_INVEXPO));
 				pspi.SetRotation(-6);
+				pspi.SetScaling(-10,0);
 				pspi.SetTranslations(4, -8);
 				return;
 			case 4:
-				pspi.SetTransformationProperties(1, false, (INTR_TRANS_LINEAR));
-				pspi.SetTranslations(0, 32);
+				pspi.SetTransformationProperties(3, false);
+				pspi.SetTranslations(0,-20);
 				return;
 			case 5:
-				pspi.SetTransformationProperties(6, false, (INTR_TRANS_EXPO));
-				pspi.SetTranslations(0,-20);
+				pspi.SetTransformationProperties(3, true);
+				pspi.SetTranslations(-4, 8);
+				pspi.SetScaling(0, -12);
 				return;
 			default:
 				return;			
@@ -437,11 +438,12 @@ class ddPistol : ddWeapon replaces Pistol
 			#### F 6;
 			#### F 10 A_PistolReload2;
 			#### F 1 A_SetWeapState;
-			#### F 10 A_PistolReload3;
+			PISD A 5 A_DDTransformation;
+			PISD A 10 A_PistolReload3;
 		Reload3:
-			#### J 5 A_WeapAction;
-			#### J 1;
-			#### J 4;
+			#### A 5 A_WeapAction;
+			#### A 1;
+			#### A 4;
 			Goto Ready;		
 		UnloadP:
 			#### F 5 A_PistolReload2;
@@ -452,9 +454,8 @@ class ddPistol : ddWeapon replaces Pistol
 			#### J 4;
 			Goto Ready;
 		HandReload:
-			TNT1 A 4 A_DDTransformation;
 			TNT1 A 15;
-			PIMH A 5 A_DDTransformation;
+			PIMH A 4 A_DDTransformation;
 			#### # 12;
 			Stop;
 		FlashP:

@@ -181,6 +181,40 @@ class ddShotgun : ddWeapon
 	}
 	
 	override void alternativeattack() { primaryattack(); } 
+
+	override void SetDDTransformations(int no, PSpriteInfo &pspi)
+	{
+		let ddp = ddPlayer(owner);
+		if(!ddp) { return; }
+		int i = (weaponside) ? ddp.leftinstability : ddp.rightinstability;
+		switch(no)
+		{
+			case 1:
+				pspi.SetTransformationProperties(3, true, (INTR_TRANS_EXPO | INTR_SCALE_INVEXPO));
+				pspi.SetTranslations(random2(1), 12);
+				pspi.SetScaling(0, 20);
+				pspi.SetRotation(random2(7));
+				return;
+			case 2:
+				pspi.SetTransformationProperties(4, false);
+				pspi.SetTranslations(-6, 2);
+				return;
+			case 3:
+				pspi.SetTransformationProperties(3, false, (INTR_TRANS_INVEXPO | INTR_SCALE_INVEXPO));
+				pspi.SetTranslations(-1, 16);
+				pspi.SetScaling(10, 0);
+				pspi.SetRotation(6);
+				return;
+			case 4:
+				pspi.SetTransformationProperties(3, false, (INTR_SCALE_INVEXPO));
+				pspi.SetTranslations(3, -14);
+				pspi.SetScaling(-10, 0);
+				pspi.SetRotation(-4);
+				return;
+			default: return;
+		}
+		
+	}
 	
 	override int, int, int, int GetOffsets(int no)
 	{
@@ -289,9 +323,8 @@ class ddShotgun : ddWeapon
 			#### A 1 A_WeapAction;
 			#### A 3;
 			#### A 0 A_DDFlash;
-			#### A 1 A_DDWeaponOffset;
+			#### A 1 A_DDTransformation;
 			#### A 1 A_FireDDWeapon;
-			#### A 2 A_DDWeaponOffset;
 			#### A 6;
 			#### A 2 A_WeapAction;
 			Goto Ready;	
@@ -303,18 +336,18 @@ class ddShotgun : ddWeapon
 			Loop;
 		ReloadA:
 		ReloadP:
-			#### B 3 A_DDWeaponOffset;
+			#### B 2 A_DDTransformation;
 			#### BC 5;
-			#### D 4 A_DDWeaponOffset;
+			#### D 3 A_DDTransformation;
 			#### D 4 A_RackShotgun;
 			#### C 6 A_WeapAction;
 			#### C 3;
 		Reload2:
-			#### C 5 A_DDWeaponOffset;
+			#### C 4 A_DDTransformation;
 			#### C 2 A_SlideShotgun;
 			#### B 4;
 			#### B 3 A_WeapAction;
-			#### B 6 A_DDWeaponOffset;
+			//#### B 6 A_DDWeaponOffset;
 			#### B 1;
 			#### A 2;
 			#### A 1;
@@ -363,6 +396,7 @@ class ddShotgun : ddWeapon
 			SHTF F 3 Bright A_Light2;
 			Goto FlashDone;
 		FlashP:
+			SHTF A 1 A_DDTransformation;
 			SHTF A 1 Bright A_Light1;
 			SHTF B 2 Bright A_Light2;
 			Goto FlashDone;	

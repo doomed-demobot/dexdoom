@@ -190,6 +190,7 @@ class ddPlayer : DoomPlayer
 				[inf, add] = PSpriteInfo.Create(self);
 				if(inf != null)
 				{
+					inf.ResetTransformations();
 					inf.ID = pspr.ID;
 					if(add) 
 					{
@@ -1250,10 +1251,11 @@ class PSpriteInfo : Thinker
 	Vector2 transDelta, scaleDelta, rotDelta;
 	Vector2 scaleTarget; //hold percentage i.e. target x = 1 means target x = 1% = 0.01;
 	double rotTarget;
-	int translationLength;
-	int translationTimer; //same as translationLength, but gets decremented in DoTransformations.
+	int transformationLength;
+	int transformationTimer; //same as transformationLength, but gets decremented in DoTransformations.
 	int16 transFlags;
 	PSpriteInfo next;
+	PSpriteInfo superInfo; //PSpriteInfo for PSprite that created this info. null for Main sprites.
 	FVector2 whatever;
 	bool resetOnTransform;
 	
@@ -1285,82 +1287,81 @@ class PSpriteInfo : Thinker
 	void DoTransformations()
 	{
 		let psp = owner.player.GetPSprite(id);
-		if(translationTimer <= 0) 
+		if(transformationTimer <= 0) 
 		{ 
-			if(resetOnTransform && translationTimer != -1) { ResetTransformations(); }
-			translationTimer = -1;
+			if(resetOnTransform && transformationTimer != -1) { ResetTransformations(); }
+			transformationTimer = -1;
 			return;
 		}
 		if(PSPStatus & PSPS_TRANSLATING)
 		{
 			if((iMethod & 3) == INTR_TRANS_EXPO)
 			{
-				psp.x += (transDelta.x < 0 ? -1 : 1) * ( ( 1. / ( 1 / ( (transDelta.x + 1)**( 1. / translationLength ) ) ** (abs(translationTimer - (translationLength + 1) ) ) ) ) - 
-						( 1. / ( 1 / ( (transDelta.x + 1)**( 1. / translationLength ) ) ** ((abs(translationTimer - (translationLength + 1) ) ) - 1) ) ) );
-				psp.y += (transDelta.y < 0 ? -1 : 1) * ( ( 1. / ( 1 / ( (transDelta.y + 1)**( 1. / translationLength ) ) ** (abs(translationTimer - (translationLength + 1) ) ) ) ) - 
-						( 1. / ( 1 / ( (transDelta.y + 1)**( 1. / translationLength ) ) ** ((abs(translationTimer - (translationLength + 1) ) ) - 1) ) ) );
+				psp.x += (transDelta.x < 0 ? -1 : 1) * ( ( 1. / ( 1 / ( (transDelta.x + 1)**( 1. / transformationLength ) ) ** (abs(transformationTimer - (transformationLength + 1) ) ) ) ) - 
+						( 1. / ( 1 / ( (transDelta.x + 1)**( 1. / transformationLength ) ) ** ((abs(transformationTimer - (transformationLength + 1) ) ) - 1) ) ) );
+				psp.y += (transDelta.y < 0 ? -1 : 1) * ( ( 1. / ( 1 / ( (transDelta.y + 1)**( 1. / transformationLength ) ) ** (abs(transformationTimer - (transformationLength + 1) ) ) ) ) - 
+						( 1. / ( 1 / ( (transDelta.y + 1)**( 1. / transformationLength ) ) ** ((abs(transformationTimer - (transformationLength + 1) ) ) - 1) ) ) );
 			}
 			else if((iMethod & 3) == INTR_TRANS_LINEAR)
 			{
-				console.printf("id: "..id.." "..psp.y);
-				psp.x += double(transDelta.x) / translationLength;
-				psp.y += double(transDelta.y) / translationLength;
+				psp.x += double(transDelta.x) / transformationLength;
+				psp.y += double(transDelta.y) / transformationLength;
 			}
 			else if((iMethod & 3) == INTR_TRANS_INVEXPO)
 			{
-				psp.x += (transDelta.x < 0 ? -1 : 1) * ( ( 1. / ( 1 / ( (abs(transDelta.x) + 1)**( 1. / translationLength ) ) ** ((translationTimer) ) ) ) - 
-						( 1. / ( 1 / ( (abs(transDelta.x) + 1)**( 1. / translationLength ) ) ** (((translationTimer) ) - 1) ) ) );
-				psp.y += (transDelta.y < 0 ? -1 : 1) * ( ( 1. / ( 1 / ( (abs(transDelta.y) + 1)**( 1. / translationLength ) ) ** ((translationTimer) ) ) ) - 
-						( 1. / ( 1 / ( (abs(transDelta.y) + 1)**( 1. / translationLength ) ) ** (((translationTimer) ) - 1) ) ) );
+				psp.x += (transDelta.x < 0 ? -1 : 1) * ( ( 1. / ( 1 / ( (abs(transDelta.x) + 1)**( 1. / transformationLength ) ) ** ((transformationTimer) ) ) ) - 
+						( 1. / ( 1 / ( (abs(transDelta.x) + 1)**( 1. / transformationLength ) ) ** (((transformationTimer) ) - 1) ) ) );
+				psp.y += (transDelta.y < 0 ? -1 : 1) * ( ( 1. / ( 1 / ( (abs(transDelta.y) + 1)**( 1. / transformationLength ) ) ** ((transformationTimer) ) ) ) - 
+						( 1. / ( 1 / ( (abs(transDelta.y) + 1)**( 1. / transformationLength ) ) ** (((transformationTimer) ) - 1) ) ) );
 			}
 		}
 		if(PSPSTatus & PSPS_SCALING)
 		{
 			if((iMethod & 12) == INTR_SCALE_EXPO)
 			{
-				psp.scale.x += ( 1. / ( 1 / ( ((scaleDelta.x / 100) + 1)**( 1. / translationLength ) ) ** (abs(translationTimer - (translationLength + 1) ) ) ) ) - 
-						( 1. / ( 1 / ( ((scaleDelta.x / 100) + 1)**( 1. / translationLength ) ) ** ((abs(translationTimer - (translationLength + 1) ) ) - 1) ) );
-				psp.scale.y += ( 1. / ( 1 / ( ((scaleDelta.y / 100) + 1)**( 1. / translationLength ) ) ** (abs(translationTimer - (translationLength + 1) ) ) ) ) - 
-						( 1. / ( 1 / ( ((scaleDelta.y / 100) + 1)**( 1. / translationLength ) ) ** ((abs(translationTimer - (translationLength + 1) ) ) - 1) ) );
+				psp.scale.x += ( 1. / ( 1 / ( ((scaleDelta.x / 100) + 1)**( 1. / transformationLength ) ) ** (abs(transformationTimer - (transformationLength + 1) ) ) ) ) - 
+						( 1. / ( 1 / ( ((scaleDelta.x / 100) + 1)**( 1. / transformationLength ) ) ** ((abs(transformationTimer - (transformationLength + 1) ) ) - 1) ) );
+				psp.scale.y += ( 1. / ( 1 / ( ((scaleDelta.y / 100) + 1)**( 1. / transformationLength ) ) ** (abs(transformationTimer - (transformationLength + 1) ) ) ) ) - 
+						( 1. / ( 1 / ( ((scaleDelta.y / 100) + 1)**( 1. / transformationLength ) ) ** ((abs(transformationTimer - (transformationLength + 1) ) ) - 1) ) );
 			}
 			else if((iMethod & 12) == INTR_SCALE_LINEAR)
 			{
-				psp.scale.x += double(scaleDelta.x) / translationLength;
-				psp.scale.y += double(scaleDelta.y) / translationLength;
+				psp.scale.x += double(scaleDelta.x / 100) / transformationLength;
+				psp.scale.y += double(scaleDelta.y / 100) / transformationLength;
 			}
 			else if((iMethod & 12) == INTR_SCALE_INVEXPO)
 			{
-				psp.scale.x += ( 1. / ( 1 / ( ((scaleDelta.x / 100) + 1)**( 1. / translationLength ) ) ** ((translationTimer) ) ) ) - 
-						( 1. / ( 1 / ( ((scaleDelta.x / 100) + 1)**( 1. / translationLength ) ) ** (((translationTimer) ) - 1) ) );
-				psp.scale.y += ( 1. / ( 1 / ( ((scaleDelta.y / 100) + 1)**( 1. / translationLength ) ) ** ((translationTimer) ) ) ) - 
-						( 1. / ( 1 / ( ((scaleDelta.y / 100) + 1)**( 1. / translationLength ) ) ** (((translationTimer) ) - 1) ) );
+				psp.scale.x += ( 1. / ( 1 / ( ((scaleDelta.x / 100) + 1)**( 1. / transformationLength ) ) ** ((transformationTimer) ) ) ) - 
+						( 1. / ( 1 / ( ((scaleDelta.x / 100) + 1)**( 1. / transformationLength ) ) ** (((transformationTimer) ) - 1) ) );
+				psp.scale.y += ( 1. / ( 1 / ( ((scaleDelta.y / 100) + 1)**( 1. / transformationLength ) ) ** ((transformationTimer) ) ) ) - 
+						( 1. / ( 1 / ( ((scaleDelta.y / 100) + 1)**( 1. / transformationLength ) ) ** (((transformationTimer) ) - 1) ) );
 			}
 		}
 		if(PSPStatus & PSPS_ROTATING)
 		{
 			if((iMethod & 48) == INTR_ROTAT_EXPO)
 			{
-				psp.rotation += (rotTarget < 0 ? -1 : 1) * ( ( 1. / ( 1 / ( (abs(rotTarget) + 1)**( 1. / translationLength ) ) ** ((translationTimer) ) ) ) - 
-						( 1. / ( 1 / ( (abs(rotTarget) + 1)**( 1. / translationLength ) ) ** (((translationTimer) ) - 1) ) ) );
+				psp.rotation += (rotTarget < 0 ? -1 : 1) * ( ( 1. / ( 1 / ( (abs(rotTarget) + 1)**( 1. / transformationLength ) ) ** ((transformationTimer) ) ) ) - 
+						( 1. / ( 1 / ( (abs(rotTarget) + 1)**( 1. / transformationLength ) ) ** (((transformationTimer) ) - 1) ) ) );
 			}
 			else if((iMethod & 48) == INTR_ROTAT_LINEAR)
 			{
-				psp.rotation += double(rotTarget) / translationLength;
+				psp.rotation += double(rotTarget) / transformationLength;
 			}
 			else if((iMethod & 48) == INTR_ROTAT_INVEXPO)
 			{
-				psp.rotation += (rotTarget < 0 ? -1 : 1) * ( ( 1. / ( 1 / ( (abs(rotTarget) + 1)**( 1. / translationLength ) ) ** ((translationTimer) ) ) ) - 
-						( 1. / ( 1 / ( (abs(rotTarget) + 1)**( 1. / translationLength ) ) ** (((translationTimer) ) - 1) ) ) );
+				psp.rotation += (rotTarget < 0 ? -1 : 1) * ( ( 1. / ( 1 / ( (abs(rotTarget) + 1)**( 1. / transformationLength ) ) ** ((transformationTimer) ) ) ) - 
+						( 1. / ( 1 / ( (abs(rotTarget) + 1)**( 1. / transformationLength ) ) ** (((transformationTimer) ) - 1) ) ) );
 			}
 		
 		}
-		translationTimer--;
+		transformationTimer--;
 	}
 	
 	void SetTransformationProperties(int tLength = 1, bool resetOnTrans = false, int tMethods = 0)
 	{
 		if(tMethods > 0) { iMethod |= tMethods; }
-		translationLength = tLength;
+		transformationLength = tLength;
 		resetOnTransform = resetOnTrans;
 	}
 	
@@ -1380,11 +1381,13 @@ class PSpriteInfo : Thinker
 		{
 			transDelta.x = xtar; transDelta.y = ytar;
 		}
+		translTarget.x = transDelta.x; translTarget.y = transDelta.y;
 		PSPStatus |= PSPS_TRANSLATING;
 	}
 	
 	void SetScaling(int xtar, int ytar, int scaleFlags = 0)
 	{
+		scaleTarget.x = xtar; scaleTarget.y = ytar;
 		scaleDelta.x = xtar; scaleDelta.y = ytar;
 		PSPStatus |= PSPS_SCALING;
 	}
@@ -1404,7 +1407,7 @@ class PSpriteInfo : Thinker
 		scaleTarget.y = 0;
 		rotTarget = 0.;
 		transFlags = 0;
-		translationLength = -1;
+		transformationLength = -1;
 		PSPStatus = 0;
 		iMethod = (INTR_TRANS_LINEAR | INTR_SCALE_LINEAR | INTR_ROTAT_LINEAR);
 		if(psp)

@@ -25,6 +25,7 @@ class ddChaingun : ddWeapon replaces Chaingun
 		Inventory.PickupMessage "$GOTCHAINGUN";
 		Obituary "$OB_MPCHAINGUN";
 		Tag "$TAG_CHAINGUN";
+		+DDWEAPON.BOBWHENREADY;
 	}
 	
 	override void PostBeginPlay()
@@ -146,6 +147,28 @@ class ddChaingun : ddWeapon replaces Chaingun
 		else { return 12; } 
 	}
 	
+	override void SetDDTransformations(int no, PSpriteInfo &pspi)
+	{
+		let ddp = ddPlayer(owner);
+		if(!ddp) { return; }
+		if(ddp.CountInv("Clip") < 1) { pspi.SetTransformationProperties(); return; }
+		int i = (weaponside) ? ddp.leftinstability : ddp.rightinstability;
+		switch(no)
+		{
+			case 1:
+				pspi.SetTransformationProperties(3, true, (INTR_TRANS_INVEXPO | INTR_SCALE_INVEXPO | INTR_ROTAT_INVEXPO));
+				pspi.SetTranslations(0, 12);
+				pspi.SetScaling(6, 6);/*
+				if(i > 50) 
+				{
+					as they are random values, the flash state and weapon state are misaligned.
+					pspi.SetRotation(random2(4));
+				}*/
+				return;
+			default: return;
+		}
+	}
+	
 	override int, int, int, int GetOffsets(int no)
 	{
 		if(owner.CountInv("Clip") < 1) { return 0, 0, 1, (WOF_ADD); }
@@ -199,16 +222,14 @@ class ddChaingun : ddWeapon replaces Chaingun
 			Loop;
 		Fire:
 			CHGG A 0 A_ChainSpin;
-			CHGG A 1 A_DDWeaponOffset;
 			CHGG A 0 A_DDFlash;
+			CHGG A 1 A_DDTransformation;
 			CHGG A 1 A_FireDDWeapon;
-			CHGG A 2 A_DDWeaponOffset;
 			CHGG A 1 A_SetTicks;
-			CHGG A 1 A_DDWeaponOffset;
 			CHGG A 0 A_DDFlash;
+			CHGG A 1 A_DDTransformation;
 			CHGG B 0 A_ChainSpin;
 			CHGG B 1 A_FireDDWeapon;
-			CHGG A 2 A_DDWeaponOffset;
 			CHGG A 1 A_SetTicks;
 			CHGG B 0 A_DDRefire;
 			Goto Ready;
@@ -235,9 +256,11 @@ class ddChaingun : ddWeapon replaces Chaingun
 			CHGG B 0 A_DDRefire;
 			Goto Ready;
 		Flash:
+			CHGF A 1 A_DDTransformation;
 			CHGF A 5 Bright A_Light2;
 			Goto FlashDone;
 		Flash2:
+			CHGF B 1 A_DDTransformation;
 			CHGF B 5 Bright A_Light2;
 			Goto FlashDone;
 		Spawn:

@@ -437,6 +437,7 @@ class ddStats : BaseStatusBar
 				DrawString(fa, "X: "..FormatNumber(pp.x).."."..FormatNumber((pp.x-floor(pp.x)) * 1000).." Y: "..FormatNumber(pp.y).."."..FormatNumber((pp.y-floor(pp.y)) * 1000), (80, -144), DI_SCREEN_LEFT_BOTTOM);
 				DrawString(fa, "SX: "..FormatNumber(pp.scale.x).."."..FormatNumber((pp.scale.y-floor(pp.scale.y)) * 1000).." SY: "..FormatNumber(pp.scale.y).."."..FormatNumber((pp.scale.y-floor(pp.scale.y)) * 1000), (80, -136), DI_SCREEN_LEFT_BOTTOM);
 				DrawString(fa, "ROTD: "..FormatNumber(pp.rotation).."."..FormatNumber((pp.rotation-floor(pp.rotation))*1000), (80, -128), DI_SCREEN_LEFT_BOTTOM);
+				DrawString(fa, "D: "..((pp.bDestroyed) ? "YES" : "NO"), (80, -120), DI_SCREEN_LEFT_BOTTOM);
 				if(pi)
 				{					
 					DrawString(fa, "I_ID: "..FormatNumber(pi.ID), (80, -64), DI_SCREEN_LEFT_BOTTOM);
