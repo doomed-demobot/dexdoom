@@ -1365,6 +1365,24 @@ class PSpriteInfo : Thinker
 		resetOnTransform = resetOnTrans;
 	}
 	
+	int, bool, int GetTransProperties(int pid, bool apply = true)
+	{
+		if(pid == 0) { return 0, false, 0; }
+		let pspi = ddPlayer(owner).GetPSpriteInfo(pid, owner);
+		if(!pspi) { return 0, false, 0; }
+		if(!apply)
+		{
+			return pspi.transformationLength, pspi.resetOnTransform, pspi.iMethod;
+		}
+		else
+		{
+			self.transformationLength = pspi.transformationLength;
+			self.resetOnTransform = pspi.resetOnTransform;
+			self.iMethod = pspi.iMethod;
+			return 0, false, 0;
+		}
+	}
+	
 	void SetTranslations(int xtar, int ytar, int translFlags = 0)
 	{
 		let psp = owner.player.FindPSprite(id);
@@ -1385,6 +1403,25 @@ class PSpriteInfo : Thinker
 		PSPStatus |= PSPS_TRANSLATING;
 	}
 	
+	//get translations from other PSpriteInfo. if apply = true, set own translations to retrieved values and return nothing.
+	int, int GetTranslations(int pid, bool apply = true)
+	{
+		if(pid == 0) { return 0, 0; }
+		let pspi = ddPlayer(owner).GetPSpriteInfo(pid, owner);
+		if(!pspi) { return 0, 0; }
+		if(!apply)
+		{
+			return pspi.transDelta.x, pspi.transDelta.y;
+		}
+		else
+		{
+			self.transDelta.x = pspi.transDelta.x; self.transDelta.y = pspi.transDelta.y;
+			self.translTarget.x = pspi.translTarget.x; self.translTarget.y = pspi.translTarget.y;
+			self.PSPStatus |= PSPS_TRANSLATING;
+			return 0, 0;
+		}
+	}
+	
 	void SetScaling(int xtar, int ytar, int scaleFlags = 0)
 	{
 		scaleTarget.x = xtar; scaleTarget.y = ytar;
@@ -1392,10 +1429,45 @@ class PSpriteInfo : Thinker
 		PSPStatus |= PSPS_SCALING;
 	}
 	
+	int, int GetScaling(int pid, bool apply = true)
+	{
+		if(pid == 0) { return 0, 0; }
+		let pspi = ddPlayer(owner).GetPSpriteInfo(pid, owner);
+		if(!pspi) { return 0, 0; }
+		if(!apply)
+		{
+			return pspi.scaleDelta.x, pspi.scaleDelta.y;
+		}
+		else
+		{
+			self.scaleDelta.x = pspi.scaleDelta.x; self.scaleDelta.y = pspi.scaleDelta.y;
+			self.scaleTarget.x = pspi.scaleTarget.x; self.scaleTarget.y = pspi.scaleTarget.y;
+			self.PSPStatus |= PSPS_SCALING;
+			return 0, 0;
+		}
+	}
+	
 	void SetRotation(int rtar, int rotFlags = 0)
 	{
 		rotTarget = rtar;
 		PSPStatus |= PSPS_ROTATING;
+	}
+	
+	int GetRotation(int pid, bool apply = true)
+	{
+		if(pid == 0) { return 0; }
+		let pspi = ddPlayer(owner).GetPSpriteInfo(pid, owner);
+		if(!pspi) { return 0; }
+		if(!apply)
+		{
+			return pspi.rotTarget;
+		}
+		else
+		{
+			self.rotTarget = pspi.rotTarget;
+			self.PSPStatus |= PSPS_ROTATING;
+			return 0;
+		}
 	}
 
 	void ResetTransformations()
@@ -1415,12 +1487,12 @@ class PSpriteInfo : Thinker
 			psp.halign = pspa_center;
 			psp.scale.x = 1.; psp.scale.y = 1.;
 			psp.rotation = 0;
-			if((psp.id >= PSP_LEFTW3) && (psp.id <= PSP_LEFTWF0)) {
+			if(((psp.id >= PSP_LEFTW4) && (psp.id <= PSP_LEFTW0)) || (psp.id >= PSP_LEFTWF4) && (psp.id <= PSP_LEFTWF0)) {
 				psp.x = -64;
 				if(owner.GetFireMode(false) == DUALWIELD) {	psp.y = 0; }
 				else { psp.y = 128; }
 			}
-			else if((psp.id >= PSP_RIGHTW3) && (psp.id <= PSP_RIGHTWF0)) {
+			else if(((psp.id >= PSP_RIGHTW4) && (psp.id <= PSP_RIGHTW0)) || ((psp.id >= PSP_RIGHTWF4) && (psp.id <= PSP_RIGHTWF0))) {
 				psp.y = 0;
 				if(owner.GetFireMode(false) == DUALWIELD) {	psp.x = 64; }
 				else { psp.x = 0; }

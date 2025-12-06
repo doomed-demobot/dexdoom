@@ -472,22 +472,26 @@ class ddStats : BaseStatusBar
 		switch(id)
 		{
 			case 1: return "(READYWEAPON)";
-			case 2: return "(LEFTW3)";
-			case 3: return "(LEFTW2)";
-			case 4: return "(LEFTW1)";
-			case 5: return "(LEFTW0)";
-			case 6: return "(LEFTWF3)";
-			case 7: return "(LEFTWF2)";
-			case 8: return "(LEFTWF1)";
-			case 9: return "(LEFTWF0)";
-			case 10: return "(RIGHTW3)";
-			case 11: return "(RIGHTW2)";
-			case 12: return "(RIGHTW1)";
-			case 13: return "(RIGHTW0)";
-			case 14: return "(RIGHTWF3)";
-			case 15: return "(RIGHTWF2)";
-			case 16: return "(RIGHTWF1)";
-			case 17: return "(RIGHTWF0)";
+			case 6: return "(LEFTW4)";
+			case 7: return "(LEFTW3)";
+			case 8: return "(LEFTW2)";
+			case 9: return "(LEFTW1)";
+			case 10: return "(LEFTW0)";
+			case 11: return "(RIGHTW4)";
+			case 12: return "(RIGHTW3)";
+			case 13: return "(RIGHTW2)";
+			case 14: return "(RIGHTW1)";
+			case 15: return "(RIGHTW0)";
+			case 16: return "(LEFTWF4)";
+			case 17: return "(LEFTWF3)";
+			case 18: return "(LEFTWF2)";
+			case 19: return "(LEFTWF1)";
+			case 20: return "(LEFTWF0)";
+			case 21: return "(RIGHTWF4)";
+			case 22: return "(RIGHTWF3)";
+			case 23: return "(RIGHTWF2)";
+			case 24: return "(RIGHTWF1)";
+			case 25: return "(RIGHTWF0)";
 			default: return "";
 		}
 	}

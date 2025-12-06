@@ -233,30 +233,32 @@ class ddPistol : ddWeapon replaces Pistol
 		int i = (weaponside) ? ddp.leftinstability : ddp.rightinstability;
 		switch(no)
 		{
-			case 1:
+			case 1: //pistol fire
 				pspi.SetTransformationProperties(4, true, (INTR_TRANS_EXPO | INTR_SCALE_EXPO | INTR_ROTAT_INVEXPO));
 				pspi.SetTranslations(0, 12);
 				pspi.SetScaling(0, -12);
-				pspi.SetRotation(random2(2.5)*(1 + (i/100.)));
+				//if flash state, copy weapons rotation
+				if(pspi.id > 15) { pspi.GetRotation(pspi.id - 10); }
+				else { pspi.SetRotation(random2(2.5)*(1 + (i/100.))); }
 				return;
-			case 2:
+			case 2: //pistol reload 1
 				pspi.SetTransformationProperties(4, false, (INTR_TRANS_INVEXPO | INTR_SCALE_INVEXPO));
 				pspi.SetTranslations(-4, 16);
 				pspi.SetScaling(10, 0);
 				pspi.SetRotation(8);
 				SetSubSprite(pspi, 0, 32, PSP_RIGHTW1, "HandReload");
 				return;
-			case 3: 
+			case 3: //pistol reload 2
 				pspi.SetTransformationProperties(8, true, (INTR_TRANS_INVEXPO | INTR_SCALE_INVEXPO | INTR_ROTAT_INVEXPO));
 				pspi.SetRotation(-6);
 				pspi.SetScaling(-10,0);
 				pspi.SetTranslations(4, -8);
 				return;
-			case 4:
+			case 4: //reload hand up
 				pspi.SetTransformationProperties(3, false);
 				pspi.SetTranslations(0,-20);
 				return;
-			case 5:
+			case 5: //pistol slide forward
 				pspi.SetTransformationProperties(3, true);
 				pspi.SetTranslations(-4, 8);
 				pspi.SetScaling(0, -12);

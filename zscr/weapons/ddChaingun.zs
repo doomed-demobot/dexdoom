@@ -158,12 +158,13 @@ class ddChaingun : ddWeapon replaces Chaingun
 			case 1:
 				pspi.SetTransformationProperties(3, true, (INTR_TRANS_INVEXPO | INTR_SCALE_INVEXPO | INTR_ROTAT_INVEXPO));
 				pspi.SetTranslations(0, 12);
-				pspi.SetScaling(6, 6);/*
+				pspi.SetScaling(6, 6);
 				if(i > 50) 
 				{
-					as they are random values, the flash state and weapon state are misaligned.
-					pspi.SetRotation(random2(4));
-				}*/
+					//if flash state, copy weapons rotation
+					if(pspi.id > 15) { pspi.GetRotation(pspi.id - 10); }
+					else { pspi.SetRotation(random2(4)); console.printf(""..pspi.rotTarget); }
+				}
 				return;
 			default: return;
 		}
@@ -222,12 +223,12 @@ class ddChaingun : ddWeapon replaces Chaingun
 			Loop;
 		Fire:
 			CHGG A 0 A_ChainSpin;
-			CHGG A 0 A_DDFlash;
 			CHGG A 1 A_DDTransformation;
+			CHGG A 0 A_DDFlash;
 			CHGG A 1 A_FireDDWeapon;
 			CHGG A 1 A_SetTicks;
-			CHGG A 0 A_DDFlash;
 			CHGG A 1 A_DDTransformation;
+			CHGG A 0 A_DDFlash;
 			CHGG B 0 A_ChainSpin;
 			CHGG B 1 A_FireDDWeapon;
 			CHGG A 1 A_SetTicks;

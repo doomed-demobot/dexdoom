@@ -189,23 +189,33 @@ class ddShotgun : ddWeapon
 		int i = (weaponside) ? ddp.leftinstability : ddp.rightinstability;
 		switch(no)
 		{
-			case 1:
+			case 1: //shotgun fire
 				pspi.SetTransformationProperties(3, true, (INTR_TRANS_EXPO | INTR_SCALE_INVEXPO));
-				pspi.SetTranslations(random2(1), 12);
+				//if flash state, copy weapons rotation
+				if(pspi.id > 15) 
+				{
+					pspi.GetTranslations(pspi.id - 10);
+					pspi.GetRotation(pspi.id - 10);
+				}
+				else 
+				{
+					pspi.SetTranslations(random2(1), 12); console.printf(""..pspi.transDelta.x);
+					pspi.SetRotation(random2(7));
+				}
+				
 				pspi.SetScaling(0, 20);
-				pspi.SetRotation(random2(7));
 				return;
-			case 2:
+			case 2: //shotgun reload 1
 				pspi.SetTransformationProperties(4, false);
 				pspi.SetTranslations(-6, 2);
 				return;
-			case 3:
+			case 3: //shotgun reload 2
 				pspi.SetTransformationProperties(3, false, (INTR_TRANS_INVEXPO | INTR_SCALE_INVEXPO));
 				pspi.SetTranslations(-1, 16);
 				pspi.SetScaling(10, 0);
 				pspi.SetRotation(6);
 				return;
-			case 4:
+			case 4: //shotgun reload 3
 				pspi.SetTransformationProperties(3, false, (INTR_SCALE_INVEXPO));
 				pspi.SetTranslations(3, -14);
 				pspi.SetScaling(-10, 0);
@@ -322,8 +332,8 @@ class ddShotgun : ddWeapon
 		Fire:
 			#### A 1 A_WeapAction;
 			#### A 3;
-			#### A 0 A_DDFlash;
 			#### A 1 A_DDTransformation;
+			#### A 0 A_DDFlash;
 			#### A 1 A_FireDDWeapon;
 			#### A 6;
 			#### A 2 A_WeapAction;
