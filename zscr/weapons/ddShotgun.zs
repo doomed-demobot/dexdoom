@@ -199,25 +199,25 @@ class ddShotgun : ddWeapon
 				}
 				else 
 				{
-					pspi.SetTranslations(random2(1), 12); console.printf(""..pspi.transDelta.x);
+					pspi.SetTranslations(random2(1), 12);
 					pspi.SetRotation(random2(7));
 				}
 				
 				pspi.SetScaling(0, 20);
 				return;
 			case 2: //shotgun reload 1
-				pspi.SetTransformationProperties(4, false);
-				pspi.SetTranslations(-6, 2);
+				pspi.SetTransformationProperties(5, false, INTR_TRANS_EXPO);
+				pspi.SetTranslations(-10, 4);
 				return;
 			case 3: //shotgun reload 2
-				pspi.SetTransformationProperties(3, false, (INTR_TRANS_INVEXPO | INTR_SCALE_INVEXPO));
+				pspi.SetTransformationProperties(3, false, (INTR_TRANS_INVEXPO | INTR_SCALE_INVEXPO | INTR_ROTAT_LINEAR));
 				pspi.SetTranslations(-1, 16);
 				pspi.SetScaling(10, 0);
 				pspi.SetRotation(6);
 				return;
 			case 4: //shotgun reload 3
-				pspi.SetTransformationProperties(3, false, (INTR_SCALE_INVEXPO));
-				pspi.SetTranslations(3, -14);
+				pspi.SetTransformationProperties(3, false, (INTR_TRANS_LINEAR | INTR_SCALE_INVEXPO | INTR_ROTAT_LINEAR));
+				pspi.SetTranslations(8, -16);
 				pspi.SetScaling(-10, 0);
 				pspi.SetRotation(-4);
 				return;
@@ -352,8 +352,8 @@ class ddShotgun : ddWeapon
 			#### D 4 A_RackShotgun;
 			#### C 6 A_WeapAction;
 			#### C 3;
-		Reload2:
 			#### C 4 A_DDTransformation;
+		Reload2:
 			#### C 2 A_SlideShotgun;
 			#### B 4;
 			#### B 3 A_WeapAction;

@@ -199,12 +199,31 @@ class ddWeapon : Weapon
 		return;
 	}
 	
-	protected PSpriteInfo SetSubSprite(PSpriteInfo &pspi, int ix, int iy, int pSpriteID, StateLabel iState = null)
+	protected PSpriteInfo SetSubSprite(PSpriteInfo &pspi, int ix, int iy, int pSpriteID = 0, StateLabel iState = null)
 	{
 		let ddp = ddPlayer(owner);
 		if(!ddp) { return null; }
-		let newPSP = ddp.player.GetPSprite(pSpriteID);
-		let newInfo = ddp.GetPSpriteInfO(pSpriteID, ddp);
+		int eyedee = pSpriteID;
+		if(eyedee == 0)
+		{
+			int x = ((weaponside) ? 9 : 14) + ((pspi.id > 15) ? 10 : 0);
+			for(int y = x; y > (x - 4); y--)
+			{
+				if(ddp.GetPSpriteInfo(y, ddp).transformationLength == -1)
+				{
+					eyedee = y;
+					break;
+				}
+				console.printf(""..y);
+			}
+			if(eyedee == 0)
+			{
+				console.printf("No free substate available");
+				return null;
+			}
+		}
+		let newPSP = ddp.player.GetPSprite(eyedee);
+		let newInfo = ddp.GetPSpriteInfo(eyedee, ddp);
 		newInfo.superInfo = pspi;
 		newInfo.ResetTransformations();
 		newPSP.firstTic = true;
@@ -870,21 +889,33 @@ class ddWeapon : Weapon
 		if(!ddp) { return; }
 		ddWeapon weap;
 		PSprite psp, pspf;
-		if(((stateinfo.mPSPIndex >= PSP_LEFTW4) && (stateinfo.mPSPIndex <= PSP_LEFTW0)) || ((stateinfo.mPSPIndex >= PSP_LEFTWF4) && (stateinfo.mPSPIndex <= PSP_LEFTWF0))) {
+		//if(((stateinfo.mPSPIndex >= PSP_LEFTW4) && (stateinfo.mPSPIndex <= PSP_LEFTW0)) || ((stateinfo.mPSPIndex >= PSP_LEFTWF4) && (stateinfo.mPSPIndex <= PSP_LEFTWF0))) {
+		if(stateinfo.mPSPIndex == PSP_LEFTW0){
 			weap = ddp.GetLeftWeapon(ddp.lwx);
 			ddp.ddWeaponState |= DDW_LEFTREADY;
 			ddp.ddWeaponState |= DDW_LEFTBOBBING;
 			ddp.ddWeaponState &= ~DDW_LEFTNOBOBBING;
 			psp = ddp.player.GetPSprite(PSP_LEFTW0);
 			pspf = ddp.player.GetPSprite(PSP_LEFTWF0);
+			for(int x = 20; x > 15; x--)
+			{
+				ddp.GetPSpriteInfo(x, ddp).transformationLength = -1;
+				ddp.GetPSpriteInfo((x-10), ddp).transformationLength = -1;
+			}
 		}
-		else if(((stateinfo.mPSPIndex >= PSP_RIGHTW4) && (stateinfo.mPSPIndex <= PSP_RIGHTW0)) || ((stateinfo.mPSPIndex >= PSP_RIGHTWF4) && (stateinfo.mPSPIndex <= PSP_RIGHTWF0))){
+		//else if(((stateinfo.mPSPIndex >= PSP_RIGHTW4) && (stateinfo.mPSPIndex <= PSP_RIGHTW0)) || ((stateinfo.mPSPIndex >= PSP_RIGHTWF4) && (stateinfo.mPSPIndex <= PSP_RIGHTWF0))){
+		else if(stateinfo.mPSPIndex == PSP_RIGHTW0){
 			weap = ddp.GetRightWeapon(ddp.rwx);
 			ddp.ddWeaponState |= DDW_RIGHTREADY;
 			ddp.ddWeaponState |= DDW_RIGHTBOBBING;
 			ddp.ddWeaponState &= ~DDW_RIGHTNOBOBBING;
 			psp = ddp.player.GetPSprite(PSP_RIGHTW0);
 			pspf = ddp.player.GetPSprite(PSP_RIGHTWF0);
+			for(int x = 25; x > 20; x--)
+			{
+				ddp.GetPSpriteInfo(x, ddp).transformationLength = -1;
+				ddp.GetPSpriteInfo((x-10), ddp).transformationLength = -1;
+			}
 		}
 		if(weap.ReadySound && playUpSound) {
 			if(weap.bReadySndHalf || random() < 128) { ddp.A_StartSound(weap.ReadySound, CHAN_WEAPON); }

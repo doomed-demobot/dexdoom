@@ -163,7 +163,7 @@ class ddChaingun : ddWeapon replaces Chaingun
 				{
 					//if flash state, copy weapons rotation
 					if(pspi.id > 15) { pspi.GetRotation(pspi.id - 10); }
-					else { pspi.SetRotation(random2(4)); console.printf(""..pspi.rotTarget); }
+					else { pspi.SetRotation(random2(4)); }
 				}
 				return;
 			default: return;

@@ -1289,7 +1289,7 @@ class PSpriteInfo : Thinker
 		let psp = owner.player.GetPSprite(id);
 		if(transformationTimer <= 0) 
 		{ 
-			if(resetOnTransform && transformationTimer != -1) { ResetTransformations(); }
+			if(resetOnTransform && transformationTimer != -1) { ResetTransformations(); resetOnTransform = false; }
 			transformationTimer = -1;
 			return;
 		}
@@ -1297,10 +1297,12 @@ class PSpriteInfo : Thinker
 		{
 			if((iMethod & 3) == INTR_TRANS_EXPO)
 			{
-				psp.x += (transDelta.x < 0 ? -1 : 1) * ( ( 1. / ( 1 / ( (transDelta.x + 1)**( 1. / transformationLength ) ) ** (abs(transformationTimer - (transformationLength + 1) ) ) ) ) - 
-						( 1. / ( 1 / ( (transDelta.x + 1)**( 1. / transformationLength ) ) ** ((abs(transformationTimer - (transformationLength + 1) ) ) - 1) ) ) );
-				psp.y += (transDelta.y < 0 ? -1 : 1) * ( ( 1. / ( 1 / ( (transDelta.y + 1)**( 1. / transformationLength ) ) ** (abs(transformationTimer - (transformationLength + 1) ) ) ) ) - 
-						( 1. / ( 1 / ( (transDelta.y + 1)**( 1. / transformationLength ) ) ** ((abs(transformationTimer - (transformationLength + 1) ) ) - 1) ) ) );
+				psp.x += (transDelta.x < 0 ? -1 : 1) * 
+					( ( 1. / ( 1 / ( (abs(transDelta.x) + 1)**( 1. / transformationLength ) ) ** (abs(transformationTimer - (transformationLength + 1) ) ) ) ) - 
+					( 1. / ( 1 / ( (abs(transDelta.x) + 1)**( 1. / transformationLength ) ) ** ((abs(transformationTimer - (transformationLength + 1) ) ) - 1) ) ) );
+				psp.y += (transDelta.y < 0 ? -1 : 1) * 
+					( ( 1. / ( 1 / ( (abs(transDelta.y) + 1)**( 1. / transformationLength ) ) ** (abs(transformationTimer - (transformationLength + 1) ) ) ) ) - 
+					( 1. / ( 1 / ( (abs(transDelta.y) + 1)**( 1. / transformationLength ) ) ** ((abs(transformationTimer - (transformationLength + 1) ) ) - 1) ) ) );
 			}
 			else if((iMethod & 3) == INTR_TRANS_LINEAR)
 			{
@@ -1309,10 +1311,12 @@ class PSpriteInfo : Thinker
 			}
 			else if((iMethod & 3) == INTR_TRANS_INVEXPO)
 			{
-				psp.x += (transDelta.x < 0 ? -1 : 1) * ( ( 1. / ( 1 / ( (abs(transDelta.x) + 1)**( 1. / transformationLength ) ) ** ((transformationTimer) ) ) ) - 
-						( 1. / ( 1 / ( (abs(transDelta.x) + 1)**( 1. / transformationLength ) ) ** (((transformationTimer) ) - 1) ) ) );
-				psp.y += (transDelta.y < 0 ? -1 : 1) * ( ( 1. / ( 1 / ( (abs(transDelta.y) + 1)**( 1. / transformationLength ) ) ** ((transformationTimer) ) ) ) - 
-						( 1. / ( 1 / ( (abs(transDelta.y) + 1)**( 1. / transformationLength ) ) ** (((transformationTimer) ) - 1) ) ) );
+				psp.x += (transDelta.x < 0 ? -1 : 1) * 
+					( ( 1. / ( 1 / ( (abs(transDelta.x) + 1)**( 1. / transformationLength ) ) ** ((transformationTimer) ) ) ) - 
+					( 1. / ( 1 / ( (abs(transDelta.x) + 1)**( 1. / transformationLength ) ) ** (transformationTimer - 1) ) ) );
+				psp.y += (transDelta.y < 0 ? -1 : 1) * 
+					( ( 1. / ( 1 / ( (abs(transDelta.y) + 1)**( 1. / transformationLength ) ) ** ((transformationTimer) ) ) ) - 
+					( 1. / ( 1 / ( (abs(transDelta.y) + 1)**( 1. / transformationLength ) ) ** (transformationTimer - 1) ) ) );
 			}
 		}
 		if(PSPSTatus & PSPS_SCALING)
@@ -1360,7 +1364,10 @@ class PSpriteInfo : Thinker
 	
 	void SetTransformationProperties(int tLength = 1, bool resetOnTrans = false, int tMethods = 0)
 	{
-		if(tMethods > 0) { iMethod |= tMethods; }
+		if((tMethods & 3) > 0) { iMethod &= ~3; iMethod |= tMethods; }
+		if((tMethods & 12) > 0) { iMethod &= ~12; iMethod |= tMethods; }
+		if((tMethods & 48) > 0) { iMethod &= ~48; iMethod |= tMethods; }
+		
 		transformationLength = tLength;
 		resetOnTransform = resetOnTrans;
 	}
@@ -1487,15 +1494,32 @@ class PSpriteInfo : Thinker
 			psp.halign = pspa_center;
 			psp.scale.x = 1.; psp.scale.y = 1.;
 			psp.rotation = 0;
-			if(((psp.id >= PSP_LEFTW4) && (psp.id <= PSP_LEFTW0)) || (psp.id >= PSP_LEFTWF4) && (psp.id <= PSP_LEFTWF0)) {
-				psp.x = -64;
+			if(((psp.id >= PSP_LEFTW4) && (psp.id <= PSP_LEFTW0)) || ((psp.id >= PSP_LEFTWF4) && (psp.id <= PSP_LEFTWF0))) {
+				/*psp.x = -64;
 				if(owner.GetFireMode(false) == DUALWIELD) {	psp.y = 0; }
-				else { psp.y = 128; }
+				else { psp.y = 128; }*/
+				if(owner.GetLeftWeapon(owner.lwx).weaponStatus == DDW_RELOADING)
+				{
+					psp.x = 0; psp.y = 0;
+				}
+				else
+				{
+					if(owner.GetFireMode(false) == DUALWIELD) { psp.y = 0; }
+					else { psp.y = 128; }
+					psp.x = -64;
+				}
 			}
 			else if(((psp.id >= PSP_RIGHTW4) && (psp.id <= PSP_RIGHTW0)) || ((psp.id >= PSP_RIGHTWF4) && (psp.id <= PSP_RIGHTWF0))) {
-				psp.y = 0;
-				if(owner.GetFireMode(false) == DUALWIELD) {	psp.x = 64; }
-				else { psp.x = 0; }
+				if(owner.GetRightWeapon(owner.rwx).weaponStatus == DDW_RELOADING)
+				{
+					psp.x = 0; psp.y = 0;
+				}
+				else
+				{
+					if(owner.GetFireMode(false) == DUALWIELD) { psp.x = 64; }
+					else { psp.x = 0; }
+					psp.y = 0;
+				}
 			}
 			else { return; }
 		}

@@ -266,6 +266,7 @@ class twoHanding : ddWeapon
 		let psplf = player.GetPSprite(PSP_LEFTWF0);
 		let pspr = player.GetPSprite(PSP_RIGHTW0);
 		let psprf = player.GetPSprite(PSP_RIGHTWF0);
+		let pspri = ddp.GetPSpriteInfo(pspr.id, ddp);
 		double sFactor;
 		if(rw) 
 		{

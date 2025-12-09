@@ -245,8 +245,8 @@ class ddPistol : ddWeapon replaces Pistol
 				pspi.SetTransformationProperties(4, false, (INTR_TRANS_INVEXPO | INTR_SCALE_INVEXPO));
 				pspi.SetTranslations(-4, 16);
 				pspi.SetScaling(10, 0);
-				pspi.SetRotation(8);
-				SetSubSprite(pspi, 0, 32, PSP_RIGHTW1, "HandReload");
+				//pspi.SetRotation(8);
+				SetSubSprite(pspi, 0, 32, 0, "HandReload");
 				return;
 			case 3: //pistol reload 2
 				pspi.SetTransformationProperties(8, true, (INTR_TRANS_INVEXPO | INTR_SCALE_INVEXPO | INTR_ROTAT_INVEXPO));
@@ -262,6 +262,9 @@ class ddPistol : ddWeapon replaces Pistol
 				pspi.SetTransformationProperties(3, true);
 				pspi.SetTranslations(-4, 8);
 				pspi.SetScaling(0, -12);
+			case 6: //pistol 3
+				pspi.SetTransformationProperties(2, true, (INTR_TRANS_EXPO));
+				pspi.SetTranslations(0, -4);
 				return;
 			default:
 				return;			
@@ -437,8 +440,9 @@ class ddPistol : ddWeapon replaces Pistol
 			#### F 4 A_WeapAction;
 		Reload2:
 			#### F 4;
-			#### F 6;
-			#### F 10 A_PistolReload2;
+			#### F 4;
+			#### F 6 A_DDTransformation;
+			#### F 12 A_PistolReload2;
 			#### F 1 A_SetWeapState;
 			PISD A 5 A_DDTransformation;
 			PISD A 10 A_PistolReload3;
