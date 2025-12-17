@@ -239,7 +239,7 @@ class ddPistol : ddWeapon replaces Pistol
 				pspi.SetScaling(0, -12);
 				//if flash state, copy weapons rotation
 				if(pspi.id > 15) { pspi.GetRotation(pspi.id - 10); }
-				else { pspi.SetRotation(random2(2.5)*(1 + (i/100.))); }
+				else { pspi.SetRotation(random2(3)*(1 + (i/100.))); }
 				return;
 			case 2: //pistol reload 1
 				pspi.SetTransformationProperties(4, false, (INTR_TRANS_INVEXPO | INTR_SCALE_INVEXPO));

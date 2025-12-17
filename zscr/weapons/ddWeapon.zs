@@ -899,8 +899,10 @@ class ddWeapon : Weapon
 			pspf = ddp.player.GetPSprite(PSP_LEFTWF0);
 			for(int x = 20; x > 15; x--)
 			{
-				ddp.GetPSpriteInfo(x, ddp).transformationLength = -1;
-				ddp.GetPSpriteInfo((x-10), ddp).transformationLength = -1;
+				//ddp.GetPSpriteInfo(x, ddp).transformationLength = -1;
+				//ddp.GetPSpriteInfo((x-10), ddp).transformationLength = -1;
+				ddp.GetPSpriteInfo(x, ddp).ResetTransformations();
+				ddp.GetPSpriteInfo(x-10, ddp).ResetTransformations();
 			}
 		}
 		//else if(((stateinfo.mPSPIndex >= PSP_RIGHTW4) && (stateinfo.mPSPIndex <= PSP_RIGHTW0)) || ((stateinfo.mPSPIndex >= PSP_RIGHTWF4) && (stateinfo.mPSPIndex <= PSP_RIGHTWF0))){
@@ -913,8 +915,10 @@ class ddWeapon : Weapon
 			pspf = ddp.player.GetPSprite(PSP_RIGHTWF0);
 			for(int x = 25; x > 20; x--)
 			{
-				ddp.GetPSpriteInfo(x, ddp).transformationLength = -1;
-				ddp.GetPSpriteInfo((x-10), ddp).transformationLength = -1;
+				//ddp.GetPSpriteInfo(x, ddp).transformationLength = -1;
+				//ddp.GetPSpriteInfo((x-10), ddp).transformationLength = -1;
+				ddp.GetPSpriteInfo(x, ddp).ResetTransformations();
+				ddp.GetPSpriteInfo(x-10, ddp).ResetTransformations();
 			}
 		}
 		if(weap.ReadySound && playUpSound) {
@@ -1024,15 +1028,27 @@ class ddWeapon : Weapon
 			weap = ddp.GetLeftWeapon(ddp.lwx);
 			psp = ddp.player.GetPSprite(PSP_LEFTW0);
 			bPress = (!weap.bAltFire) ? A_PressingLeftFire() : A_PressingLeftAltFire();
+			for(int x = 20; x > 15; x--)
+			{
+				//ddp.GetPSpriteInfo(x, ddp).transformationLength = -1;
+				//ddp.GetPSpriteInfo((x-10), ddp).transformationLength = -1;
+				ddp.GetPSpriteInfo(x, ddp).ResetTransformations();
+				ddp.GetPSpriteInfo(x-10, ddp).ResetTransformations();
+			}
 		}
 		else if(((stateinfo.mPSPIndex >= PSP_RIGHTW4) && (stateinfo.mPSPIndex <= PSP_RIGHTW0)) || ((stateinfo.mPSPIndex >= PSP_RIGHTWF4) && (stateinfo.mPSPIndex <= PSP_RIGHTWF0))){
 			weap = ddp.GetRightWeapon(ddp.rwx);
 			psp = ddp.player.GetPSprite(PSP_RIGHTW0);;
 			bPress = (!weap.bAltFire) ? A_PressingRightFire() : A_PressingRightAltFire();
+			for(int x = 25; x > 20; x--)
+			{
+				//ddp.GetPSpriteInfo(x, ddp).transformationLength = -1;
+				//ddp.GetPSpriteInfo((x-10), ddp).transformationLength = -1;
+				ddp.GetPSpriteInfo(x, ddp).ResetTransformations();
+				ddp.GetPSpriteInfo(x-10, ddp).ResetTransformations();
+			}
 		}
 		State st = weap.GetRefireState();
-		PSpriteInfo pspi = ddp.GetPSpriteInfo(psp.ID, self);
-		pspi.ResetTransformations();
 		if(player.ReadyWeapon is "playerInventory") { return; }
 		if(!(player.weaponState & (WF_QUICKLEFTOK | WF_QUICKRIGHTOK)) && invoker.bModeReady && bPress && player.health > 0)
 		{

@@ -195,12 +195,12 @@ class ddShotgun : ddWeapon
 				if(pspi.id > 15) 
 				{
 					pspi.GetTranslations(pspi.id - 10);
-					pspi.GetRotation(pspi.id - 10);
+					//pspi.GetRotation(pspi.id - 10);
 				}
 				else 
 				{
 					pspi.SetTranslations(random2(1), 12);
-					pspi.SetRotation(random2(7));
+					//pspi.SetRotation(random2(7));
 				}
 				
 				pspi.SetScaling(0, 20);

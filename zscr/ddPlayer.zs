@@ -1362,12 +1362,13 @@ class PSpriteInfo : Thinker
 		transformationTimer--;
 	}
 	
-	void SetTransformationProperties(int tLength = 1, bool resetOnTrans = false, int tMethods = 0)
+	void SetTransformationProperties(int tLength = 1, bool resetOnTrans = false, int tMethods = 0, int hal = PSPA_CENTER, int val = PSPA_CENTER)
 	{
 		if((tMethods & 3) > 0) { iMethod &= ~3; iMethod |= tMethods; }
 		if((tMethods & 12) > 0) { iMethod &= ~12; iMethod |= tMethods; }
 		if((tMethods & 48) > 0) { iMethod &= ~48; iMethod |= tMethods; }
-		
+		let psp = owner.player.findpsprite(id);
+		if(psp) { psp.halign = hal; psp.valign = val; }
 		transformationLength = tLength;
 		resetOnTransform = resetOnTrans;
 	}
@@ -1476,7 +1477,7 @@ class PSpriteInfo : Thinker
 			return 0;
 		}
 	}
-
+	
 	void ResetTransformations()
 	{
 		let psp = owner.player.FindPSprite(id);
@@ -1490,8 +1491,9 @@ class PSpriteInfo : Thinker
 		PSPStatus = 0;
 		iMethod = (INTR_TRANS_LINEAR | INTR_SCALE_LINEAR | INTR_ROTAT_LINEAR);
 		if(psp)
-		{		
+		{
 			psp.halign = pspa_center;
+			psp.valign = pspa_center;
 			psp.scale.x = 1.; psp.scale.y = 1.;
 			psp.rotation = 0;
 			if(((psp.id >= PSP_LEFTW4) && (psp.id <= PSP_LEFTW0)) || ((psp.id >= PSP_LEFTWF4) && (psp.id <= PSP_LEFTWF0))) {

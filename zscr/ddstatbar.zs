@@ -437,16 +437,22 @@ class ddStats : BaseStatusBar
 				DrawString(fa, "X: "..FormatNumber(pp.x).."."..FormatNumber((pp.x-floor(pp.x)) * 1000).." Y: "..FormatNumber(pp.y).."."..FormatNumber((pp.y-floor(pp.y)) * 1000), (80, -144), DI_SCREEN_LEFT_BOTTOM);
 				DrawString(fa, "SX: "..FormatNumber(pp.scale.x).."."..FormatNumber((pp.scale.y-floor(pp.scale.y)) * 1000).." SY: "..FormatNumber(pp.scale.y).."."..FormatNumber((pp.scale.y-floor(pp.scale.y)) * 1000), (80, -136), DI_SCREEN_LEFT_BOTTOM);
 				DrawString(fa, "ROTD: "..FormatNumber(pp.rotation).."."..FormatNumber((pp.rotation-floor(pp.rotation))*1000), (80, -128), DI_SCREEN_LEFT_BOTTOM);
+				DrawString(fa, "C0 ("..FormatNumber(pp.Coord0.x)..", "..FormatNumber(pp.Coord0.y)..")", (80, -120), DI_SCREEN_LEFT_BOTTOM);
+				DrawString(fa, "C1 ("..FormatNumber(pp.Coord0.x)..", "..FormatNumber(pp.Coord0.y)..")", (80, -112), DI_SCREEN_LEFT_BOTTOM);
+				DrawString(fa, "C2 ("..FormatNumber(pp.Coord0.x)..", "..FormatNumber(pp.Coord0.y)..")", (140, -120), DI_SCREEN_LEFT_BOTTOM);
+				DrawString(fa, "C3 ("..FormatNumber(pp.Coord0.x)..", "..FormatNumber(pp.Coord0.y)..")", (140, -112), DI_SCREEN_LEFT_BOTTOM);
+				DrawString(fa, "H_AL: "..FormatNumber(pp.HAlign),(80, -104), DI_SCREEN_LEFT_BOTTOM);
+				DrawString(fa, "V_AL: "..FormatNumber(pp.VAlign),(144, -104), DI_SCREEN_LEFT_BOTTOM);
 				if(pi)
 				{					
-					DrawString(fa, "I_TLENGTH: "..FormatNumber(pi.transformationLength).." I_TTIMER: "..FormatNumber(pi.transformationTimer), (80, -120), DI_SCREEN_LEFT_BOTTOM);
+					DrawString(fa, "I_TLENGTH: "..FormatNumber(pi.transformationLength).." I_TTIMER: "..FormatNumber(pi.transformationTimer), (80, -72), DI_SCREEN_LEFT_BOTTOM);
 					DrawString(fa, "I_ID: "..FormatNumber(pi.ID), (80, -64), DI_SCREEN_LEFT_BOTTOM);
 					DrawString(fa, "I_TARTRANS: ("..FormatNumber(pi.translTarget.x)..", "..FormatNumber(pi.translTarget.y)..")", (80, -56), DI_SCREEN_LEFT_BOTTOM);
 					DrawString(fa, "I_TARSCALE: ("..FormatNumber(pi.scaleTarget.x)..", "..FormatNumber(pi.scaleTarget.y)..")", (80, -48), DI_SCREEN_LEFT_BOTTOM);
 					DrawString(fa, "I_TARROT: "..FormatNumber(pi.rotTarget), (80, -40), DI_SCREEN_LEFT_BOTTOM);
 					DrawString(fa, "I_TSTATUS: "..StatusToBin(pi.PSPStatus, 3), (80, -32), DI_SCREEN_LEFT_BOTTOM);
 					DrawString(fa, "RST", (154, -24), DI_SCREEN_LEFT_BOTTOM);
-					DrawString(fa, "I_FLAGS: "..StatusToBin(pi.transFlags, 4), (80, -16), DI_SCREEN_LEFT_BOTTOM);
+					DrawString(fa, "I_FLAGS: "..StatusToBin(pi.imethod, 6), (80, -16), DI_SCREEN_LEFT_BOTTOM);
 				}
 				else { DrawString(fa, "ERR:NO PSPINFO", (80, -64), DI_SCREEN_LEFT_BOTTOM);}
 			}

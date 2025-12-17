@@ -181,7 +181,7 @@ class ddSuperShotgun : ddWeapon
 		switch(no)
 		{
 			case 1:
-				pspi.SetTransformationProperties(4, true, (INTR_TRANS_INVEXPO | INTR_SCALE_INVEXPO));
+				pspi.SetTransformationProperties(6, true, (INTR_TRANS_INVEXPO | INTR_SCALE_INVEXPO));
 				pspi.SetTranslations(0, 9);
 				pspi.SetScaling(12, 45);
 				return;
@@ -192,7 +192,7 @@ class ddSuperShotgun : ddWeapon
 				pspi.SetRotation((mag > 1) ? -2 : 2);
 				return;
 			case 3: //reload 1
-				pspi.SetTransformationProperties(11, false, (INTR_TRANS_EXPO | INTR_SCALE_EXPO));
+				pspi.SetTransformationProperties(10, false, (INTR_TRANS_INVEXPO | INTR_SCALE_EXPO));
 				pspi.SetTranslations(-8, 0);
 				return;
 			case 4: //reload click
@@ -201,10 +201,10 @@ class ddSuperShotgun : ddWeapon
 				pspi.SetRotation(-8);
 				return;
 			case 5: //reload clock
-				pspi.SetTransformationProperties(2, false, (INTR_TRANS_INVEXPO | INTR_SCALE_EXPO | INTR_ROTAT_INVEXPO));
-				pspi.SetTranslations(4, 4);
+				pspi.SetTransformationProperties(3, false, (INTR_TRANS_INVEXPO | INTR_SCALE_EXPO | INTR_ROTAT_INVEXPO));
+				//pspi.SetTranslations(4, 4);
 				pspi.SetScaling(10,0);
-				pspi.SetRotation(4);
+				pspi.SetRotation(8);
 				return;
 			case 6: //reload clack
 				pspi.SetTransformationProperties(2, false, (INTR_TRANS_EXPO | INTR_SCALE_LINEAR | INTR_ROTAT_EXPO));
@@ -327,9 +327,9 @@ class ddSuperShotgun : ddWeapon
 		Reload:
 		ReloadA:
 		ReloadP:
-			#### B 3 A_DDTransformation;
-			#### B 7;
-			#### C 7;
+			#### B 2;
+			#### C 3 A_DDTransformation;
+			#### C 12;
 			#### D 4 A_DDTransformation;
 			#### D 1 A_OpenShotgun2;
 			#### D 5 A_WeapAction;
@@ -371,7 +371,7 @@ class ddSuperShotgun : ddWeapon
 			SH2F D 2 Bright A_Light1;
 			Goto FlashDone;
 		FlashP:
-			SH2F A 1 A_DDTransformation;
+			SHT2 A 1 A_DDTransformation;
 			SHT2 I 4 Bright A_Light1;
 			SHT2 J 3 Bright A_Light2;
 			Goto FlashDone;
