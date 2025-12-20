@@ -1,7 +1,6 @@
 // #Class ddRocketLauncher : ddWeapon replaces RocketLauncher()
-// Doom Rocket Launcher. 4 mag, reloads automatically when two handed. Must lower other
+// Doom Rocket Launcher. 6 mag, reloads automatically when two handed. Must lower other
 // weapon to reload. Grenade launcher altfire.
-//TODO: make grenades like tf2
 enum ddRLFlags
 {
 	RKL_RSEQ = 1,
@@ -27,6 +26,7 @@ class ddRocketLauncher : ddWeapon replaces RocketLauncher
 		+WEAPON.NOAUTOFIRE
 		Inventory.PickupMessage "$GOTLAUNCHER";
 		Tag "$TAG_ROCKETLAUNCHER";
+		+DDWEAPON.BOBWHENREADY;
 	}
 	
 	override void InventoryInfo(ddStats ddhud, bool debug)
@@ -139,6 +139,47 @@ class ddRocketLauncher : ddWeapon replaces RocketLauncher
 		if(mag > 0) { mag--; A_FireDDGrenade(); }
 	}
 	
+	override void SetDDTransformations(int no, PSpriteInfo &pspi)
+	{
+		let ddp = ddPlayer(owner);
+		if(!ddp) { return; }
+		let i = (weaponside) ? ddp.leftInstability : ddp.rightInstability;
+		switch(no)
+		{
+			case 1:
+				pspi.SetTransformationProperties(3, true, INTR_TRANS_EXPO);
+				pspi.SetTranslations(0, 10);
+				pspi.SetScaling(5, -10);
+				return;
+			case 2: //reload start
+				pspi.SetTransformationProperties(4, false, (INTR_TRANS_INVEXPO));
+				pspi.SetTranslations(0, -6);
+				pspi.SetScaling(0, -10);
+				pspi.SetRotation(-8);
+				return;
+			case 3:
+				pspi.SetTransformationProperties(4, true, (INTR_TRANS_INVEXPO));
+				pspi.SetTranslations(0, 6);
+				pspi.SetScaling(0, 10);
+				pspi.SetRotation(8);
+				return;
+			case 4:
+				pspi.SetTransformationProperties(4, false, (INTR_TRANS_INVEXPO));
+				pspi.SetTranslations(2, -2);
+				pspi.SetScaling(0, 0);
+				pspi.SetRotation(0);
+				return;
+			case 5:
+				pspi.SetTransformationProperties(3, false, (INTR_TRANS_INVEXPO));
+				pspi.SetTranslations(-2, 2);
+				pspi.SetScaling(0, 0);
+				pspi.SetRotation(0);
+				return;
+			default: return;
+		}
+		
+	}
+	
 	override void DD_WeapAction(int no)
 	{
 		let ddp = ddPlayer(owner);
@@ -233,7 +274,9 @@ class ddRocketLauncher : ddWeapon replaces RocketLauncher
 		Fire:
 			MISG A 1 A_WeapAction;
 			MISG B 0 A_DDFlash;
-			MISG B 8;
+			MISG B 3;			
+			MISG B 1 A_DDTransformation;
+			MISG B 5;
 			MISG B 12 A_FireDDWeapon;
 			MISG B 2 A_WeapAction;
 			MISG B 0 A_DDRefire;
@@ -247,16 +290,20 @@ class ddRocketLauncher : ddWeapon replaces RocketLauncher
 			Goto Ready;
 		ReloadA:
 		ReloadP:
+			MISG B 2 A_DDTransformation;
 			MISG B 5;
 			MISG B 6 A_WeapAction;
 			MISG B 1;
 		Load:
 			MISG B 10;
+			MISG B 4 A_DDTransformation;
 			MISG B 3 A_WeapAction;
 			MISG B 5;
+			MISG B 5 A_DDTransformation;
 			MISG B 4 A_WeapAction;
 			MISG B 1;
 		RFinish:
+			MISG B 3 A_DDTransformation;
 			MISG A 5;
 			MISG A 5 A_RLPump1;
 			MISG A 2 A_RLPump2;
@@ -271,6 +318,7 @@ class ddRocketLauncher : ddWeapon replaces RocketLauncher
 			Goto Ready;
 		Flash:
 			MISF A 3 Bright A_Light1;
+			MISF A 1 A_DDTransformation;
 			MISF B 4 Bright;
 			MISF CD 4 Bright A_Light2;
 			Goto FlashDone;

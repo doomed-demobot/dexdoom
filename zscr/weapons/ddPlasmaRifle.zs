@@ -25,6 +25,7 @@ class ddPlasmaRifle : ddWeapon replaces PlasmaRifle
 		+DDWEAPON.NOLOWER;
 		Inventory.PickupMessage "$GOTPLASMA";
 		Tag "$TAG_PLASMARIFLE";
+		+DDWEAPON.BOBWHENREADY;
 	}
 	
 	override void InventoryInfo(ddStats ddhud, bool debug)
@@ -193,6 +194,30 @@ class ddPlasmaRifle : ddWeapon replaces PlasmaRifle
 		else { return FindState("DoNotJump"); }
 	}
 	
+	override void SetDDTransformations(int no, PSpriteInfo &pspi)
+	{
+		let ddp = ddPlayer(owner);
+		if(!ddp) { return; }
+		let i = (weaponside) ? ddp.leftInstability : ddp.rightInstability;
+		switch(no)
+		{
+			case 1:
+				pspi.SetTransformationProperties(3, true, (INTR_TRANS_INVEXPO));
+				pspi.SetTranslations(0, 5);
+				return;
+			case 2:
+				let pspif = ddp.GetPSpriteInfo(pspi.id + 10, ddp);
+				pspi.SetTransformationProperties(5, false, (INTR_TRANS_INVEXPO));
+				pspi.SetTranslations(-5, 8);
+				pspif.SetTransformationProperties(5, false, (INTR_TRANS_INVEXPO));
+				pspif.SetTranslations(-5, 8);
+				return;
+			default:
+				return;
+		}
+		
+	}
+	
 	override void DD_WeapAction(int no)
 	{		
 		let ddp = ddPlayer(owner);
@@ -228,8 +253,8 @@ class ddPlasmaRifle : ddWeapon replaces PlasmaRifle
 				if(mag > 50) { mag = 50; }
 				break;
 			case 5: //reload loop
-				if(weaponside) { if(mag < 50 && !(PressingLeftFire())) { ChangeState("ReloadP", myside); break; } }
-				else { if(mag < 50 && !(PressingRightFire())) { ChangeState("ReloadP", myside); break; } }
+				if(weaponside) { if(mag < 50 && !(PressingLeftFire())) { ChangeState("ReloadP2", myside); break; } }
+				else { if(mag < 50 && !(PressingRightFire())) { ChangeState("ReloadP2", myside); break; } }
 				break;
 				
 			default: ddp.A_Log("No action defined for tic "..no); break;
@@ -254,6 +279,7 @@ class ddPlasmaRifle : ddWeapon replaces PlasmaRifle
 			PLSG A 1 A_WeapAction;
 			PLSG A 2 A_SetTicks;
 			PLSG A 0 A_DDFlash;
+			PLSG A 1 A_DDTransformation;
 			PLSG A 1 A_FireDDWeapon;
 			PLSG A 2 A_WeapAction;
 			PLSG A 2 A_DDRefire;
@@ -284,6 +310,8 @@ class ddPlasmaRifle : ddWeapon replaces PlasmaRifle
 			PLGF B 20 A_DDRefire;
 			Goto Ready;
 		ReloadP:
+			#### # 2 A_DDTransformation;
+		ReloadP2:
 			#### # 0 A_ChangeSprite;
 			#### # 0 A_DDFlash;
 			#### # 2;
@@ -293,9 +321,11 @@ class ddPlasmaRifle : ddWeapon replaces PlasmaRifle
 			#### # 10;
 			Goto Ready;
 		Flash:
+			PLSF A 1 A_DDTransformation;
 			PLSF A 3 Bright A_Light2;
 			Goto FlashDone;
 		Flash2:
+			PLSF B 1 A_DDTransformation;
 			PLSF B 3 Bright A_Light2;
 			Goto FlashDone;
 		Altflash: //initial charge

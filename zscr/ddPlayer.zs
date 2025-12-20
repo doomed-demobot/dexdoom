@@ -1369,7 +1369,7 @@ class PSpriteInfo : Thinker
 		if((tMethods & 48) > 0) { iMethod &= ~48; iMethod |= tMethods; }
 		let psp = owner.player.findpsprite(id);
 		if(psp) { psp.halign = hal; psp.valign = val; }
-		transformationLength = tLength;
+		transformationTimer = transformationLength = tLength;
 		resetOnTransform = resetOnTrans;
 	}
 	

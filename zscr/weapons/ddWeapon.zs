@@ -189,7 +189,7 @@ class ddWeapon : Weapon
 		{
 			weap.SetDDTransformations(no, pspi);
 			if(pspi.transformationLength == -1) { console.printf("Translation Length not set for tic "..no..". Use SetTransformationProperties()"); return; } 
-			pspi.transformationTimer = pspi.transformationLength;
+			//pspi.transformationTimer = pspi.transformationLength;
 		}
 	}
 	
