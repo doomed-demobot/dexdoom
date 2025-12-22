@@ -245,8 +245,7 @@ class ddPistol : ddWeapon replaces Pistol
 				pspi.SetTransformationProperties(4, false, (INTR_TRANS_INVEXPO | INTR_SCALE_INVEXPO));
 				pspi.SetTranslations(-4, 16);
 				pspi.SetScaling(10, 0);
-				//pspi.SetRotation(8);
-				SetSubSprite(pspi, 0, 32, 0, "HandReload");
+				//pspi.SetRotation(8);				
 				return;
 			case 3: //pistol reload 2
 				pspi.SetTransformationProperties(8, true, (INTR_TRANS_INVEXPO | INTR_SCALE_INVEXPO | INTR_ROTAT_INVEXPO));
@@ -255,7 +254,7 @@ class ddPistol : ddWeapon replaces Pistol
 				pspi.SetTranslations(4, -8);
 				return;
 			case 4: //reload hand up
-				pspi.SetTransformationProperties(3, false);
+				pspi.SetTransformationProperties((owner.FindInventory("PowerBerserk")) ? 2 : 3, false);
 				pspi.SetTranslations(0,-20);
 				return;
 			case 5: //pistol slide forward
@@ -283,6 +282,7 @@ class ddPistol : ddWeapon replaces Pistol
 		let psplf = ddp.player.GetPSprite(PSP_LEFTWF0);
 		let pspr = ddp.player.GetPSprite(PSP_RIGHTW0);
 		let psprf = ddp.player.GetPSprite(PSP_RIGHTWF0);
+		let pspi = ddp.GetPSpriteInfo(PSP_RIGHTW0, ddp);
 		int myside = (weaponside) ? PSP_LEFTW0 : PSP_RIGHTW0;
 		int flashside = (weaponside) ? PSP_LEFTWF0 : PSP_RIGHTWF0;
 		let res = ModeCheck();
@@ -322,6 +322,9 @@ class ddPistol : ddWeapon replaces Pistol
 			case 6:
 				UnloadWeaponMag();
 				break;
+			case 7:				
+				SetSubSprite(pspi, 0, 32, 0, "HandReload");
+				break;
 			default: ddp.A_Log("No action defined for tic "..no); break;
 		}
 	}
@@ -333,6 +336,12 @@ class ddPistol : ddWeapon replaces Pistol
 			case 1: if(mag >= 1) { return FindState("Reload3"); } else { return FindState("DoNotJump"); }
 			default: return Super.GetWeapState(no);
 		}
+	}
+	
+	override int GetTicks()
+	{
+		if(!owner) { return 0; }
+		return (owner.FindInventory("PowerBerserk")) ? 6 : 8;
 	}
 	
 	action void A_FireDDPistol()
@@ -439,6 +448,7 @@ class ddPistol : ddWeapon replaces Pistol
 			#### F 3 A_DDTransformation;
 			#### F 4 A_WeapAction;
 		Reload2:
+			#### F 7 A_WeapAction;
 			#### F 4;
 			#### F 4;
 			#### F 6 A_DDTransformation;
@@ -460,7 +470,7 @@ class ddPistol : ddWeapon replaces Pistol
 			#### J 4;
 			Goto Ready;
 		HandReload:
-			TNT1 A 15;
+			TNT1 A 15 A_SetTicks;
 			PIMH A 4 A_DDTransformation;
 			#### # 12;
 			Stop;

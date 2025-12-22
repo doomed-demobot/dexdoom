@@ -21,6 +21,7 @@ class ddBFG9000 : ddWeapon
 		+DDWEAPON.TWOHANDER;
 		Inventory.PickupMessage "$GOTBFG9000";
 		Tag "$TAG_BFG9000";
+		+DDWEAPON.BOBWHENREADY;
 	}
 	
 	override void InventoryInfo(ddStats ddhud, bool debug)

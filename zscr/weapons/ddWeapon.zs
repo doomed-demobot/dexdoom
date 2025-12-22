@@ -1100,13 +1100,12 @@ class ddWeapon : Weapon
 		PSprite psp;
 		if(((stateinfo.mPSPIndex >= PSP_LEFTW4) && (stateinfo.mPSPIndex <= PSP_LEFTW0)) || ((stateinfo.mPSPIndex >= PSP_LEFTWF4) && (stateinfo.mPSPIndex <= PSP_LEFTWF0))) {
 			weap = ddp.GetLeftWeapon(ddp.lwx);
-			psp = ddp.player.GetPSprite(PSP_LEFTW0);
 		}
 		else if(((stateinfo.mPSPIndex >= PSP_RIGHTW4) && (stateinfo.mPSPIndex <= PSP_RIGHTW0)) || ((stateinfo.mPSPIndex >= PSP_RIGHTWF4) && (stateinfo.mPSPIndex <= PSP_RIGHTWF0))){
 			weap = ddp.GetRightWeapon(ddp.rwx);
-			psp = ddp.player.GetPSprite(PSP_RIGHTW0);
 		}
 		else { return; }
+		psp = ddp.player.GetPSprite(stateinfo.mPSPIndex);
 		int ticks = weap.GetTicks();
 		psp.Tics = ticks;
 		if(ddp.dddebug & DBG_WEAPSEQUENCE && ddp.dddebug & DBG_VERBOSE) { A_Log((stateinfo.mPSPIndex == PSP_LEFTW0) ? "Left " : "Right ".."weapon state set to "..ticks.." tics"); }		
@@ -1474,6 +1473,13 @@ class ddWeapon : Weapon
 			else if(PressingRightAltFire()) { rweap.onWeaponFire(CE_RIGHT, mode.rightheld); } 
 			if(lWeap.weaponready || ddp.lwx != lSwapTarget) 
 			{
+				for(int x = 25; x > 15; x--)
+				{
+					if(x != 25) { ddp.player.GetPSprite(x).SetState(rw.FindState("Select.Common")); ddp.player.GetPSprite(x-10).SetState(rw.FindState("Select.Common")); }
+					if(x != 20) { ddp.player.GetPSprite(x).SetState(lw.FindState("Select.Common")); ddp.player.GetPSprite(x-10).SetState(lw.FindState("Select.Common")); }
+					ddp.GetPSpriteInfo(x, ddp).transformationTimer = -1;
+					ddp.GetPSpriteInfo(x - 10, ddp).transformationTimer = -1;
+				}
 				ddp.player.SetPSprite(PSP_LEFTW0, lWeap.GetUpState()); 
 				ddp.player.SetPSprite(PSP_RIGHTW0, rWeap.GetUpState()); 
 				ddp.ddWeaponState &= ~DDW_LEFTREADY;				
@@ -1580,6 +1586,13 @@ class ddWeapon : Weapon
 			else if(PressingRightAltFire()) { rweap.onWeaponFire(CE_RIGHT, mode.rightheld); } 
 			if(rWeap.weaponready || ddp.rwx != rSwapTarget) 
 			{
+				for(int x = 25; x > 15; x--)
+				{
+					if(x != 25) { ddp.player.GetPSprite(x).SetState(rw.FindState("Select.Common")); ddp.player.GetPSprite(x-10).SetState(rw.FindState("Select.Common")); }
+					if(x != 20) { ddp.player.GetPSprite(x).SetState(lw.FindState("Select.Common")); ddp.player.GetPSprite(x-10).SetState(lw.FindState("Select.Common")); }
+					ddp.GetPSpriteInfo(x, ddp).transformationTimer = -1;
+					ddp.GetPSpriteInfo(x - 10, ddp).transformationTimer = -1;
+				}
 				ddp.player.SetPSprite(PSP_LEFTW0, lWeap.GetUpState()); 
 				ddp.player.SetPSprite(PSP_RIGHTW0, rWeap.GetUpState());
 				//if mode was switched during reload time, swap to mode and dont raise back left weapon
@@ -1647,7 +1660,7 @@ class ddWeapon : Weapon
 					mode = thd;
 					ddp.lastmode = thd;
 					ddp.player.pendingweapon = WP_NOCHANGE;
-					ddp.player.SetPSprite(PSP_WEAPON, mode.GetReadyState());
+					ddp.player.SetPSprite(PSP_WEAPON, mode.FindState("LowerS"));
 					ddp.ddWeaponState &= ~DDW_RIGHTLOWERTOREL; 
 					mode.bmodeready = true;
 					mode.weaponstatus = DDW_READY;
@@ -1728,6 +1741,16 @@ class ddWeapon : Weapon
 			mode.y = WEAPONBOTTOM;
 			return;
 		}		
+	}
+	
+	action void A_GetPSPS()
+	{
+		for(int x = 25; x > 20; x--)
+		{
+			player.GetPSprite(x);
+			player.GetPSprite(x-10);
+		}
+		
 	}
 	
 	action void A_PickupSwapDrop()
@@ -1840,6 +1863,9 @@ class ddWeapon : Weapon
 			Loop;
 		DeathLower:
 			---- A 1 A_DeathLower;
+			Loop;
+		Select.Common:
+			TNT1 A 1;
 			Loop;
 		//marker labels
 		DoNotJump:

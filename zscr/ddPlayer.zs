@@ -267,6 +267,13 @@ class ddPlayer : DoomPlayer
 				ddWeaponState &= ~DDW_LEFTRAISETOREL;
 				ddWeaponState &= ~DDW_RIGHTLOWERTOREL;
 				ddWeaponState &= ~DDW_RIGHTRAISETOREL;
+				for(int x = 25; x > 15; x--)
+				{
+					if(x != 25) { player.GetPSprite(x).SetState(rw.FindState("FlashDone")); player.GetPSprite(x-10).SetState(rw.FindState("FlashDone")); }
+					if(x != 20) { player.GetPSprite(x).SetState(lw.FindState("FlashDone")); player.GetPSprite(x-10).SetState(lw.FindState("FlashDone")); }
+					GetPSpriteInfo(x, self).transformationTimer = -1;
+					GetPSpriteInfo(x - 10, self).transformationTimer = -1;
+				}
 				if(player.readyweapon is "twoHanding")
 				{
 					if(FindInventory("ClassicModeToken")) { ddWeaponState &= ~DDW_LEFTISTH; ddWeaponState &= ~DDW_RIGHTISTH; }
@@ -640,6 +647,7 @@ class ddPlayer : DoomPlayer
 	}
 	
 	//check which firemode is currently active. lastmode checks if mode was the last one selected.
+	//redundant function
 	int GetFireMode(bool isPending, bool wasLastMode = true)
 	{
 		if(player.readyweapon is "twoHanding" || (wasLastMode && lastmode is "twoHanding") || (isPending && player.pendingWeapon is "twoHanding"))
@@ -718,6 +726,12 @@ class ddPlayer : DoomPlayer
 			if((rwx != weap.rSwapTarget) && weap.weaponStatus == DDW_READY)
 			{
 				if(rw.weaponstatus == DDW_FIRING) { return; }
+				for(int x = 25; x > 20; x--)
+				{
+					if(x != 25) { player.GetPSprite(x).SetState(rw.FindState("Select.Common")); player.GetPSprite(x-10).SetState(rw.FindState("Select.Common")); }
+					GetPSpriteInfo(x, self).transformationTimer = -1;
+					GetPSpriteInfo(x - 10, self).transformationTimer = -1;
+				}
 				player.SetPSprite(PSP_RIGHTW0, rw.GetUpState());
 				ddWeaponState &= ~DDW_RIGHTREADY;
 				weap.bmodeready = false;
@@ -732,6 +746,14 @@ class ddPlayer : DoomPlayer
 			if((lwx != weap.lSwapTarget || rwx != weap.rSwapTarget) && weap.weaponStatus == DDW_READY)
 			{
 				if(lw.weaponstatus == DDW_FIRING || rw.weaponstatus == DDW_FIRING) { return; }
+				
+				for(int x = 25; x > 15; x--)
+				{
+					if(x != 25) { player.GetPSprite(x).SetState(rw.FindState("Select.Common")); player.GetPSprite(x-10).SetState(rw.FindState("Select.Common")); }
+					if(x != 20) { player.GetPSprite(x).SetState(lw.FindState("Select.Common")); player.GetPSprite(x-10).SetState(lw.FindState("Select.Common")); }
+					GetPSpriteInfo(x, self).transformationTimer = -1;
+					GetPSpriteInfo(x - 10, self).transformationTimer = -1;
+				}
 				player.SetPSprite(PSP_LEFTW0, lw.GetUpState());
 				player.SetPSprite(PSP_RIGHTW0, rw.GetUpState());
 				ddWeaponState &= ~DDW_LEFTREADY;

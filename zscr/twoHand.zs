@@ -273,11 +273,23 @@ class twoHanding : ddWeapon
 			sFactor = rw.sFactor * 6;
 			if(ddp.rwx != invoker.rSwapTarget) //lower right weapon
 			{
-				pspr.y += sFactor; psprf.y += sFactor;
+				for(int x = 25; x > 20; x--)
+				{
+					ddp.player.GetPSprite(x).y += sFactor;
+					ddp.player.GetPSprite(x - 10).y += sFactor;
+				}
+				//pspr.y += sFactor; psprf.y += sFactor;
 				if(pspr.y < WEAPONBOTTOM) {  }
 				else
 				{
-					pspr.y = 128; psprf.y = 128;
+					//pspr.y = 128; psprf.y = 128;
+					for(int x = 25; x > 20; x--)
+					{
+						ddp.GetPSpriteInfo(x, ddp).ResetTransformations();
+						ddp.GetPSpriteInfo(x - 10, ddp).ResetTransformations();
+						ddp.player.GetPSprite(x).y = 128;
+						ddp.player.GetPSprite(x - 10).y = 128;
+					}
 					ddp.rwx = invoker.rSwapTarget;
 					rw = rWeap.RetItem(ddp.rwx);
 					if(rw.bTwoHander && !ddp.CheckESOA(2)) { ddp.ddWeaponState |= DDW_RIGHTISTH; }
@@ -291,11 +303,23 @@ class twoHanding : ddWeapon
 			}
 			else //raise right weapon
 			{
-				pspr.y -= sFactor; psprf.y -= sFactor;
+				//pspr.y -= sFactor; psprf.y -= sFactor;
+				for(int x = 25; x > 20; x--)
+				{
+					ddp.player.GetPSprite(x).y -= sFactor;
+					ddp.player.GetPSprite(x - 10).y -= sFactor;
+				}
 				if(pspr.y > 0) {  }
 				else
 				{
-					pspr.y = 0; psprf.y = 0;
+					//pspr.y = 0; psprf.y = 0;
+					for(int x = 25; x > 20; x--)
+					{
+						ddp.GetPSpriteInfo(x, ddp).ResetTransformations();
+						ddp.GetPSpriteInfo(x - 10, ddp).ResetTransformations();
+						ddp.player.GetPSprite(x).y = 0;
+						ddp.player.GetPSprite(x - 10).y = 0;
+					}
 					if(lw) { rw.companionpiece = lw; lw.companionpiece = rw; }
 					player.SetPSprite(PSP_RIGHTW0, rw.GetReadyState());
 					ddp.altModeR = rw.fireMode;
@@ -426,6 +450,9 @@ class twoHanding : ddWeapon
 	// ## twoHanding States()
 	States
 	{
+		//gets old psprites when lower swapping so they dont disappear.
+		LowerS:
+			TNT1 A 0 A_GetPSPS;
 		Ready:
 			TNT1 A 1 A_WeaponReady(WRF_FULL);
 			Loop;
