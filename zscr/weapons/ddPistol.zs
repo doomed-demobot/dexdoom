@@ -338,10 +338,17 @@ class ddPistol : ddWeapon replaces Pistol
 		}
 	}
 	
-	override int GetTicks()
+	override int GetTicks(int no)
 	{
 		if(!owner) { return 0; }
-		return (owner.FindInventory("PowerBerserk")) ? 6 : 8;
+		switch(no)
+		{
+			case 1:
+				return (owner.FindInventory("PowerBerserk")) ? 6 : 8;
+			case 2:
+				return (owner.FindInventory("PowerBerserk")) ? 6 : 12;
+			default: return 0;
+		}
 	}
 	
 	action void A_FireDDPistol()
@@ -470,9 +477,9 @@ class ddPistol : ddWeapon replaces Pistol
 			#### J 4;
 			Goto Ready;
 		HandReload:
-			TNT1 A 15 A_SetTicks;
+			TNT1 A 1 A_SetTicks;
 			PIMH A 4 A_DDTransformation;
-			#### # 12;
+			#### # 2 A_SetTicks;
 			Stop;
 		FlashP:
 			PISF # 1 Bright A_DDTransformation;

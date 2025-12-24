@@ -659,8 +659,9 @@ class ddWeapon : Weapon
 		return FindState('DoNotJump');
 	}
 	
-	virtual int GetTicks()
+	virtual int GetTicks(int no)
 	{
+		console.printf("No tics defined for tic no "..no);
 		return 0;
 	}
 	
@@ -1106,7 +1107,8 @@ class ddWeapon : Weapon
 		}
 		else { return; }
 		psp = ddp.player.GetPSprite(stateinfo.mPSPIndex);
-		int ticks = weap.GetTicks();
+		
+		int ticks = weap.GetTicks(psp.Tics);
 		psp.Tics = ticks;
 		if(ddp.dddebug & DBG_WEAPSEQUENCE && ddp.dddebug & DBG_VERBOSE) { A_Log((stateinfo.mPSPIndex == PSP_LEFTW0) ? "Left " : "Right ".."weapon state set to "..ticks.." tics"); }		
 	}

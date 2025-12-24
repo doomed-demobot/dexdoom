@@ -117,7 +117,7 @@ class ddPlasmaRifle : ddWeapon replaces PlasmaRifle
 		return "ddPlasmaRifle";
 	}
 	
-	override int GetTicks()
+	override int GetTicks(int no)
 	{
 		if(!bAltFire)
 		{

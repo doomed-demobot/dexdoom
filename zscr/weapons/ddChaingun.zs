@@ -137,7 +137,7 @@ class ddChaingun : ddWeapon replaces Chaingun
 		if(spin > 40) { spin = 40; }
 	}
 	
-	override int GetTicks()
+	override int GetTicks(int no)
 	{
 		let ddp = ddPlayer(owner);
 		if(spin > 32) { return 2; }
