@@ -2,3 +2,4 @@
 #include "TEXTURES.shotgun.txt"
 #include "TEXTURES.plasmarifle.txt"
 #include "TEXTURES.fists.txt"
+#include "TEXTURES.pistol_actual.txt"

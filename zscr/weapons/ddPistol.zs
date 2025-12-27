@@ -114,9 +114,10 @@ class ddPistol : ddWeapon replaces Pistol
 		if(forcemode < 0)
 		{
 			if(ddp.player.readyweapon is "dualWielding" || ddp.player.pendingweapon is "dualWielding" || ddp.lastmode is "dualWielding") {
-				String sp = (weaponside) ? "PISLA0" : "PIFDA0";
+				//String sp = (weaponside) ? "PISLA0" : "PIFDA0";
 				int fr = ((ddweaponflags & PIS_RSEQ) ? 10 : 0);
-				fr = ((mag < 1) ? 1 : fr);
+				String sp = (weaponside) ? "PISGA0" : "PSTLA0" ;
+				fr = ((mag < 1) ? 2 : fr);
 				return sp, fr; 
 			}
 			else if(ddp.player.readyweapon is "twoHanding" || ddp.player.pendingweapon is "twoHanding" || ddp.lastmode is "twoHanding")  
@@ -497,6 +498,7 @@ class ddPistol : ddWeapon replaces Pistol
 			PISL A 1;
 			PISG A 1;
 			PISE A 1;
+			PSTL A 1;
 			Stop;			
 	}
 }
