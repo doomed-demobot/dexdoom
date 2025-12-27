@@ -266,6 +266,20 @@ class ddPistol : ddWeapon replaces Pistol
 				pspi.SetTransformationProperties(2, true, (INTR_TRANS_EXPO));
 				pspi.SetTranslations(0, -4);
 				return;
+			case 7: //pistol burst fire
+				if(burstcounter > 1) 
+				{ 
+					pspi.SetTransformationProperties(1, false);
+					pspi.SetTranslations(0, 6);
+					pspi.SetScaling(0, 10);
+				}
+				else 
+				{
+					pspi.SetTransformationProperties(3, true, (INTR_TRANS_INVEXPO | INTR_SCALE_INVEXPO));
+					pspi.SetTranslations(0, 8);
+					pspi.SetScaling(0, -20);
+				} 
+				return;
 			default:
 				return;			
 		}
@@ -439,6 +453,7 @@ class ddPistol : ddWeapon replaces Pistol
 			#### A 1 A_WeapAction;
 			#### A 4;
 		Burst:
+			#### B 7 A_DDTransformation;
 			#### B 0 A_DDFlash;
 			#### B 1 A_FireDDWeapon;
 			#### C 0;
@@ -487,6 +502,7 @@ class ddPistol : ddWeapon replaces Pistol
 			PISF # 1 Bright A_Light2;
 			Goto FlashDone;
 		FlashA:
+			PISF # 7 Bright A_DDTransformation;
 			PISF # 1 Bright A_Light2;
 			Goto FlashDone;
 		Spawn:

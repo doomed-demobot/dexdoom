@@ -8,12 +8,6 @@ enum WeaponStatus
 	DDW_UNLOADING
 };
 
-enum TransformationFlags{
-	TFL_TRANS_NOINTERP = 1 << 0,	//disable interpolation
-	TFL_TRANS_ABS = 1 << 1,			//interpret value as coordinate
-	TFL_TRANS_MIRROR = 1 << 2,		//mirror translation for left side
-	TFL_TRANS_ORIGIN = 1 << 3,		//interpret 0, 0 as return to origin
-};
 
 class NoBlood : Blood
 {

@@ -1256,6 +1256,13 @@ enum IntepolationMethods{
 	INTR_ROTAT_EXPO = 32,
 	INTR_ROTAT_INVEXPO = 48,
 };
+enum TransformationFlags{
+	TFL_TRANS_NOINTERP = 1 << 0,	//disable interpolation
+	TFL_TRANS_ABS = 1 << 1,			//interpret value as coordinate
+	TFL_TRANS_MIRROR = 1 << 2,		//mirror translation for left side
+	TFL_TRANS_ORIGIN = 1 << 3,		//interpret 0, 0 as return to origin
+	TFL_ROTAT_ABS = 1 << 4, 		//interpret value as coordinate
+};
 enum PSPStatus{
 	
 	PSPS_TRANSLATING = 1<<0,
@@ -1479,7 +1486,16 @@ class PSpriteInfo : Thinker
 	
 	void SetRotation(int rtar, int rotFlags = 0)
 	{
-		rotTarget = rtar;
+		let psp = owner.player.FindPSprite(id);
+		if(!psp) { return; }
+		if(rotFlags & TFL_ROTAT_ABS)
+		{
+			rotTarget = rtar -  psp.rotation;
+		}
+		else
+		{
+			rotTarget = rtar;
+		}
 		PSPStatus |= PSPS_ROTATING;
 	}
 	
