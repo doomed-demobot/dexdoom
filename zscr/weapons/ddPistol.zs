@@ -179,17 +179,6 @@ class ddPistol : ddWeapon replaces Pistol
 		else { return Super.GetAttackState(); }
 	}
 	
-	override State GetFlashState()
-	{
-		let ddp = ddPlayer(owner);
-		if(ddp.FindInventory("ClassicModeToken")) { return FindState("FlashC"); }
-		if(ddp.player.readyweapon is "dualWielding" || ddp.player.pendingweapon is "dualWielding" || ddp.lastmode is "dualWielding") {
-			if(weaponside) { ddp.player.FindPSprite(PSP_LEFTWF0).Frame = 1; }
-			else { ddp.player.FindPSprite(PSP_RIGHTWF0).Frame = 2; }
-		}
-		return Super.GetFlashState();
-	}
-	
 	override void primaryattack()
 	{
 		let ddp = ddPlayer(owner);		

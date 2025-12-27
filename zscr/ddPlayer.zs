@@ -1424,7 +1424,7 @@ class PSpriteInfo : Thinker
 	{
 		let psp = owner.player.FindPSprite(id);
 		if(!psp) { return; }
-		if(translFlags & TFL_TRANS_ORIGIN && ((translTarget.x == 0 && translTarget.y == 0)))
+		if(translFlags & TFL_TRANS_ORIGIN && ((xtar == 0 && ytar == 0)))
 		{
 			transDelta.x = (0 - xtar); transDelta.y = (0 - ytar);
 		}

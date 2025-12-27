@@ -43,7 +43,7 @@ class ddShotgun : ddWeapon
 			if(weaponstatus == DDW_RELOADING || weaponstatus == DDW_UNLOADING) { if(myside.tics > 3) { myside.tics--; } if(myflash.tics > 1) { myflash.tics--; } }
 		}
 	}*/
-	
+	/*
 	//lame fix for dualWield refire states
 	override void onRefire()
 	{
@@ -61,7 +61,7 @@ class ddShotgun : ddWeapon
 				psp.sprite = GetSpriteIndex("SHOHA2");
 			}
 		}
-	}
+	}*/
 	
 	override void OnAutoReload()
 	{
@@ -114,7 +114,7 @@ class ddShotgun : ddWeapon
 		}
 		else { return FindState("Ready"); }
 	}
-	
+	/*
 	override State GetFlashState()
 	{
 		let ddp = ddPlayer(owner);
@@ -124,7 +124,7 @@ class ddShotgun : ddWeapon
 			else { return FindState("FlashDW")+2; }
 		}
 		else { return Super.GetFlashState(); }
-	}
+	}*/
 	
 	override String, int GetSprites(int forcemode)
 	{
@@ -137,7 +137,7 @@ class ddShotgun : ddWeapon
 				int frame = -1;
 				sp = (weaponside) ? "SHOHA0" : "SHH2A0";
 				if(ddWeaponFlags & SHT_RSEQ) { 
-					frame = 5; 
+					frame = 2; 
 				}
 				return sp, frame;
 			}
@@ -220,6 +220,26 @@ class ddShotgun : ddWeapon
 				pspi.SetTranslations(8, -16);
 				pspi.SetScaling(-10, 0);
 				pspi.SetRotation(-4);
+				return;
+			case 5: //shotgun 1h reload 1
+				pspi.SetTransformationProperties(5, false, (INTR_TRANS_INVEXPO));
+				pspi.SetTranslations(((weaponside) ? -9 : 9), 16);
+				return;
+			case 6:
+				pspi.SetTransformationProperties(2, false, (INTR_TRANS_EXPO));
+				pspi.SetTranslations(0, -16);
+				return;
+			case 7:
+				pspi.SetTransformationProperties(4, false, (INTR_TRANS_INVEXPO));
+				pspi.SetTranslations(0, 8);
+				return;
+			case 8:
+				pspi.SetTransformationProperties(4, false, (INTR_TRANS_INVEXPO));
+				pspi.SetTranslations(0, -6);
+				return;
+			case 9:
+				pspi.SetTransformationProperties(4, true, (INTR_TRANS_EXPO));
+				pspi.SetTranslations(((weaponside) ? 9 : -9), -4);
 				return;
 			default: return;
 		}
@@ -307,7 +327,7 @@ class ddShotgun : ddWeapon
 				else { /*yes*/ }
 				break;			
 			case 3: //reload mag
-				ReloadWeaponMag(1); ddWeaponFlags &= ~SHT_RSEQ; break;			
+				ReloadWeaponMag(1); ddWeaponFlags &= ~SHT_RSEQ; weaponstatus = DDW_READY; break;			
 			case 4: //unload mag
 				UnloadWeaponMag(); break;			
 			case 5: //reload mag onehanded MOVE DOWN HERE V V V
@@ -365,26 +385,21 @@ class ddShotgun : ddWeapon
 			Goto Ready;
 		ReloadOneHanded:
 			SHH2 A 0 A_ChangeSprite;
-			#### A 2 A_DDWeaponOffset;
-			#### A 2;
-			#### A 2 A_DDWeaponOffset;
-			#### A 2;
-			#### A 2 A_DDWeaponOffset;
-			#### A 2;
-			#### DE 2;
-			#### F 6 A_WeapAction;
-			#### F 1;
-			#### F 12 A_RackShotgun;
+			#### A 5 A_DDTransformation;
+			#### A 6;
+			#### A 6 A_DDTransformation;
+			#### BC 2;
+			#### A 7 A_DDTransformation;
+			#### D 6 A_WeapAction;
+			#### D 1;
+			#### D 12 A_RackShotgun;
 		Reload2B:
-			#### E 6 A_SlideShotgun;
-			#### D 3 A_WeapAction;
-			#### D 3;
-			#### A 3 A_DDWeaponOffset;
-			#### A 2;
-			#### A 3 A_DDWeaponOffset;
-			#### A 2;
-			#### A 3 A_DDWeaponOffset;
-			#### A 2;
+			#### C 8 A_DDTransformation;
+			#### C 6 A_SlideShotgun;
+			#### B 9 A_DDTransformation;
+			#### B 3 A_WeapAction;
+			#### B 3;
+			#### A 6;
 			#### AAA 1 A_DDHeavyRefire;
 			#### A 4;
 			Goto Ready;			
@@ -398,6 +413,7 @@ class ddShotgun : ddWeapon
 			#### A 1;
 			#### A 7;
 			Goto Ready;
+		/*
 		FlashDW:
 			SHTF C 1 Bright A_Light1;
 			SHTF D 3 Bright A_Light2;
@@ -405,6 +421,7 @@ class ddShotgun : ddWeapon
 			SHTF E 1 Bright A_Light1;
 			SHTF F 3 Bright A_Light2;
 			Goto FlashDone;
+			*/
 		FlashP:
 			SHTF A 1 A_DDTransformation;
 			SHTF A 1 Bright A_Light1;
