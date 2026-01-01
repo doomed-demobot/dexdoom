@@ -202,20 +202,7 @@ class ddPistol : ddWeapon replaces Pistol
 	{
 		burstcounter = 3;
 	}
-	
-	override int, int, int, int GetOffsets(int no)
-	{
-		switch(no)
-		{
-			case 1:
-				return 0, -2, 1, (WOF_KEEPX | WOF_MOVEFLASH | WOF_STARTATORIGIN);
-			case 2:
-				return 0, 8, 3, (WOF_KEEPX | WOF_INTERPOLATE | WOF_MOVEFLASH);
-			default:
-				return Super.GetOffsets(no), 0, 1, 0;
-		}
-	}
-	
+
 	override void SetDDTransformations(int no, PSpriteInfo &pspi)
 	{
 		let ddp = ddPlayer(owner);
@@ -274,7 +261,7 @@ class ddPistol : ddWeapon replaces Pistol
 		}
 		return;
 	}
-	
+
 	override void DD_WeapAction(int no)
 	{		
 		let ddp = ddPlayer(owner);
