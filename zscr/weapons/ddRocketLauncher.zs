@@ -176,8 +176,7 @@ class ddRocketLauncher : ddWeapon replaces RocketLauncher
 				pspi.SetRotation(0);
 				return;
 			default: return;
-		}
-		
+		}		
 	}
 	
 	override void DD_WeapAction(int no)

@@ -56,10 +56,6 @@ class ddWeapon : Weapon
 	int xOffset;
 	uint lswaptarget, rswapTarget;
 	int fireMode; //true = alt; false = primary
-	int offsetLength; //how many tics PSprite will offset for
-	int offsetStepLengthX, offsetStepLengthY; //amount PSprite will offset; stepLength / length
-	int offsetInterp;
-	bool offsetFlashState;
 	Name reticleName;
 	double reticleScale;
 	WeaponInfo myInfo;
@@ -123,41 +119,7 @@ class ddWeapon : Weapon
 		-DDWEAPON.MODEREADY;
 		-DDWEAPON.NOLOWER;
 	}
-	//moving this to tickpsprites
-	override void Tick()
-	{
-		Super.Tick();
-		let ddp = ddPlayer(owner);
-		if(ddp)
-		{
-			PSprite myPSp = ddp.player.GetPSprite((weaponside) ? PSP_LEFTW0 : PSP_RIGHTW0);
-			PSprite myFlash = ddp.player.GetPSprite((weaponside) ? PSP_LEFTWF0 : PSP_RIGHTWF0);
-			if(myPsp)
-			{
-				if(offsetLength > -1)
-				{
-					ddp.ddWeaponState |= (weaponside) ? DDW_LEFTNOBOBBING : DDW_RIGHTNOBOBBING;
-					myPSp.firstTic = offsetInterp;
-					myFlash.firstTic = offsetInterp;
-					myPSp.x += offsetStepLengthX;
-					myPSp.y += offsetStepLengthY;
-					if(offsetFlashState)
-					{						
-						myFlash.x += offsetStepLengthX;
-						myFlash.y += offsetStepLengthY;
-					}
-					offsetLength--;
-				}
-				else
-				{
-					if(offsetLength == -1 && !bBobWhenReady) { ddp.ddWeaponState &= (weaponside) ? ~DDW_LEFTNOBOBBING : ~DDW_RIGHTNOBOBBING; }
-					offsetLength = -2;
-					offsetStepLengthX = 0; offsetStepLengthY = 0;
-				}
-			}
-		}
-	}
-	
+		
 	//weapon action function for translations, scaling, and rotation
 	action void A_DDTransformation()
 	{
@@ -226,80 +188,7 @@ class ddWeapon : Weapon
 		{ newPSP.SetState(FindState(iState)); }
 		return newInfo;
 	}
-	
-	//[deprecated]
-	action void A_DDWeaponOffset()
-	{
-		let ddp = ddPlayer(self);
-		if(!ddp) { return; }
-		let i = invoker;
-		ddWeapon weap;
-		PSprite psp;
-		PSpriteInfo pspi;
-		int pspf;
-		PSpriteInfo pspfi;
-		if(stateinfo.mPSPIndex == PSP_LEFTW0) {
-			weap = ddp.GetLeftWeapon(ddp.lwx);
-			psp = ddp.player.GetPSprite(PSP_LEFTW0);
-			pspi = ddp.GetPSpriteInfo(PSP_LEFTW0, self);
-			pspf = PSP_LEFTWF0;
-			pspfi = ddp.GetPSpriteInfo(PSP_LEFTWF0, self);
-		}
-		else if(stateinfo.mPSPIndex == PSP_RIGHTW0) {
-			weap = ddp.GetRightWeapon(ddp.rwx);
-			psp = ddp.player.GetPSprite(PSP_RIGHTW0);
-			pspi = ddp.GetPSpriteInfo(PSP_RIGHTW0, self);
-			pspf = PSP_RIGHTWF0;
-			pspfi = ddp.GetPSpriteInfo(PSP_RIGHTWF0, self);
-		}
-		else { return; }
-		int no = psp.tics;
-		psp.tics = 0;
-		int xoff, yoff, offLength, dofflags;
-		if(weap)
-		{ 
-			[xoff, yoff, offLength, dofflags] = weap.GetOffsets(no);
-			if(weap.bflipoffsets && weap.weaponside == CE_LEFT) { xoff *= -1; }
-			weap.DoDDWeaponOffset(stateinfo.mPSPIndex, pspf, xoff, yoff, offLength, dofflags);
-		}
-	}
-	
-	virtual int, int, int, int GetOffsets(int no)
-	{
-		console.printf("No offsets defined for tic "..no);
-		return 0, 0, 1, 0;
-	}
-	
-	private void DoDDWeaponOffset(int layer, int flayer, int xoff, int yoff, int offLength = 1, int dofflags = 0)
-	{
-		let ddp = ddPlayer(owner);
-		let weap = ddWeapon(self);
-		if(!ddp) { return; }
-		if(offLength < 1) { console.printf(GetClassName().." offset length cannot be less than 1"); return; }
-		PSprite psp = ddp.player.GetPSprite(layer);
-		PSprite pspf = ddp.player.GetPSprite(flayer);
-		weap.offsetLength = offLength-1;
-		if(dofFlags & WOF_INTERPOLATE || dofflags & WOF_ADD) { weap.offsetInterp = true; }
-		else { weap.offsetInterp = false; }
-		if(dofFlags & WOF_MOVEFLASH) { weap.offsetFlashState = true; }
-		else { weap.offsetFlashState = false; }
-		if(!(dofflags & WOF_KEEPX))
-		{
-			if(dofflags & WOF_STARTATORIGIN) { 
-				psp.x = pspf.x = (ddp.player.readyweapon is "dualWielding") ? ((weaponside) ? -65 : 65) : 0;
-			}
-			if(dofflags & WOF_ADD)  { weap.offsetStepLengthX = (xoff / offLength); }
-			else { weap.offsetStepLengthX = (xoff - psp.x) / offLength; }
-		}
-		if(!(dofflags & WOF_KEEPY))
-		{
-			if(dofflags & WOF_STARTATORIGIN) { psp.y = pspf.y = 0; }
-			if(dofflags & WOF_ADD) { weap.offsetStepLengthY = (yoff / offLength); }
-			else { weap.offsetStepLengthY = (yoff - psp.y) / offLength; }
-		}
 		
-	}
-	
 	virtual ui void HUDA(ddStats hude) {} //screensize 11; minimal
 	virtual ui void HUDB(ddStats hude) { self.HUDA(hude); } //screensize 10; more descriptive 
 	
@@ -923,7 +812,6 @@ class ddWeapon : Weapon
 		psp.y = pspf.y = 0;
 		psp.rotation = 0;
 		pspf.rotation = 0;
-		weap.offsetLength = -2;
 		weap.weaponStatus = DDW_READY;
 		weap.weaponReady = true;
 	}

@@ -395,20 +395,6 @@ class ddStats : BaseStatusBar
 		}
 		if(dPlay.dddebug & DBG_WEAPSEQUENCE)
 		{
-			DrawString(fa, FormatNumber(pspl.x), (25, 0), DI_SCREEN_LEFT_CENTER);
-			DrawString(fa, FormatNumber(pspl.y), (25, 10), DI_SCREEN_LEFT_CENTER, Font.CR_ORANGE);
-			DrawString(fa, FormatNumber(pspl.oldx), (45, 0), DI_SCREEN_LEFT_CENTER, Font.CR_BLUE);
-			DrawString(fa, FormatNumber(pspl.oldy), (45, 10), DI_SCREEN_LEFT_CENTER, Font.CR_YELLOW);
-			DrawString(fa, FormatNumber(lw.offsetLength), (65, 20), DI_SCREEN_LEFT_CENTER, Font.CR_WHITE);
-			DrawString(fa, FormatNumber(lw.offsetStepLengthX), (65, 0), DI_SCREEN_LEFT_CENTER, Font.CR_GREEN);
-			DrawString(fa, FormatNumber(lw.offsetStepLengthY), (65, 10), DI_SCREEN_LEFT_CENTER, Font.CR_DARKGREEN);		
-			DrawString(fa, FormatNumber(pspr.x), (-75, 0), DI_SCREEN_RIGHT_CENTER);
-			DrawString(fa, FormatNumber(pspr.y), (-75, 10), DI_SCREEN_RIGHT_CENTER, Font.CR_ORANGE);
-			DrawString(fa, FormatNumber(pspr.oldx), (-55, 0), DI_SCREEN_RIGHT_CENTER, Font.CR_BLUE);
-			DrawString(fa, FormatNumber(pspr.oldy), (-55, 10), DI_SCREEN_RIGHT_CENTER, Font.CR_YELLOW);
-			DrawString(fa, FormatNumber(rw.offsetLength), (-35, 20), DI_SCREEN_RIGHT_CENTER, Font.CR_WHITE);
-			DrawString(fa, FormatNumber(rw.offsetStepLengthX), (-35, 0), DI_SCREEN_RIGHT_CENTER, Font.CR_GREEN);
-			DrawString(fa, FormatNumber(rw.offsetStepLengthY), (-35, 10), DI_SCREEN_RIGHT_CENTER, Font.CR_DARKGREEN);
 		}
 		if(dPlay.dddebug & DBG_INVENTORY && dPlay.dddebug & DBG_VERBOSE)
 		{

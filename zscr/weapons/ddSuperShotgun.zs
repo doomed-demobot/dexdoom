@@ -215,30 +215,7 @@ class ddSuperShotgun : ddWeapon
 			default: return;
 		}
 	}
-	
-	
-	override int, int, int, int GetOffsets(int no)
-	{
-		if(!owner) { return Super.GetOffsets(no), 0, 1, 0; }
-		switch(no)
-		{
-			case 1: //primary
-				if(owner.player.readyweapon is "twohanding") { return random(-4, 4), 16, 1, (WOF_ADD | WOF_INTERPOLATE | WOF_MOVEFLASH | WOF_STARTATORIGIN); }
-				else if(owner.player.readyweapon is "dualWielding") { return random(-6, 6), 20, 1, (WOF_ADD | WOF_INTERPOLATE | WOF_MOVEFLASH); }
-				else { return Super.GetOffsets(no), 0, 1, 0; }
-			case 2: //alternative
-				if(owner.player.readyweapon is "twohanding") { return 0, 12, 1, (WOF_KEEPX | WOF_INTERPOLATE | WOF_MOVEFLASH | WOF_STARTATORIGIN); }
-				else if(owner.player.readyweapon is "dualWielding") { return 0, 12, 1, (WOF_KEEPX | WOF_INTERPOLATE | WOF_MOVEFLASH); }
-				else { return Super.GetOffsets(no), 0, 1, 0; }
-			case 3:				
-				if(owner.player.readyweapon is "twoHanding") { return 0, 0, 3, (WOF_KEEPX | WOF_INTERPOLATE | WOF_MOVEFLASH); }
-				else if(owner.player.readyweapon is "dualWielding") { return 4, 0, 3, (WOF_ADD | WOF_INTERPOLATE | WOF_MOVEFLASH); }
-				else { return Super.GetOffsets(no), 0, 1, 0; }
-			default:
-				return Super.GetOffsets(no), 0, 1, 0;
-		}
-	}
-	
+
 	override void DD_WeapAction(int no)
 	{
 		let ddp = ddPlayer(owner);

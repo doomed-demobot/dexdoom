@@ -215,7 +215,6 @@ class ddPlasmaRifle : ddWeapon replaces PlasmaRifle
 			default:
 				return;
 		}
-		
 	}
 	
 	override void DD_WeapAction(int no)

@@ -173,21 +173,7 @@ class ddChaingun : ddWeapon replaces Chaingun
 			default: return;
 		}
 	}
-	
-	override int, int, int, int GetOffsets(int no)
-	{
-		if(owner.CountInv("Clip") < 1) { return 0, 0, 1, (WOF_ADD); }
-		switch(no)
-		{
-			case 1:
-				return (spin > 18) ? random(-2, 2) : 0, 4, 1, (WOF_ADD | WOF_INTERPOLATE | WOF_MOVEFLASH | WOF_STARTATORIGIN);
-			case 2:
-				return 0, -2, 1, (WOF_KEEPX | WOF_INTERPOLATE | WOF_MOVEFLASH);
-			default:
-				return Super.GetOffsets(no), 0, 1, 0;
-		}
-	}
-	
+		
 	override void DD_WeapAction(int no)
 	{
 		let ddp = ddPlayer(owner);

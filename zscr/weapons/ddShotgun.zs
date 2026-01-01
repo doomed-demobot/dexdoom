@@ -223,50 +223,8 @@ class ddShotgun : ddWeapon
 				return;
 			default: return;
 		}
-		
 	}
-	
-	override int, int, int, int GetOffsets(int no)
-	{
-		let ddp = ddPlayer(owner);
-		if(!ddp) { return Super.GetOffsets(no), 0, 1, 0; }
-		if(ddp.GetFireMode(true) == TWOHAND)
-		{
-			switch(no)
-			{
-				case 1:
-					return 0, 12, 1, (WOF_KEEPX | WOF_INTERPOLATE | WOF_MOVEFLASH | WOF_STARTATORIGIN);
-				case 2:
-					 return 0, 0, 3, (WOF_KEEPX | WOF_INTERPOLATE | WOF_MOVEFLASH);
-				case 3:
-					return random(-8,-4), 0, 4, (WOF_INTERPOLATE | WOF_MOVEFLASH);
-				case 4:
-					return 0, 12, 3, (WOF_ADD | WOF_MOVEFLASH);
-				case 5:
-					return 0, -5, 3, (WOF_ADD | WOF_MOVEFLASH);
-				case 6:
-					return 0, 0, 3, (WOF_INTERPOLATE | WOF_MOVEFLASH);
-				default:
-					return Super.GetOffsets(no), 0, 1, 0;
-			}
-		}
-		else if(ddp.GetFireMode(true) == DUALWIELD)
-		{
-			switch(no)
-			{
-				case 1:
-					return -4, 12, 1, (WOF_ADD | WOF_INTERPOLATE | WOF_MOVEFLASH);
-				case 2:
-					return 6, 2, 1, (WOF_ADD | WOF_INTERPOLATE | WOF_MOVEFLASH);
-				case 3:
-					return -6, -2, 1, (WOF_ADD | WOF_INTERPOLATE | WOF_MOVEFLASH);
-				default:
-					return Super.GetOffsets(no), 0, 1, 0;
-			}
-		}
-		else { return Super.GetOffsets(no), 0, 1, 0; }
-	}
-	
+
 	override void DD_WeapAction(int no)
 	{
 		let ddp = ddPlayer(owner);
@@ -365,11 +323,8 @@ class ddShotgun : ddWeapon
 			Goto Ready;
 		ReloadOneHanded:
 			SHH2 A 0 A_ChangeSprite;
-			#### A 2 A_DDWeaponOffset;
 			#### A 2;
-			#### A 2 A_DDWeaponOffset;
 			#### A 2;
-			#### A 2 A_DDWeaponOffset;
 			#### A 2;
 			#### DE 2;
 			#### F 6 A_WeapAction;
@@ -379,11 +334,8 @@ class ddShotgun : ddWeapon
 			#### E 6 A_SlideShotgun;
 			#### D 3 A_WeapAction;
 			#### D 3;
-			#### A 3 A_DDWeaponOffset;
 			#### A 2;
-			#### A 3 A_DDWeaponOffset;
 			#### A 2;
-			#### A 3 A_DDWeaponOffset;
 			#### A 2;
 			#### AAA 1 A_DDHeavyRefire;
 			#### A 4;
