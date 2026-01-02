@@ -123,7 +123,7 @@ class ddPistol : ddWeapon replaces Pistol
 			else if(ddp.player.readyweapon is "twoHanding" || ddp.player.pendingweapon is "twoHanding" || ddp.lastmode is "twoHanding")  
 			{
 				int fr = ((ddweaponflags & PIS_RSEQ ? 9 : 0));
-				if(mag < 1) { return "PISEI0", 8; }
+				if(mag < 1) { return "PSTLB0", 2; }
 				else { return "PISDA0", fr; }
 				//fr = ((mag < 1) ? 9 : fr);
 				//return "PISDA0", fr; 
@@ -131,7 +131,7 @@ class ddPistol : ddWeapon replaces Pistol
 			else { 
 				return "TNT1A0", -1; }
 		}
-		else if(forcemode == 2) { return "PISLA0", ((ddweaponflags & PIS_RSEQ) ? 10 : 0); }
+		else if(forcemode == 2) { return "PSTLB0", ((ddweaponflags & PIS_RSEQ) ? 1 : 0); }
 		else if(forcemode == 1) {
 			int fr = ((ddweaponflags & PIS_RSEQ ? 9 : 0));
 			if(mag < 1) { return "PISEI0", 8; }
@@ -440,19 +440,19 @@ class ddPistol : ddWeapon replaces Pistol
 			#### # 5 A_DDRefire;
 			Goto Ready;
 		ReloadP:
-			#### F 2 A_DDTransformation;
-			#### F 3;
-			#### F 2 A_PistolReload1;
-			#### F 2;
-			#### F 3 A_DDTransformation;
-			#### F 4 A_WeapAction;
+			#### # 2 A_DDTransformation;
+			#### # 3;
+			#### # 2 A_PistolReload1;
+			#### # 2;
+			#### # 3 A_DDTransformation;
+			#### # 4 A_WeapAction;
 		Reload2:
-			#### F 7 A_WeapAction;
-			#### F 4;
-			#### F 4;
-			#### F 6 A_DDTransformation;
-			#### F 12 A_PistolReload2;
-			#### F 1 A_SetWeapState;
+			#### # 7 A_WeapAction;
+			#### # 4;
+			#### # 4;
+			#### # 6 A_DDTransformation;
+			#### # 12 A_PistolReload2;
+			#### # 1 A_SetWeapState;
 			PISD A 5 A_DDTransformation;
 			PISD A 10 A_PistolReload3;
 		Reload3:
