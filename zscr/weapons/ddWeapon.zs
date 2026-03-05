@@ -59,11 +59,7 @@ class ddWeapon : Weapon
 	Name reticleName;
 	double reticleScale;
 	WeaponInfo myInfo;
-	class<Ammo> ClassicAmmoType1, ClassicAmmoType2;
 	ddWeapon swapHeld; //weapon stored here for pickupswapstore
-	property ClassicAmmoType : ClassicAmmoType1;
-	property ClassicAmmoType1 : ClassicAmmoType1;
-	property ClassicAmmoType2 : ClassicAmmoType2;
 	property Rating : rating; //rating used for sorting
 	property SwitchSpeed : sFactor; // 1 = crawling, 1.5 = slow, 2 = normal, 2.5 = fast, 3 = faster
 	property WeaponSide : weaponside;
@@ -335,8 +331,8 @@ class ddWeapon : Weapon
 			if(pInv.AddWeapon(self) == false) { ddp.A_Log("Inventory full"); return false; }
 			else 
 			{ 
-				Class<Ammo> myammo1 = (ddp is "ddPlayerNormal") ? AmmoType1 : ClassicAmmoType1;
-				Class<Ammo> myammo2 = (ddp is "ddPlayerNormal") ? AmmoType2 : ClassicAmmoType2;
+				Class<Ammo> myammo1 = AmmoType1;
+				Class<Ammo> myammo2 = AmmoType2;
 				AddAmmo(ddp, myammo1, ammogive1); AddAmmo(ddp, myammo2, ammogive2); 
 			}
 			if(CVar.GetCVar("pl_autosort",ddp.player).GetBool()) { ddp.SortInv(); }
@@ -348,29 +344,13 @@ class ddWeapon : Weapon
 	{
 		BecomeItem();
 		other.AddInventory(self);
-		Class<Ammo> myammo1 = (other is "ddPlayerNormal") ? AmmoType1 : ClassicAmmoType1;
-		Class<Ammo> myammo2 = (other is "ddPlayerNormal") ? AmmoType2 : ClassicAmmoType2;
+		Class<Ammo> myammo1 = AmmoType1;
+		Class<Ammo> myammo2 = AmmoType2;
 		Ammo1 = AddAmmo(other, myammo1, ammogive1);
 		Ammo2 = AddAmmo(other, myammo2, ammogive2);
 	}
 	
-	override void Touch(Actor toucher) 
-	{ 
-		if(toucher is "ddPlayerClassic")
-		{
-			if(AmmoGive1 > 0) 
-			{ 
-				toucher.A_Log("+"..AmmoGive1.." "..ClassicAmmoType1.GetClassName());
-				toucher.GiveInventory(ClassicAmmoType1, AmmoGive1); AmmoGive1 = 0; 
-				PlayPickupSound(toucher);
-				if(!bNoScreenFlash && toucher.player.playerstate != PST_DEAD)
-				{
-					toucher.player.bonuscount = BONUSADD;
-				}
-			}
-		}
-		return;
-	} 
+	override void Touch(Actor toucher) { return; }
 	
 	// ##goto action button checks()
 	action bool A_PressingRightFire()
@@ -576,12 +556,7 @@ class ddWeapon : Weapon
 	{
 		if(owner) { owner.A_Log("No action defined for tic "..no); }
 	}
-	
-	virtual void DD_WeapSound(int no)
-	{
-		if(owner) { owner.A_Log("No sound defined for tic "..no); }
-	}
-	
+		
 	virtual State GetWeapState(int no)
 	{
 		if(owner) { owner.A_Log("No state defined for tic "..no); }
@@ -593,7 +568,6 @@ class ddWeapon : Weapon
 		let ddp = ddPlayer(owner);
 		let mode = ddWeapon(ddp.player.readyweapon);
 		let cpiece = ddWeapon(companionpiece);
-		if(ddp.FindInventory("ClassicModeToken")) { return 4; }
 		if(mode is "twoHanding" || ddp.lastmode is "twoHanding") { return 1; }
 		else if(mode is "dualWielding" || ddp.lastmode is "dualWielding") 
 		{
@@ -632,14 +606,6 @@ class ddWeapon : Weapon
 		}
 	}
 	
-	// ##goto weapon setters() 
-	
-	//commmon combos
-	//todo: update these to utilize tic definitions
-	action void A_ComShot() { let ddp = ddPlayer(invoker.owner); ddp.combo = COM_SHOT; ddp.comboTimer = 35; }
-	
-	action void A_ClearCombo() { let ddp = ddPlayer(invoker.owner); ddp.combo = 0; }
-	
 	// ##goto weapon actions()
 	
 	//extra stuff called by weapon modes. 1 = left, 0 = right
@@ -654,7 +620,6 @@ class ddWeapon : Weapon
 	//apply bonuses during berserk
 	virtual void WhileBerserk() {} 
 	
-	//if frame needs to be greater than 0, does that mean frame A is unusable?
 	action void A_ChangeSprite(int forcemode = -1)
 	{
 		let ddp = ddPlayer(invoker.owner);
@@ -680,7 +645,7 @@ class ddWeapon : Weapon
 		psp.Sprite = GetSpriteIndex(sp);
 		if(fr > 0) { psp.Frame = fr; }
 	}
-	
+	//figure out if this is useful and then updated for tic def calls
 	void ChangeSprite(int side, int forcemode = -1)
 	{
 		let ddp = ddPlayer(owner);
@@ -714,6 +679,7 @@ class ddWeapon : Weapon
 			psp.SetState(FindState(st));
 		}
 	}
+	//figure out if this is even being used cuz its worthless
 	action void A_ChangeState(statelabel st, int layer = PSP_WEAPON)
 	{
 		if(player)
@@ -749,7 +715,6 @@ class ddWeapon : Weapon
 		let ddp = ddPlayer(invoker.owner);
 		let weap = ddWeapon(invoker);
 		let com = ddWeapon(weap.companionpiece);
-		if(ddp.FindInventory("ClassicModeToken")) { return; }
 		//visual recoil decrements when addpitch is zero, so physical recoil is 
 		//disabled in ddPlayer.Tick()
 		if(ddp.visrec)
@@ -770,14 +735,12 @@ class ddWeapon : Weapon
 		ddp.AddAngle = newAngle;
 	}
 	
-	//should weapons be returned to default position on weaponready?
 	action void A_DDWeaponReady(bool playUpSound = true)
 	{
 		let ddp = ddPlayer(self);
 		if(!ddp) { return; }
 		ddWeapon weap;
 		PSprite psp, pspf;
-		//if(((stateinfo.mPSPIndex >= PSP_LEFTW4) && (stateinfo.mPSPIndex <= PSP_LEFTW0)) || ((stateinfo.mPSPIndex >= PSP_LEFTWF4) && (stateinfo.mPSPIndex <= PSP_LEFTWF0))) {
 		if(stateinfo.mPSPIndex == PSP_LEFTW0){
 			weap = ddp.GetLeftWeapon(ddp.lwx);
 			ddp.ddWeaponState |= DDW_LEFTREADY;
@@ -787,13 +750,10 @@ class ddWeapon : Weapon
 			pspf = ddp.player.GetPSprite(PSP_LEFTWF0);
 			for(int x = 20; x > 15; x--)
 			{
-				//ddp.GetPSpriteInfo(x, ddp).transformationLength = -1;
-				//ddp.GetPSpriteInfo((x-10), ddp).transformationLength = -1;
 				ddp.GetPSpriteInfo(x, ddp).ResetTransformations();
 				ddp.GetPSpriteInfo(x-10, ddp).ResetTransformations();
 			}
 		}
-		//else if(((stateinfo.mPSPIndex >= PSP_RIGHTW4) && (stateinfo.mPSPIndex <= PSP_RIGHTW0)) || ((stateinfo.mPSPIndex >= PSP_RIGHTWF4) && (stateinfo.mPSPIndex <= PSP_RIGHTWF0))){
 		else if(stateinfo.mPSPIndex == PSP_RIGHTW0){
 			weap = ddp.GetRightWeapon(ddp.rwx);
 			ddp.ddWeaponState |= DDW_RIGHTREADY;
@@ -803,8 +763,6 @@ class ddWeapon : Weapon
 			pspf = ddp.player.GetPSprite(PSP_RIGHTWF0);
 			for(int x = 25; x > 20; x--)
 			{
-				//ddp.GetPSpriteInfo(x, ddp).transformationLength = -1;
-				//ddp.GetPSpriteInfo((x-10), ddp).transformationLength = -1;
 				ddp.GetPSpriteInfo(x, ddp).ResetTransformations();
 				ddp.GetPSpriteInfo(x-10, ddp).ResetTransformations();
 			}
@@ -1035,29 +993,7 @@ class ddWeapon : Weapon
 		}
 		mag = 0;
 	}
-	
-	//weapon sounds should be defined with the tics in the frame
-	
-	action void A_WeapSound()
-	{
-		let ddp = ddPlayer(self);
-		if(!ddp) { return; }
-		ddWeapon weap;
-		PSprite psp;
-		if(stateinfo.mPSPIndex == PSP_LEFTW0) {
-			weap = ddp.GetLeftWeapon(ddp.lwx);
-			psp = ddp.player.GetPSprite(PSP_LEFTW0);
-		}
-		else if(stateinfo.mPSPIndex == PSP_RIGHTW0) {
-			weap = ddp.GetRightWeapon(ddp.rwx);
-			psp = ddp.player.GetPSprite(PSP_RIGHTW0);
-		}
-		else { return; }
-		int no = psp.tics;
-		psp.tics = 0;
-		if(weap) { weap.DD_WeapSound(no); }
-	}
-	
+		
 	action void A_WeapAction()
 	{
 		let ddp = ddPlayer(self);
@@ -1090,49 +1026,36 @@ class ddWeapon : Weapon
 		double zoff = 4.0;
 		if(ddp.dddebug & DBG_WEAPONS && ddp.dddebug & DBG_VERBOSE) { ddp.A_Log("=======\nddShot from "..weap.GetClassName()); }
 		if(ddp.dddebug & DBG_WEAPONS && ddp.dddebug & DBG_VERBOSE) { ddp.A_Log("original extraangle:"..extraangle.."\noriginal extrapitch:"..extrapitch); }
-		if(!(ddp.FindInventory("ClassicModeToken")))
+		//movement penalties
+		if(ddp.player.bob > 8.) 
 		{
-			//movement penalties
-			if(ddp.player.bob > 8.) 
-			{
-				double mp = random2()*((2.0 * (ddp.player.bob / 16.0)) / 256);
-				extraAngle *= mp;
-				if(ddp.dddebug & DBG_WEAPONS && ddp.dddebug & DBG_VERBOSE) { ddp.A_Log("+movement penalty to extraAngle:"..extraangle); }
-			}
-			else { if(ddp.dddebug & DBG_WEAPONS && ddp.dddebug & DBG_VERBOSE) { ddp.A_Log("no movement penalties"); } }
-			//instability penalties
-			double ip = random2()*((5.0 * (double(weap.weaponside ? ddp.leftInstability : ddp.rightInstability) / 100)) / 256);
-			extraAngle += ip;
-			extraPitch += (ip / 2);
-			if(ip != 0) {
-				if(ddp.dddebug & DBG_WEAPONS && ddp.dddebug & DBG_VERBOSE) { ddp.A_Log("+instability to extraAngle:"..extraangle); }
-				if(ddp.dddebug & DBG_WEAPONS && ddp.dddebug & DBG_VERBOSE) { ddp.A_Log("+instability to extraPitch:"..extraPitch); }
-			}
-			else {
-				if(ddp.dddebug & DBG_WEAPONS && ddp.dddebug & DBG_VERBOSE) { ddp.A_Log("no instability penalties"); } 
-			}
-			
-			if(kick) { 
-				if(weap.weaponside) { ddp.leftInstability = clamp((kick + ddp.leftInstability), 0, 100); ddp.insTimerLeft = insTimer; }
-				else { ddp.rightInstability = clamp((kick + ddp.rightInstability), 0, 100); ddp.insTimerRight = insTimer; }
-			}
-			if(accurate)
-			{
-				extraAngle /= 2;
-				extraPitch = 0;
-				if(ddp.dddebug & DBG_WEAPONS && ddp.dddebug & DBG_VERBOSE) { 
-				ddp.A_Log("+first shot bonus to extraAngle:"..extraangle.."\n+first shot bonus to extraPitch:"..extraPitch); }
-			}
+			double mp = random2()*((2.0 * (ddp.player.bob / 16.0)) / 256);
+			extraAngle *= mp;
+			if(ddp.dddebug & DBG_WEAPONS && ddp.dddebug & DBG_VERBOSE) { ddp.A_Log("+movement penalty to extraAngle:"..extraangle); }
 		}
-		else
+		else { if(ddp.dddebug & DBG_WEAPONS && ddp.dddebug & DBG_VERBOSE) { ddp.A_Log("no movement penalties"); } }
+		//instability penalties
+		double ip = random2()*((5.0 * (double(weap.weaponside ? ddp.leftInstability : ddp.rightInstability) / 100)) / 256);
+		extraAngle += ip;
+		extraPitch += (ip / 2);
+		if(ip != 0) {
+			if(ddp.dddebug & DBG_WEAPONS && ddp.dddebug & DBG_VERBOSE) { ddp.A_Log("+instability to extraAngle:"..extraangle); }
+			if(ddp.dddebug & DBG_WEAPONS && ddp.dddebug & DBG_VERBOSE) { ddp.A_Log("+instability to extraPitch:"..extraPitch); }
+		}
+		else {
+			if(ddp.dddebug & DBG_WEAPONS && ddp.dddebug & DBG_VERBOSE) { ddp.A_Log("no instability penalties"); } 
+		}
+		
+		if(kick) { 
+			if(weap.weaponside) { ddp.leftInstability = clamp((kick + ddp.leftInstability), 0, 100); ddp.insTimerLeft = insTimer; }
+			else { ddp.rightInstability = clamp((kick + ddp.rightInstability), 0, 100); ddp.insTimerRight = insTimer; }
+		}
+		if(accurate)
 		{
-			if(!accurate)
-			{
-				ang += random2() * (5.25 / 256);
-			}
-			if(ddp.dddebug & DBG_WEAPONS && ddp.dddebug & DBG_VERBOSE) 
-			{ ddp.A_Log("Classic Mode sets extraangle:"..extraangle.."\nextrapitch:"..extrapitch); }
-			zoff = 0;
+			extraAngle /= 2;
+			extraPitch = 0;
+			if(ddp.dddebug & DBG_WEAPONS && ddp.dddebug & DBG_VERBOSE) { 
+			ddp.A_Log("+first shot bonus to extraAngle:"..extraangle.."\n+first shot bonus to extraPitch:"..extraPitch); }
 		}
 		if(ddp.dddebug & DBG_WEAPONS && ddp.dddebug & DBG_VERBOSE) 
 		{ 
@@ -1142,8 +1065,6 @@ class ddWeapon : Weapon
 		ddp.LineAttack(ang + extraAngle, PLAYERMISSILERANGE, pitch + extrapitch, damage, 'Hitscan', pufftype, 0, null, zoff);
 	}
 	
-
-	//bug: lowertoreloadleft doesnt work when called this way
 	action void A_CheckLeftWeaponMag()
 	{
 		let ddp = ddPlayer(invoker.owner);
@@ -1292,7 +1213,7 @@ class ddWeapon : Weapon
 		ddp.player.SetPSprite(PSP_RIGHTW0, st);
 		mode.ChangeState('Ready');
 	}
-	//called by weapons when they reload themselves
+	//called by weapons when they reload themselves. also check if this is necessary
 	void LowerToReloadWeapon()
 	{
 		let ddp = ddPlayer(owner);

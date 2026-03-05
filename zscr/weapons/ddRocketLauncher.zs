@@ -16,8 +16,6 @@ class ddRocketLauncher : ddWeapon replaces RocketLauncher
 		Weapon.AmmoGive 2;
 		Weapon.AmmoType "RocketAmmo";
 		Weapon.AmmoType2 "RocketAmmo";
-		ddWeapon.ClassicAmmoType1 "RocketAmmo";
-		ddWeapon.ClassicAmmoType2 "RocketAmmo";
 		ddWeapon.rating 7;
 		ddWeapon.SwitchSpeed 1.2;
 		ddWeapon.InitialMag 6;
@@ -62,20 +60,17 @@ class ddRocketLauncher : ddWeapon replaces RocketLauncher
 	{
 		if(owner.player.readyweapon is "twoHanding")
 		{
-			if(!owner.FindInventory("ClassicModeToken"))
-				hude.DrawString(hude.bf, hude.FormatNumber(mag), (0, -20), hude.DI_SCREEN_CENTER_BOTTOM | hude.DI_TEXT_ALIGN_CENTER, 0, 0.5, -1, 4, (0.75,0.75));
+			hude.DrawString(hude.bf, hude.FormatNumber(mag), (0, -20), hude.DI_SCREEN_CENTER_BOTTOM | hude.DI_TEXT_ALIGN_CENTER, 0, 0.5, -1, 4, (0.75,0.75));
 		}
 		else if(owner.player.readyweapon is "dualWielding")
 		{
 			if(weaponside == CE_LEFT)
 			{
-				if(!owner.FindInventory("ClassicModeToken"))
-					hude.DrawString(hude.bf, hude.FormatNumber(mag), (-64, -20), hude.DI_SCREEN_CENTER_BOTTOM | hude.DI_TEXT_ALIGN_CENTER, 0, 0.5, -1, 4, (0.75,0.75));
+				hude.DrawString(hude.bf, hude.FormatNumber(mag), (-64, -20), hude.DI_SCREEN_CENTER_BOTTOM | hude.DI_TEXT_ALIGN_CENTER, 0, 0.5, -1, 4, (0.75,0.75));
 			}
 			else
 			{
-				if(!owner.FindInventory("ClassicModeToken"))
-					hude.DrawString(hude.bf, hude.FormatNumber(mag), (64, -20), hude.DI_SCREEN_CENTER_BOTTOM | hude.DI_TEXT_ALIGN_CENTER, 0, 0.5, -1, 4, (0.75,0.75));				
+				hude.DrawString(hude.bf, hude.FormatNumber(mag), (64, -20), hude.DI_SCREEN_CENTER_BOTTOM | hude.DI_TEXT_ALIGN_CENTER, 0, 0.5, -1, 4, (0.75,0.75));				
 			}
 		}
 	}	
@@ -127,8 +122,7 @@ class ddRocketLauncher : ddWeapon replaces RocketLauncher
 		let ddp = ddPlayer(owner);
 		if(mag > 0) 
 		{ 
-			if(!ddp.FindInventory("ClassicModeToken")) { mag--; }
-			else { ddp.TakeInventory("RocketAmmo", 1); }
+			mag--;
 			A_FireDDMissile(); 
 		}
 	}	
@@ -191,7 +185,6 @@ class ddRocketLauncher : ddWeapon replaces RocketLauncher
 		switch(no)
 		{
 			case 1: //init/ammo check
-				if(res == RES_CLASSIC && ddp.CountInv("RocketAmmo") < 1) { ChangeState("NoAmmo", myside); break; }
 				if(mag < 1 && ddp.CountInv("RocketAmmo") < 1) { ChangeState("NoAmmo", myside); break; }
 				if(res == RES_DUALWLD) {
 					if(mag < 1) { 

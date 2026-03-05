@@ -16,8 +16,6 @@ class ddKnife : ddFist
 		ddWeapon.SwitchSpeed 3;
 		Weapon.AmmoType1 "NotAnAmmo";
 		Weapon.AmmoType2 "NotAnAmmo";
-		ddWeapon.ClassicAmmoType1 "NotAnAmmo";
-		ddWeapon.ClassicAmmoType2 "NotAnAmmo";
 		Weapon.AmmoUse1 0;
 		Weapon.AmmoUse2 0;
 		ddWeapon.WeaponType "Fist";
@@ -74,22 +72,9 @@ class ddKnife : ddFist
 		int flashside = (weaponside) ? PSP_LEFTWF0 : PSP_RIGHTWF0;
 		switch(no)
 		{
-			case 1:
-				if(weaponside) {
-					if(ddp.combo == COM_QUICK) { ChangeState("QuickJab", myside); break; } 
-					if(!(ddp.ddWeaponState & DDW_RIGHTREADY)) { ChangeState("Ready", myside); }
-					else { 
-						if(ddp.dddebug & DBG_WEAPSEQUENCE && ddp.dddebug & DBG_VERBOSE) { ddp.A_Log("Left fist attack blocked by right attack"); } 
-					}
-				}
-				else {
-					if(!(ddp.ddWeaponState & DDW_LEFTREADY)) { ChangeState("Ready", myside); }
-					else {
-						if(ddp.dddebug & DBG_WEAPSEQUENCE && ddp.dddebug & DBG_VERBOSE) { ddp.A_Log("Right fist attack blocked by left attack"); } 
-					}				
-				}
-				break;				
-			default: ddp.A_Log("No action defined for tic "..no); break;
+			default:
+				//nothing :(
+				return;
 		}
 	}	
 	
@@ -115,7 +100,6 @@ class ddKnife : ddFist
 			KNFL A 0 A_DDRefire;
 			Goto Ready;
 		QuickJab:
-			KNFL C 0 A_ClearCombo;
 			KNFL CD 1;
 			KNFL E 1 A_Whoosh;
 			KNFL F 1;
@@ -123,80 +107,7 @@ class ddKnife : ddFist
 			KNFL HI 2;
 			Goto Ready;		
 	}
-}/*
-// #Class ddKnifeLeft : ddKnife()
-class ddKnifeLeft : ddKnife
-{
-	Default 
-	{
-		-DDFIST.ADDME;
-		ddweapon.weaponside CE_LEFT; 
-	}
-	States
-	{
-		Ready:
-			KNFL A 1 A_DDWeaponReady;
-			Loop;
-		Select:
-			KNFL A 1;
-			Loop;
-		Fire:
-			KNFL A 1 A_WeapAction;
-			KNFL BC 2;
-			KNFL CD 1;
-			KNFL E 1 A_Whoosh2;
-			KNFL F 4;
-			KNFL G 4 A_Stab;
-			KNFL HI 4;
-			KNFL A 0 A_DDRefire;
-			Goto Ready;
-		QuickJab:
-			KNFL C 0 A_ClearCombo;
-			KNFL CD 1;
-			KNFL E 1 A_Whoosh;
-			KNFL F 1;
-			KNFL G 5 A_Stab;
-			KNFL HI 2;
-			Goto Ready;
-	}
 }
-// #Class ddKnifeRight : ddKnife()
-class ddKnifeRight : ddKnife
-{
-	Default 
-	{ 
-		-DDFIST.ADDME;
-		ddweapon.weaponside CE_RIGHT; 
-	}
-	States
-	{
-		Ready:
-			KNFR A 1 A_DDWeaponReady;
-			Loop;
-		Select:
-			KNFR A 1;
-			Loop;
-		Fire:
-			KNFR A 1 A_WeapAction;
-			KNFR BCD 1;
-			KNFR E 1 A_Whoosh;
-			KNFR F 2; 
-			KNFR G 2 A_Slice;
-			KNFR H 2;
-			TNT1 A 2 A_DDRefire;
-			KNFR MNO 1;
-			Goto Ready;
-		Fire2:
-			KNFR I 1 A_Whoosh;
-			KNFR J 2;
-			KNFR K 2 A_Slice;
-			KNFR L 2;
-			TNT1 A 2 A_ComQuick;
-			KNFR MNO 1;
-			KNFR A 0 A_DDRefire;
-			Goto Ready;
-	}
-}*/
 
 // #Class Knife : CustomInventory()
 class Knife : CustomInventory
@@ -234,7 +145,6 @@ extend class ddWeapon
 		if(ddp.player == null) { return; }
 
 		int damage = random[Punch](5, 18) << 1;
-		console.printf("stab");
 		if (FindInventory("PowerStrength")) { damage *= 3; }
 
 		double ang = angle + Random2[Punch]() * (5.625 / 256);
@@ -272,5 +182,4 @@ extend class ddWeapon
 		}
 	}
 	
-	action void A_ComQuick() { let ddp = ddPlayer(self); ddp.combo = COM_QUICK; ddp.comboTimer = 10; }
 }

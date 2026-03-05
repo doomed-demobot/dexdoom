@@ -13,8 +13,6 @@ class ddPlasmaRifle : ddWeapon replaces PlasmaRifle
 		Weapon.AmmoGive 40; 
 		Weapon.AmmoType "Cell";
 		Weapon.AmmoType2 "Cell";
-		ddWeapon.ClassicAmmoType1 "Cell";
-		ddWeapon.ClassicAmmoType2 "Cell";
 		ddWeapon.rating 7;
 		ddWeapon.SwitchSpeed 1.25;
 		ddWeapon.InitialMag 50;
@@ -69,25 +67,21 @@ class ddPlasmaRifle : ddWeapon replaces PlasmaRifle
 		double cbar = 40 * ((charge + 0.0)/25.);
 		if(owner.player.readyweapon is "twoHanding")
 		{ 
-			
-			if(!owner.FindInventory("ClassicModeToken"))
-				hude.Fill(Color(150, warn, 0, 255 - warn), -18, -19, bar, 4, hude.DI_SCREEN_CENTER_BOTTOM | hude.DI_TEXT_ALIGN_CENTER); 
-				hude.Fill(Color(150, big, 255, 0), -18, -15, cbar, 4, hude.DI_SCREEN_CENTER_BOTTOM | hude.DI_TEXT_ALIGN_CENTER); 
+			hude.Fill(Color(150, warn, 0, 255 - warn), -18, -19, bar, 4, hude.DI_SCREEN_CENTER_BOTTOM | hude.DI_TEXT_ALIGN_CENTER); 
+			hude.Fill(Color(150, big, 255, 0), -18, -15, cbar, 4, hude.DI_SCREEN_CENTER_BOTTOM | hude.DI_TEXT_ALIGN_CENTER); 
 		}
 		else if(owner.player.readyweapon is "dualWielding")
 		{
 			if(weaponside == CE_LEFT)
 			{
-				if(!owner.FindInventory("ClassicModeToken"))
-					hude.Fill(Color(150, warn, 0, 255 - warn), -82, -19, bar, 4, hude.DI_SCREEN_CENTER_BOTTOM | hude.DI_TEXT_ALIGN_CENTER);
-					hude.Fill(Color(150, big, 255, 0), -82, -15, cbar, 4, hude.DI_SCREEN_CENTER_BOTTOM | hude.DI_TEXT_ALIGN_CENTER);
+				hude.Fill(Color(150, warn, 0, 255 - warn), -82, -19, bar, 4, hude.DI_SCREEN_CENTER_BOTTOM | hude.DI_TEXT_ALIGN_CENTER);
+				hude.Fill(Color(150, big, 255, 0), -82, -15, cbar, 4, hude.DI_SCREEN_CENTER_BOTTOM | hude.DI_TEXT_ALIGN_CENTER);
 					
 			}
 			else
 			{
-				if(!owner.FindInventory("ClassicModeToken"))
-					hude.Fill(Color(150, warn, 0, 255 - warn), 46, -19, bar, 4, hude.DI_SCREEN_CENTER_BOTTOM | hude.DI_TEXT_ALIGN_CENTER); 
-					hude.Fill(Color(150, big, 255, 0), 46, -15, cbar, 4, hude.DI_SCREEN_CENTER_BOTTOM | hude.DI_TEXT_ALIGN_CENTER);				
+				hude.Fill(Color(150, warn, 0, 255 - warn), 46, -19, bar, 4, hude.DI_SCREEN_CENTER_BOTTOM | hude.DI_TEXT_ALIGN_CENTER); 
+				hude.Fill(Color(150, big, 255, 0), 46, -15, cbar, 4, hude.DI_SCREEN_CENTER_BOTTOM | hude.DI_TEXT_ALIGN_CENTER);				
 			}
 			
 		}
@@ -135,21 +129,12 @@ class ddPlasmaRifle : ddWeapon replaces PlasmaRifle
 			return 2;
 		}
 	}	
-	
-	override State GetAttackState()
-	{
-		if(owner.FindInventory("ClassicModeToken")) { return FindState('FireClassic'); }
-		else { return Super.GetAttackState(); }
-	}
-	
+		
 	override State GetRefireState()
-	{		
-		if(owner.FindInventory("ClassicModeToken")) { if(owner.CountInv("Cell") > 0) { return FindState('FireClassic'); } else { return FindState('DoNotJump'); } }
-		else { 
-			if(!bAltFire) {return Super.GetRefireState(); } 
-			else { if(mag > 0 && charge < 25) { return FindState('Charging'); }
-					else { return FindState('DoNotJump'); }
-			}
+	{
+		if(!bAltFire) {return Super.GetRefireState(); } 
+		else { if(mag > 0 && charge < 25) { return FindState('Charging'); }
+				else { return FindState('DoNotJump'); }
 		}
 	}
 	
@@ -159,7 +144,7 @@ class ddPlasmaRifle : ddWeapon replaces PlasmaRifle
 		if(weaponstatus == DDW_RELOADING) {
 			if(ddp.player.readyweapon is "dualWielding" || ddp.player.pendingweapon is "dualWielding" || ddp.lastmode is "dualWielding") { return FindState('FlashRechargeDW'); }
 			else if(ddp.player.readyweapon is "twoHanding" || ddp.player.pendingweapon is "twoHanding" || ddp.lastmode is "twoHanding") { return FindState('FlashRechargeTH'); }
-			else { /*spillover*/ }
+			else { }
 		}
 		if(bAltFire)
 		{
@@ -174,7 +159,7 @@ class ddPlasmaRifle : ddWeapon replaces PlasmaRifle
 	override void primaryattack()
 	{
 		let ddp = ddPlayer(owner);
-		if(owner.CountInv("Cell") > 0 && mag > 0) { if(!ddp.Findinventory("ClassicModeToken")) { mag--; } A_FireDDPlasma(); }
+		if(owner.CountInv("Cell") > 0 && mag > 0) { mag--; A_FireDDPlasma(); }
 	}
 	
 	override void alternativeattack()
@@ -298,12 +283,6 @@ class ddPlasmaRifle : ddWeapon replaces PlasmaRifle
 			PLSG A 2 A_DDRefire;
 			PLSG A 25 A_FireDDWeapon;
 			Goto Ready;
-		FireClassic:
-			PLSG A 1 A_WeapAction;
-			PLSG A 0 A_DDFlash;
-			PLSG A 3 A_FireDDWeapon;
-			PLGF B 20 A_DDRefire;
-			Goto Ready;
 		ReloadP:
 			#### # 2 A_DDTransformation;
 		ReloadP2:
@@ -385,25 +364,6 @@ extend class ddWeapon
 		if(mis) { PlasmaBolt(mis).power = charge;  }
 		else { PlasmaBolt(mis2).power = charge; }
 		AddRecoil(5., 3 * ((charge / 10) + 2), 4.0);
-	}
-	
-	//deprecated
-	action void A_FireDDPlasmaShotgun(int pellets)
-	{
-		let ddp = ddPlayer(invoker.owner);
-		if(ddp.player == null) { return; }
-		ddWeapon weap = ddWeapon(self);
-		bool pen = (ddp.player.readyweapon is "dualWielding"&&!ddp.CheckESOA(0));
-		int kick = (pen) ? 10 : 5;
-		ddp.instability += kick;
-		ddp.instTimer = 20;
-		ddp.A_StartSound("weapons/plasmaf", CHAN_WEAPON, CHANF_OVERLAP);
-		for(int x = 0; x < pellets; x++)
-		{
-			ddp.SpawnPlayerMissile("PlasmaPellet", ddp.angle + (random2()*(6.25/256)), 0.0, 0.0, random2() * (10.75 / 256));
-		}
-		ddp.TakeInventory("Cell", pellets / 2);
-		AddRecoil(5., 0, 2.4);
 	}
 }
 

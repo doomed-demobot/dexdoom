@@ -1,31 +1,15 @@
-/* combos : 
-	onetwo : lp, rp [(l) fire -> (r) cross]
-	~crosscombo : rp, ra [(r) fire -> (r) altfire]
-	~shockuppercut : la, rp [(l) altfire -> (r) uppercut]
-	~doublepunch : lp + rp [(l+r) punch]
-*/
-
-enum ComboFist
-{
-	COM_ONETWO = 11,
-	COM_CROSS,
-	COM_SHOCKUPPERCUT,
-	COM_DOUBLEPUNCH,
-};
 // #Class ddFist : ddWeapon replaces Fist()
 //Doom Fists. Base ddFist weapon, used when selecting an empty weapon slot.
-//When used in leftside, get a quick jab attack. When used in rightside, get a strong right hook.
+//being remade
 class ddFist : ddWeapon replaces Fist
 {	
 	int fistFlags;
-	flagdef base : fistFlags, 0; //wont be used directly, only used for making clones for left/right weapon slot
+	flagdef base : fistFlags, 0; //wont be used directly, only used for making clones for left/right weapon slot [is this being used?]
 	flagdef addMe : fistFlags, 1; //set true for parent types to be added to fInv, false for left/right counterparts
 	Default
 	{
 		Weapon.AmmoType1 "NotAnAmmo";
 		Weapon.AmmoType2 "NotAnAmmo";
-		ddWeapon.ClassicAmmoType1 "NotAnAmmo";
-		ddWeapon.ClassicAmmoType2 "NotAnAmmo";
 		Weapon.AmmoUse1  0;
 		Weapon.AmmoUse2  0;
 		Weapon.Kickback 100;
@@ -52,31 +36,20 @@ class ddFist : ddWeapon replaces Fist
 		Super.AttachToOwner(other);
 		let ddp = ddPlayer(other);
 		let fls = fistlist(ddp.FindInventory("FistList"));
-		if(ddp is "ddPlayerClassic") { sFactor = 1.0; }
 		if(bAddMe) { fls.AddItem(ddWeapon(self), true); }
 		else { if(ddp.dddebug & DBG_INVENTORY && ddp.dddebug & DBG_VERBOSE)ddp.A_Log("I, "..self.GetClassName()..", wasn't added!"); }
 	}
 	
 	override State GetAttackState()
 	{
-		let ddp = ddPlayer(owner);
-		if(ddp.FindInventory("ClassicModeToken")) { return FindState('FireClassic'); }
-		else 
-		{ 
-			if(weaponside) { return FindState('Jab'); }
-			else { return FindState('Hook'); }
-		}
+		if(weaponside) { return FindState('Jab'); }
+		else { return FindState('Hook'); }
 	}
 	
 	override State GetRefireState()
 	{
-		let ddp = ddPlayer(owner);
-		if(ddp.FindInventory("ClassicModeToken")) { return FindState('FireClassic'); }		
-		else 
-		{
-			if(weaponside) { return FindState('Jab'); }
-			else { return FindState('Hook'); }
-		}
+		if(weaponside) { return FindState('Jab'); }
+		else { return FindState('Hook'); }
 	}
 	
 	override String, int GetSprites(int no)
@@ -90,8 +63,6 @@ class ddFist : ddWeapon replaces Fist
 	
 	override void primaryattack()
 	{	
-		let ddp = ddPlayer(owner);
-		if(ddp is "ddPlayerClassic") { A_ddPunch(); return; }
 		if(weaponside == CE_RIGHT)
 		{
 			if(!bAltFire) { A_ddHook(); }
@@ -139,9 +110,6 @@ class ddFist : ddWeapon replaces Fist
 				}
 				else
 				{
-					if(ddp.combo == COM_ONETWO) { 
-						if(ddp.dddebug & DBG_WEAPSEQUENCE) { ddp.A_Log("Combo: One Two."); }
-						ChangeState("Two", myside); break; }
 					if(!(ddp.ddWeaponState & DDW_LEFTREADY)) { ChangeState("Ready", myside); }
 					else {
 						if(ddp.dddebug & DBG_WEAPSEQUENCE && ddp.dddebug & DBG_VERBOSE) { ddp.A_Log("Right fist attack blocked by left attack"); } 
@@ -178,9 +146,7 @@ class ddFist : ddWeapon replaces Fist
 			PUNG C 1 A_Whoosh;
 			PUNG D 6 A_FireDDWeapon;
 			PUNG C 1;
-			PUNG C 1 A_ComOneTwo;
 			PUNG B 4;
-			PUNG B 1 A_ClearCombo;
 			PUNG B 3 A_DDRefire;	
 			Goto Ready;
 		Hook:
@@ -195,7 +161,6 @@ class ddFist : ddWeapon replaces Fist
 			TNT1 A 2 A_DDRefire;
 			Goto Ready;
 		Two:
-			TNT1 A 1 A_ClearCombo;
 			PUNH AB 1;
 			PUNH C 1 A_Whoosh;
 			PUNH D 1;
@@ -286,8 +251,6 @@ extend class ddWeapon
 			ddp.angle = t.angleFromSource;
 		}
 	}
-	//todo: set these with dd_condition instead?
-	action void A_ComOneTwo() { let ddp = ddPlayer(invoker.owner); ddp.combo = COM_ONETWO; ddp.comboTimer = 10; }
 	
 	action void A_Whoosh() { A_StartSound("weapons/fistswing", CHAN_WEAPON, CHANF_OVERLAP); }
 	action void A_Whoosh2() { A_StartSound("weapons/fistswing", CHAN_WEAPON, CHANF_OVERLAP, 1.0, ATTN_NORM, 0.87); }

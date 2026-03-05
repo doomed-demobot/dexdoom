@@ -40,7 +40,6 @@ enum ModeCheckResults
 	RES_TWOHAND = 1,
 	RES_DUALWLD = 2,
 	RES_HASESOA = 3,
-	RES_CLASSIC = 4,
 };
 //hopefully augmenting weaponstate doesn't bring unforeseen consequences :)
 enum ExtraStates

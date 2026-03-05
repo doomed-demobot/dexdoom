@@ -17,8 +17,6 @@ class ddPistol : ddWeapon replaces Pistol
 		Weapon.AmmoGive 15;
 		Weapon.AmmoType "d9Mil";
 		Weapon.AmmoType2 "d9Mil";
-		ddWeapon.ClassicAmmoType1 "Clip";
-		ddWeapon.ClassicAmmoType2 "Clip";
 		ddWeapon.rating 2;
 		ddWeapon.SwitchSpeed 3.2;
 		ddWeapon.WeaponType "Handgun";
@@ -46,20 +44,17 @@ class ddPistol : ddWeapon replaces Pistol
 	{
 		if(owner.player.readyweapon is "twoHanding")
 		{
-			if(!owner.FindInventory("ClassicModeToken"))
-				hude.DrawString(hude.bf, hude.FormatNumber(mag), (0, -20), hude.DI_SCREEN_CENTER_BOTTOM | hude.DI_TEXT_ALIGN_CENTER, 0, 0.5, -1, 4, (0.75,0.75));
+			hude.DrawString(hude.bf, hude.FormatNumber(mag), (0, -20), hude.DI_SCREEN_CENTER_BOTTOM | hude.DI_TEXT_ALIGN_CENTER, 0, 0.5, -1, 4, (0.75,0.75));
 		}
 		else if(owner.player.readyweapon is "dualWielding")
 		{
 			if(weaponside == CE_LEFT)
 			{
-				if(!owner.FindInventory("ClassicModeToken"))
-					hude.DrawString(hude.bf, hude.FormatNumber(mag), (-64, -20), hude.DI_SCREEN_CENTER_BOTTOM | hude.DI_TEXT_ALIGN_CENTER, 0, 0.5, -1, 4, (0.75,0.75));
+				hude.DrawString(hude.bf, hude.FormatNumber(mag), (-64, -20), hude.DI_SCREEN_CENTER_BOTTOM | hude.DI_TEXT_ALIGN_CENTER, 0, 0.5, -1, 4, (0.75,0.75));
 			}
 			else
 			{
-				if(!owner.FindInventory("ClassicModeToken"))
-					hude.DrawString(hude.bf, hude.FormatNumber(mag), (64, -20), hude.DI_SCREEN_CENTER_BOTTOM | hude.DI_TEXT_ALIGN_CENTER, 0, 0.5, -1, 4, (0.75,0.75));				
+				hude.DrawString(hude.bf, hude.FormatNumber(mag), (64, -20), hude.DI_SCREEN_CENTER_BOTTOM | hude.DI_TEXT_ALIGN_CENTER, 0, 0.5, -1, 4, (0.75,0.75));				
 			}
 		}
 	}	
@@ -97,14 +92,11 @@ class ddPistol : ddWeapon replaces Pistol
 	
 	override void WhileBerserk()
 	{
-		if(owner is "ddPlayerNormal")
-		{
-			//speed up reloading/unloading when berserk
-			let myside = (weaponside) ? owner.player.getpsprite(PSP_LEFTW0) : owner.player.getpsprite(PSP_RIGHTW0);
-			let myflash = (weaponside) ? owner.player.getpsprite(PSP_LEFTWF0) : owner.player.getpsprite(PSP_RIGHTWF0);
-			if(owner.FindInventory("PowerBerserk") && (weaponstatus == DDW_UNLOADING || weaponstatus == DDW_RELOADING)) 
-			{ if(myside.tics > 3) { myside.tics--; } if(myflash.tics > 1) { myflash.tics--; } }
-		}
+		//speed up reloading/unloading when berserk
+		let myside = (weaponside) ? owner.player.getpsprite(PSP_LEFTW0) : owner.player.getpsprite(PSP_RIGHTW0);
+		let myflash = (weaponside) ? owner.player.getpsprite(PSP_LEFTWF0) : owner.player.getpsprite(PSP_RIGHTWF0);
+		if(owner.FindInventory("PowerBerserk") && (weaponstatus == DDW_UNLOADING || weaponstatus == DDW_RELOADING)) 
+		{ if(myside.tics > 3) { myside.tics--; } if(myflash.tics > 1) { myflash.tics--; } }
 	}
 	
 	override String, int GetSprites(int no)
@@ -152,35 +144,17 @@ class ddPistol : ddWeapon replaces Pistol
 		else { return FindState("Ready"); }
 	}
 	
-	override State GetAttackState()
-	{
-		let ddp = ddPlayer(owner);
-		if(ddp.FindInventory("ClassicModeToken")) { return FindState("FireClassic"); }
-		else { return Super.GetAttackState(); }
-	}
-	
-	override State GetRefireState()
-	{
-		let ddp = ddPlayer(owner);
-		if(ddp.FindInventory("ClassicModeToken")) { return FindState("FireClassic"); }
-		else { return Super.GetAttackState(); }
-	}
-	
 	override void primaryattack()
 	{
-		let ddp = ddPlayer(owner);		
-		Class<Ammo> type = (ddp.FindInventory("ClassicModeToken")) ? ClassicAmmoType1 : AmmoType1;
-		if(ddp.FindInventory("ClassicModeToken")) { ddp.TakeInventory("Clip", 1); }
-		else { mag--; }
+		let ddp = ddPlayer(owner);
+		mag--;
 		A_FireDDPistol();
 	}
 	
 	override void alternativeattack()
 	{
 		let ddp = ddPlayer(owner);
-		Class<Ammo> type = (ddp.FindInventory("ClassicModeToken")) ? ClassicAmmoType1 : AmmoType1;
-		if(ddp.FindInventory("ClassicModeToken")) { if(ddp.CountInv(type) > 0) { ddp.TakeInventory(type, 1); } }
-		else { mag--; }
+		mag--;
 		A_BurstFireDDPistol();
 		burstcounter--;
 	}
@@ -246,9 +220,6 @@ class ddPistol : ddWeapon replaces Pistol
 					else { pspi.SetRotation(random2(3)*(1 + (i/100.))); }
 				} 
 				return;
-			case 8:
-				console.printf("test case for id: "..pspi.id);
-				return;
 			default:
 				return;			
 		}
@@ -259,9 +230,7 @@ class ddPistol : ddWeapon replaces Pistol
 	{		
 		let ddp = ddPlayer(owner);
 		let me = ddWeapon(self);
-		let type = (ddp.FindInventory("ClassicModeToken")) ?
-		((!bAltFire) ? ClassicAmmoType1 : ClassicAmmoType2) :
-		((!bAltFire) ? AmmoType1 : AmmoType2);
+		let type = (!bAltFire) ? AmmoType1 : AmmoType2;
 		let pspl = ddp.player.GetPSprite(PSP_LEFTW0);
 		let psplf = ddp.player.GetPSprite(PSP_LEFTWF0);
 		let pspr = ddp.player.GetPSprite(PSP_RIGHTW0);
@@ -273,11 +242,6 @@ class ddPistol : ddWeapon replaces Pistol
 		switch(no)
 		{
 			case 1: //init/ammo check
-				if(res == RES_CLASSIC && (ddp.CountInv(type) < 1)) {					
-					if(ddp.dddebug & DBG_WEAPSEQUENCE) { ddp.A_Log("No ammo for Pistol fire"); } 
-					ChangeState("NoAmmo", myside);
-					break;
-				}
 				if(mag < 1 && (ddp.CountInv(type) < 1)) {					
 					if(ddp.dddebug & DBG_WEAPSEQUENCE) { ddp.A_Log("No ammo for Pistol fire"); } 
 					ChangeState("NoAmmo", myside);
@@ -341,7 +305,7 @@ class ddPistol : ddWeapon replaces Pistol
 		int dam = 4 * random(2,3);
 		let ddp = ddPlayer(invoker.owner);
 		ddWeapon weap = ddWeapon(self);
-		Class<Ammo> type = (ddp.FindInventory("ClassicModeToken")) ? weap.ClassicAmmoType1 : weap.AmmoType1;
+		Class<Ammo> type = weap.AmmoType1;
 		if(ddp.player == null) { return; }	
 		double eA = 0;
 		double eP = 0;
@@ -350,8 +314,7 @@ class ddPistol : ddWeapon replaces Pistol
 		bool bz = (ddp.FindInventory("PowerBerserk"));
 		if(pen) { eA = (Random2() * (1.99 / 256)); eP = (Random2() * (1.67 / 256)); } 
 		else { eA = Random2() * (0.99 / 256); eP = Random2() * (0.99 / 256); }
-		if(ddp.FindInventory("ClassicModeToken")) { ddp.A_StartSound("weapons/pistol", CHAN_WEAPON, CHANF_OVERLAP); }
-		else { ddp.A_StartSound("weapons/pistolnew", CHAN_WEAPON, CHANF_OVERLAP); }
+		ddp.A_StartSound("weapons/pistolnew", CHAN_WEAPON, CHANF_OVERLAP);
 		if(invoker.mag < 4) { ddp.A_StartSound("weapons/nofire", CHAN_WEAPON, CHANF_OVERLAP); }
 		ddShot(accurate, "BulletPuff", dam, eA, eP, weap.weaponside, (pen) ? 10 : 3);
 		if(pen) { AddRecoil(1.8, 1, 4.); }
@@ -364,7 +327,7 @@ class ddPistol : ddWeapon replaces Pistol
 		int dam = 5 * random(2,3);
 		let ddp = ddPlayer(invoker.owner);
 		ddWeapon weap = ddWeapon(self);
-		Class<Ammo> type = (ddp.FindInventory("ClassicModeToken")) ? weap.ClassicAmmoType1 : weap.AmmoType1;
+		Class<Ammo> type = weap.AmmoType1;
 		if(ddp.player == null) { return; }
 		bool pen = (ddp.player.readyweapon is "dualWielding"&&!ddp.CheckESOA(0));
 		if(ddp.dddebug & DBG_WEAPONS) { A_Log(""..weap.GetClassName().." dualwielding penalties "..((pen) ? "active" : "inactive")); }
@@ -373,8 +336,7 @@ class ddPistol : ddWeapon replaces Pistol
 		bool bz = (ddp.FindInventory("PowerBerserk"));
 		if(pen) { eA = (Random2() * (3.67 / 256)); eP = (Random2() * (4.25 / 256)); } 
 		else { eA = Random2() * (1.67 / 256); eP = Random2() * (2.25 / 256); }
-		if(ddp.FindInventory("ClassicModeToken")) { ddp.A_StartSound("weapons/pistol", CHAN_WEAPON, CHANF_OVERLAP); }
-		else { ddp.A_StartSound("weapons/pistolnew", CHAN_WEAPON, CHANF_OVERLAP); }
+		ddp.A_StartSound("weapons/pistolnew", CHAN_WEAPON, CHANF_OVERLAP);
 		if(invoker.mag < 4) { ddp.A_StartSound("weapons/nofire", CHAN_WEAPON, CHANF_OVERLAP); }
 		ddShot(false, "BulletPuff", dam, eA, eP,weap.weaponside, 5);
 		if(pen) { AddRecoil(7.5, 4, 3.5); }
@@ -402,14 +364,6 @@ class ddPistol : ddWeapon replaces Pistol
 			#### # 0 A_ChangeSprite;
 			#### ######## 1 A_DDHeavyRefire;
 			#### # 1;
-			Goto Ready;
-		FireClassic:
-			#### A 1 A_WeapAction;
-			#### A 4;
-			#### B 0 A_DDFlash;
-			#### B 6 A_FireDDWeapon;
-			#### C 4;
-			#### B 5 A_DDRefire;
 			Goto Ready;
 		Select:
 			PISD A 0 A_ChangeSprite;
@@ -523,13 +477,6 @@ class d9MSpawner : RandomSpawner
 	
 	override Name ChooseSpawn()
 	{
-		for(int x = 0; x < 8; x++)
-		{
-			if(players[x].mo is "ddPlayerClassic")
-			{
-				return "Clip";
-			}
-		}
 		return Super.ChooseSpawn();
 	}
 }

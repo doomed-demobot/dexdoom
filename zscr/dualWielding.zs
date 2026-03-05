@@ -241,12 +241,8 @@ class dualWielding : ddWeapon
 		{
 			CurRWp = ddp.GetRightWeapon(ddp.rwx);
 		}
-		let typel = (ddp.FindInventory("ClassicModeToken")) ?
-		((!CurLWp.bAltFire) ? CurLWp.ClassicAmmoType1 : CurLWp.ClassicAmmoType2) :
-		((!CurLWp.bAltFire) ? CurLWp.AmmoType1 : CurLWp.AmmoType2);
-		let typer = (ddp.FindInventory("ClassicModeToken")) ?
-		((!CurRWp.bAltFire) ? CurRWp.ClassicAmmoType1 : CurRWp.ClassicAmmoType2) :
-		((!CurRWp.bAltFire) ? CurRWp.AmmoType1 : CurRWp.AmmoType2);
+		let typel = ((!CurLWp.bAltFire) ? CurLWp.AmmoType1 : CurLWp.AmmoType2);
+		let typer = ((!CurRWp.bAltFire) ? CurRWp.AmmoType1 : CurRWp.AmmoType2);
 		if(CurLWp && CurRWp)
 		{
 			let plarm = ddp.FindInventory("BasicArmor");
@@ -322,23 +318,12 @@ class dualWielding : ddWeapon
 			}
 			if(wolfen)
 			{
-				if(!ddp.FindInventory("ClassicModeToken"))
-				{
-					//hude.DrawString(hude.fa, ddp.altmodeL ? "A" : "P", (-64, -48), hude.DI_SCREEN_CENTER_BOTTOM | hude.DI_TEXT_ALIGN_CENTER);
-					//hude.DrawString(hude.fa, ddp.altmodeR ? "A" : "P", (65, -48), hude.DI_SCREEN_CENTER_BOTTOM | hude.DI_TEXT_ALIGN_CENTER);
-					hude.DrawTexture(CurLWP.GetFireModeIcon(), (-88, -20), hude.DI_SCREEN_CENTER_BOTTOM , 1., (-1, -1), (0.33, 0.33));
-					hude.DrawTexture(CurRWP.GetFireModeIcon(), (38, -20), hude.DI_SCREEN_CENTER_BOTTOM , 1., (-1, -1), (0.33, 0.33));					
-					
-				}
+				hude.DrawTexture(CurLWP.GetFireModeIcon(), (-88, -20), hude.DI_SCREEN_CENTER_BOTTOM , 1., (-1, -1), (0.33, 0.33));
+				hude.DrawTexture(CurRWP.GetFireModeIcon(), (38, -20), hude.DI_SCREEN_CENTER_BOTTOM , 1., (-1, -1), (0.33, 0.33));					
 			}		
 			if(ddp.desire)
 			{
-				if(ddp is "ddPlayerClassic")
-				{
-					hude.DrawString(hude.fa, ddp.desire.GetTag(), (12, 45), hude.DI_SCREEN_CENTER | hude.DI_TEXT_ALIGN_LEFT);
-					hude.DrawString(hude.fa, "Spare ammo: "..hude.FormatNumber(ddp.desire.AmmoGive1), (12, 52), hude.DI_SCREEN_CENTER | hude.DI_TEXT_ALIGN_LEFT);
-				}
-				else { ddp.desire.PreviewInfo(hude); }
+				ddp.desire.PreviewInfo(hude);
 			}
 			hude.DrawInventoryIcon(plarm, (-35, -20), 0, 0.4);
 			hude.DrawString(hude.bf, hude.FormatNumber(plarm.Amount), (-50, -35), hude.DI_SCREEN_RIGHT_BOTTOM | hude.DI_TEXT_ALIGN_CENTER, 0, 0.5, -1, 4, (1.25,1.25));
@@ -409,7 +394,6 @@ class dualWielding : ddWeapon
 				}
 				else if(A_PressingLeftAltFire())
 				{
-					if(FindInventory("ClassicModeToken")) { return; }
 					lw.onWeaponFire(1, invoker.leftheld);
 					if(ddp.ddWeaponState & DDW_LEFTREADY)
 					{
@@ -428,7 +412,6 @@ class dualWielding : ddWeapon
 				}
 				else if(A_PressingLeftModeSwitch())
 				{
-					if(FindInventory("ClassicModeToken")) { return; }
 					if(ddp.ddWeaponState & DDW_LEFTREADY)
 					{
 						ddp.altmodeL = !ddp.altmodeL;
@@ -462,7 +445,6 @@ class dualWielding : ddWeapon
 				}
 				else if(A_PressingRightAltFire())
 				{
-					if(FindInventory("ClassicModeToken")) { return; }
 					rw.onWeaponFire(0, invoker.rightheld);
 					if(ddp.ddWeaponState & DDW_RIGHTREADY)
 					{
@@ -481,7 +463,6 @@ class dualWielding : ddWeapon
 				}
 				else if(A_PressingRightModeSwitch())
 				{
-					if(FindInventory("ClassicModeToken")) { return; }
 					if(ddp.ddWeaponState & DDW_RIGHTREADY)
 					{
 						ddp.altmodeR = !ddp.altmodeR;
@@ -497,35 +478,6 @@ class dualWielding : ddWeapon
 			}
 			else if(A_PressingReload())
 			{
-				if(FindInventory("ClassicModeToken")) { return; }
-				/*
-				if(player.cmd.buttons & BT_USE)
-				{
-					if(ddp.ddWeaponState & DDW_RIGHTREADY)
-					{
-						A_CheckRightWeaponMag();
-						lw.weaponready = false;
-						rw.weaponready = false;
-					}
-				}
-				else
-				{
-					if(ddp.ddWeaponState & DDW_LEFTREADY)
-					{
-						A_CheckLeftWeaponMag();
-						lw.weaponready = false;
-						rw.weaponready = false;		
-					}
-					else
-					{
-						if(ddp.ddWeaponState & DDW_RIGHTREADY)
-						{
-							A_CheckRightWeaponMag();
-							lw.weaponready = false;
-							rw.weaponready = false;
-						}
-					}
-				}*/
 				if(ddp.ddWeaponState & DDW_LEFTREADY)
 				{
 					lw.weaponready = false;

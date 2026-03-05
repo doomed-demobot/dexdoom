@@ -19,8 +19,6 @@ class ddSuperShotgun : ddWeapon replaces SuperShotgun
 		Weapon.AmmoUse2 1;
 		Weapon.AmmoType "BFS";
 		Weapon.AmmoType2 "BFS";
-		ddWeapon.ClassicAmmoType1 "Shell";
-		ddWeapon.ClassicAmmoType2 "Shell";
 		ddWeapon.rating 5;
 		ddWeapon.SwitchSpeed 1.5;
 		ddWeapon.initialmag 2;
@@ -34,13 +32,10 @@ class ddSuperShotgun : ddWeapon replaces SuperShotgun
 	
 	override void WhileBerserk()
 	{
-		if(owner is "ddPlayerNormal")
-		{
-			//speed up states when berserk
-			let myside = (weaponside) ? owner.player.getpsprite(PSP_LEFTW0) : owner.player.getpsprite(PSP_RIGHTW0);
-			let myflash = (weaponside) ? owner.player.getpsprite(PSP_LEFTWF0) : owner.player.getpsprite(PSP_RIGHTWF0);
-			if(weaponstatus == DDW_RELOADING) { if(myside.tics > 3) { myside.tics--; } if(myflash.tics > 1) { myflash.tics--; } }
-		}
+		//speed up states when berserk
+		let myside = (weaponside) ? owner.player.getpsprite(PSP_LEFTW0) : owner.player.getpsprite(PSP_RIGHTW0);
+		let myflash = (weaponside) ? owner.player.getpsprite(PSP_LEFTWF0) : owner.player.getpsprite(PSP_RIGHTWF0);
+		if(weaponstatus == DDW_RELOADING) { if(myside.tics > 3) { myside.tics--; } if(myflash.tics > 1) { myflash.tics--; } }
 	}
 	
 	override void OnAutoReload()
@@ -76,20 +71,17 @@ class ddSuperShotgun : ddWeapon replaces SuperShotgun
 	{
 		if(owner.player.readyweapon is "twoHanding")
 		{
-			if(!owner.FindInventory("ClassicModeToken"))
-				hude.DrawString(hude.bf, hude.FormatNumber(mag), (0, -20), hude.DI_SCREEN_CENTER_BOTTOM | hude.DI_TEXT_ALIGN_CENTER, 0, 0.5, -1, 4, (0.75,0.75));
+			hude.DrawString(hude.bf, hude.FormatNumber(mag), (0, -20), hude.DI_SCREEN_CENTER_BOTTOM | hude.DI_TEXT_ALIGN_CENTER, 0, 0.5, -1, 4, (0.75,0.75));
 		}
 		else if(owner.player.readyweapon is "dualWielding")
 		{
 			if(weaponside == CE_LEFT)
 			{
-				if(!owner.FindInventory("ClassicModeToken"))
-					hude.DrawString(hude.bf, hude.FormatNumber(mag), (-64, -20), hude.DI_SCREEN_CENTER_BOTTOM | hude.DI_TEXT_ALIGN_CENTER, 0, 0.5, -1, 4, (0.75,0.75));
+				hude.DrawString(hude.bf, hude.FormatNumber(mag), (-64, -20), hude.DI_SCREEN_CENTER_BOTTOM | hude.DI_TEXT_ALIGN_CENTER, 0, 0.5, -1, 4, (0.75,0.75));
 			}
 			else
 			{
-				if(!owner.FindInventory("ClassicModeToken"))
-					hude.DrawString(hude.bf, hude.FormatNumber(mag), (64, -20), hude.DI_SCREEN_CENTER_BOTTOM | hude.DI_TEXT_ALIGN_CENTER, 0, 0.5, -1, 4, (0.75,0.75));				
+				hude.DrawString(hude.bf, hude.FormatNumber(mag), (64, -20), hude.DI_SCREEN_CENTER_BOTTOM | hude.DI_TEXT_ALIGN_CENTER, 0, 0.5, -1, 4, (0.75,0.75));				
 			}
 		}
 	}
@@ -167,7 +159,7 @@ class ddSuperShotgun : ddWeapon replaces SuperShotgun
 	override void primaryattack()
 	{
 		let ddp = ddPlayer(owner);		
-		if(mag > 1) { if(!ddp.FindInventory("ClassicModeToken")) { mag -= 2; } else { ddp.TakeInventory("Shell", 2); } A_FireDDSShotgun(); }
+		if(mag > 1) { mag -= 2; }
 		else if(mag > 0) { mag--; A_FireDDSShotgunSingle(); }
 		else { }
 	}
@@ -247,7 +239,6 @@ class ddSuperShotgun : ddWeapon replaces SuperShotgun
 		switch(no)
 		{
 			case 1: //init/mode check
-				if(res == RES_CLASSIC && (ddp.CountInv("Shell") < 2)) { ChangeState("NoAmmo", myside); break; }
 				if(mag < 1 && ddp.CountInv("BFS") < 1) { ChangeState("NoAmmo", myside); break; }
 				if(res == RES_DUALWLD) { //lower to reload
 					if(mag < 1 && !(ddWeaponFlags & 7)) { ddWeaponFlags |= SST_RQUIK; ChangeState("ReloadOneHanded", myside); break; }
@@ -264,7 +255,6 @@ class ddSuperShotgun : ddWeapon replaces SuperShotgun
 				}
 				else { if(mag < 1) { weaponstatus = DDW_RELOADING; ChangeState("ReloadP", myside); break; } else { ddp.PlayAttacking(); } break; }
 			case 2: //jump to reload if twohanding
-				if(res == RES_CLASSIC && ddp.CountInv("Shell") >= 1) { ChangeState("ReloadP", myside); break; }
 				if((res == RES_TWOHAND || res == RES_HASESOA) && ddp.CountInv("BFS") >= 1 && mag < 1) { weaponstatus = DDW_RELOADING; ChangeState("ReloadP", myside); }
 				else { }
 				break;
@@ -445,13 +435,6 @@ class ShellSpawner : RandomSpawner replaces Shell
 	
 	override Name ChooseSpawn()
 	{
-		for(int x = 0; x < 8; x++)
-		{
-			if(players[x].mo is "ddPlayerClassic")
-			{
-				return "Shelle";
-			}
-		}
 		//check if doom2
 		if(TexMan.CheckForTexture("SGN2A0", TexMan.Type_Sprite).IsValid()) 	{ return Super.ChooseSpawn(); }
 		else { return "Shelle"; }
@@ -468,13 +451,6 @@ class ShellBoxSpawner : RandomSpawner replaces ShellBox
 	
 	override Name ChooseSpawn()
 	{
-		for(int x = 0; x < 8; x++)
-		{
-			if(players[x].mo is "ddPlayerClassic")
-			{
-				return "ShellBoxe";
-			}
-		}
 		if(TexMan.CheckForTexture("SGN2A0", TexMan.Type_Sprite).IsValid()) { return Super.ChooseSpawn(); }
 		else { return "ShellBoxe"; }
 		
@@ -528,26 +504,3 @@ extend class ddWeapon
 		else { AddRecoil(9., 2, 4.); }
 	}
 }
-
-// #Class BreakActionSpawner : RandomSpawner replaces SuperShotgun()
-/*
-class BreakActionSpawner : RandomSpawner replaces SuperShotgun
-{
-	Default
-	{
-		DropItem "ddSuperShotgun", 255, 60;
-		DropItem "PowerFist", 255, 9;
-	}
-	
-	override Name ChooseSpawn()
-	{
-		for(int x = 0; x < 8; x++)
-		{
-			if(players[x].mo is "ddPlayerClassic")
-			{
-				return "ddSuperShotgun";
-			}
-		}
-		return Super.ChooseSpawn();
-	}
-}*/

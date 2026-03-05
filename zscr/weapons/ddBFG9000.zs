@@ -11,8 +11,6 @@ class ddBFG9000 : ddWeapon
 		Weapon.AmmoGive 40;
 		Weapon.AmmoType "Cell";
 		Weapon.AmmoType2 "Cell";
-		ddWeapon.ClassicAmmoType1 "Cell";
-		ddWeapon.ClassicAmmoType2 "Cell";
 		ddWeapon.rating 9;
 		ddWeapon.SwitchSpeed 1.0;
 		ddWeapon.xOffset 24;
@@ -85,7 +83,7 @@ class ddBFG9000 : ddWeapon
 			default: ddp.A_Log("No action defined for tic "..no); break;
 		}
 	}
-	//todo: complete multi-sequence transformation calls so you can do cool stuff
+	
 	override void SetDDTransformations(int no, PSpriteInfo pspi)
 	{
 		let ddp = ddPlayer(owner);
@@ -173,15 +171,6 @@ extend class ddWeapon
 		ddp.SpawnPlayerMissile("BFGBall", ddp.angle, nofreeaim:sv_nobfgaim);
 		ddp.TakeInventory("Cell", 40);		
 	}
-	//deprecated
-	action void A_FireDDBFGBolt()
-	{
-		let own = ddPlayer(invoker.owner);
-		if(own.player == null) { return; }
-		A_BFGAltFireSound();
-		own.SpawnPlayerMissile("BFGBlast", own.angle);
-		own.TakeInventory("Cell", 10);
-	}
 	
 	action void A_BFGAltFireStart()	{ A_StartSound("weapons/10kmodeg", CHAN_WEAPON);	}
 	action void A_BFGAltFireSound() { invoker.owner.A_StartSound("weapons/10kmodef", CHAN_WEAPON, CHANF_OVERLAP); }
@@ -212,31 +201,3 @@ class BFGSpawner : RandomSpawner replaces BFG9000
 	}
 }
 */
-class BFGBlast : Actor //[unused]
-{	
-	Default
-	{
-		Radius 12;
-		Height 12;
-		Scale 0.5;
-		Speed 500;
-		Damage 100;
-		Projectile
-		+RANDOMIZE;
-		+NOGRAVITY
-		DeathSound "weapons/bfgx";
-		Obituary "%o saw a bright light.";
-	}
-	States
-	{
-		Spawn:
-			PLS2 AB 3 Bright;
-			Loop;
-		Death:
-			BFE1 A 2 Bright A_Explode;
-			BFE1 B 2;
-			BFE1 C 2 Bright;
-			BFE1 DEF 2 Bright;
-			Stop;
-	}
-}

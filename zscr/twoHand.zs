@@ -49,9 +49,7 @@ class twoHanding : ddWeapon
 		let mode = twoHanding(self);
 		ddWeapon curWeap;
 		if(rWeap.items.Size()) { curWeap = ddp.GetRightWeapon(ddp.rwx); }
-		let type = (ddp is "ddPlayerClassic") ?
-		((!curWeap.bAltFire) ? curWeap.ClassicAmmoType1 : curWeap.ClassicAmmoType2) :
-		((!curWeap.bAltFire) ? curWeap.AmmoType1 : curWeap.AmmoType2);
+		let type = ((!curWeap.bAltFire) ? curWeap.AmmoType1 : curWeap.AmmoType2);
 		let plarm = ddp.FindInventory("BasicArmor");
 		bool wolfen = CVar.GetCVar("pl_wolfen", ddp.player).GetBool();
 		if(curWeap)
@@ -85,22 +83,11 @@ class twoHanding : ddWeapon
 			}
 			if(wolfen) 
 			{ 
-				if(!ddp.FindInventory("ClassicModeToken")) { 				
-					//hude.DrawString(hude.fa, ddp.altmodeR ? "A" : "P", (0, -48), hude.DI_SCREEN_CENTER_BOTTOM | hude.DI_TEXT_ALIGN_CENTER); 
-					hude.DrawTexture(CurWeap.GetFireModeIcon(), (-26, -20), hude.DI_SCREEN_CENTER_BOTTOM , 1., (-1, -1), (0.33, 0.33));
-				}
+				hude.DrawTexture(CurWeap.GetFireModeIcon(), (-26, -20), hude.DI_SCREEN_CENTER_BOTTOM , 1., (-1, -1), (0.33, 0.33));
 			}
 			hude.DrawInventoryIcon(plarm, (-35, -20), 0, 0.4);
 			hude.DrawString(hude.bf, hude.FormatNumber(plarm.Amount), (-50, -35), hude.DI_SCREEN_RIGHT_BOTTOM | hude.DI_TEXT_ALIGN_CENTER, 0, 0.5, -1, 4, (1.25,1.25));
-			if(ddp.desire)
-			{
-				if(ddp is "ddPlayerClassic")
-				{
-					hude.DrawString(hude.fa, ddp.desire.GetTag(), (12, 45), hude.DI_SCREEN_CENTER | hude.DI_TEXT_ALIGN_LEFT);
-					hude.DrawString(hude.fa, "Spare ammo: "..hude.FormatNumber(ddp.desire.AmmoGive1), (12, 52), hude.DI_SCREEN_CENTER | hude.DI_TEXT_ALIGN_LEFT);
-				}
-				else { ddp.desire.PreviewInfo(hude); }
-			}
+			if(ddp.desire) { ddp.desire.PreviewInfo(hude); }
 			if(ddp.dddebug & DBG_WEAPONS)
 			{
 				hude.DrawString(hude.bf, ".", (-50, -85), hude.DI_SCREEN_RIGHT_BOTTOM | hude.DI_TEXT_ALIGN_CENTER, (rightheld) ? Font.CR_GREEN : Font.CR_RED);
@@ -210,7 +197,6 @@ class twoHanding : ddWeapon
 			else if(A_PressingRightAltFire())
 			{
 				//secondary fire
-				if(FindInventory("ClassicModeToken")) { return; } 
 				weap.onWeaponFire(0, invoker.rightheld);
 				if(ddp.ddWeaponState & DDW_RIGHTREADY)
 				{

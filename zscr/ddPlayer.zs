@@ -17,8 +17,6 @@ class ddPlayer : DoomPlayer
 	double addPitch;
 	double addAngle;
 	bool esoaActive; //set with esoaActivator custominventory item
-	uint8 Combo; //holds current combo indentifier
-	int ComboTimer; //set by weapons
 	int fwx;
 	inventoryWeapon invTemp;
 	ddWeapon lastmode; //remember previous mode [dual or 2h] todo: put in pocket so it doesnt get cleared on death
@@ -97,8 +95,6 @@ class ddPlayer : DoomPlayer
 		altmodeL = false;
 		altmodeR = false;
 		esoaActive = true;
-		combo = COM_SHOT;
-		combotimer = 0;
 		desire = null;
 		
 	}
@@ -179,6 +175,7 @@ class ddPlayer : DoomPlayer
 		PSpriteInfo inf = null;
 		while(pspr)
 		{
+			//check if current psprite has pspriteinfo
 			while(pspi)
 			{
 				if(pspi.ID == pspr.ID) { inf = pspi; break; }
@@ -276,7 +273,6 @@ class ddPlayer : DoomPlayer
 				}
 				if(player.readyweapon is "twoHanding")
 				{
-					if(FindInventory("ClassicModeToken")) { ddWeaponState &= ~DDW_LEFTISTH; ddWeaponState &= ~DDW_RIGHTISTH; }
 					ddWeaponState |= DDW_LEFTNOBOBBING;
 					ddWeaponState |= DDW_RIGHTNOBOBBING;
 					player.SetPSprite(PSP_LEFTW0, lw.GetUpState());
@@ -286,7 +282,6 @@ class ddPlayer : DoomPlayer
 				}
 				else if(player.readyweapon is "dualWielding")
 				{
-					if(FindInventory("ClassicModeToken")) { ddWeaponState &= ~DDW_LEFTISTH; ddWeaponState &= ~DDW_RIGHTISTH; }
 					ddWeaponState |= DDW_LEFTNOBOBBING;
 					ddWeaponState |= DDW_RIGHTNOBOBBING;
 					player.SetPSprite(PSP_LEFTW0, lw.GetUpState());
@@ -337,59 +332,56 @@ class ddPlayer : DoomPlayer
 		let lw = GetLeftWeapons();
 		let rw = GetRightWeapons();
 		let pinv = GetWeaponsInventory();
-		if(self is "ddPlayerNormal")
+		for(int x = 0; x < pinv.size; x++)
 		{
-			for(int x = 0; x < pinv.size; x++)
+			//remake inventoryweapons references
+			let inw = pInv.RetItem(x);
+			if(inw.ref == null) 
 			{
-				//remake inventoryweapons references
-				let inw = pInv.RetItem(x);
-				if(inw.ref == null) 
-				{
-					inw.construct(inw.weaponname, inw.rating, inw.weaponsprite, inw.mag, inw.ddWeaponFlags, true);
-				}
+				inw.construct(inw.weaponname, inw.rating, inw.weaponsprite, inw.mag, inw.ddWeaponFlags, true);
 			}
-			if(autoreload)
+		}
+		if(autoreload)
+		{
+			for(int y = 0; y < pinv.size; y++)
 			{
-				for(int y = 0; y < pinv.size; y++)
+				//auto reload inventoryweapons
+				let inw = pInv.RetItem(y);
+				if(inw.ref)
 				{
-					//auto reload inventoryweapons
-					let inw = pInv.RetItem(y);
-					if(inw.ref)
+					if(inw.mag < inw.ref.default.mag)
 					{
-						if(inw.mag < inw.ref.default.mag)
-						{
-							int cost = (inw.ref.default.mag - inw.ref.mag) * inw.ref.costmultiplier;
-							if(cost > 0)
-							{
-								if(CountInv(inw.ref.AmmoType1) < cost) { inw.ref.mag += CountInv(inw.ref.AmmoType1); inw.mag = inw.ref.mag; }
-								else { inw.ref.mag += (cost/inw.ref.costmultiplier); inw.mag = inw.ref.mag; }
-								TakeInventory(inw.ref.AmmoType1, cost);
-							}
-							else { inw.ref.mag = inw.ref.default.mag; inw.mag = inw.ref.mag; }
-						}
-						inw.ref.OnAutoReload();
-						inw.ddWeaponFlags = inw.ref.ddWeaponFlags;
-					}
-					
-				}
-				ddWeapon weap;
-				for(int z = 0; z < lw.size+rw.size; z++)
-				{
-					//auto reload ddweapons
-					if(z < lw.size) { weap = lw.RetItem(z);	}
-					else { weap = rw.RetItem(z-lw.size); }
-					weap.OnAutoReload();
-					if(weap.mag < weap.default.mag)
-					{
-						int cost = (weap.default.mag - weap.mag) * weap.costmultiplier;
+						int cost = (inw.ref.default.mag - inw.ref.mag) * inw.ref.costmultiplier;
 						if(cost > 0)
 						{
-							if(CountInv(weap.AmmoType1) < cost) { weap.mag += CountInv(weap.AmmoType1); }
-							else { weap.mag += (cost/weap.costmultiplier); }
-							TakeInventory(weap.AmmoType1, cost);
+							if(CountInv(inw.ref.AmmoType1) < cost) { inw.ref.mag += CountInv(inw.ref.AmmoType1); inw.mag = inw.ref.mag; }
+							else { inw.ref.mag += (cost/inw.ref.costmultiplier); inw.mag = inw.ref.mag; }
+							TakeInventory(inw.ref.AmmoType1, cost);
 						}
-						else { weap.mag = weap.default.mag; }
+						else { inw.ref.mag = inw.ref.default.mag; inw.mag = inw.ref.mag; }
 					}
+					inw.ref.OnAutoReload();
+					inw.ddWeaponFlags = inw.ref.ddWeaponFlags;
+				}
+				
+			}
+			ddWeapon weap;
+			for(int z = 0; z < lw.size+rw.size; z++)
+			{
+				//auto reload ddweapons
+				if(z < lw.size) { weap = lw.RetItem(z);	}
+				else { weap = rw.RetItem(z-lw.size); }
+				weap.OnAutoReload();
+				if(weap.mag < weap.default.mag)
+				{
+					int cost = (weap.default.mag - weap.mag) * weap.costmultiplier;
+					if(cost > 0)
+					{
+						if(CountInv(weap.AmmoType1) < cost) { weap.mag += CountInv(weap.AmmoType1); }
+						else { weap.mag += (cost/weap.costmultiplier); }
+						TakeInventory(weap.AmmoType1, cost);
+					}
+					else { weap.mag = weap.default.mag; }
 				}
 			}
 		}
@@ -471,8 +463,6 @@ class ddPlayer : DoomPlayer
 			dddebug = 0;
 			CVar.GetCVar("pl_dmode", player).SetInt(0);			
 		}
-		if(comboTimer != 0) { comboTimer--; }
-		if(comboTimer <= 0) { combo = 0; comboTimer = 0; }
 		if(insTimerLeft != 0) { insTimerLeft--; }
 		if(insTimerLeft <= 0) { insTimerLeft = 0; 
 			if(leftInstability > 0) { leftInstability = clamp(leftInstability - 5, 0, leftInstability); } 
@@ -491,7 +481,7 @@ class ddPlayer : DoomPlayer
  		if(instTimer != 0) { instTimer--; }
 		if(instTimer <= 0) { instTimer = 0; if(instability > 0) { instability-=5; } else { instability = 0; } }
 		plFOV = fouv.GetFloat();
-		if(!FindInventory("ClassicModeToken") && visrec) { plFOV += (instTimer / 4); }
+		if(visrec) { plFOV += (instTimer / 4); }
 		BobDDWeapons();
 		//get looked at weapon
 		flinetracedata re;
@@ -542,7 +532,6 @@ class ddPlayer : DoomPlayer
 									//let weap = ddWeapon(Spawn(""..item.GetClassName().."Left"));
 									let weap = ddWeapon(Spawn(""..item.GetClassName()));
 									weap.AttachToOwner(self); weap.AmmoGive1 = 0; noIW = true; weap.weaponside = CE_LEFT;
-									if(self is "ddPlayerClassic") { weap.sFactor = 2; }
 									lWeap.SetItem(weap, x);
 								}
 							}
@@ -553,7 +542,6 @@ class ddPlayer : DoomPlayer
 									//let weap = ddWeapon(Spawn(""..item.GetClassName().."Right"));
 									let weap = ddWeapon(Spawn(""..item.GetClassName()));
 									weap.AttachToOwner(self); weap.AmmoGive1 = 0; noIW = true; weap.weaponside = CE_RIGHT;
-									if(self is "ddPlayerClassic") { weap.sFactor = 2; }
 									rWeap.SetItem(weap, x - lWeap.size);
 								}
 							}
@@ -997,18 +985,16 @@ class ddPlayer : DoomPlayer
 		if(side < 0) 
 		{ 
 			if(!ignoreTwoHander && flst.RetItem(fwx).btwohander && 
-			(player.readyweapon is "dualWielding" || lastmode is "dualWielding") && 
-			!FindInventory("ClassicModeToken")) { 
+			(player.readyweapon is "dualWielding" || lastmode is "dualWielding")) { 
 				return flst.RetItem(0); 
 			} 			
 			return flst.RetItem(fwx); 
 		}			
-		else
+		else //make sure nothing is using side > 0 before removing
 		{
 			ddWeapon fst;		
 			if(!ignoreTwoHander && flst.RetItem(fwx).btwohander && 
-			(player.readyweapon is "dualWielding" || lastmode is "dualWielding") && 
-			!FindInventory("ClassicModeToken")) { 
+			(player.readyweapon is "dualWielding" || lastmode is "dualWielding")) { 
 				fst = ddWeapon(FindInventory(flst.RetItem(0).GetClassName()..((side) ? "Left" : "Right")));; 
 			}
 			else { if(side) { fst = flst.curfistleft; } else { fst = flst.curfistright; } }
@@ -1021,7 +1007,7 @@ class ddPlayer : DoomPlayer
 	{ 
 		let lWeap = GetLeftWeapons();
 		if(slot > lWeap.items.size() - 1 || slot < 0) { return null; }
-		if(!ignoreTwoHander && lWeap.RetItem(slot).bTwoHander && !FindInventory("ClassicModeToken")) { return ddWeapon(GetFists(1)); }
+		if(!ignoreTwoHander && lWeap.RetItem(slot).bTwoHander) { return ddWeapon(GetFists(1)); }
 		else { return ddWeapon(lWeap.RetItem(slot)); }
 	}
 	
@@ -1030,8 +1016,7 @@ class ddPlayer : DoomPlayer
 		let rWeap = GetRightWeapons();
 		if(slot > rWeap.items.size() - 1 || slot < 0) { return null; }
 		if(!ignoreTwoHander && rWeap.RetItem(slot).bTwoHander &&
-		(player.readyweapon is "dualWielding" || lastmode is "dualWielding") &&
-		!FindInventory("ClassicModeToken")) { 
+		(player.readyweapon is "dualWielding" || lastmode is "dualWielding")) { 
 			return ddWeapon(GetFists(0)); 
 		}
 		else { return ddWeapon(rWeap.RetItem(slot)); }
@@ -1588,31 +1573,6 @@ class ddPlayerNormal : ddPlayer
 		Player.DisplayName "Normal Mode";
 	}
 }
-// #Class ddPlayerClassic : ddPlayer()
-class ddPlayerClassic : ddPlayer 
-{
-	Default
-	{
-		Player.Portrait "";
-		Player.DisplayName "Classic Mode";
-		Player.StartItem "ClassicModeToken";
-		Player.StartItem "twoHanding";
-		Player.StartItem "dualWielding";	
-		Player.StartItem "inventoryOpener";
-		Player.StartItem "playerInventory";
-		Player.StartItem "ddFist";
-		Player.StartItem "ddFistLeft";
-		Player.StartItem "ddFistRight";
-		Player.StartItem "ddPistol";
-		Player.StartItem "Clip", 30;
-		Player.StartItem "LeftWeapons";
-		Player.StartItem "RightWeapons";
-		Player.StartItem "WeaponsInventory";
-		Player.StartItem "FistList";
-		Player.StartItem "emptie";
-		Player.StartItem "inventoryWeapon";
-	}
-}
 
 enum DebugState
 {
@@ -1853,15 +1813,6 @@ class reloadRight : CustomInventory
 		Use:
 			---- A 1 A_UseReloadRight;
 			Loop;
-	}
-}
-
-//token given to classic mode player; disables altfire, extra items and special weapon handling
-class ClassicModeToken : ESOA
-{	
-	Default
-	{
-		Inventory.RestrictedTo "ddPlayerClassic";
 	}
 }
 

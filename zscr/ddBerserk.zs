@@ -28,8 +28,7 @@ class PowerBerserk : Powerup
 	override void Tick()
 	{
 		Super.Tick();
-		if(owner is "ddPlayerNormal") { if(effecttics == (35*3)) { owner.A_Log("Your muscles start to ache..."); owner.A_StartSound("weapons/berserkfade", CHAN_BODY, CHANF_OVERLAP); } }
-		else { if(effecttics < 35) { effecttics = -1; } }
+		if(effecttics == (35*3)) { owner.A_Log("Your muscles start to ache..."); owner.A_StartSound("weapons/berserkfade", CHAN_BODY, CHANF_OVERLAP); }
 	}
 	override color GetBlend ()
 	{

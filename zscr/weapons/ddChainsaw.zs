@@ -10,8 +10,6 @@ class ddChainsaw : ddFist
 		Weapon.ReadySound "weapons/sawidle";
 		Weapon.AmmoType1 "NotAnAmmo";
 		Weapon.AmmoType2 "NotAnAmmo";
-		ddWeapon.ClassicAmmoType1 "NotAnAmmo";
-		ddWeapon.ClassicAmmoType2 "NotAnAmmo";
 		Weapon.AmmoUse1  0;
 		Weapon.AmmoUse2  0;
 		ddWeapon.rating 3;
@@ -25,23 +23,7 @@ class ddChainsaw : ddFist
 		Obituary "$OB_MPCHAINSAW";
 		Tag "$TAG_CHAINSAW";
 	}
-	/*
-	override void InventoryInfo(ddStats ddhud)
-	{
-		let hud = ddhud;		
-		hud.DrawString(hud.fa, GetTag(), (30, 45), hud.DI_SCREEN_CENTER | hud.DI_TEXT_ALIGN_LEFT);
-		hud.DrawString(hud.fa, "level "..hud.FormatNumber(rating).." chainsaw", (30, 55), hud.DI_SCREEN_CENTER | hud.DI_TEXT_ALIGN_LEFT);
-		hud.DrawString(hud.fa, "twohander", (30, 65), hud.DI_SCREEN_CENTER | hud.DI_TEXT_ALIGN_LEFT);
-		hud.DrawString(hud.fa, "no mag", (30, 75), hud.DI_SCREEN_CENTER | hud.DI_TEXT_ALIGN_LEFT);
-	}
-	
-	override void PreviewInfo(ddStats ddhud)
-	{
-		let hude = ddhud;
-		hude.DrawString(hude.fa, GetTag(), (12, 45), hude.DI_SCREEN_CENTER | hude.DI_TEXT_ALIGN_LEFT);
-	}
-	*/
-	
+		
 	override String GetIconSprite()
 	{
 		return "ICCHAI";

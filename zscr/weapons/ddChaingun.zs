@@ -18,8 +18,6 @@ class ddChaingun : ddWeapon replaces Chaingun
 		Weapon.AmmoGive 20;
 		Weapon.AmmoType "Clip";
 		Weapon.AmmoType2 "Clip";
-		ddWeapon.ClassicAmmoType1 "Clip";
-		ddWeapon.ClassicAmmoType2 "Clip";
 		ddWeapon.rating 5;	
 		ddWeapon.SwitchSpeed 1.3;
 		ddWeapon.WeaponType "LMG";
@@ -103,20 +101,6 @@ class ddChaingun : ddWeapon replaces Chaingun
 			default:
 				return "TNT1", -1;
 		}
-	}
-	
-	override State GetAttackState()
-	{
-		let ddp = ddPlayer(owner);
-		if(ddp.FindInventory("ClassicModeToken")) { return FindState("FireClassic"); }
-		else { return Super.GetAttackState(); }
-	}
-	
-	override State GetRefireState()
-	{
-		let ddp = ddPlayer(owner);
-		if(ddp.FindInventory("ClassicModeToken")) { return FindState("FireClassic"); }
-		else { return Super.GetRefireState(); }	
 	}
 	
 	override String GetWeaponSprite()
@@ -213,7 +197,7 @@ class ddChaingun : ddWeapon replaces Chaingun
 					else { ddp.altModeR = 0; fireMode = ddp.altModeR; }
 				}
 				break;
-			case 3:
+			case 3: //play spin sound
 				if(spin > 0) { ddp.A_StartSound("weapons/chaingunspin", CHAN_WEAPON, CHANF_OVERLAP, 1., ATTN_NORM, ((spin < 5) ? 1. : 1.2)); }
 				return;
 			default: ddp.A_Log("No action defined for tic "..no); break;
@@ -248,13 +232,6 @@ class ddChaingun : ddWeapon replaces Chaingun
 			CHGG B 3 A_WeapAction;
 			CHGG B 1 A_FireDDWeapon;
 			CHGG A 0 A_SetTicks;
-			CHGG B 0 A_DDRefire;
-			Goto Ready;
-		FireClassic:
-			CHGG A 0 A_DDFlash;
-			CHGG A 4 A_FireDDWeapon;
-			CHGG A 0 A_DDFlash;
-			CHGG B 4 A_FireDDWeapon;
 			CHGG B 0 A_DDRefire;
 			Goto Ready;
 		Altfire:
@@ -305,7 +282,6 @@ extend class ddWeapon
 			eP = (bz) ? (Random2() * (2.23 / 256)) : (Random2() * (4.75 / 256)); 
 		} 
 		else { eA = random2() * (2.067 / 256); eP = random2() * (2.35 / 256); }
-		if(ddp.FindInventory("ClassicModeToken")) { eA = 0; eP = 0;}
 		if(ddp.CountInv("Clip") > 0)
 		{
 			ddp.A_StartSound("weapons/chngun", CHAN_WEAPON, CHANF_OVERLAP);

@@ -10,7 +10,7 @@ map TESTING "ddTesting Center"
 
 gameinfo
 {
-	PlayerClasses="ddPlayerNormal","ddPlayerClassic"
+	PlayerClasses="ddPlayerNormal"
 	StatusBarClass="ddStats"
 	EventHandlers="ddHandlers"
 	NoRandomPlayerClass=true

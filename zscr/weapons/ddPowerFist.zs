@@ -10,8 +10,6 @@ class ddPowerFist : ddFist
 		Weapon.Kickback 42000;
 		Weapon.AmmoType1 "NotAnAmmo";
 		Weapon.AmmoType2 "NotAnAmmo";
-		ddWeapon.ClassicAmmoType1 "NotAnAmmo";
-		ddWeapon.ClassicAmmoType2 "NotAnAmmo";
 		Weapon.AmmoUse1 0;
 		Weapon.AmmoUse2 0;
 		DDWeapon.SwitchSpeed 1.8;
