@@ -435,7 +435,7 @@ class dualWielding : ddWeapon
 						lw.fireMode = ddp.altModeL;
 						lw.weaponStatus = DDW_FIRING;
 						lw.bAltFire = false;
-						A_StartSound("weapons/chaingunspin", CHAN_BODY, CHANF_OVERLAP);
+						A_StartSound("weapons/firemodeswitch", CHAN_BODY, CHANF_OVERLAP);
 						player.SetPSprite(PSP_LEFTW0, lw.FindState('NoAmmo'));
 						ddp.ddWeaponState &= ~DDW_LEFTREADY;
 						lw.weaponready = false;
@@ -488,7 +488,7 @@ class dualWielding : ddWeapon
 						rw.fireMode = ddp.altModeR;
 						rw.weaponStatus = DDW_FIRING;
 						rw.bAltFire = false;
-						A_StartSound("weapons/chaingunspin", CHAN_BODY, CHANF_OVERLAP);
+						A_StartSound("weapons/firemodeswitch", CHAN_BODY, CHANF_OVERLAP);
 						player.SetPSprite(PSP_RIGHTW0, rw.FindState('NoAmmo'));
 						ddp.ddWeaponState &= ~DDW_RIGHTREADY;
 						rw.weaponready = false;
@@ -570,6 +570,7 @@ class dualWielding : ddWeapon
 					else { ddp.ddWeaponState &= ~DDW_LEFTISTH; }
 					lw = ddp.GetLeftWeapon(ddp.lwx);
 					if(lw.UpSound) { ddp.A_StartSound(lw.UpSound, CHAN_WEAPON); }
+					if(rw) { lw.companionpiece = rw; rw.companionpiece = rw; }
 					player.SetPSprite(PSP_LEFTW0, lw.GetUpState());
 					player.SetPSprite(PSP_LEFTWF0, null);
 					player.GetPSprite(PSP_LEFTWF0).x = -64 - lw.xOffset;
@@ -582,7 +583,6 @@ class dualWielding : ddWeapon
 				else
 				{
 					pspl.y = 0; psplf.y = 0;
-					if(rw) { lw.companionpiece = rw; rw.companionpiece = rw; }
 					ddp.altModeL = lw.fireMode;
 					mode.blraised = true;
 				}
@@ -604,6 +604,8 @@ class dualWielding : ddWeapon
 					else { ddp.ddWeaponState &= ~DDW_RIGHTISTH; }
 					rw = ddp.GetRightWeapon(ddp.rwx);
 					if(rw.UpSound) { ddp.A_StartSound(rw.UpSound, CHAN_WEAPON); }
+					if(lw) { rw.companionpiece = lw; lw.companionpiece = rw; }
+					else { console.printf("penis"); }
 					player.SetPSprite(PSP_RIGHTW0, rw.GetUpState());
 					player.SetPSprite(PSP_RIGHTWF0, null);
 					player.GetPSprite(PSP_RIGHTWF0).x = 64 + rw.xoffset;
@@ -616,7 +618,6 @@ class dualWielding : ddWeapon
 				else
 				{
 					pspr.y = 0; psprf.y = 0;
-					if(lw) { rw.companionpiece = lw; lw.companionpiece = rw; }
 					ddp.altModeR = rw.fireMode;
 					mode.brraised = true;
 				}

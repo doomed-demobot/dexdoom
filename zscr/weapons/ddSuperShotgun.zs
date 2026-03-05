@@ -9,7 +9,7 @@ enum ddSShotgunFlags{
 	SST_RALL = 7,
 };
 
-class ddSuperShotgun : ddWeapon
+class ddSuperShotgun : ddWeapon replaces SuperShotgun
 {
 	Default
 	{
@@ -99,18 +99,24 @@ class ddSuperShotgun : ddWeapon
 		return "ddSuperShotgun";
 	}
 	
-	override String, int GetSprites(int forcemode)
+	override String, int GetSprites(int no)
 	{
-		let ddp = ddPlayer(owner);	
-		if(forcemode < 0)
+		let ddp = ddPlayer(owner);
+		if(!ddp) { return "TNT1", -1; }
+		int res = ModeCheck();
+		switch(no)
 		{
-			if(ddp.player.readyweapon is "dualWielding" || ddp.player.pendingweapon is "dualWielding" || ddp.lastmode is "dualWielding")  { return "SH2DA0", -1; }
-			else if(ddp.player.readyweapon is "twoHanding" || ddp.player.pendingweapon is "twoHanding" || ddp.lastmode is "twoHanding")   { return "SHT2A0", -1; }
-			else { return "TNT1A0", -1; }
+			case 0:
+				if(res == RES_TWOHAND) { return "SHT2", ((ddWeaponFlags & SST_RALL) ? 6 : 0 ); }
+				else if(res == RES_DUALWLD) { return ((weaponside) ? "SHT2" : "SH2R"), ((ddWeaponFlags & SST_RALL) ? 6 : 0 ); }
+				else { return "TNT1", -1; }
+			case 1: //one hand reload
+				return ((weaponside) ? "SHT2" : "SH2R"), ((ddWeaponFlags & SST_RALL) ? 6 : 0 );
+			case 2: //force sht2
+				return "SHT2", -1;
+			default:
+				return "TNT1", -1;
 		}
-		else if(forcemode == 2) { return "SH2DA0", -1; }
-		else if(forcemode == 1) { return "SHT2A0", -1; }
-		else { return "TNT1A0", -1; }
 	}
 	
 	override String GetWeaponSprite()
@@ -173,7 +179,7 @@ class ddSuperShotgun : ddWeapon
 		else { }
 	}
 	
-	override void SetDDTransformations(int no, PSpriteInfo &pspi)
+	override void SetDDTransformations(int no, PSpriteInfo pspi)
 	{
 		let ddp = ddPlayer(owner);
 		if(!ddp) { return; }
@@ -212,6 +218,19 @@ class ddSuperShotgun : ddWeapon
 				pspi.SetScaling(-10, 5);
 				pspi.SetRotation(10);
 				return;
+			case 7: //onehand reload 1
+				pspi.SetTransformationProperties(6, false, (INTR_TRANS_EXPO));
+				pspi.SetTranslations(((weaponside) ? -8 : 8), -6);
+				return;
+			case 8:
+				pspi.SetTransformationProperties(5, true, (INTR_TRANS_INVEXPO));
+				pspi.SetTranslations(0, 18);
+				return;
+			case 9:
+				pspi.SetTransformationProperties(4, true, (INTR_TRANS_EXPO));
+				pspi.SetTranslations(0, 5);
+				pspi.SetRotation((weaponside) ? 6 : -6);
+				return;
 			default: return;
 		}
 	}
@@ -231,7 +250,7 @@ class ddSuperShotgun : ddWeapon
 				if(res == RES_CLASSIC && (ddp.CountInv("Shell") < 2)) { ChangeState("NoAmmo", myside); break; }
 				if(mag < 1 && ddp.CountInv("BFS") < 1) { ChangeState("NoAmmo", myside); break; }
 				if(res == RES_DUALWLD) { //lower to reload
-					if(mag < 1 && !(ddWeaponFlags & 7)) { ddWeaponFlags |= SST_RQUIK; ChangeState("ReloadP", myside); break; }
+					if(mag < 1 && !(ddWeaponFlags & 7)) { ddWeaponFlags |= SST_RQUIK; ChangeState("ReloadOneHanded", myside); break; }
 					if(ddWeaponFlags & 7) { LowerToReloadWeapon(); break; }
 					break;
 				}
@@ -275,22 +294,24 @@ class ddSuperShotgun : ddWeapon
 			#### A 10;
 		Ready:
 			SH2D A 0 A_ChangeSprite;
-			#### A 1 A_DDWeaponReady;
+			#### # 1 A_DDWeaponReady;
 			Loop;
 		Fire:
 			#### A 1 A_WeapAction;
 			#### A 3;
 			#### A 1 A_DDTransformation;
-			#### A 0 A_DDFlash;
 			#### A 1 A_FireDDWeapon;
+			#### A 0 A_DDFlash;
 			#### A 6;
 			#### A 2 A_WeapAction;
 			Goto Ready;
 		Select:
-			#### A 1 A_ChangeSprite;
+			#### A 0 A_ChangeSprite;
+			#### # 1;
 			Loop;
 		Deselect:
-			#### A 1 A_ChangeSprite;
+			#### A 0 A_ChangeSprite;
+			#### # 1;
 			Loop;
 		Altfire:
 			#### A 1 A_WeapAction;
@@ -304,6 +325,7 @@ class ddSuperShotgun : ddWeapon
 		Reload:
 		ReloadA:
 		ReloadP:
+			#### A 0 A_ChangeSprite;
 			#### B 2;
 			#### C 3 A_DDTransformation;
 			#### C 12;
@@ -312,6 +334,7 @@ class ddSuperShotgun : ddWeapon
 			#### D 5 A_WeapAction;
 			#### D 1;
 		Reload2:
+			#### A 2 A_ChangeSprite;
 			#### D 5;
 			#### E 7;
 			#### F 0 A_LoadShotgun2;
@@ -326,6 +349,18 @@ class ddSuperShotgun : ddWeapon
 			#### H 6 A_WeapAction;
 			#### H 6 A_DDRefire;
 			#### A 5;
+			Goto Ready;
+		ReloadOneHanded:
+			ST2R A 1 A_ChangeSprite;
+			#### A 9 A_DDTransformation;
+			#### A 8;
+			#### B 6 A_OpenShotgun2;
+			#### A 7 A_DDTransformation;
+			#### C 8;
+			#### G 8 A_DDTransformation;
+			#### G 8 A_LoadShotgun2;
+			#### B 5;
+			#### B 5 A_WeapAction;
 			Goto Ready;
 		UnloadP:
 			#### BC 7;
@@ -352,6 +387,9 @@ class ddSuperShotgun : ddWeapon
 			SHT2 I 4 Bright A_Light1;
 			SHT2 J 3 Bright A_Light2;
 			Goto FlashDone;
+		Ind:
+			SH2R A 1;
+			Stop;
 		Spawn:
 			SGN2 A -1;
 			Stop;
@@ -385,7 +423,7 @@ class BFShellBox : BFS
 	{
 		Inventory.PickupMessage "Picked up a whole box of BFS! Oh yea.";
 		Inventory.Amount 16;
-		Tag "Box o' bio force";
+		Tag "Box o' abnormally sized shells";
 	}
 	States
 	{
@@ -414,7 +452,8 @@ class ShellSpawner : RandomSpawner replaces Shell
 				return "Shelle";
 			}
 		}
-		if(TexMan.CheckForTexture("SGN2A0", TexMan.Type_Sprite).IsValid()) { return Super.ChooseSpawn(); }
+		//check if doom2
+		if(TexMan.CheckForTexture("SGN2A0", TexMan.Type_Sprite).IsValid()) 	{ return Super.ChooseSpawn(); }
 		else { return "Shelle"; }
 	}	
 }
@@ -491,6 +530,7 @@ extend class ddWeapon
 }
 
 // #Class BreakActionSpawner : RandomSpawner replaces SuperShotgun()
+/*
 class BreakActionSpawner : RandomSpawner replaces SuperShotgun
 {
 	Default
@@ -510,4 +550,4 @@ class BreakActionSpawner : RandomSpawner replaces SuperShotgun
 		}
 		return Super.ChooseSpawn();
 	}
-}
+}*/

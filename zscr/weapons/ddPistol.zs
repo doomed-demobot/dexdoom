@@ -107,37 +107,24 @@ class ddPistol : ddWeapon replaces Pistol
 		}
 	}
 	
-	override String, int GetSprites(int forcemode)
+	override String, int GetSprites(int no)
 	{
 		let ddp = ddPlayer(owner);
 		if(!ddp) { return "TNT1A0", -1; }
-		if(forcemode < 0)
+		int res = ModeCheck();
+		switch(no)
 		{
-			if(ddp.player.readyweapon is "dualWielding" || ddp.player.pendingweapon is "dualWielding" || ddp.lastmode is "dualWielding") {
-				//String sp = (weaponside) ? "PISLA0" : "PIFDA0";
-				int fr = ((ddweaponflags & PIS_RSEQ) ? 10 : 0);
-				String sp = (weaponside) ? "PISGA0" : "PSTLA0" ;
-				fr = ((mag < 1) ? 2 : fr);
-				return sp, fr; 
-			}
-			else if(ddp.player.readyweapon is "twoHanding" || ddp.player.pendingweapon is "twoHanding" || ddp.lastmode is "twoHanding")  
-			{
-				int fr = ((ddweaponflags & PIS_RSEQ ? 9 : 0));
-				if(mag < 1) { return "PSTLB0", 2; }
-				else { return "PISDA0", fr; }
-				//fr = ((mag < 1) ? 9 : fr);
-				//return "PISDA0", fr; 
-			}
-			else { 
-				return "TNT1A0", -1; }
+			case 0: //ready
+				if(res == RES_TWOHAND) { return "PISD", ((mag < 1) ? 1 : 0); }
+				else if(res == RES_DUALWLD || res == RES_HASESOA)  { return ((weaponside) ? "PISG" : "PSTL"), ((mag < 1) ? 1 : 0); }
+				else { return "TNT1", -1; }
+			case 1: //reload
+				if(res == RES_TWOHAND || res == RES_DUALWLD) { return "PSTL", ((mag < 1) ? 1 : 2); }
+				else if(res == RES_HASESOA)  { return ((weaponside) ? "PISG" : "PSTL"), ((ddWeaponFlags & PIS_RSEQ) ? 1 : 2); }
+				else { return "TNT1", -1; }				
+			default:
+				return "TNT1", -1;
 		}
-		else if(forcemode == 2) { return "PSTLB0", ((ddweaponflags & PIS_RSEQ) ? 1 : 0); }
-		else if(forcemode == 1) {
-			int fr = ((ddweaponflags & PIS_RSEQ ? 9 : 0));
-			if(mag < 1) { return "PISEI0", 8; }
-			else { return "PISDA0", fr; }		
-		}
-		else { return "TNT1A0", -1; }
 	}
 		
 	override State wannaReload()
@@ -203,7 +190,7 @@ class ddPistol : ddWeapon replaces Pistol
 		burstcounter = 3;
 	}
 
-	override void SetDDTransformations(int no, PSpriteInfo &pspi)
+	override void SetDDTransformations(int no, PSpriteInfo pspi)
 	{
 		let ddp = ddPlayer(owner);
 		if(!ddp) { return; }
@@ -211,7 +198,7 @@ class ddPistol : ddWeapon replaces Pistol
 		switch(no)
 		{
 			case 1: //pistol fire
-				pspi.SetTransformationProperties(4, true, (INTR_TRANS_EXPO | INTR_SCALE_EXPO | INTR_ROTAT_INVEXPO));
+				pspi.SetTransformationProperties(6, true, (INTR_TRANS_EXPO | INTR_SCALE_EXPO | INTR_ROTAT_INVEXPO));
 				pspi.SetTranslations(0, 12);
 				pspi.SetScaling(0, -12);
 				//if flash state, copy weapons rotation
@@ -245,7 +232,7 @@ class ddPistol : ddWeapon replaces Pistol
 			case 7: //pistol burst fire
 				if(burstcounter > 1) 
 				{ 
-					pspi.SetTransformationProperties(1, false);
+					pspi.SetTransformationProperties(2, false);
 					pspi.SetTranslations(0, 6);
 					pspi.SetScaling(0, 10);
 				}
@@ -254,7 +241,13 @@ class ddPistol : ddWeapon replaces Pistol
 					pspi.SetTransformationProperties(3, true, (INTR_TRANS_INVEXPO | INTR_SCALE_INVEXPO));
 					pspi.SetTranslations(0, 8);
 					pspi.SetScaling(0, -20);
+					//if flash state, copy weapons rotation
+					if(pspi.id > 15) { pspi.GetRotation(pspi.id - 10); }
+					else { pspi.SetRotation(random2(3)*(1 + (i/100.))); }
 				} 
+				return;
+			case 8:
+				console.printf("test case for id: "..pspi.id);
 				return;
 			default:
 				return;			
@@ -314,7 +307,7 @@ class ddPistol : ddWeapon replaces Pistol
 				UnloadWeaponMag();
 				break;
 			case 7:				
-				SetSubSprite(pspi, 0, 32, 0, "HandReload");
+				SetSubSprite(pspi, 0, 38, 0, "HandReload");
 				break;
 			default: ddp.A_Log("No action defined for tic "..no); break;
 		}
@@ -337,7 +330,7 @@ class ddPistol : ddWeapon replaces Pistol
 			case 1:
 				return (owner.FindInventory("PowerBerserk")) ? 6 : 8;
 			case 2:
-				return (owner.FindInventory("PowerBerserk")) ? 6 : 12;
+				return (owner.FindInventory("PowerBerserk")) ? 6 : 11;
 			default: return 0;
 		}
 	}
@@ -368,7 +361,7 @@ class ddPistol : ddWeapon replaces Pistol
 	action void A_BurstFireDDPistol() 
 	{
 		bool accurate;
-		int dam = 5 * random(2,3);		
+		int dam = 5 * random(2,3);
 		let ddp = ddPlayer(invoker.owner);
 		ddWeapon weap = ddWeapon(self);
 		Class<Ammo> type = (ddp.FindInventory("ClassicModeToken")) ? weap.ClassicAmmoType1 : weap.AmmoType1;
@@ -392,13 +385,13 @@ class ddPistol : ddWeapon replaces Pistol
 	States
 	{
 		NoAmmo:
-			#### # 10 A_ChangeSprite;
+			#### # 10;
 		Ready:
 			PISD A 0 A_ChangeSprite;
 			#### # 1 A_DDWeaponReady;
 			Loop;
 		Fire:
-			#### A 1 A_WeapAction;
+			#### # 1 A_WeapAction;
 			#### A 1;
 			#### A 1 A_DDTransformation;
 			#### A 0 A_DDFlash;
@@ -406,7 +399,7 @@ class ddPistol : ddWeapon replaces Pistol
 			#### B 1;
 			#### B 0 A_ChangeSprite;
 			#### C 2 A_WeapAction;
-			#### # 1 A_ChangeSprite;
+			#### # 0 A_ChangeSprite;
 			#### ######## 1 A_DDHeavyRefire;
 			#### # 1;
 			Goto Ready;
@@ -432,14 +425,15 @@ class ddPistol : ddWeapon replaces Pistol
 			#### B 7 A_DDTransformation;
 			#### B 0 A_DDFlash;
 			#### B 1 A_FireDDWeapon;
-			#### C 0;
-			#### # 1 A_ChangeSprite;
+			#### C 1;
+			#### # 0 A_ChangeSprite;
 			#### # 3 A_WeapAction;
 			#### # 1;
 			#### # 3;
 			#### # 5 A_DDRefire;
 			Goto Ready;
 		ReloadP:
+			#### # 1 A_ChangeSprite;
 			#### # 2 A_DDTransformation;
 			#### # 3;
 			#### # 2 A_PistolReload1;
@@ -447,6 +441,7 @@ class ddPistol : ddWeapon replaces Pistol
 			#### # 3 A_DDTransformation;
 			#### # 4 A_WeapAction;
 		Reload2:
+			#### # 1 A_ChangeSprite;
 			#### # 7 A_WeapAction;
 			#### # 4;
 			#### # 4;
@@ -456,9 +451,10 @@ class ddPistol : ddWeapon replaces Pistol
 			PISD A 5 A_DDTransformation;
 			PISD A 10 A_PistolReload3;
 		Reload3:
+			#### A 0 A_ChangeSprite;
 			#### A 5 A_WeapAction;
 			#### A 1;
-			#### A 4;
+			//#### A 2;
 			Goto Ready;		
 		UnloadP:
 			#### F 5 A_PistolReload2;
@@ -471,6 +467,7 @@ class ddPistol : ddWeapon replaces Pistol
 		HandReload:
 			TNT1 A 1 A_SetTicks;
 			PIMH A 4 A_DDTransformation;
+			#### # 1;
 			#### # 2 A_SetTicks;
 			Stop;
 		FlashP:

@@ -1275,7 +1275,9 @@ class PSpriteInfo : Thinker
 	ddPlayer owner;
 	int ID;
 	int iMethod;
+	int nextCaseNumber; // used for chaining transformation calls. -1 means no next transformation
 	int8 PSPStatus;
+	DDWeapon Provider; //DDWeapon that owns/provides the states tracked by this PSpriteInfo
 	Vector2 translTarget;
 	Vector2 transDelta, scaleDelta, rotDelta;
 	Vector2 scaleTarget; //hold percentage i.e. target x = 1 means target x = 1% = 0.01;
@@ -1284,7 +1286,7 @@ class PSpriteInfo : Thinker
 	int transformationTimer; //same as transformationLength, but gets decremented in DoTransformations.
 	int16 transFlags;
 	PSpriteInfo next;
-	PSpriteInfo superInfo; //PSpriteInfo for PSprite that created this info. null for Main sprites.
+	PSpriteInfo superInfo; //PSpriteInfo acting as master. Used for flash psprites & subsprites
 	FVector2 whatever;
 	bool resetOnTransform;
 	
@@ -1318,9 +1320,13 @@ class PSpriteInfo : Thinker
 		let psp = owner.player.GetPSprite(id);
 		if(transformationTimer <= 0) 
 		{ 
-			if(resetOnTransform && transformationTimer != -1) { ResetTransformations(); resetOnTransform = false; }
+			if(resetOnTransform && transformationTimer != -1 && nextCaseNumber < 0) { ResetTransformations(); resetOnTransform = false; }
 			transformationTimer = -1;
-			return;
+			if(nextCaseNumber > -1) { 
+				if(!provider) { transformationTimer = -1; return; }
+				else { int temp = nextCaseNumber; nextCaseNumber = -1; provider.SetDDTransformations(temp, self); return; }
+			}
+			else { return; }
 		}
 		if(PSPStatus & PSPS_TRANSLATING)
 		{
@@ -1391,13 +1397,19 @@ class PSpriteInfo : Thinker
 		transformationTimer--;
 	}
 	
-	void SetTransformationProperties(int tLength = 1, bool resetOnTrans = false, int tMethods = 0, int hal = PSPA_CENTER, int val = PSPA_CENTER)
+	void SetTransformationProperties(int tLength = 1, bool resetOnTrans = false, int tMethods = 0, double pivotx = 0, double pivoty = 0, bool pivotPercent = false, PSpriteInfo pspiMaster = null, int nextCase = -1)
 	{
 		if((tMethods & 3) > 0) { iMethod &= ~3; iMethod |= tMethods; }
 		if((tMethods & 12) > 0) { iMethod &= ~12; iMethod |= tMethods; }
 		if((tMethods & 48) > 0) { iMethod &= ~48; iMethod |= tMethods; }
 		let psp = owner.player.findpsprite(id);
-		if(psp) { psp.halign = hal; psp.valign = val; }
+		if(psp) 
+		{ 
+			psp.halign = PSPA_CENTER; psp.valign = PSPA_CENTER;
+			if(pspiMaster) { superInfo = pspiMaster; }
+			psp.pivot.x = pivotx; psp.pivot.y = pivoty; psp.bPivotPercent = pivotPercent;
+		}
+		nextCaseNumber = nextCase;
 		transformationTimer = transformationLength = tLength;
 		resetOnTransform = resetOnTrans;
 	}

@@ -8,6 +8,7 @@ enum KnifeCombos
 // #Class ddKnife : ddFist()
 //ddFist weapon. Quick attacks that only get 1/3 berserk bonus.
 //Lefthand gets a stab, righthand get two quick slashes.
+//##DISABLED##
 class ddKnife : ddFist
 {
 	Default
@@ -31,7 +32,7 @@ class ddKnife : ddFist
 		return "ICKNFE";
 	}
 	
-	override String, int GetSprites()
+	override String, int GetSprites(int no)
 	{
 		return "KNFGA0", -1;
 	}

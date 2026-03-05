@@ -430,7 +430,9 @@ class ddStats : BaseStatusBar
 				DrawString(fa, "H_AL: "..FormatNumber(pp.HAlign),(80, -104), DI_SCREEN_LEFT_BOTTOM);
 				DrawString(fa, "V_AL: "..FormatNumber(pp.VAlign),(144, -104), DI_SCREEN_LEFT_BOTTOM);
 				if(pi)
-				{					
+				{
+					DrawString(fa, "I_PROVIDER: "..((pi.Provider) ? pi.provider.GetClassName() : 'null'), (80, -88), DI_SCREEN_LEFT_BOTTOM);
+					DrawString(fa, "I_NEXTCASE: "..FormatNumber(pi.nextCaseNumber), (80, -80), DI_SCREEN_LEFT_BOTTOM);
 					DrawString(fa, "I_TLENGTH: "..FormatNumber(pi.transformationLength).." I_TTIMER: "..FormatNumber(pi.transformationTimer), (80, -72), DI_SCREEN_LEFT_BOTTOM);
 					DrawString(fa, "I_ID: "..FormatNumber(pi.ID), (80, -64), DI_SCREEN_LEFT_BOTTOM);
 					DrawString(fa, "I_TARTRANS: ("..FormatNumber(pi.translTarget.x)..", "..FormatNumber(pi.translTarget.y)..")", (80, -56), DI_SCREEN_LEFT_BOTTOM);

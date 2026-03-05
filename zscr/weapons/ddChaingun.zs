@@ -9,6 +9,7 @@ enum ddChaingunFlags{
 class ddChaingun : ddWeapon replaces Chaingun
 {
 	bool safeflasher; //true if flash 2, false if flash 1;
+	bool chainFrame; //false for A, true for B
 	int spin, spintimer;
 	Default
 	{
@@ -31,6 +32,7 @@ class ddChaingun : ddWeapon replaces Chaingun
 	override void PostBeginPlay()
 	{
 		safeflasher = false;
+		chainFrame = false;
 		spin = 0;
 		spintimer = 0;
 	}
@@ -46,7 +48,7 @@ class ddChaingun : ddWeapon replaces Chaingun
 		Super.Tick();		
 		if(owner) {
 			if(--spintimer < 0) { spintimer = 0; }
-			if(!spintimer) { if(spin > 0) { spin -= 10; spintimer += 35; } if(spin < 0) { spin = 0; } }
+			if(!spintimer) { if(spin > 0) { spin -= 1; spintimer += 35; } if(spin < 0) { spin = 0; } }
 		}
 	}
 		
@@ -73,26 +75,33 @@ class ddChaingun : ddWeapon replaces Chaingun
 		else { return Super.GetFireModeIcon(); }
 	}
 	
-	override String, int GetSprites()
+	override String, int GetSprites(int no)
 	{
 		let ddp = ddPlayer(owner);
-		if(ddp.FindInventory("ClassicModeToken")) { return "CHGGA", 0; } 
-		if(spin > 0)
+		if(!ddp) { return "TNT1", -1; }
+		switch(no)
 		{
-			int mod;
-			if(mod > 29) { mod = 1; } 
-			else if(spin > 20) { mod = 2; }
-			else if(spin > 12) { mod = 4; }
-			else if(spin > 6)  { mod = 8; }
-			else { mod = 16; } 
-			
-			if(level.mapTime & mod) { return "CHGGA", 1; }
-			else { return "CHGGB", 0; }
-		}
-		else { 
-			/*if(ddp.player.readyweapon is "dualWielding" || ddp.lastmode is "dualWielding") { return (weaponside) ? "CHGGA0" : "CHGRA0", 0; }
-			else { return "CHGGA0", 0; }*/
-			return "CHGGA0", 0;
+			case 0:
+				if(spin > 0)
+				{
+					int mod;
+					if(spin > 6) { mod = 2; }
+					else if(spin > 5) { mod = 3; }
+					else if(spin > 4) { mod = 4; }
+					else if(spin > 3) { mod = 5; }
+					else if(spin > 2) { mod = 6; }
+					else if(spin > 1) { mod = 7; }
+					else { mod = 8; } 
+					
+					if(level.mapTime % mod == 0) { console.printf(""..mod); ddp.A_StartSound("weapons/chaingunspin", CHAN_WEAPON, CHANF_OVERLAP, 1., ATTN_NORM, ((spin < 5) ? 1. : 1.2)); chainFrame = !chainFrame; }
+					if(!chainFrame) { return "CHGG", 0; }
+					else { return "CHGG", 1; }
+				}
+				else { 
+					return "CHGGA0", 0;
+				}				
+			default:
+				return "TNT1", -1;
 		}
 	}
 	
@@ -132,22 +141,31 @@ class ddChaingun : ddWeapon replaces Chaingun
 	{
 		let ddp = ddPlayer(owner);
 		A_FireDDCGun();
-		spin += 4;
+		spin += 1;
 		spintimer = 35;
-		if(spin > 40) { spin = 40; }
+		if(spin > 7) { spin = 7; }
 	}
 	
 	override int GetTicks(int no)
 	{
 		let ddp = ddPlayer(owner);
-		if(spin > 32) { return 2; }
-		else if(spin > 24) { return 3; }
-		else if(spin > 18) { return 4; }
-		else if(spin > 8) { return 5; }
-		else { return 12; } 
+		if(!ddp) { return 0; } 
+		switch(no)
+		{
+			case 0:
+				if(spin > 6) { return 2; }
+				else if(spin > 5) { return 3; }
+				else if(spin > 4) { return 4; }
+				else if(spin > 3) { return 5; }
+				else if(spin > 2) { return 6; }
+				else if(spin > 1) { return 7; }
+				else { return 8; } 
+			default:
+				return 0;
+		}
 	}
 	
-	override void SetDDTransformations(int no, PSpriteInfo &pspi)
+	override void SetDDTransformations(int no, PSpriteInfo pspi)
 	{
 		let ddp = ddPlayer(owner);
 		if(!ddp) { return; }
@@ -156,7 +174,7 @@ class ddChaingun : ddWeapon replaces Chaingun
 		switch(no)
 		{
 			case 1:
-				pspi.SetTransformationProperties(3, true, (INTR_TRANS_INVEXPO | INTR_SCALE_INVEXPO | INTR_ROTAT_INVEXPO), pspa_left, pspa_top);
+				pspi.SetTransformationProperties(3, true, (INTR_TRANS_INVEXPO | INTR_SCALE_INVEXPO | INTR_ROTAT_INVEXPO));
 				pspi.SetTranslations(0, 12);
 				
 				//pspi.SetScaling(6, 6);
@@ -170,6 +188,11 @@ class ddChaingun : ddWeapon replaces Chaingun
 				else { pspi.SetRotation(random2(7)); }
 				}
 				return;
+			case 2:
+				pspi.SetTransformationProperties(3, true, (INTR_TRANS_INVEXPO | INTR_SCALE_INVEXPO | INTR_ROTAT_INVEXPO), 0., 0.4, true, ddp.GetPSpriteInfo(((weaponside) ? PSP_LEFTW0 : PSP_RIGHTW0), ddp));
+				pspi.GetTranslations(pspi.superInfo.ID);
+				pspi.GetRotation(pspi.superInfo.ID);
+				return;
 			default: return;
 		}
 	}
@@ -181,16 +204,18 @@ class ddChaingun : ddWeapon replaces Chaingun
 		switch(no)
 		{
 			case 1:
-				spin += 5;
+				spin += 1;
 				spintimer = 35;
-				if(spin > 40) { spin = 40; }
+				if(spin > 7) { spin = 7; }
 			case 2:
 				if(!PressingFireButton()) { 
 					if(weaponside) { ddp.altModeL = 0; fireMode = ddp.altModeL; }
 					else { ddp.altModeR = 0; fireMode = ddp.altModeR; }
 				}
 				break;
-				
+			case 3:
+				if(spin > 0) { ddp.A_StartSound("weapons/chaingunspin", CHAN_WEAPON, CHANF_OVERLAP, 1., ATTN_NORM, ((spin < 5) ? 1. : 1.2)); }
+				return;
 			default: ddp.A_Log("No action defined for tic "..no); break;
 		}
 	}
@@ -202,7 +227,8 @@ class ddChaingun : ddWeapon replaces Chaingun
 			#### # 10;
 		Ready:
 			CHGR A 0 A_ChangeSprite;
-			#### # 1 A_DDWeaponReady;
+			#### # 0 A_DDWeaponReady;
+			#### # 1;
 			Loop;
 		Select:
 			CHGG A 0 A_ChangeSprite;
@@ -212,16 +238,16 @@ class ddChaingun : ddWeapon replaces Chaingun
 			CHGG A 1;
 			Loop;
 		Fire:
-			CHGG A 0 A_ChainSpin;
+			CHGG A 3 A_WeapAction;
 			CHGG A 1 A_DDTransformation;
 			CHGG A 0 A_DDFlash;
 			CHGG A 1 A_FireDDWeapon;
-			CHGG A 1 A_SetTicks;
+			CHGG A 0 A_SetTicks;
 			CHGG A 1 A_DDTransformation;
 			CHGG A 0 A_DDFlash;
-			CHGG B 0 A_ChainSpin;
+			CHGG B 3 A_WeapAction;
 			CHGG B 1 A_FireDDWeapon;
-			CHGG A 1 A_SetTicks;
+			CHGG A 0 A_SetTicks;
 			CHGG B 0 A_DDRefire;
 			Goto Ready;
 		FireClassic:
@@ -232,27 +258,26 @@ class ddChaingun : ddWeapon replaces Chaingun
 			CHGG B 0 A_DDRefire;
 			Goto Ready;
 		Altfire:
-			CHGG A 0 A_ChainSpin;
+			CHGG A 3 A_WeapAction;
 			CHGG A 1 A_WeapAction;
 			CHGG A 1;
 			CHGG A 2 A_WeapAction;
-			CHGG A 1 A_SetTicks;
-			CHGG B 0 A_ChainSpin;
-			CHGG B 0 A_ChainSpin;
+			CHGG A 0 A_SetTicks;
+			CHGG B 3 A_WeapAction;
 			CHGG B 1 A_WeapAction;
 			CHGG B 1;
 			CHGG B 2 A_WeapAction;
-			CHGG B 1 A_SetTicks;			
+			CHGG B 0 A_SetTicks;			
 			CHGG B 2 A_WeapAction;
 			CHGG B 0 A_DDRefire;
 			Goto Ready;
 		Flash:
-			CHGF A 1 A_DDTransformation;
-			CHGF A 5 Bright A_Light2;
+			CHGF A 2 A_DDTransformation;
+			CHGF A 2 Bright A_Light2;
 			Goto FlashDone;
 		Flash2:
-			CHGF B 1 A_DDTransformation;
-			CHGF B 5 Bright A_Light2;
+			CHGF B 2 A_DDTransformation;
+			CHGF B 2 Bright A_Light2;
 			Goto FlashDone;
 		Spawn:
 			MGUN A -1;
@@ -262,7 +287,7 @@ class ddChaingun : ddWeapon replaces Chaingun
 
 extend class ddWeapon
 {	
-	action void A_ChainSpin() { A_StartSound("weapons/chaingunspin", CHAN_WEAPON, CHANF_OVERLAP); }
+	action void A_ChainSpin() { A_StartSound("weapons/chaingunspin", CHAN_WEAPON, CHANF_OVERLAP, 1., ATTN_NORM, 1.2); }
 	action void A_FireDDCGun()
 	{		
 		let ddp = ddPlayer(invoker.owner);

@@ -93,18 +93,14 @@ class ddPlasmaRifle : ddWeapon replaces PlasmaRifle
 		}
 	}
 	
-	override String, int GetSprites(int forcemode)
+	override String, int GetSprites(int no)
 	{
 		let ddp = ddPlayer(owner);
-		if(forcemode < 0)
-		{
-			if(ddp.player.readyweapon is "dualWielding" || ddp.player.pendingweapon is "dualWielding" || ddp.lastmode is "dualWielding") { return "PLSGC0", 2; }
-			else if(ddp.player.readyweapon is "twoHanding" || ddp.player.pendingweapon is "twoHanding" || ddp.lastmode is "twoHanding")  { return "PLSGB0", 1; }
-			else { return "TNT1A0", -1; }
-		}
-		else if(forcemode == 2) { return "PLSGC0", 2; }
-		else if(forcemode == 1) { return "PLSGB0", 1; }
-		else { return "TNT1A0", -1; }
+		if(!ddp) { return "TNT1", -1; }
+		int res = ModeCheck();
+		if(res == RES_TWOHAND) { return "PLSG", 1; }
+		else if(res == RES_DUALWLD) { return "PLSG", 2; }
+		else { return "TNT1", -1; }
 	}
 	
 	override String GetWeaponSprite()
@@ -194,7 +190,7 @@ class ddPlasmaRifle : ddWeapon replaces PlasmaRifle
 		else { return FindState("DoNotJump"); }
 	}
 	
-	override void SetDDTransformations(int no, PSpriteInfo &pspi)
+	override void SetDDTransformations(int no, PSpriteInfo pspi)
 	{
 		let ddp = ddPlayer(owner);
 		if(!ddp) { return; }

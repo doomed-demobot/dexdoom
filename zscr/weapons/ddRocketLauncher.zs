@@ -92,7 +92,7 @@ class ddRocketLauncher : ddWeapon replaces RocketLauncher
 		return "ddRocketLauncher";
 	}	
 	
-	override String, int GetSprites()
+	override String, int GetSprites(int no)
 	{
 		return "MISGA0", -1;
 	}
@@ -139,7 +139,7 @@ class ddRocketLauncher : ddWeapon replaces RocketLauncher
 		if(mag > 0) { mag--; A_FireDDGrenade(); }
 	}
 	
-	override void SetDDTransformations(int no, PSpriteInfo &pspi)
+	override void SetDDTransformations(int no, PSpriteInfo pspi)
 	{
 		let ddp = ddPlayer(owner);
 		if(!ddp) { return; }
@@ -147,7 +147,7 @@ class ddRocketLauncher : ddWeapon replaces RocketLauncher
 		switch(no)
 		{
 			case 1:
-				pspi.SetTransformationProperties(3, true, INTR_TRANS_EXPO);
+				pspi.SetTransformationProperties(4, true, INTR_TRANS_INVEXPO);
 				pspi.SetTranslations(0, 10);
 				pspi.SetScaling(5, -10);
 				return;

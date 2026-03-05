@@ -145,11 +145,12 @@ class ddWeapon : Weapon
 		{
 			weap.SetDDTransformations(no, pspi);
 			if(pspi.transformationLength == -1) { console.printf("Translation Length not set for tic "..no..". Use SetTransformationProperties()"); return; } 
+			pspi.Provider = weap;
 			//pspi.transformationTimer = pspi.transformationLength;
 		}
 	}
 	
-	virtual void SetDDTransformations(int no, PSpriteInfo &pspi)
+	virtual void SetDDTransformations(int no, PSpriteInfo pspi)
 	{
 		Console.printf("no translations defined for tic "..no);
 		return;
@@ -560,8 +561,9 @@ class ddWeapon : Weapon
 		return "Weapon";
 	}
 	
-	virtual String, int GetSprites(int forcemode = -1)
+	virtual String, int GetSprites(int no)
 	{
+		console.printf("no sprite/frame defined for tic "..no);
 		return "TNT1A0", -1;
 	}
 	
@@ -592,8 +594,8 @@ class ddWeapon : Weapon
 		let mode = ddWeapon(ddp.player.readyweapon);
 		let cpiece = ddWeapon(companionpiece);
 		if(ddp.FindInventory("ClassicModeToken")) { return 4; }
-		if(mode is "twoHanding") { return 1; }
-		else if(mode is "dualWielding") 
+		if(mode is "twoHanding" || ddp.lastmode is "twoHanding") { return 1; }
+		else if(mode is "dualWielding" || ddp.lastmode is "dualWielding") 
 		{
 			let cost = (bAltFire) ? ChargeUse2 : ChargeUse1;
 			if(esoaCost > -1) { cost = esoaCost; }
@@ -670,9 +672,11 @@ class ddWeapon : Weapon
 			psp = ddp.player.GetPSprite(PSP_RIGHTW0);
 		}
 		else { console.printf("PSprite not a weapon sprite"); return; }
+		int no = psp.tics;
+		psp.tics = 0;
 		String sp;
 		int fr;
-		[sp, fr] = weap.GetSprites(forcemode);
+		[sp, fr] = weap.GetSprites(no);
 		psp.Sprite = GetSpriteIndex(sp);
 		if(fr > 0) { psp.Frame = fr; }
 	}
@@ -1384,7 +1388,7 @@ class ddWeapon : Weapon
 				pspr.y = 128; psprf.y = 128;	
 				State st = lWeap.wannaReload();
 				if(st == lWeap.FindState('DoNotJump')) { bmodeReady = true; lWeap.weaponready = true; return; }
-				lWeap.ChangeSprite(CE_LEFT, 1);
+				//lWeap.ChangeSprite(CE_LEFT, 1);
 				mode.weaponstatus = lWeap.weaponStatus;
 				ddp.player.SetPSprite(PSP_LEFTW0, st);
 				return;
@@ -1507,7 +1511,7 @@ class ddWeapon : Weapon
 					if(st == rWeap.FindState('DoNotJump')) { bmodeReady = true; rWeap.weaponready = true; return; }
 					ddp.player.SetPSprite(PSP_RIGHTW0, st);
 					mode.weaponstatus = rWeap.weaponstatus;
-					rWeap.ChangeSprite(CE_RIGHT, 1);
+					//rWeap.ChangeSprite(CE_RIGHT, 1);
 					if(ddp.player.pendingweapon is "twoHanding") { 
 						ddWeapon thd = ddWeapon(ddp.FindInventory("twoHanding"));
 						thd.lSwapTarget = mode.lSwapTarget;

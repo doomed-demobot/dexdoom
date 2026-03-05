@@ -1,19 +1,20 @@
 //backpack that increases holster slots by 1 and inventory space by 2
 // #Class ddTactPack : Inventory()
-class ddTactPack : Inventory
+class ddTactPack : BackpackItem
 {
 	Default
 	{
 		Height 36;
 		Radius 14;
-		Inventory.PickupMessage "Picked up a load-bearing backpack with extra pockets!!";
+		Inventory.PickupMessage "Picked up a load-bearing backpack with extra pockets";
 		Inventory.PickupSound "misc/secret";
+		Inventory.MaxAmount 2;
 	}
 	
 	override void AttachToOwner(Actor other)
 	{
+		if(!other.CountInv(self.GetClass())) { BuffOwner(other); }
 		Super.AttachToOwner(other);
-		BuffOwner(other);
 	}
 	
 	void BuffOwner(Actor owner)
@@ -30,15 +31,15 @@ class ddTactPack : Inventory
 		{
 			case 0:
 			case 1:
-				ddp.GiveInventory("Clip", 20);
+				ddp.GiveInventory("Clip", 80);
 				break;
 			case 2:
 				break;
 			case 3:
-				ddp.GiveInventory("RocketAmmo", 2);
+				ddp.GiveInventory("RocketAmmo", 12);
 				break;
 			case 4:
-				ddp.GiveInventory("Shell", 12);
+				ddp.GiveInventory("Shell", 36);
 				break;
 			case 5:
 				break;

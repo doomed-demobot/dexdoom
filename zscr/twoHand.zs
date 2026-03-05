@@ -235,7 +235,7 @@ class twoHanding : ddWeapon
 					weap.fireMode = ddp.altModeR;
 					weap.weaponStatus = DDW_FIRING;
 					weap.bAltFire = false;
-					A_StartSound("weapons/chaingunspin", CHAN_BODY, CHANF_OVERLAP);
+					A_StartSound("weapons/firemodeswitch", CHAN_BODY, CHANF_OVERLAP);
 					player.SetPSprite(PSP_RIGHTW0, weap.FindState('NoAmmo'));
 					ddp.ddWeaponState &= ~DDW_RIGHTREADY;
 					weap.weaponready = false;
@@ -297,6 +297,7 @@ class twoHanding : ddWeapon
 					pspr.x = 0;
 					psprf.x = 0;
 					if(rw.UpSound) { ddp.A_StartSound(rw.UpSound, CHAN_WEAPON); }
+					if(lw) { rw.companionpiece = lw; lw.companionpiece = rw; }
 					player.SetPSprite(PSP_RIGHTW0, rw.GetUpState());
 					player.SetPSprite(PSP_RIGHTWF0, null);
 				}
@@ -320,7 +321,6 @@ class twoHanding : ddWeapon
 						ddp.player.GetPSprite(x).y = 0;
 						ddp.player.GetPSprite(x - 10).y = 0;
 					}
-					if(lw) { rw.companionpiece = lw; lw.companionpiece = rw; }
 					player.SetPSprite(PSP_RIGHTW0, rw.GetReadyState());
 					ddp.altModeR = rw.fireMode;
 					invoker.bModeReady = true;

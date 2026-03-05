@@ -1,6 +1,7 @@
 // #Class ddPowerFist : ddFist()
 //Impactor Gauntlet by TheDoomedArchvile. Edits by me. Very slow, powerful ddFist weapon
 //Pressing left and right simultaneous swings both fists at once.
+//##DISABLED##
 class ddPowerFist : ddFist
 {	
 	
@@ -25,7 +26,7 @@ class ddPowerFist : ddFist
 		return "ICPFST";
 	}
 	
-	override String, int GetSprites()
+	override String, int GetSprites(int no)
 	{
 		return "IMPAA0", -1;
 	}

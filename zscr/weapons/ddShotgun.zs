@@ -7,7 +7,7 @@ enum ddShotgunFlags
 	SHT_RSEQ = 1 << 1,
 };
 
-class ddShotgun : ddWeapon
+class ddShotgun : ddWeapon replaces Shotgun
 {
 	Default
 	{
@@ -126,27 +126,22 @@ class ddShotgun : ddWeapon
 		else { return Super.GetFlashState(); }
 	}*/
 	
-	override String, int GetSprites(int forcemode)
+	override String, int GetSprites(int no)
 	{
 		let ddp = ddPlayer(owner);
-		if(forcemode < 0)
+		if(!ddp) { return "TNT1", -1; }
+		int res = ModeCheck();
+		switch(no)
 		{
-			if(ddp.player.readyweapon is "dualWielding" || ddp.player.pendingweapon is "dualWielding" || ddp.lastmode is "dualWielding") 
-			{ 
-				String sp; 
-				int frame = -1;
-				sp = (weaponside) ? "SHOHA0" : "SHH2A0";
-				if(ddWeaponFlags & SHT_RSEQ) { 
-					frame = 2; 
-				}
-				return sp, frame;
-			}
-			else if(ddp.player.readyweapon is "twoHanding" || ddp.player.pendingweapon is "twoHanding" || ddp.lastmode is "twoHanding")  { return "SHTGA0", -1; }
-			else { return "TNT1A0", -1; }
+			case 0: //ready
+				if(res == RES_TWOHAND) { return "SHTG", ((ddWeaponFlags & SHT_RSEQ) ? 3 : 0); }
+				else if(res == RES_DUALWLD) { return ((weaponside) ? "SHOH" : "SHH2"), ((ddWeaponFlags & SHT_RSEQ) ? 3 : 0); }
+				else { return "TNT1", -1; }
+			case 1:
+				if(res == RES_DUALWLD) { return ((weaponside) ? "SHOH" : "SHH2"), ((ddWeaponFlags & SHT_RSEQ) ? 3 : -1); }
+			default:
+				return "TNT1", -1;
 		}
-		else if(forcemode == 2) { return "SHTDA0", -1; }
-		else if(forcemode == 1) { return "SHTGA0", -1; }
-		else { return "TNT1A0", -1; }
 	}
 	
 	override String getParentType()
@@ -182,7 +177,7 @@ class ddShotgun : ddWeapon
 	
 	override void alternativeattack() { primaryattack(); } 
 
-	override void SetDDTransformations(int no, PSpriteInfo &pspi)
+	override void SetDDTransformations(int no, PSpriteInfo pspi)
 	{
 		let ddp = ddPlayer(owner);
 		if(!ddp) { return; }
@@ -206,17 +201,17 @@ class ddShotgun : ddWeapon
 				pspi.SetScaling(0, 20);
 				return;
 			case 2: //shotgun reload 1
-				pspi.SetTransformationProperties(5, false, INTR_TRANS_EXPO);
+				pspi.SetTransformationProperties(4, false, INTR_TRANS_EXPO);
 				pspi.SetTranslations(-10, 4);
 				return;
 			case 3: //shotgun reload 2
-				pspi.SetTransformationProperties(3, false, (INTR_TRANS_INVEXPO | INTR_SCALE_INVEXPO | INTR_ROTAT_LINEAR));
+				pspi.SetTransformationProperties(2, false, (INTR_TRANS_INVEXPO | INTR_SCALE_INVEXPO | INTR_ROTAT_LINEAR));
 				pspi.SetTranslations(-1, 16);
 				pspi.SetScaling(10, 0);
 				pspi.SetRotation(6);
 				return;
 			case 4: //shotgun reload 3
-				pspi.SetTransformationProperties(3, false, (INTR_TRANS_LINEAR | INTR_SCALE_INVEXPO | INTR_ROTAT_LINEAR));
+				pspi.SetTransformationProperties(2, false, (INTR_TRANS_LINEAR | INTR_SCALE_INVEXPO | INTR_ROTAT_LINEAR));
 				pspi.SetTranslations(8, -16);
 				pspi.SetScaling(-10, 0);
 				pspi.SetRotation(-4);
@@ -317,10 +312,12 @@ class ddShotgun : ddWeapon
 			#### A 2 A_WeapAction;
 			Goto Ready;	
 		Select:
-			SHTD A 1 A_ChangeSprite;
+			SHTD A 0 A_ChangeSprite;
+			#### # 1;
 			Loop;
 		Deselect:
-			SHTD A 1 A_ChangeSprite;
+			SHTD A 0 A_ChangeSprite;
+			#### # 1;
 			Loop;
 		ReloadA:
 		ReloadP:
@@ -342,7 +339,7 @@ class ddShotgun : ddWeapon
 			#### A 7 A_DDRefire;
 			Goto Ready;
 		ReloadOneHanded:
-			SHH2 A 0 A_ChangeSprite;
+			SHH2 A 1 A_ChangeSprite;
 			#### A 5 A_DDTransformation;
 			#### A 6;
 			#### A 6 A_DDTransformation;
@@ -397,6 +394,7 @@ class ddShotgun : ddWeapon
 }
 
 // #Class ShotgunSpawner : RandomSpawner replaces Shotgun()
+/*
 class ShotgunSpawner : RandomSpawner replaces Shotgun
 {
 	Default
@@ -416,7 +414,7 @@ class ShotgunSpawner : RandomSpawner replaces Shotgun
 		}
 		return Super.ChooseSpawn();
 	}
-}
+}*/
 
 
 extend class ddWeapon

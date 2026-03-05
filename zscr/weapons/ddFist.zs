@@ -79,7 +79,7 @@ class ddFist : ddWeapon replaces Fist
 		}
 	}
 	
-	override String, int GetSprites(int forcemode)
+	override String, int GetSprites(int no)
 	{
 		let ddp = ddPlayer(owner);
 		if(!ddp) { return "TNT1A0", -1; }

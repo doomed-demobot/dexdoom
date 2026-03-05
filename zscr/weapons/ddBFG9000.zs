@@ -57,7 +57,7 @@ class ddBFG9000 : ddWeapon
 		else { return FindState('Flash2'); }  
 	}
 	
-	override String, int GetSprites()
+	override String, int GetSprites(int no)
 	{
 		return "BFGGA0", -1;
 	}
@@ -85,6 +85,36 @@ class ddBFG9000 : ddWeapon
 			default: ddp.A_Log("No action defined for tic "..no); break;
 		}
 	}
+	//todo: complete multi-sequence transformation calls so you can do cool stuff
+	override void SetDDTransformations(int no, PSpriteInfo pspi)
+	{
+		let ddp = ddPlayer(owner);
+		if(!ddp) { return; }
+		let i = (weaponside) ? ddp.leftInstability : ddp.rightInstability;
+		switch(no)
+		{
+			case 0: //fire 1
+				pspi.SetTransformationProperties(5, true, (INTR_TRANS_INVEXPO));
+				pspi.SetTranslations(0, 10);
+				pspi.SetScaling(30, 40);
+				return;
+			case 1: //fire loop
+				pspi.SetTransformationProperties(1, false, (INTR_TRANS_INVEXPO), nextcase:1);
+				pspi.SetTranslations(clamp(random(-3, 3), -3 ,3), clamp(random(-2, 2), -2, 2));
+				return;
+			case 2: //flash 1
+				pspi.SetTransformationProperties(5, true, (INTR_TRANS_INVEXPO), 0., 0.4, true, ddp.GetPSpriteInfo(((weaponside) ? PSP_LEFTW0 : PSP_RIGHTW0), ddp));
+				pspi.GetTranslations(pspi.superInfo.ID);
+				pspi.SetScaling(20, 0);
+				return;
+			case 3: 
+				pspi.SetTransformationProperties(1, true, (INTR_TRANS_INVEXPO));
+				pspi.SetTranslations(0, 0, TFL_TRANS_ORIGIN);
+				return;
+			default:
+				return;
+		}
+	}
 	
 	// ## ddBFG9000 States()
 	States
@@ -103,15 +133,20 @@ class ddBFG9000 : ddWeapon
 		Fire:
 			BFGG A 1 A_WeapAction;
 			BFGG A 1;
+			BFGG A 1 A_DDTransformation;
 			BFGG A 20 A_BFGsound;
+			BFGG A 3 A_DDTransformation;
 			BFGG B 10 A_DDFlash;
+			BFGG B 0 A_DDTransformation;
 			BFGG B 10 A_FireDDWeapon;
 			BFGG B 20 A_DDRefire;
 			Goto Ready;
 		Altfire:
 			Goto Ready;
 		Flash:
-			BFGF A 11 Bright A_Light1;
+			BFGF A 9 Bright A_Light1;
+			BFGF A 2 A_DDTransformation;
+			BFGF A 2;
 			BFGF B 6 Bright A_Light2;
 			Goto FlashDone;
 		Flash2:
@@ -154,6 +189,7 @@ extend class ddWeapon
 	
 }
 // #Class BFGSpawner : RandomSpawner replaces BFG9000()
+/* ##DISABLED##
 class BFGSpawner : RandomSpawner replaces BFG9000
 {
 
@@ -175,7 +211,7 @@ class BFGSpawner : RandomSpawner replaces BFG9000
 		return Super.ChooseSpawn();
 	}
 }
-
+*/
 class BFGBlast : Actor //[unused]
 {	
 	Default

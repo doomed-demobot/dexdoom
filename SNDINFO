@@ -13,6 +13,7 @@ $limit weapons/shotgf 0
 weapons/shotgp "dsshotp" $volume weapons/shotgp 0.5
 weapons/shotgp1 "dsshotp1" $volume weapons/shotgp1 0.5
 weapons/shotgp2 "dsshotp2" $volume weapons/shotgp2 0.5
+weapons/firemodeswitch	"dsfiremo"
 $limit weapons/pistol 0
 $limit weapons/sshotf 0
 $limit weapons/pistol 0
