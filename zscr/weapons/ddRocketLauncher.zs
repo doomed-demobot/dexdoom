@@ -24,7 +24,6 @@ class ddRocketLauncher : ddWeapon replaces RocketLauncher
 		+WEAPON.NOAUTOFIRE
 		Inventory.PickupMessage "$GOTLAUNCHER";
 		Tag "$TAG_ROCKETLAUNCHER";
-		+DDWEAPON.BOBWHENREADY;
 	}
 	
 	override void InventoryInfo(ddStats ddhud, bool debug)
@@ -106,7 +105,7 @@ class ddRocketLauncher : ddWeapon replaces RocketLauncher
 	override State GetReadyState()
 	{
 		ddWeaponFlags &= ~RKL_RLOD;
-		if(ddWeaponFlags & RKL_RSEQ) { weaponStatus = DDW_RELOADING; return FindState("RFinish"); }
+		if(ddWeaponFlags & RKL_RSEQ) { return FindState("RFinish"); }
 		else { return FindState("Ready"); }
 	}
 	

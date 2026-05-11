@@ -383,7 +383,6 @@ class dualWielding : ddWeapon
 						ddp.ddWeaponState &= ~DDW_LEFTREADY;
 						ddp.ddWeaponState &= ~DDW_LEFTBOBBING;
 						lw.bAltFire = false;
-						if(lw.bBobWhenReady) { ddp.ddWeaponState |= DDW_LEFTNOBOBBING; }
 						player.SetPSprite(PSP_LEFTW0, lw.GetAttackState());
 						if(!lw.bNoAlert)
 						{
@@ -401,7 +400,6 @@ class dualWielding : ddWeapon
 						ddp.ddWeaponState &= ~DDW_LEFTREADY;
 						ddp.ddWeaponState &= ~DDW_LEFTBOBBING;
 						lw.bAltFire = true;
-						if(lw.bBobWhenReady) { ddp.ddWeaponState |= DDW_LEFTNOBOBBING; }
 						player.SetPSprite(PSP_LEFTW0, lw.GetAttackState());
 						if(!lw.bNoAlert)
 						{
@@ -434,7 +432,6 @@ class dualWielding : ddWeapon
 						ddp.ddWeaponState &= ~DDW_RIGHTREADY;
 						ddp.ddWeaponState &= ~DDW_RIGHTBOBBING;
 						rw.bAltFire = false;
-						if(rw.bBobWhenReady) { ddp.ddWeaponState |= DDW_RIGHTNOBOBBING; }
 						player.SetPSprite(PSP_RIGHTW0, rw.GetAttackState());
 						if(!rw.bNoAlert)
 						{
@@ -452,7 +449,6 @@ class dualWielding : ddWeapon
 						ddp.ddWeaponState &= ~DDW_RIGHTREADY;
 						ddp.ddWeaponState &= ~DDW_RIGHTBOBBING;
 						rw.bAltFire = true;
-						if(rw.bBobWhenReady) { ddp.ddWeaponState |= DDW_RIGHTNOBOBBING; }
 						player.SetPSprite(PSP_RIGHTW0, rw.GetAttackState());
 						if(!rw.bNoAlert)
 						{
@@ -478,7 +474,7 @@ class dualWielding : ddWeapon
 			}
 			else if(A_PressingReload())
 			{
-				if(ddp.ddWeaponState & DDW_LEFTREADY)
+				if(ddp.ddWeaponState & DDW_LEFTREADY || ddp.ddWeaponState & DDW_RIGHTREADY)
 				{
 					lw.weaponready = false;
 					rw.weaponready = false;
@@ -522,7 +518,7 @@ class dualWielding : ddWeapon
 					else { ddp.ddWeaponState &= ~DDW_LEFTISTH; }
 					lw = ddp.GetLeftWeapon(ddp.lwx);
 					if(lw.UpSound) { ddp.A_StartSound(lw.UpSound, CHAN_WEAPON); }
-					if(rw) { lw.companionpiece = rw; rw.companionpiece = rw; }
+					if(rw) { lw.companionpiece = rw; rw.companionpiece = lw; }
 					player.SetPSprite(PSP_LEFTW0, lw.GetUpState());
 					player.SetPSprite(PSP_LEFTWF0, null);
 					player.GetPSprite(PSP_LEFTWF0).x = -64 - lw.xOffset;
@@ -557,7 +553,6 @@ class dualWielding : ddWeapon
 					rw = ddp.GetRightWeapon(ddp.rwx);
 					if(rw.UpSound) { ddp.A_StartSound(rw.UpSound, CHAN_WEAPON); }
 					if(lw) { rw.companionpiece = lw; lw.companionpiece = rw; }
-					else { console.printf("penis"); }
 					player.SetPSprite(PSP_RIGHTW0, rw.GetUpState());
 					player.SetPSprite(PSP_RIGHTWF0, null);
 					player.GetPSprite(PSP_RIGHTWF0).x = 64 + rw.xoffset;
@@ -596,6 +591,8 @@ class dualWielding : ddWeapon
 		let rWeap = ddp.GetRightWeapons();
 		let lw = ddp.GetLeftWeapon(ddp.lwx);
 		let rw = ddp.GetRightWeapon(ddp.rwx);
+		lw.weaponstatus = DDW_READY;
+		rw.weaponstatus = DDW_READY;
 		let pspl = player.getpsprite(PSP_LEFTW0);
 		let psplf = player.getpsprite(PSP_LEFTWF0);
 		let pspr = player.getpsprite(PSP_RIGHTW0);
@@ -624,7 +621,7 @@ class dualWielding : ddWeapon
 			if(lWeap.items.Size()) { player.setpsprite(PSP_LEFTW0, lw.GetReadyState()); }
 			if(rWeap.items.Size()) { player.setpsprite(PSP_RIGHTW0, rw.GetReadyState()); }
 			invoker.weaponstatus = DDW_READY;
-			A_ChangeState("Ready");
+			A_ChangeState("Ready");	
 		}
 	}
 	

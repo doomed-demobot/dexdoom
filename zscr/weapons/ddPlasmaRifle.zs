@@ -23,7 +23,6 @@ class ddPlasmaRifle : ddWeapon replaces PlasmaRifle
 		+DDWEAPON.NOLOWER;
 		Inventory.PickupMessage "$GOTPLASMA";
 		Tag "$TAG_PLASMARIFLE";
-		+DDWEAPON.BOBWHENREADY;
 	}
 	
 	override void InventoryInfo(ddStats ddhud, bool debug)
@@ -367,30 +366,34 @@ extend class ddWeapon
 	}
 }
 
+//reintroduce once esoa/berserker suit is introduced
 class Celle : Cell replaces Cell
 {
 	Default
 	{
-		+INVENTORY.ALWAYSPICKUP;
+		//+INVENTORY.ALWAYSPICKUP;
 	}
+	/*
 	override void DoPickupSpecial(Actor toucher)
 	{
 		Super.DoPickupSpecial(toucher);
-		if(!toucher.player) { return; }
+		if(!toucher.player) { return; } 
 		if(toucher.FindInventory("ESOA"))
 		{
 			toucher.A_Log("...and used some to charge your ESOA!");
 			toucher.GiveInventory("ESOACharge", 65);
 		}
 	}
+	*/
 }
 
 class CellPacke : CellPack replaces CellPack
 {
 	Default
 	{
-		+INVENTORY.ALWAYSPICKUP;
+		//+INVENTORY.ALWAYSPICKUP;
 	}
+	/*
 	override void DoPickupSpecial(Actor toucher)
 	{
 		Super.DoPickupSpecial(toucher);
@@ -401,6 +404,7 @@ class CellPacke : CellPack replaces CellPack
 			toucher.GiveInventory("ESOACharge", 300);
 		}
 	}
+	*/
 }
 
 class PlasmaBolt : Actor

@@ -83,7 +83,7 @@ class ddStats : BaseStatusBar
 					if(dPlay.visrec) { DrawString(fa, "v", (-25, 25), DI_SCREEN_RIGHT_TOP); }
 				}
 				wep.HUDB(self);
-				if(rw && lw)
+				if(rw && lw && lWeap && rWeap)
 				{
 					rw.HUDB(self);
 					if(wep is "dualWielding") { lw.HUDB(self); }

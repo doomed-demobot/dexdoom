@@ -1,14 +1,14 @@
 // #Class ddBFG9000 : ddWeapon()
-//Doom BFG9000. Unchanged, but cannot be used in dualWielding. No altfire
-class ddBFG9000 : ddWeapon
+//Doom BFG9000. Twohanded weapon; cannot be used when dual-wielding. BFGBall updated to act similar to modern BFG, with increased ammo cost to compensate.
+class ddBFG9000 : ddWeapon replaces BFG9000
 {
 	Default
 	{
 		Height 20;
 		Weapon.SelectionOrder 2800;
-		Weapon.AmmoUse 40;
-		Weapon.AmmoUse2 10;
-		Weapon.AmmoGive 40;
+		Weapon.AmmoUse 60;
+		Weapon.AmmoUse2 60;
+		Weapon.AmmoGive 120;
 		Weapon.AmmoType "Cell";
 		Weapon.AmmoType2 "Cell";
 		ddWeapon.rating 9;
@@ -19,7 +19,6 @@ class ddBFG9000 : ddWeapon
 		+DDWEAPON.TWOHANDER;
 		Inventory.PickupMessage "$GOTBFG9000";
 		Tag "$TAG_BFG9000";
-		+DDWEAPON.BOBWHENREADY;
 	}
 	
 	override void InventoryInfo(ddStats ddhud, bool debug)
@@ -157,6 +156,63 @@ class ddBFG9000 : ddWeapon
 	}
 }
 
+class BFGBalle : BFGBall
+{
+	//adapted from A_BFGSpray() https://github.com/UZDoom/UZDoom/blob/trunk/wadsrc/static/zscript/actors/doom/weaponbfg.zs line:216
+	//BFG spray that projects in a 360 deg field around BFGBalle. Will incorporate horizontal autoaiming, but limit total amount of damage dealt via tracers to 1800-2000
+	void NewBFGSpray()
+	{
+		int totalTracerDam, tracerDamMax;
+		tracerDamMax = 1800 + random(0,200); //is there a cooler way to do this? idk
+		FTranslatedLineTarget lt;
+		Actor orig = self;
+		if(!target) { return; }
+		for(int x = 0; x < 360; x++)
+		{
+			if(totalTracerDam >= tracerDamMax) { break; }
+			orig.AimLineAttack(x, 1024, lt, 32);
+			if(!lt.linetarget)
+			{				
+				orig.AimLineAttack(x + 5, 1024, lt, 32);
+			}
+			if(!lt.linetarget)
+			{
+				orig.AimLineAttack(x - 5, 1024, lt, 32);				
+			}
+			if(!lt.linetarget) { continue; }
+			BFGExtra spray = BFGExtra(Spawn("BFGExtra", lt.linetarget.pos + (0, 0, lt.linetarget.Height / 4), ALLOW_REPLACE));
+			if(!spray) { continue; }
+			if(target.GetSpecies() == lt.linetarget.GetSpecies()) { spray.Destroy(); continue; }
+			int spraydam;
+			for(int y = 0; y < 15; ++y)
+			{
+				spraydam += random(1,8);
+				if(spraydam > lt.linetarget.health) //if overkilling, chance to stop doing more damage
+				{
+					if(random(35, 128) > 100) { break; }
+				}
+			}
+			int dmg = lt.linetarget.DamageMobj(orig, target, spraydam, 'BFGSplash', DMG_USEANGLE, lt.angleFromSource);
+			lt.TraceBleed(dmg, orig);
+			console.printf("damaged "..lt.linetarget.GetClassName().." for "..dmg.." damage.");
+			totalTracerDam += dmg;
+			console.printf("total tracer damage at "..totalTracerDam.." up to "..tracerDamMax..".");
+		}
+	}
+	
+	States
+	{
+		Spawn:
+			BFS1 AB 2 Bright;
+			Loop;
+		Death:
+			BFE1 AB 4 Bright;
+			BFE1 C 4 Bright NewBFGSpray;
+			BFE1 DEF 2 Bright;
+			Stop;
+	}
+}
+
 extend class ddWeapon
 {
 	action void A_FireDDBFG()
@@ -168,15 +224,15 @@ extend class ddWeapon
 		int kick = 90;
 		ddp.instability += kick;
 		ddp.instTimer = 40;
-		ddp.SpawnPlayerMissile("BFGBall", ddp.angle, nofreeaim:sv_nobfgaim);
-		ddp.TakeInventory("Cell", 40);		
+		ddp.SpawnPlayerMissile("BFGBalle", ddp.angle, nofreeaim:sv_nobfgaim);
+		ddp.TakeInventory("Cell", invoker.ammouse1);		
 	}
 	
 	action void A_BFGAltFireStart()	{ A_StartSound("weapons/10kmodeg", CHAN_WEAPON);	}
 	action void A_BFGAltFireSound() { invoker.owner.A_StartSound("weapons/10kmodef", CHAN_WEAPON, CHANF_OVERLAP); }
-	action void A_BFGAltFireStop() { A_StartSound("weapons/10kmodes", CHAN_WEAPON, CHANF_OVERLAP); }
-	
+	action void A_BFGAltFireStop() { A_StartSound("weapons/10kmodes", CHAN_WEAPON, CHANF_OVERLAP); }	
 }
+
 // #Class BFGSpawner : RandomSpawner replaces BFG9000()
 /* ##DISABLED##
 class BFGSpawner : RandomSpawner replaces BFG9000

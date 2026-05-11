@@ -27,7 +27,6 @@ class ddSuperShotgun : ddWeapon replaces SuperShotgun
 		Inventory.PickupMessage "$GOTSHOTGUN2";
 		Obituary "$OB_MPSSHOTGUN";
 		Tag "$TAG_SUPERSHOTGUN";
-		+DDWEAPON.BOBWHENREADY;
 	}
 	
 	override void WhileBerserk()
@@ -132,9 +131,9 @@ class ddSuperShotgun : ddWeapon replaces SuperShotgun
 	
 	override State GetReadyState()
 	{
-		if(ModeCheck(4) == (RES_TWOHAND || RES_HASESOA)) 
+		if(ModeCheck(4) == RES_TWOHAND) 
 		{ 
-			ddPlayer(owner).ddWeaponState |= DDW_RIGHTNOBOBBING; 
+			ddPlayer(owner).ddWeaponState &= ~DDW_RIGHTBOBBING; 
 			ddPlayer(owner).ddWeaponState &= ~DDW_RIGHTREADY;			
 			weaponStatus = DDW_RELOADING;
 			
@@ -159,7 +158,7 @@ class ddSuperShotgun : ddWeapon replaces SuperShotgun
 	override void primaryattack()
 	{
 		let ddp = ddPlayer(owner);		
-		if(mag > 1) { mag -= 2; }
+		if(mag > 1) { mag -= 2; A_FireDDSShotgun(); }
 		else if(mag > 0) { mag--; A_FireDDSShotgunSingle(); }
 		else { }
 	}
@@ -189,39 +188,34 @@ class ddSuperShotgun : ddWeapon replaces SuperShotgun
 				pspi.SetScaling(5, 15);
 				pspi.SetRotation((mag > 1) ? -2 : 2);
 				return;
-			case 3: //reload 1
-				pspi.SetTransformationProperties(6, false, (INTR_TRANS_INVEXPO | INTR_SCALE_EXPO));
-				pspi.SetTranslations(-8, 0);
+			case 3: //flash
+				pspi.SetTransformationProperties(4, true, (INTR_TRANS_INVEXPO | INTR_SCALE_INVEXPO), 0, 30);
+				pspi.SetTranslations(0, 9);
+				pspi.SetScaling(12, 30);
 				return;
-			case 4: //reload click
-				pspi.SetTransformationProperties(3, false, (INTR_TRANS_INVEXPO | INTR_ROTAT_INVEXPO));
-				pspi.SetTranslations(4, 12);
-				pspi.SetRotation(-8);
+			case 4: //flash alt
+				pspi.SetTransformationProperties(3, true, (INTR_TRANS_INVEXPO | INTR_SCALE_INVEXPO | INTR_ROTAT_EXPO), 0, 30);
+				pspi.SetTranslations(0, 3);
+				pspi.SetScaling(5, 15);
+				pspi.SetRotation((mag > 1) ? -2 : 2);
 				return;
-			case 5: //reload clock
-				pspi.SetTransformationProperties(3, false, (INTR_TRANS_INVEXPO | INTR_SCALE_EXPO | INTR_ROTAT_INVEXPO));
-				//pspi.SetTranslations(4, 4);
+			case 5: //reload 1
+				pspi.SetTransformationProperties(14, false, (INTR_TRANS_EXPO | INTR_SCALE_EXPO | INTR_ROTAT_INVEXPO), nextcase: 6);
+				pspi.SetTranslations(0, 0);
+				pspi.SetScaling(-5, 0);
+				pspi.SetRotation(9);
+				return;
+			case 6:	//reload 2
+				pspi.SetTransformationProperties(6, false, (INTR_TRANS_EXPO | INTR_SCALE_LINEAR | INTR_ROTAT_EXPO), nextcase: 7);
+				pspi.SetTranslations(0, 20);
 				pspi.SetScaling(10,0);
-				pspi.SetRotation(0);
+				pspi.SetRotation(-6);
 				return;
-			case 6: //reload clack
-				pspi.SetTransformationProperties(2, false, (INTR_TRANS_EXPO | INTR_SCALE_LINEAR | INTR_ROTAT_EXPO));
-				pspi.SetTranslations(3, -10);
-				pspi.SetScaling(-10, 5);
-				pspi.SetRotation(10);
-				return;
-			case 7: //onehand reload 1
-				pspi.SetTransformationProperties(6, false, (INTR_TRANS_EXPO));
-				pspi.SetTranslations(((weaponside) ? -8 : 8), -6);
-				return;
-			case 8:
-				pspi.SetTransformationProperties(5, true, (INTR_TRANS_INVEXPO));
-				pspi.SetTranslations(0, 18);
-				return;
-			case 9:
-				pspi.SetTransformationProperties(4, true, (INTR_TRANS_EXPO));
-				pspi.SetTranslations(0, 5);
-				pspi.SetRotation((weaponside) ? 6 : -6);
+			case 7:
+				pspi.SetTransformationProperties(2, false, (INTR_TRANS_INVEXPO | INTR_SCALE_INVEXPO | INTR_ROTAT_EXPO));
+				pspi.SetTranslations(0, -20);
+				pspi.SetScaling(-5, 0);
+				pspi.SetRotation(-3);
 				return;
 			default: return;
 		}
@@ -289,9 +283,9 @@ class ddSuperShotgun : ddWeapon replaces SuperShotgun
 		Fire:
 			#### A 1 A_WeapAction;
 			#### A 3;
+			#### A 0 A_DDFlash;
 			#### A 1 A_DDTransformation;
 			#### A 1 A_FireDDWeapon;
-			#### A 0 A_DDFlash;
 			#### A 6;
 			#### A 2 A_WeapAction;
 			Goto Ready;
@@ -306,8 +300,8 @@ class ddSuperShotgun : ddWeapon replaces SuperShotgun
 		Altfire:
 			#### A 1 A_WeapAction;
 			#### A 3;
-			#### A 2 A_DDTransformation;
 			#### A 0 A_DDFlash;
+			#### A 2 A_DDTransformation;
 			#### A 1 A_FireDDWeapon;
 			#### A 6;
 			#### A 2 A_WeapAction;
@@ -316,10 +310,9 @@ class ddSuperShotgun : ddWeapon replaces SuperShotgun
 		ReloadA:
 		ReloadP:
 			#### A 0 A_ChangeSprite;
-			#### B 2;
-			#### C 3 A_DDTransformation;
-			#### C 12;
-			#### D 4 A_DDTransformation;
+			#### # 5 A_DDTransformation;
+			#### B 7;
+			#### C 8;
 			#### D 1 A_OpenShotgun2;
 			#### D 5 A_WeapAction;
 			#### D 1;
@@ -328,13 +321,11 @@ class ddSuperShotgun : ddWeapon replaces SuperShotgun
 			#### D 5;
 			#### E 7;
 			#### F 0 A_LoadShotgun2;
-			#### E 5 A_DDTransformation;
 			#### F 3 A_WeapAction;
 			#### F 1;
 		Reload3:
 			#### F 6;
 			#### G 5;
-			#### G 6 A_DDTransformation;
 			#### G 1 A_CloseShotgun2;
 			#### H 6 A_WeapAction;
 			#### H 6 A_DDRefire;
@@ -342,38 +333,28 @@ class ddSuperShotgun : ddWeapon replaces SuperShotgun
 			Goto Ready;
 		ReloadOneHanded:
 			ST2R A 1 A_ChangeSprite;
-			#### A 9 A_DDTransformation;
 			#### A 8;
 			#### B 6 A_OpenShotgun2;
-			#### A 7 A_DDTransformation;
 			#### C 8;
-			#### G 8 A_DDTransformation;
 			#### G 8 A_LoadShotgun2;
 			#### B 5;
 			#### B 5 A_WeapAction;
 			Goto Ready;
 		UnloadP:
-			#### BC 7;
-			#### D 7 A_OpenShotgun2;
-			#### F 5 A_LoadShotgun2;
-			#### E 4 A_WeapAction;
-			#### E 5;
-			#### G 6 A_CloseShotgun2;
-			#### HA 6;
 			Goto Ready;			
 		FlashA:
 		Boom:
-			SH2F A 2 A_DDTransformation;
+			SH2F A 4 A_DDTransformation;
 			SH2F A 2 Bright A_Light1;
 			SH2F B 2 Bright A_Light1;
 			Goto FlashDone;
 		Blam:
-			SH2F A 2 A_DDTransformation;
+			SH2F A 4 A_DDTransformation;
 			SH2F C 2 Bright A_Light1;
 			SH2F D 2 Bright A_Light1;
 			Goto FlashDone;
 		FlashP:
-			SHT2 A 1 A_DDTransformation;
+			SHT2 A 3 A_DDTransformation;
 			SHT2 I 4 Bright A_Light1;
 			SHT2 J 3 Bright A_Light2;
 			Goto FlashDone;

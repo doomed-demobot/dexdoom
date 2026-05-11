@@ -1,4 +1,6 @@
 //consts and enums live here
+
+
 enum WeapPSprites
 {
 	PSP_LEFTW4 = 6,
@@ -75,7 +77,9 @@ enum ddWeaponStatus
 	DDW_RIGHTRAISETOREL = 1 << 16,
 };
 
-enum CommonCombo
+enum DDFakeButtons
 {
-	COM_SHOT = 1,
+	FBT_RELOADRIGHT	= 1 << 0,
+	FBT_UNLOADLEFT	= 1 << 1,
+	FBT_UNLOADRIGHT = 1 << 2,
 };

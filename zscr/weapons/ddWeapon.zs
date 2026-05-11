@@ -84,8 +84,7 @@ class ddWeapon : Weapon
 	flagdef noReload     : prFlags, 2; //weapon mag isn't check with reload key
 	flagdef twoHander	 : prFlags, 3; //weapon can only be used in twoHanding; replaced with fists if equipped in dualWielding
 	flagdef goesInInv	 : prFlags, 4; //weapon goes into playerInventory;
-	flagdef bobWhenReady : prFlags, 5; //weapon will active nobobbing during states
-	flagdef flipOffsets : prFlags, 6; //xoffset for ddweaponoffset flips depending on weaponside
+	flagdef flipOffsets : prFlags, 5; //xoffset for ddweaponoffset flips depending on weaponside
 	Default
 	{
 		Weapon.MinSelectionAmmo1  0;
@@ -111,38 +110,55 @@ class ddWeapon : Weapon
 		+DONTTHRUST;
 		+INVULNERABLE;
 		+DDWEAPON.GOESININV;
-		-DDWEAPON.BOBWHENREADY;
 		-DDWEAPON.MODEREADY;
 		-DDWEAPON.NOLOWER;
 	}
 		
+	protected int GetSideFromStateInfo(int pspindex)
+	{		
+		if(((PSPIndex >= PSP_LEFTW4) && (PSPIndex <= PSP_LEFTW0)) || ((PSPIndex >= PSP_LEFTWF4) && (PSPIndex <= PSP_LEFTWF0))) {
+			return CE_LEFT;
+		}
+		else if(((PSPIndex >= PSP_RIGHTW4) && (PSPIndex <= PSP_RIGHTW0)) || ((PSPIndex >= PSP_RIGHTWF4) && (PSPIndex <= PSP_RIGHTWF0))){
+			return CE_RIGHT;
+		}
+		else { return -1; }
+	}
+	
 	//weapon action function for translations, scaling, and rotation
-	action void A_DDTransformation()
+	action void A_DDTransformation(int ticOverride = -1)
 	{
-		let ddp = ddPlayer(self);
+		ddPlayer ddp;
+		ddWeapon weap;
+		int pid;
+		if(ticOverride < 0) { ddp = ddPlayer(self); }
+		else { ddp = ddPlayer(invoker.owner); weap = ddWeapon(invoker); pid = ((weap.weaponside) ? 10 : 15); }
 		if(!ddp) { return; }
 		let i = invoker;
-		ddWeapon weap;
 		PSprite psp;
 		PSpriteInfo pspi;
-		if(((stateinfo.mPSPIndex >= PSP_LEFTW4) && (stateinfo.mPSPIndex <= PSP_LEFTW0)) || ((stateinfo.mPSPIndex >= PSP_LEFTWF4) && (stateinfo.mPSPIndex <= PSP_LEFTWF0))) {
-			weap = ddp.GetLeftWeapon(ddp.lwx);
+		if(stateinfo)
+		{	
+			pid = stateinfo.mPSPIndex;
+			if(weap.GetSideFromStateInfo(stateinfo.mPSPIndex) == CE_LEFT) {
+				weap = ddp.GetLeftWeapon(ddp.lwx);
+			}
+			else if(weap.GetSideFromStateInfo(stateinfo.mPSPIndex) == CE_RIGHT){
+				weap = ddp.GetRightWeapon(ddp.rwx);
+			}
+			else { return; }
 		}
-		else if(((stateinfo.mPSPIndex >= PSP_RIGHTW4) && (stateinfo.mPSPIndex <= PSP_RIGHTW0)) || ((stateinfo.mPSPIndex >= PSP_RIGHTWF4) && (stateinfo.mPSPIndex <= PSP_RIGHTWF0))){
-			weap = ddp.GetRightWeapon(ddp.rwx);
-		}
-		else { return; }
-		psp = ddp.player.GetPSprite(stateinfo.mPSPIndex);
-		pspi = ddp.GetPSpriteInfo(stateinfo.mPSPIndex, self);
+		psp = ddp.player.GetPSprite(pid);
+		pspi = ddp.GetPSpriteInfo(pid, ddp);
 		if(pspi.resetOnTransform) { pspi.ResetTransformations(); }
 		int no = psp.tics;
 		psp.tics = 0;
+		if(ticOverride > -1) { no = ticOverride; }
 		if(weap)
 		{
 			weap.SetDDTransformations(no, pspi);
 			if(pspi.transformationLength == -1) { console.printf("Translation Length not set for tic "..no..". Use SetTransformationProperties()"); return; } 
 			pspi.Provider = weap;
-			//pspi.transformationTimer = pspi.transformationLength;
 		}
 	}
 	
@@ -282,13 +298,14 @@ class ddWeapon : Weapon
 			}
 			let cc = CreateDDCopy();
 			cc.AttachToOwner(ddp);
-			//drop because no empty slot was found
-			if(invIndex == -1)
+			//drop because no empty slot was found, or youre holding zoom to force
+			if(invIndex == -1 || mode.zoomheld)
 			{
 				if(!(goner is "ddFist"))
 				{
 					goner.weaponside = -1;
 					ddp.DropInventory(goner);
+					invIndex = -1;
 					//ddp.RemoveInventory(goner);
 					wanter.A_Print(""..goner.GetTag().." dropped.");
 				}
@@ -563,11 +580,11 @@ class ddWeapon : Weapon
 		return FindState('DoNotJump');
 	}
 	
-	int ModeCheck(int esoaCost = -1)
+	int ModeCheck(bool isWeaponMode = true, int esoaCost = -1)
 	{
 		let ddp = ddPlayer(owner);
 		let mode = ddWeapon(ddp.player.readyweapon);
-		let cpiece = ddWeapon(companionpiece);
+		let cpiece = ddWeapon(self.companionpiece);
 		if(mode is "twoHanding" || ddp.lastmode is "twoHanding") { return 1; }
 		else if(mode is "dualWielding" || ddp.lastmode is "dualWielding") 
 		{
@@ -575,7 +592,7 @@ class ddWeapon : Weapon
 			if(esoaCost > -1) { cost = esoaCost; }
 			let am = (bAltFire) ? AmmoType2 : AmmoType1;
 			let au = (bAltFire) ? AmmoUse2 : AmmoUse1;
-			if(!cpiece.weaponready) { au += ((cpiece.bAltFire) ? AmmoUse2 : AmmoUse1); }
+			if(!isWeaponMode) { if(!cpiece.weaponready) { au += ((cpiece.bAltFire) ? AmmoUse2 : AmmoUse1); } }
 			if(ddp.CheckESOA(cost) && ddp.CountInv(am) >= au) { ddp.TakeInventory("ESOACharge", cost); return 3; }
 			else { return 2; }
 		}
@@ -620,25 +637,34 @@ class ddWeapon : Weapon
 	//apply bonuses during berserk
 	virtual void WhileBerserk() {} 
 	
-	action void A_ChangeSprite(int forcemode = -1)
+	action void A_ChangeSprite(int ticOverride = -1)
 	{
 		let ddp = ddPlayer(invoker.owner);
-		if(!ddp) { return; }
+		int pid;
 		ddWeapon weap;
 		PSprite psp;
-		if(((stateinfo.mPSPIndex >= PSP_LEFTW4) && (stateinfo.mPSPIndex <= PSP_LEFTW0)) || ((stateinfo.mPSPIndex >= PSP_LEFTWF4) && (stateinfo.mPSPIndex <= PSP_LEFTWF0))) {		
-			if(ddp.ddWeaponState & DDW_NOLEFTSPRITECHANGE) { return; } 
-			weap = ddp.GetLeftWeapon(ddp.lwx);
-			psp = ddp.player.GetPSprite(PSP_LEFTW0);
+		if(ticOverride < 0) { ddp = ddPlayer(self); }
+		else { ddp = ddPlayer(invoker.owner); weap = ddWeapon(invoker); psp = ddp.player.GetPSprite((weap.weaponside) ? 10 : 15); }
+		if(!ddp) { return; }
+		if(stateinfo)
+		{	
+			pid = stateinfo.mPSPIndex;
+			if(weap.GetSideFromStateInfo(stateinfo.mPSPIndex) == CE_LEFT) {
+				if(ddp.ddWeaponState & DDW_NOLEFTSPRITECHANGE) { return; } 
+				weap = ddp.GetLeftWeapon(ddp.lwx);
+				psp = ddp.player.FindPSprite(PSP_LEFTW0);
+			}
+			else if(weap.GetSideFromStateInfo(stateinfo.mPSPIndex) == CE_RIGHT){
+				if(ddp.ddWeaponState & DDW_NORIGHTSPRITECHANGE) { return; }
+				weap = ddp.GetRightWeapon(ddp.rwx);
+				psp = ddp.player.FindPSprite(PSP_RIGHTW0);
+			}
+			else { return; }
 		}
-		else if(((stateinfo.mPSPIndex >= PSP_RIGHTW4) && (stateinfo.mPSPIndex <= PSP_RIGHTW0)) || ((stateinfo.mPSPIndex >= PSP_RIGHTWF4) && (stateinfo.mPSPIndex <= PSP_RIGHTWF0))){
-			if(ddp.ddWeaponState & DDW_NORIGHTSPRITECHANGE) { return; }
-			weap = ddp.GetRightWeapon(ddp.rwx);
-			psp = ddp.player.GetPSprite(PSP_RIGHTW0);
-		}
-		else { console.printf("PSprite not a weapon sprite"); return; }
+		if(!psp) { console.printf("fuck"); }
 		int no = psp.tics;
 		psp.tics = 0;
+		if(ticOverride > -1) { no = ticOverride; }
 		String sp;
 		int fr;
 		[sp, fr] = weap.GetSprites(no);
@@ -709,12 +735,13 @@ class ddWeapon : Weapon
 		else { psp.SetState(st); }
 	}
 	
-	//does this need to be action?
+	
 	action void AddRecoil(double pitch, int angle, double desFOV)
 	{
 		let ddp = ddPlayer(invoker.owner);
 		let weap = ddWeapon(invoker);
 		let com = ddWeapon(weap.companionpiece);
+		let mode = ddWeapon(ddp.player.readyweapon);
 		//visual recoil decrements when addpitch is zero, so physical recoil is 
 		//disabled in ddPlayer.Tick()
 		if(ddp.visrec)
@@ -724,7 +751,7 @@ class ddWeapon : Weapon
 			else { ddp.player.DesiredFOV = (ddp.plFOV + 5.); }			
 		}
 		let newAngle = ((random2() * angle) >> 8);
-		if(ddp.GetFireMode(false) == DUALWIELD)
+		if(mode.ModeCheck() == RES_DUALWLD)
 		{
 			com.myInfo.aimOffsetPitch += pitch;
 			com.myInfo.aimOffsetAngle += newAngle;
@@ -782,6 +809,7 @@ class ddWeapon : Weapon
 	void ResetPSpriteTransformations(bool allthem = false)
 	{
 		let ddp = ddPlayer(owner);
+		let mode = ddWeapon(ddp.player.readyweapon);
 		if(!ddp) { return; }
 		PSprite psp;
 		if(allthem)
@@ -793,20 +821,20 @@ class ddWeapon : Weapon
 				if(((x >= PSP_LEFTW4) && (x <= PSP_LEFTW0)) || ((x >= PSP_LEFTWF4) && (x <= PSP_LEFTWF0)))
 				{
 					psp.x = -64; 
-					switch(ddp.GetFireMode(false))
+					switch(mode.ModeCheck())
 					{
-						case TWOHAND: psp.y = 128; break;
-						case DUALWIELD: psp.y = 0; break;
+						case RES_TWOHAND: psp.y = 128; break;
+						case RES_DUALWLD: psp.y = 0; break;
 						default: break;
 					}
 				}
 				else if(((x >= PSP_RIGHTW4) && (x <= PSP_RIGHTW0)) || ((x >= PSP_RIGHTWF4) && (x <= PSP_RIGHTWF0)))
 				{
 					psp.x = 64; 
-					switch(ddp.GetFireMode(false))
+					switch(mode.ModeCheck())
 					{
-						case TWOHAND: psp.x = 0; break;
-						case DUALWIELD: psp.x = 64; break;
+						case RES_TWOHAND: psp.x = 0; break;
+						case RES_DUALWLD: psp.x = 64; break;
 						default: break;
 					}
 				}			
@@ -993,24 +1021,31 @@ class ddWeapon : Weapon
 		}
 		mag = 0;
 	}
-		
-	action void A_WeapAction()
+				
+	action void A_WeapAction(int ticOverride = -1)
 	{
-		let ddp = ddPlayer(self);
-		if(!ddp) { return; }
+		ddPlayer ddp;
 		ddWeapon weap;
-		PSprite psp;
-		if(stateinfo.mPSPIndex == PSP_LEFTW0) {
-			weap = ddp.GetLeftWeapon(ddp.lwx);
-			psp = ddp.player.GetPSprite(PSP_LEFTW0);
+		int pid;
+		if(ticOverride < 0) { ddp = ddPlayer(self); }
+		else { ddp = ddPlayer(invoker.owner); weap = ddWeapon(invoker); pid = ((weap.weaponside) ? 10 : 15); }
+		if(!ddp) { return; }
+		PSprite psp;		
+		if(stateinfo)
+		{	
+			pid = stateinfo.mPSPIndex;
+			if(weap.GetSideFromStateInfo(stateinfo.mPSPIndex) == CE_LEFT) {
+				weap = ddp.GetLeftWeapon(ddp.lwx);
+			}
+			else if(weap.GetSideFromStateInfo(stateinfo.mPSPIndex) == CE_RIGHT){
+				weap = ddp.GetRightWeapon(ddp.rwx);
+			}
+			else { return; }
 		}
-		else if(stateinfo.mPSPIndex == PSP_RIGHTW0) {
-			weap = ddp.GetRightWeapon(ddp.rwx);
-			psp = ddp.player.GetPSprite(PSP_RIGHTW0);
-		}
-		else { return; }
+		psp = ddp.player.GetPSprite(pid);
 		int no = psp.tics;
 		psp.tics = 0;
+		if(ticOverride > -1) { no = ticOverride; }
 		if(weap) { weap.DD_WeapAction(no); }
 	}
 	
@@ -1246,7 +1281,7 @@ class ddWeapon : Weapon
 		}
 		else 
 		{ 
-			if(cpiece.weaponstatus == DDW_FIRING) { ChangeState("Ready", myside); return; }
+			if(cpiece.weaponstatus == DDW_FIRING) { return; }
 			mode.bmodeready = false;
 			pspl.SetState(cpiece.FindState('Select'));
 			psplf.SetState(null);
@@ -1272,7 +1307,7 @@ class ddWeapon : Weapon
 			let rw = ddp.GetRightWeapons();
 			let pspl = ddp.player.GetPSprite(PSP_LEFTW0);
 			let psplf = ddp.player.GetPSprite(PSP_LEFTWF0);
-			let pspr = ddp.player.GetPSprite(PSP_RIGHTW0);
+			let pspr = ddp.player.FindPSprite(PSP_RIGHTW0);
 			let psprf = ddp.player.GetPSprite(PSP_RIGHTWF0);
 			int bz = (ddp.FindInventory("PowerBerserk")) ? 2 : 1;
 			double sFactor = (12 + ((lWeap.sFactor + rWeap.sFactor) / 2)) * bz;
@@ -1289,14 +1324,16 @@ class ddWeapon : Weapon
 					ddp.GetPSpriteInfo(x, ddp).transformationTimer = -1;
 					ddp.GetPSpriteInfo(x - 10, ddp).transformationTimer = -1;
 				}
-				ddp.player.SetPSprite(PSP_LEFTW0, lWeap.GetUpState()); 
-				ddp.player.SetPSprite(PSP_RIGHTW0, rWeap.GetUpState()); 
 				ddp.ddWeaponState &= ~DDW_LEFTREADY;				
 				ddp.ddWeaponState &= ~DDW_RIGHTREADY;
-				ddp.ddWeaponState &= ~DDW_LEFTBOBBING;				
+				ddp.player.SetPSprite(PSP_LEFTW0, lWeap.GetUpState()); 
+				ddp.player.SetPSprite(PSP_RIGHTW0, rWeap.GetUpState());
+				ddp.ddWeaponState &= ~DDW_LEFTBOBBING;
 				ddp.ddWeaponState &= ~DDW_RIGHTBOBBING;
 				ddp.ddWeaponState &= ~DDW_LEFTLOWERTOREL;
 				ddp.ddWeaponState |= DDW_LEFTRAISETOREL;
+				ddp.player.FindPSprite(PSP_RIGHTW0).x = 64; ddp.player.FindPSprite(PSP_RIGHTW0).y = 128;
+				return;
 			}
 			if(mode.weaponstatus != DDW_RELOADING && mode.weaponstatus != DDW_UNLOADING)
 			{
@@ -1309,9 +1346,8 @@ class ddWeapon : Weapon
 				pspr.y = 128; psprf.y = 128;	
 				State st = lWeap.wannaReload();
 				if(st == lWeap.FindState('DoNotJump')) { bmodeReady = true; lWeap.weaponready = true; return; }
-				//lWeap.ChangeSprite(CE_LEFT, 1);
 				mode.weaponstatus = lWeap.weaponStatus;
-				ddp.player.SetPSprite(PSP_LEFTW0, st);
+				pspl.SetState(st);
 				return;
 			}
 			else
@@ -1352,16 +1388,16 @@ class ddWeapon : Weapon
 			else if(PressingRightAltFire()) { rweap.onWeaponFire(CE_RIGHT, mode.rightheld); } 
 			if(pspr.y > 0) { pspr.y -= sFactor; psprf.y -= sFactor; }
 			pspl.x -= sFactor; psplf.x -= sFactor;
-			if(!(pspl.x <= -64)) { return; }
-			pspl.x = -64; psplf.x = -64;
+			if(pspl.x >= -64) { return; }
+			pspl.x = -64 - lWeap.xOffset; psplf.x = -64 - lWeap.xOffset;
 			pspl.y = 0; psplf.y = 0;
 			pspr.x = 64 + rweap.xOffset; psprf.x = 64 + rweap.xOffset;
 			pspr.y = 0; psprf.y = 0;
 			ddp.player.SetPSprite(PSP_RIGHTW0, rWeap.GetReadyState());
 			ddp.player.SetPSprite(PSP_LEFTW0, lWeap.GetReadyState());
 			bmodeready = true;
-			ddp.ddWeaponState &= ~DDW_LEFTNOBOBBING;
-			ddp.ddWeaponState &= ~DDW_RIGHTNOBOBBING;
+			ddp.ddWeaponState |= DDW_LEFTBOBBING;
+			ddp.ddWeaponState |= DDW_RIGHTBOBBING;
 			ddp.ddWeaponState &= ~DDW_LEFTRAISETOREL;
 			mode.weaponstatus = DDW_READY;
 			if(mode.weaponStatus != DDW_UNLOADING && (ddp.player.cmd.buttons & BT_RELOAD))
@@ -1402,15 +1438,15 @@ class ddWeapon : Weapon
 					ddp.GetPSpriteInfo(x, ddp).transformationTimer = -1;
 					ddp.GetPSpriteInfo(x - 10, ddp).transformationTimer = -1;
 				}
-				ddp.player.SetPSprite(PSP_LEFTW0, lWeap.GetUpState()); 
-				ddp.player.SetPSprite(PSP_RIGHTW0, rWeap.GetUpState());
-				//if mode was switched during reload time, swap to mode and dont raise back left weapon
 				ddp.ddWeaponState &= ~DDW_LEFTREADY;				
 				ddp.ddWeaponState &= ~DDW_RIGHTREADY;
+				ddp.player.SetPSprite(PSP_LEFTW0, lWeap.GetUpState()); 
+				ddp.player.SetPSprite(PSP_RIGHTW0, rWeap.GetUpState());
 				ddp.ddWeaponState &= ~DDW_LEFTBOBBING;
 				ddp.ddWeaponState &= ~DDW_RIGHTBOBBING;
 				ddp.ddWeaponState &= ~DDW_RIGHTLOWERTOREL;
 				ddp.ddWeaponState |= DDW_RIGHTRAISETOREL;
+				ddp.player.FindPSprite(PSP_LEFTW0).x = -64; ddp.player.FindPSprite(PSP_LEFTW0).y = 128;
 			}
 			int bz = (FindInventory("PowerBerserk")) ? 2 : 1;			
 			double sFactor = (12 + ((lWeap.sFactor + rWeap.sFactor) / 2)) * bz;

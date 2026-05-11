@@ -184,7 +184,6 @@ class twoHanding : ddWeapon
 					ddp.ddWeaponState &= ~DDW_RIGHTREADY;
 					ddp.ddWeaponState &= ~DDW_RIGHTBOBBING;
 					weap.bAltFire = false;
-					if(weap.bBobWhenReady) { ddp.ddWeaponState |= DDW_RIGHTNOBOBBING; }
 					player.SetPSprite(PSP_RIGHTW0, weap.GetAttackState());
 					if(!weap.bNoAlert)
 					{
@@ -204,7 +203,6 @@ class twoHanding : ddWeapon
 					weap.weaponStatus = DDW_ALTFIRING;
 					ddp.ddWeaponState &= ~DDW_RIGHTBOBBING;
 					weap.bAltFire = true;
-					if(weap.bBobWhenReady) { ddp.ddWeaponState |= DDW_RIGHTNOBOBBING; }
 					player.SetPSprite(PSP_RIGHTW0, weap.GetAttackState());
 					if(!weap.bNoAlert)
 					{
@@ -231,10 +229,10 @@ class twoHanding : ddWeapon
 			{
 				if(ddp.ddWeaponState & DDW_RIGHTREADY)
 				{
-					if(weap.bBobWhenReady) { ddp.ddWeaponState |= DDW_RIGHTNOBOBBING; }
 					player.SetPSprite(PSP_RIGHTW0, weap.FindState('Select'));
 					A_CheckRightWeaponMag();
 					weap.weaponready = false;
+					ddp.ddWeaponState &= ~DDW_RIGHTBOBBING;
 					ddp.ddWeaponState &= ~DDW_RIGHTREADY;
 				}
 			}
@@ -370,6 +368,8 @@ class twoHanding : ddWeapon
 		ddp.ddWeaponState &= ~DDW_REPLACERIGHT;
 		let lw = ddp.GetLeftWeapon(ddp.lwx);
 		let rw = ddp.GetRightWeapon(ddp.rwx);
+		lw.weaponstatus = DDW_READY;
+		rw.weaponstatus = DDW_READY;
 		let pspl = player.GetPSprite(PSP_LEFTW0);
 		let psplf = player.GetPSprite(PSP_LEFTWF0);
 		let pspr = player.GetPSprite(PSP_RIGHTW0);
@@ -387,8 +387,12 @@ class twoHanding : ddWeapon
 			pspl.y -= 6 * sFactor;
 			psplf.y -= 6 * sFactor;
 			if(pspl.y > 0) { return; }
+			let rw = ddp.GetRightWeapon(ddp.rwx);
+			player.setpsprite(PSP_RIGHTW0, rw.GetUpState());
 			pspl.y = 0; psplf.y = 0;
 			pspl.x = -64; psplf.x = -64;
+			pspr.y = 0; psprf.y = 0;
+			pspr.x = 64; psprf.x = 64;
 			if(!(ddp.ddWeaponState & DDW_RIGHTISTH)) { pspr.y = 0; psprf.y = 0; }
 			let dwd = ddWeapon(FindInventory("dualWielding"));
 			dwd.weaponstatus = DDW_RELOADING;
@@ -397,8 +401,6 @@ class twoHanding : ddWeapon
 			player.pendingweapon = WP_NOCHANGE;
 			player.readyweapon = dwd;
 			ddp.lastmode = dwd;
-			let rw = ddp.GetRightWeapon(ddp.rwx);
-			player.setpsprite(PSP_RIGHTW0, rw.GetUpState());
 			player.SetPSprite(PSP_WEAPON, dwd.GetUpState());
 		}
 		return;

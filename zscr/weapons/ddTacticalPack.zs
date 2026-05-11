@@ -2,30 +2,42 @@
 // #Class ddTactPack : Inventory()
 class ddTactPack : BackpackItem
 {
+	bool ibuffed;
 	Default
 	{
 		Height 36;
 		Radius 14;
-		Inventory.PickupMessage "Picked up a load-bearing backpack with extra pockets";
+		Inventory.PickupMessage "Picked up a load-bearing backpack with extra pockets.";
 		Inventory.PickupSound "misc/secret";
-		Inventory.MaxAmount 2;
+		Inventory.MaxAmount 1;
 	}
-	
-	override void AttachToOwner(Actor other)
+		
+	override bool TryPickup(in out Actor toucher)
 	{
-		if(!other.CountInv(self.GetClass())) { BuffOwner(other); }
-		Super.AttachToOwner(other);
+		if(ddPlayer(toucher).GetWeaponsInventory().size < 4) { ibuffed = BuffOwner(toucher); }
+		return Super.TryPickup(toucher);
 	}
 	
-	void BuffOwner(Actor owner)
+	override String PickupMessage()
+	{
+		let ddp = ddPlayer(owner);
+		String finalmsg = ((ibuffed) ? self.pickupmsg : "Took some ammo out of the load-bearing backpack.").."\n"..
+		((ibuffed) ? "Left weapon holster increased by 1!!" : "" ).."\n"..
+		((ibuffed) ? "Right weapon holster increased by 1!!" : "" ).."\n"..
+		((ibuffed) ? "Inventory size increased by 2!!" : "" );
+		return finalmsg;
+	}
+	
+	bool BuffOwner(Actor owner)
 	{
 		let ddp = ddPlayer(owner);
 		let lWeap = ddp.GetLeftWeapons();
 		let rWeap = ddp.GetRightWeapons();
 		let pInv = ddp.GetWeaponsInventory();
-		if(lWeap.size < 3) { ddp.IncreaseSlots(CE_LEFT, 1); A_Log("Left weapon holster increased by 1!!"); }
-		if(rWeap.size < 3) { ddp.IncreaseSlots(CE_RIGHT, 1); A_Log("Right weapon holster increased by 1!!"); }
-		if(pInv.size < 6) { ddp.IncreaseInventory(2); A_Log("Inventory size increased by 2!!"); }
+		bool res = false;
+		if(lWeap.size < 3) { ddp.IncreaseSlots(CE_LEFT, 1); res = true; }
+		if(rWeap.size < 3) { ddp.IncreaseSlots(CE_RIGHT, 1); res = true; }
+		if(pInv.size < 6) { ddp.IncreaseInventory(2); res = true; }
 		int a = random(0, 5);
 		switch(a)
 		{
@@ -44,6 +56,7 @@ class ddTactPack : BackpackItem
 			case 5:
 				break;
 		}
+		return res;
 	}
 	
 	// ## ddTactPack States()

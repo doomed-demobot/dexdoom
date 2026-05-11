@@ -27,7 +27,6 @@ class ddPistol : ddWeapon replaces Pistol
 		Obituary "$OB_MPPISTOL";
 		Inventory.Pickupmessage "$PICKUP_PISTOL_DROPPED";
 		Tag "$TAG_PISTOL";
-		+DDWEAPON.BOBWHENREADY;
 	}
 	
 	
@@ -112,8 +111,14 @@ class ddPistol : ddWeapon replaces Pistol
 				else { return "TNT1", -1; }
 			case 1: //reload
 				if(res == RES_TWOHAND || res == RES_DUALWLD) { return "PSTL", ((mag < 1) ? 1 : 2); }
-				else if(res == RES_HASESOA)  { return ((weaponside) ? "PISG" : "PSTL"), ((ddWeaponFlags & PIS_RSEQ) ? 1 : 2); }
-				else { return "TNT1", -1; }				
+				else if(res == RES_HASESOA)  { console.printf("esoa functionality has been disabled"); return "TNT1", -1; }
+				else { return "TNT1", -1; }	
+			case 2:
+				if(res == RES_TWOHAND || res == RES_DUALWLD) { return "PISD", 0; }
+				else if(res == RES_HASESOA)  { console.printf("esoa functionality has been disabled"); return "TNT1", -1; }
+				else { return "TNT1", -1; }
+			case 3: //select
+				return ((weaponside) ? "PISG" : "PSTL"), ((mag < 1) ? 1 : 0);
 			default:
 				return "TNT1", -1;
 		}
@@ -139,8 +144,8 @@ class ddPistol : ddWeapon replaces Pistol
 	
 	override State GetReadyState()
 	{
-		if(ddweaponflags & PIS_RSEQ && (ModeCheck(4) == (RES_TWOHAND || RES_HASESOA))) 
-			{ ddPlayer(owner).ddWeaponState &= ~DDW_RIGHTREADY; ddPlayer(owner).ddWeaponState |= DDW_RIGHTNOBOBBING; return FindState("Reload2"); }
+		if(ddweaponflags & PIS_RSEQ && (ModeCheck() == RES_TWOHAND)) 
+			{ ddPlayer(owner).ddWeaponState &= ~DDW_RIGHTREADY; ddPlayer(owner).ddWeaponState &= ~DDW_RIGHTBOBBING; return FindState("Reload2"); }
 		else { return FindState("Ready"); }
 	}
 	
@@ -220,6 +225,47 @@ class ddPistol : ddWeapon replaces Pistol
 					else { pspi.SetRotation(random2(3)*(1 + (i/100.))); }
 				} 
 				return;
+			case 8: //unload pistol 1
+				pspi.SetTransformationProperties(5, false, (INTR_TRANS_EXPO | INTR_ROTAT_INVEXPO), nextcase: 9);
+				pspi.SetTranslations(0, 30);
+				pspi.SetRotation(6);
+				return;
+			case 9: //unload pistol 2
+				pspi.SetTransformationProperties(3, false, (INTR_TRANS_INVEXPO), nextcase: 10);
+				pspi.SetTranslations(0, -16);
+				pspi.SetRotation(-6);
+				return;
+			case 10: //unload pistol 3
+				pspi.SetTransformationProperties(5, false, (INTR_TRANS_INVEXPO));
+				pspi.SetTranslations(0, 12);
+				pspi.SetRotation(8);
+				return;
+			case 11: //unload mag out
+				pspi.SetTransformationProperties(4, false);
+				pspi.SetTranslations(-28, 60);
+				return;
+			case 12: //hand slide back up
+				pspi.SetTransformationProperties(5, false, (INTR_TRANS_INVEXPO), nextcase: 13);
+				pspi.SetTranslations(50, -80);
+				pspi.SetRotation(-8);
+				return;
+			case 13: //hand slide back down
+				pspi.SetTransformationProperties(3, false, (INTR_TRANS_EXPO));
+				pspi.SetTranslations(0, 64);
+				return;
+			case 14: //unload pistol 4
+				pspi.SetTransformationProperties(5, false, (INTR_TRANS_INVEXPO));
+				pspi.SetTranslations(0, 24);
+				pspi.SetRotation(8);
+				return;
+			case 15:
+				pspi.SetTransformationProperties(4, false, (INTR_SCALE_INVEXPO), nextcase: 16);
+				pspi.SetScaling(-8, 15);
+				return;
+			case 16:
+				pspi.SetTransformationProperties(2, false, (INTR_SCALE_INVEXPO));
+				pspi.SetScaling(8, -15);
+				return;
 			default:
 				return;			
 		}
@@ -273,6 +319,12 @@ class ddPistol : ddWeapon replaces Pistol
 			case 7:				
 				SetSubSprite(pspi, 0, 38, 0, "HandReload");
 				break;
+			case 8: //unload hand 1
+				SetSubSprite(pspi, 2, 24, 0, "HandUnload");
+				break;
+			case 9: //unload hand 2
+				SetSubSprite(pspi, -34, 65, ((weaponside) ? 19 : 24), "HandSlideBack");
+				break;
 			default: ddp.A_Log("No action defined for tic "..no); break;
 		}
 	}
@@ -281,7 +333,16 @@ class ddPistol : ddWeapon replaces Pistol
 	{
 		switch(no)
 		{
-			case 1: if(mag >= 1) { return FindState("Reload3"); } else { return FindState("DoNotJump"); }
+			case 1: //skip slide release
+				if(mag >= 1) { return FindState("Reload3"); } else { return FindState("DoNotJump"); }
+			case 2: //skip mag out
+				if(mag <= 1) 
+				{ 
+					A_DDTransformation(14);
+					A_WeapAction(9);
+					return FindState("SlideBack"); 
+				} 
+				else { return FindState("DoNotJump"); }
 			default: return Super.GetWeapState(no);
 		}
 	}
@@ -358,7 +419,7 @@ class ddPistol : ddWeapon replaces Pistol
 			#### A 1 A_DDTransformation;
 			#### A 0 A_DDFlash;
 			#### C 1 A_FireDDWeapon;
-			#### B 1;
+			#### B 2;
 			#### B 0 A_ChangeSprite;
 			#### C 2 A_WeapAction;
 			#### # 0 A_ChangeSprite;
@@ -366,7 +427,7 @@ class ddPistol : ddWeapon replaces Pistol
 			#### # 1;
 			Goto Ready;
 		Select:
-			PISD A 0 A_ChangeSprite;
+			PISD A 3 A_ChangeSprite;
 			#### # 1;
 			Loop;
 		Deselect:
@@ -411,18 +472,36 @@ class ddPistol : ddWeapon replaces Pistol
 			//#### A 2;
 			Goto Ready;		
 		UnloadP:
-			#### F 5 A_PistolReload2;
-			#### G 5;
-			#### H 4 A_PistolReload3;
-			#### I 6 A_WeapAction;
-			#### I 4;
-			#### J 4;
+			#### # 2 A_ChangeSprite;
+			#### # 2 A_SetWeapState;
+			#### # 8 A_DDTransformation;
+			#### # 6 A_PistolReload1;
+			#### # 8 A_WeapAction;
+		SlideBack:
+			#### # 9 A_WeapAction;
+			#### # 1 A_ChangeSprite;
+			#### # 9;
+			#### # 15 A_DDTransformation;
+			#### B 2 A_PistolReload3;
+			#### # 6 A_WeapAction;
+			#### # 10;
 			Goto Ready;
 		HandReload:
 			TNT1 A 1 A_SetTicks;
 			PIMH A 4 A_DDTransformation;
 			#### # 1;
 			#### # 2 A_SetTicks;
+			Stop;
+		HandUnload:
+			PIMH A 11 A_DDTransformation;
+			PIMH A 4;
+			TNT1 A -1;
+			Stop;
+		HandSlideBack:
+			PIMH A 4;
+			HNDA A 12 A_DDTransformation;
+			HNDA A 12;
+			TNT1 A -1;
 			Stop;
 		FlashP:
 			PISF # 1 Bright A_DDTransformation;

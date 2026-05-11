@@ -1,11 +1,5 @@
 //The base player
 // #Class ddPlayer : DoomPlayer()
-enum modeNames{
-	UNKN = -1,
-	TWOHAND = 0,
-	DUALWIELD = 1,
-	PINVENTORY = 2,
-};
 
 class ddPlayer : DoomPlayer
 {	
@@ -29,6 +23,7 @@ class ddPlayer : DoomPlayer
 	int rightInstability, insTimerRight;
 	int instability, instTimer; //instability penalty [dep]
 	PSpriteInfo psinfo;
+	uint8 fakebuttons;
 	//other
 	ddweapon desire;
 	Vector3 tepos;
@@ -83,7 +78,7 @@ class ddPlayer : DoomPlayer
 	}
 
 	// ##goto overrides()
-	
+		
 	override void PostBeginPlay()
 	{
 		Super.PostBeginPlay();
@@ -96,9 +91,8 @@ class ddPlayer : DoomPlayer
 		altmodeR = false;
 		esoaActive = true;
 		desire = null;
-		
 	}
-	//todo: gdi doesnt set readyweapon to ddfistright. find what does
+	
 	override void GiveDefaultInventory()
 	{	
 		Super.GiveDefaultInventory();
@@ -164,8 +158,7 @@ class ddPlayer : DoomPlayer
 		if(pin) { pin.items.clear(); }
 		if(fst) { fst.items.clear(); }
 	}
-	
-	//ideally, tickpsprites should know when a psprite/pspriteinfo created by getpsprite or otherwise is not in use and destroy it; it does not.
+	//adapted from TickPSprites() https://github.com/UZDoom/UZDoom/blob/3b12695dd51fb61ad751b3a0e9e83544d8cd26b4/wadsrc/static/zscript/actors/player/player.zs line: 543
 	override void TickPSprites()
 	{
 		let player = self.player;
@@ -203,8 +196,8 @@ class ddPlayer : DoomPlayer
 			}
 		
 			if(pspr.Caller == null ||
-			(pspr.Caller is "Inventory" && Inventory(pspr.Caller).Owner != pspr.Owner.Mo)
-			|| (pspr.Caller is "Weapon" && pspr.Caller != pspr.Owner.ReadyWeapon))
+			(pspr.Caller is "Inventory" && Inventory(pspr.Caller).Owner != pspr.Owner.Mo))
+			//|| (pspr.Caller is "Weapon" && pspr.Caller != pspr.Owner.ReadyWeapon))
 			{
 				pspr.Destroy();
 			}
@@ -230,25 +223,67 @@ class ddPlayer : DoomPlayer
 			else
 			{	
 				CheckQuickSwap();
-				if(ddWeaponState & DDW_LEFTLOWERTOREL) { weap.A_LowerToReloadLeft(); }
-				else if(ddWeaponState & DDW_RIGHTLOWERTOREL) { weap.A_LowerToReloadRight(); }
 				if(ddWeaponState & DDW_LEFTRAISETOREL) { weap.A_RaiseToReloadLeft(); }	
 				else if(ddWeaponState & DDW_RIGHTRAISETOREL) { weap.A_RaiseToReloadRight(); }
+				if(ddWeaponState & DDW_LEFTLOWERTOREL) { weap.A_LowerToReloadLeft(); }
+				else if(ddWeaponState & DDW_RIGHTLOWERTOREL) { weap.A_LowerToReloadRight(); }
 				if(weap.bmodeReady) 
 				{ 
 					CheckWeaponChange();
 					if (player.WeaponState & (WF_WEAPONREADY | WF_WEAPONREADYALT))
 					{
 						CheckWeaponFire();
+						CheckFakeButtons();
 					}
 					CheckWeaponButtons();
-				}				
+				}
 			}
 		}
 		else 
 		{
 			player.SetPSprite(PSP_WEAPON, weap.FindState('DeathLower'));
 		}
+	}
+	
+	void CheckFakeButtons()
+	{
+		let lw = GetLeftWeapon(lwx);
+		let rw = GetRightWeapon(rwx);
+		let mode = ddWeapon(player.readyweapon);
+		if(fakebuttons & FBT_RELOADRIGHT)
+		{
+			if(ddWeaponState & DDW_RIGHTREADY)
+			{
+				//if((rw.ModeCheck() == RES_DUALWLD) && !(ddWeaponState & DDW_LEFTREADY)) { return; }
+				lw.weaponready = false;
+				rw.weaponready = false;
+				rw.weaponstatus = DDW_RELOADING;
+				mode.A_CheckRightWeaponMag();
+			}			
+		}
+		else if(fakebuttons & FBT_UNLOADLEFT)
+		{
+			if(lw.ModeCheck() != RES_DUALWLD) { return; }
+			if(ddWeaponState & DDW_RIGHTREADY && ddWeaponState & DDW_LEFTREADY)
+			{
+				lw.weaponready = false;
+				rw.weaponready = false;
+				lw.weaponstatus = DDW_UNLOADING;
+				mode.A_CheckLeftWeaponMag();				
+			}
+		}
+		else if(fakebuttons & FBT_UNLOADRIGHT)
+		{
+			if(ddWeaponState & DDW_RIGHTREADY)
+			{
+				//if((rw.ModeCheck() == RES_DUALWLD) && !(ddWeaponState & DDW_LEFTREADY)) { return; }
+				lw.weaponready = false;
+				rw.weaponready = false;
+				rw.weaponstatus = DDW_UNLOADING;
+				mode.A_CheckRightWeaponMag();
+			}
+		}
+		else { return; }
 	}
 	
 	override void CheckWeaponChange()
@@ -273,8 +308,6 @@ class ddPlayer : DoomPlayer
 				}
 				if(player.readyweapon is "twoHanding")
 				{
-					ddWeaponState |= DDW_LEFTNOBOBBING;
-					ddWeaponState |= DDW_RIGHTNOBOBBING;
 					player.SetPSprite(PSP_LEFTW0, lw.GetUpState());
 					player.SetPSprite(PSP_RIGHTW0, rw.GetUpState());
 					mode.bmodeready = false;
@@ -282,8 +315,6 @@ class ddPlayer : DoomPlayer
 				}
 				else if(player.readyweapon is "dualWielding")
 				{
-					ddWeaponState |= DDW_LEFTNOBOBBING;
-					ddWeaponState |= DDW_RIGHTNOBOBBING;
 					player.SetPSprite(PSP_LEFTW0, lw.GetUpState());
 					player.SetPSprite(PSP_RIGHTW0, rw.GetUpState());
 					mode.bmodeready = false;
@@ -420,7 +451,7 @@ class ddPlayer : DoomPlayer
 		}
 		return null;
 	}
-	
+		
 	override void Tick()
 	{
 		if(!player || !player.mo || player.mo != self)
@@ -570,29 +601,6 @@ class ddPlayer : DoomPlayer
 			}
 			
 		}
-		//replace emptie placeholders in weapon slots with respective ddFist weapons
-		//todo: gotta give player multiple fists instead of copying the same one through GetFists()
-		/*
-		for(int c = 0; c < (lWeap.size + rWeap.size); c++)
-		{
-			if(c < lWeap.size) { 
-				if(lWeap.retitem(c) is "emptie")
-				{ 
-					let fs = ddWeapon(Spawn(GetFists().GetClassName()));
-					fs.AttachToOwner(self); fs.weaponside = CE_LEFT;
-					lWeap.SetItem(fs, c); 
-				}
-			}
-			else { 
-				if(rWeap.retitem(c - lWeap.size) is "emptie") 
-				{ 
-					let fs = ddWeapon(Spawn(GetFists().GetClassName()));
-					fs.AttachToOwner(self); fs.weaponside = CE_RIGHT;
-					rWeap.SetItem(fs, c-lWeap.size);
-				}
-			}
-		}*/
-		
 		//set companion pieces [active weapon in other hand]
 		if(lWeap.RetItem(lwx)) { rWeap.RetItem(rwx).companionPiece = lWeap.RetItem(lwx); }
 		if(rWeap.RetItem(rwx)) { lWeap.RetItem(lwx).companionPiece = rWeap.RetItem(rwx); }
@@ -634,24 +642,6 @@ class ddPlayer : DoomPlayer
 		}
 	}
 	
-	//check which firemode is currently active. lastmode checks if mode was the last one selected.
-	//redundant function
-	int GetFireMode(bool isPending, bool wasLastMode = true)
-	{
-		if(player.readyweapon is "twoHanding" || (wasLastMode && lastmode is "twoHanding") || (isPending && player.pendingWeapon is "twoHanding"))
-		{
-			return TWOHAND;
-		}
-		else if(player.readyweapon is "dualWielding" || (wasLastMode && lastmode is "dualWielding") || (isPending && player.pendingWeapon is "dualWielding"))
-		{
-			return DUALWIELD;
-		}
-		else if(player.readyweapon is "playerInventory" || (wasLastMode && lastmode is "playerInventory") || (isPending && player.pendingWeapon is "playerInventory"))
-		{
-			return PINVENTORY;
-		}
-		else { return UNKN; }
-	}
 	
 	
 	void CheckSwapButtons()
@@ -836,8 +826,8 @@ class ddPlayer : DoomPlayer
 		swapdown = false;
 		ddWeapon(player.readyweapon).lswaptarget = lwx;
 		ddWeapon(player.readyweapon).rswaptarget = rwx;
-		ddWeaponState |= DDW_LEFTNOBOBBING;
-		ddWeaponState |= DDW_RIGHTNOBOBBING;
+		ddWeaponState &= ~DDW_LEFTBOBBING;
+		ddWeaponState &= ~DDW_RIGHTBOBBING;
 		ddWeaponState &= ~DDW_LEFTLOWERTOREL;
 		ddWeaponState &= ~DDW_LEFTRAISETOREL;
 		ddWeaponState &= ~DDW_RIGHTLOWERTOREL;
@@ -876,8 +866,8 @@ class ddPlayer : DoomPlayer
 		ddWeapon(player.readyweapon).rswaptarget = rwx;
 		dualWielding(player.readyweapon).blraised = false;
 		dualWielding(player.readyweapon).brraised = false;
-		ddWeaponState |= DDW_LEFTNOBOBBING;
-		ddWeaponState |= DDW_RIGHTNOBOBBING;
+		ddWeaponState &= ~DDW_LEFTBOBBING;
+		ddWeaponState &= ~DDW_RIGHTBOBBING;
 		ddWeaponState &= ~DDW_LEFTLOWERTOREL;
 		ddWeaponState &= ~DDW_LEFTRAISETOREL;
 		ddWeaponState &= ~DDW_RIGHTLOWERTOREL;
@@ -938,44 +928,37 @@ class ddPlayer : DoomPlayer
 			double lboby = (BobVal * lBobIntensity * LWBobY * viewBob);
 			double rbobx = (BobVal * rBobIntensity * RWBobX * viewBob);
 			double rboby = (BobVal * rBobIntensity * RWBobY * viewBob);
-			if(lastmode is "dualWielding")
+			double lx, ly, rx, ry;
+			if(mode.ModeCheck() == RES_DUALWLD)
 			{
-				double lx = (lbobx * abs(cos(angle))) - (64 + lw.xoffset);
-				double ly = lboby * abs(sin(angle));
-				if(!(ddWeaponState & DDW_LEFTNOBOBBING))
+				if(ddWeaponState & DDW_LEFTBOBBING)
 				{
-					pspl.x = lx;
-					psplf.x = lx;
-					pspl.y = ly;
-					psplf.y = ly;
+					lx = (lbobx * abs(cos(angle))) - (64 + lw.xoffset);
+					ly = lboby * abs(sin(angle));
 				}
-				double rx = (rbobx * abs(-sin(angle)));
-				rx += (64 + rw.xoffset); 
-				double ry = rboby * abs(-cos(angle));
-				if(!(ddWeaponState & DDW_RIGHTNOBOBBING))
+				else { lx = pspl.x; ly = pspl.y; }
+				if(ddWeaponState & DDW_RIGHTBOBBING)
 				{
-					pspr.x = rx;
-					psprf.x = rx;
-					pspr.y = ry;
-					psprf.y = ry;
+					rx = (rbobx * abs(-sin(angle))) + (64 + rw.xoffset);
+					ry = rboby * abs(-cos(angle));
 				}
+				else { rx = pspr.x; ry = pspr.y; }
 			}
-			else if(lastmode is "twoHanding")
+			else if(mode.ModeCheck() == RES_TWOHAND)
 			{
-				pspl.x = -64;
-				psplf.x = -64;
-				pspl.y = 128;
-				psplf.y = 128;
-				double rx = rbobx * cos(angle);
-				double ry = rboby * abs(sin(angle));
-				if(!(ddWeaponState & DDW_RIGHTNOBOBBING))
+				lx = -(64 + lw.xoffset); ly = 128;				
+				if(ddWeaponState & DDW_RIGHTBOBBING)
 				{
-					pspr.x = rx;
-					psprf.x = rx;
-					pspr.y = ry;
-					psprf.y = ry;
+					rx = rbobx * cos(angle);
+					ry = rboby * abs(sin(angle));
 				}
+				else { rx = pspr.x; ry = pspr.y; }
 			}
+			else {}
+			pspl.x = lx; psplf.x = lx;
+			pspl.y = ly; psplf.y = ly;
+			pspr.x = rx; psprf.x = rx;
+			pspr.y = ry; psprf.y = ry;
 		}
 	}
 	
@@ -1300,6 +1283,7 @@ class PSpriteInfo : Thinker
 		return null, false;
 	}
 	
+	//bug: even when SetTranslations() is not set, transformation calls interrupt necessary psprite offsets (lowering, swapping etc.)
 	void DoTransformations()
 	{
 		let psp = owner.player.GetPSprite(id);
@@ -1307,6 +1291,7 @@ class PSpriteInfo : Thinker
 		{ 
 			if(resetOnTransform && transformationTimer != -1 && nextCaseNumber < 0) { ResetTransformations(); resetOnTransform = false; }
 			transformationTimer = -1;
+			ResetTransformations(false); 
 			if(nextCaseNumber > -1) { 
 				if(!provider) { transformationTimer = -1; return; }
 				else { int temp = nextCaseNumber; nextCaseNumber = -1; provider.SetDDTransformations(temp, self); return; }
@@ -1513,9 +1498,10 @@ class PSpriteInfo : Thinker
 		}
 	}
 	
-	void ResetTransformations()
+	void ResetTransformations(bool resetPSprite = true)
 	{
 		let psp = owner.player.FindPSprite(id);
+		let mode = ddWeapon(owner.player.readyweapon);
 		translTarget.x = 0;
 		translTarget.y = 0;
 		scaleTarget.x = 0;
@@ -1525,6 +1511,7 @@ class PSpriteInfo : Thinker
 		transformationLength = -1;
 		PSPStatus = 0;
 		iMethod = (INTR_TRANS_LINEAR | INTR_SCALE_LINEAR | INTR_ROTAT_LINEAR);
+		if(!resetPSprite) { return; }
 		if(psp)
 		{
 			psp.halign = pspa_center;
@@ -1532,16 +1519,13 @@ class PSpriteInfo : Thinker
 			psp.scale.x = 1.; psp.scale.y = 1.;
 			psp.rotation = 0;
 			if(((psp.id >= PSP_LEFTW4) && (psp.id <= PSP_LEFTW0)) || ((psp.id >= PSP_LEFTWF4) && (psp.id <= PSP_LEFTWF0))) {
-				/*psp.x = -64;
-				if(owner.GetFireMode(false) == DUALWIELD) {	psp.y = 0; }
-				else { psp.y = 128; }*/
 				if(owner.GetLeftWeapon(owner.lwx).weaponStatus == DDW_RELOADING)
 				{
 					psp.x = 0; psp.y = 0;
 				}
 				else
 				{
-					if(owner.GetFireMode(false) == DUALWIELD) { psp.y = 0; }
+					if(mode.ModeCheck() == RES_DUALWLD) { psp.y = 0; }
 					else { psp.y = 128; }
 					psp.x = -64;
 				}
@@ -1553,7 +1537,7 @@ class PSpriteInfo : Thinker
 				}
 				else
 				{
-					if(owner.GetFireMode(false) == DUALWIELD) { psp.x = 64; }
+					if(mode.ModeCheck() == RES_DUALWLD) { psp.x = 64; }
 					else { psp.x = 0; }
 					psp.y = 0;
 				}
@@ -1697,23 +1681,16 @@ class unloadActivatorLeft : custominventory
 	
 	action void A_UseUnloadLeft()
 	{
-		let ddp = ddPlayer(Self);
-		let mode = ddWeapon(ddp.player.readyweapon);
-		let lw = ddp.GetLeftWeapon(ddp.lwx);
-		let rw = ddp.GetRightWeapon(ddp.rwx);
-		if(!(mode is "dualWielding")) { if(ddp.dddebug & DBG_WEAPONS) { A_Log("Not dualwielding"); } return; }
-		if(mode.weaponstatus == DDW_READY)
-		{
-			lw.weaponready = false;
-			rw.weaponready = false;
-			lw.weaponstatus = DDW_UNLOADING;
-			mode.A_CheckLeftWeaponMag();
-			return;
-		}
-		else
-		{
-			if(ddp.dddebug & DBG_WEAPONS) { A_Log("Mode not ready"); return;}
-		}
+		let ddp = ddPlayer(self);
+		if(!ddp) { return; }
+		ddp.fakebuttons |= FBT_UNLOADLEFT;
+	}
+	
+	override void DoEffect()
+	{
+		let ddp = ddPlayer(owner);
+		if(!ddp) { return; }
+		if(!InStateSequence(CurState,FindState("Use"))) { ddp.fakebuttons &= ~FBT_UNLOADLEFT; }
 	}
 	
 	States
@@ -1723,9 +1700,10 @@ class unloadActivatorLeft : custominventory
 			Stop;
 		Use:
 			---- A 1 A_UseUnloadLeft;
-			Loop;
+			fail;
 	}	
 }
+
 class unloadActivatorRight : custominventory
 {
 	Default
@@ -1743,22 +1721,16 @@ class unloadActivatorRight : custominventory
 	
 	action void A_UseUnloadRight()
 	{
-		let ddp = ddPlayer(Self);
-		let mode = ddWeapon(ddp.player.readyweapon);
-		let lw = ddp.GetLeftWeapon(ddp.lwx);
-		let rw = ddp.GetRightWeapon(ddp.rwx);
-		if(mode.weaponstatus == DDW_READY)
-		{
-			lw.weaponready = false;
-			rw.weaponready = false;
-			rw.weaponstatus = DDW_UNLOADING;
-			mode.A_CheckRightWeaponMag();
-			return;
-		}
-		else
-		{
-			if(ddp.dddebug & DBG_WEAPONS) { A_Log("Mode not ready"); return; }
-		}
+		let ddp = ddPlayer(self);
+		if(!ddp) { return; }
+		ddp.fakebuttons |= FBT_UNLOADRIGHT;
+	}
+	
+	override void DoEffect()
+	{
+		let ddp = ddPlayer(owner);
+		if(!ddp) { return; }
+		if(!InStateSequence(CurState,FindState("Use"))) { ddp.fakebuttons &= ~FBT_UNLOADRIGHT; }
 	}
 	
 	States
@@ -1768,7 +1740,7 @@ class unloadActivatorRight : custominventory
 			Stop;
 		Use:
 			---- A 1 A_UseUnloadRight;
-			Loop;
+			fail;
 	}	
 }
 
@@ -1790,19 +1762,15 @@ class reloadRight : CustomInventory
 	action void A_UseReloadRight()
 	{
 		let ddp = ddPlayer(self);
-		let mode = ddWeapon(ddp.player.readyweapon);
-		let lw = ddp.GetLeftWeapon(ddp.lwx);
-		let rw = ddp.GetRightWeapon(ddp.rwx);
-		if(mode.WeaponStatus == DDW_READY)
-		{
-			lw.weaponready = false;
-			rw.weaponready = false;
-			rw.weaponstatus = DDW_RELOADING;
-			mode.A_CheckRightWeaponMag();
-			return;
-		}
-		else { if(ddp.dddebug & DBG_WEAPONS) { A_Log("Mode not ready"); } return; }
-		
+		if(!ddp) { return; }
+		ddp.fakebuttons |= FBT_RELOADRIGHT;
+	}
+	
+	override void DoEffect()
+	{
+		let ddp = ddPlayer(owner);
+		if(!ddp) { return; }
+		if(!InStateSequence(CurState,FindState("Use"))) { ddp.fakebuttons &= ~FBT_RELOADRIGHT; }
 	}
 	
 	States
@@ -1812,8 +1780,8 @@ class reloadRight : CustomInventory
 			Stop;
 		Use:
 			---- A 1 A_UseReloadRight;
-			Loop;
-	}
+			fail;
+	}	
 }
 
 //invisible actor following crosshair. allows pickup of nearby weapons

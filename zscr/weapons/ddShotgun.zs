@@ -26,7 +26,6 @@ class ddShotgun : ddWeapon replaces Shotgun
 		Inventory.PickupMessage "$GOTSHOTGUN";
 		Obituary "$OB_MPSHOTGUN";
 		Tag "$TAG_SHOTGUN";
-		+DDWEAPON.BOBWHENREADY;
 		+DDWEAPON.FLIPOFFSETS;
 	}
 
@@ -74,7 +73,7 @@ class ddShotgun : ddWeapon replaces Shotgun
 	override State GetReadyState()
 	{
 		if(ddWeaponFlags & SHT_RSEQ && ModeCheck(0) == (RES_TWOHAND || RES_HASESOA)) { 
-			ddPlayer(owner).ddWeaponState |= DDW_RIGHTNOBOBBING; ddPlayer(owner).ddWeaponState &= ~DDW_RIGHTREADY; return FindState("Reload2"); 
+			A_ChangeSprite(0); ddPlayer(owner).ddWeaponState &= ~DDW_RIGHTBOBBING; ddPlayer(owner).ddWeaponState &= ~DDW_RIGHTREADY; return FindState("Reload2"); 
 		}
 		else { return FindState("Ready"); }
 	}
@@ -92,6 +91,10 @@ class ddShotgun : ddWeapon replaces Shotgun
 				else { return "TNT1", -1; }
 			case 1:
 				if(res == RES_DUALWLD) { return ((weaponside) ? "SHOH" : "SHH2"), ((ddWeaponFlags & SHT_RSEQ) ? 3 : -1); }
+			case 2: //select
+				return ((weaponside) ? "SHOH" : "SHH2"), -1;
+			case 4: //force twohand
+				return "SHTG", -1;
 			default:
 				return "TNT1", -1;
 		}
@@ -112,7 +115,7 @@ class ddShotgun : ddWeapon replaces Shotgun
 		if(mag > 0 && weaponstatus == DDW_UNLOADING) { return FindState('UnloadP'); }
 		if(ddWeaponFlags & SHT_RSEQ) { weaponstatus = DDW_RELOADING; return FindState("Reload2");	}
 		if(mag > 0) { return FindState('DoNotJump'); }
-		else { weaponStatus = DDW_RELOADING; return FindState('ReloadP'); }
+		else { A_ChangeSprite(4); weaponStatus = DDW_RELOADING; return FindState('ReloadP'); }
 	}
 	
 	override void primaryattack()
@@ -147,7 +150,7 @@ class ddShotgun : ddWeapon replaces Shotgun
 				pspi.SetScaling(0, 20);
 				return;
 			case 2: //shotgun reload 1
-				pspi.SetTransformationProperties(4, false, INTR_TRANS_EXPO);
+				pspi.SetTransformationProperties(2, false, INTR_TRANS_EXPO);
 				pspi.SetTranslations(-10, 4);
 				return;
 			case 3: //shotgun reload 2
@@ -157,8 +160,8 @@ class ddShotgun : ddWeapon replaces Shotgun
 				pspi.SetRotation(6);
 				return;
 			case 4: //shotgun reload 3
-				pspi.SetTransformationProperties(2, false, (INTR_TRANS_LINEAR | INTR_SCALE_INVEXPO | INTR_ROTAT_LINEAR));
-				pspi.SetTranslations(8, -16);
+				pspi.SetTransformationProperties(2, false, (INTR_TRANS_LINEAR | INTR_SCALE_INVEXPO | INTR_ROTAT_INVEXPO));
+				pspi.SetTranslations(8, -24);
 				pspi.SetScaling(-10, 0);
 				pspi.SetRotation(-4);
 				return;
@@ -270,13 +273,13 @@ class ddShotgun : ddWeapon replaces Shotgun
 			#### D 3 A_DDTransformation;
 			#### D 4 A_RackShotgun;
 			#### C 6 A_WeapAction;
-			#### C 3;
+			#### C 2;
 			#### C 4 A_DDTransformation;
+			#### C 1;
 		Reload2:
 			#### C 2 A_SlideShotgun;
 			#### B 4;
 			#### B 3 A_WeapAction;
-			//#### B 6 A_DDWeaponOffset;
 			#### B 1;
 			#### A 2;
 			#### A 1;

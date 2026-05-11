@@ -205,6 +205,7 @@ class playerInventory : ddWeapon
 							rWeap.RetItem(ddp.rwx).companionpiece = lWeap.RetItem(ddp.lwx);
 							lWeap.RetItem(ddp.lwx).companionpiece = rWeap.RetItem(ddp.rwx);	
 							pspl.SetState(ddp.GetLeftWeapon(ddp.lwx).GetUpState());
+							ddp.altModeL = lWeap.RetItem(ddp.lwx).fireMode;
 							if(!(hole is "ddFist")) {
 							if(ddp.dddebug & DBG_INVENTORY && ddp.dddebug & DBG_VERBOSE) { A_Log("Previous left weapon "..hole.GetTag().." removed"); } 
 							ddp.RemoveInventory(hole);	}					
@@ -257,6 +258,7 @@ class playerInventory : ddWeapon
 						rWeap.RetItem(ddp.rwx).companionpiece = lWeap.RetItem(ddp.lwx);
 						lWeap.RetItem(ddp.lwx).companionpiece = rWeap.RetItem(ddp.rwx);
 						ddp.player.SetPSprite(PSP_RIGHTW0, ddp.GetRightWeapon(ddp.rwx).GetUpState());
+						ddp.altModeR = rWeap.RetItem(ddp.rwx).fireMode;
 						if(!(hole is "ddFist")) {
 						if(ddp.dddebug & DBG_INVENTORY && ddp.dddebug & DBG_VERBOSE) { A_Log("Previous right weapon "..hole.GetTag().." removed"); } 
 						ddp.RemoveInventory(hole); }
@@ -807,7 +809,7 @@ class playerInventory : ddWeapon
 						let rss = RightWeapons(i.storedSpot);
 						if(i.storedIndex == ddp.rwx) {
 							ddp.ddWeaponState |= DDW_NORIGHTSPRITECHANGE;
-							i.lowerR = 1; i.heldRight = rss.RetItem(i.storedIndex);  pspr.SetState(i.heldRight.GetUpState()); rss.Setitem(newWeap, i.storedIndex); ddp.ddWeaponState |= DDW_RIGHTNOBOBBING;
+							i.lowerR = 1; i.heldRight = rss.RetItem(i.storedIndex);  pspr.SetState(i.heldRight.GetUpState()); ddp.ddWeaponState &= ~DDW_RIGHTBOBBING; rss.Setitem(newWeap, i.storedIndex); ddp.ddWeaponState |= DDW_RIGHTNOBOBBING;
 						}
 						else { if(i.sW.weaponName != "emptie") { RemoveInventory(i.storedSpot.RetItem(i.storedIndex)); } rss.SetItem(newWeap, i.storedIndex);
 						}
@@ -819,7 +821,7 @@ class playerInventory : ddWeapon
 						let lss = LeftWeapons(i.storedSpot);
 						if(i.storedIndex == ddp.lwx) {
 							ddp.ddWeaponState |= DDW_NOLEFTSPRITECHANGE;
-							i.lowerL = 1; i.heldLeft = lss.RetItem(i.storedIndex); pspl.SetState(i.heldLeft.GetUpState()); ddp.ddWeaponState |= DDW_LEFTNOBOBBING; lss.SetItem(newWeap, i.storedIndex);
+							i.lowerL = 1; i.heldLeft = lss.RetItem(i.storedIndex); pspl.SetState(i.heldLeft.GetUpState()); ddp.ddWeaponState &= ~DDW_LEFTBOBBING; lss.SetItem(newWeap, i.storedIndex);
 						}
 						else { if(i.sW.weaponName != "emptie") { RemoveInventory(i.storedSpot.RetItem(i.storedIndex)); }  lss.SetItem(newWeap, i.storedIndex);
 						}
@@ -862,7 +864,7 @@ class playerInventory : ddWeapon
 						let rts = RightWeapons(i.targetSpot);
 						if(i.targetIndex == ddp.rwx) {
 							ddp.ddWeaponState |= DDW_NORIGHTSPRITECHANGE;
-							i.lowerR = 1; i.heldRight = rts.RetItem(i.targetIndex); pspr.SetState(i.heldRight.GetUpState()); ddp.ddWeaponState |= DDW_RIGHTNOBOBBING; rts.SetItem(oldWeap, i.targetindex);
+							i.lowerR = 1; i.heldRight = rts.RetItem(i.targetIndex); pspr.SetState(i.heldRight.GetUpState()); ddp.ddWeaponState &= ~DDW_RIGHTBOBBING; rts.SetItem(oldWeap, i.targetindex);
 						}
 						else { if(i.tW.weaponName != "emptie") { RemoveInventory(i.targetSpot.RetItem(i.targetIndex));} rts.SetItem(oldWeap, i.targetIndex); 
 						}
@@ -874,7 +876,7 @@ class playerInventory : ddWeapon
 						let lts = LeftWeapons(i.targetSpot);
 						if(i.targetIndex == ddp.lwx) {
 							ddp.ddWeaponState |= DDW_NOLEFTSPRITECHANGE;
-							i.lowerL = 1; i.heldLeft = lts.RetItem(i.targetIndex); pspl.SetState(i.heldLeft.GetUpState()); ddp.ddWeaponState |= DDW_LEFTNOBOBBING; lts.SetItem(oldWeap, i.targetIndex);
+							i.lowerL = 1; i.heldLeft = lts.RetItem(i.targetIndex); pspl.SetState(i.heldLeft.GetUpState()); ddp.ddWeaponState &= ~DDW_LEFTBOBBING; lts.SetItem(oldWeap, i.targetIndex);
 						}
 						else { if(i.tW.weaponName != "emptie") { RemoveInventory(i.targetSpot.RetItem(i.targetIndex)); } lts.SetItem(oldWeap, i.targetIndex);
 						}

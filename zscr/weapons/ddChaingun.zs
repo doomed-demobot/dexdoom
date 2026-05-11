@@ -24,7 +24,6 @@ class ddChaingun : ddWeapon replaces Chaingun
 		Inventory.PickupMessage "$GOTCHAINGUN";
 		Obituary "$OB_MPCHAINGUN";
 		Tag "$TAG_CHAINGUN";
-		+DDWEAPON.BOBWHENREADY;
 	}
 	
 	override void PostBeginPlay()
@@ -91,13 +90,13 @@ class ddChaingun : ddWeapon replaces Chaingun
 					else if(spin > 1) { mod = 7; }
 					else { mod = 8; } 
 					
-					if(level.mapTime % mod == 0) { console.printf(""..mod); ddp.A_StartSound("weapons/chaingunspin", CHAN_WEAPON, CHANF_OVERLAP, 1., ATTN_NORM, ((spin < 5) ? 1. : 1.2)); chainFrame = !chainFrame; }
+					if(level.mapTime % mod == 0) { ddp.A_StartSound("weapons/chaingunspin", CHAN_WEAPON, CHANF_OVERLAP, 0.2, ATTN_NORM, ((spin < 5) ? 1. : 1.2)); chainFrame = !chainFrame; }
 					if(!chainFrame) { return "CHGG", 0; }
 					else { return "CHGG", 1; }
 				}
 				else { 
 					return "CHGGA0", 0;
-				}				
+				}
 			default:
 				return "TNT1", -1;
 		}
@@ -153,27 +152,32 @@ class ddChaingun : ddWeapon replaces Chaingun
 	{
 		let ddp = ddPlayer(owner);
 		if(!ddp) { return; }
-		if(ddp.CountInv("Clip") < 1) { pspi.SetTransformationProperties(); return; }
+		//if(ddp.CountInv("Clip") < 1) { pspi.SetTransformationProperties(); return; }
 		int i = (weaponside) ? ddp.leftinstability : ddp.rightinstability;
 		switch(no)
 		{
 			case 1:
-				pspi.SetTransformationProperties(3, true, (INTR_TRANS_INVEXPO | INTR_SCALE_INVEXPO | INTR_ROTAT_INVEXPO));
-				pspi.SetTranslations(0, 12);
-				
-				//pspi.SetScaling(6, 6);
-				if(i > 50) 
+				if(ddp.CountInv("Clip") >= 1)
 				{
-					//if flash state, copy weapons rotation
-					//sets flash rotation by weapon rotation +/- 3
-				if(pspi.id > 15) { int e = pspi.GetRotation(pspi.id - 10, false); 
-					if(e > 0) { e = clamp(e-3, 2, 10); } else { e = clamp(e+3, -10, -2); }
-				pspi.SetRotation(e); }
-				else { pspi.SetRotation(random2(7)); }
+					pspi.SetTransformationProperties(3, true, (INTR_TRANS_INVEXPO | INTR_SCALE_INVEXPO | INTR_ROTAT_INVEXPO));
+					pspi.SetTranslations(0, 12);
+					pspi.SetScaling(8,10);				
+					if(i > 50) 
+					{
+						//if flash state, copy weapons rotation
+						//sets flash rotation by weapon rotation +/- 3
+					if(pspi.id > 15) { int e = pspi.GetRotation(pspi.id - 10, false); 
+						if(e > 0) { e = clamp(e-3, 2, 10); } else { e = clamp(e+3, -10, -2); }
+					pspi.SetRotation(e); }
+					else { pspi.SetRotation(random2(7)); }
+					}
+					return;
 				}
+				pspi.SetTransformationProperties(2, true, (INTR_SCALE_EXPO));
+				pspi.SetScaling(4, 3);
 				return;
 			case 2:
-				pspi.SetTransformationProperties(3, true, (INTR_TRANS_INVEXPO | INTR_SCALE_INVEXPO | INTR_ROTAT_INVEXPO), 0., 0.4, true, ddp.GetPSpriteInfo(((weaponside) ? PSP_LEFTW0 : PSP_RIGHTW0), ddp));
+				pspi.SetTransformationProperties(3, true, (INTR_TRANS_INVEXPO | INTR_SCALE_INVEXPO | INTR_ROTAT_INVEXPO), 0., 0.2, true, ddp.GetPSpriteInfo(pspi.id - 10, ddp));
 				pspi.GetTranslations(pspi.superInfo.ID);
 				pspi.GetRotation(pspi.superInfo.ID);
 				return;
@@ -198,7 +202,7 @@ class ddChaingun : ddWeapon replaces Chaingun
 				}
 				break;
 			case 3: //play spin sound
-				if(spin > 0) { ddp.A_StartSound("weapons/chaingunspin", CHAN_WEAPON, CHANF_OVERLAP, 1., ATTN_NORM, ((spin < 5) ? 1. : 1.2)); }
+				if(spin > 0) { ddp.A_StartSound("weapons/chaingunspin", CHAN_WEAPON, CHANF_OVERLAP, 0.33, ATTN_NORM, ((spin < 5) ? 1. : 1.2)); }
 				return;
 			default: ddp.A_Log("No action defined for tic "..no); break;
 		}
