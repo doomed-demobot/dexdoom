@@ -298,7 +298,6 @@ class ddPistol : ddWeapon replaces Pistol
 				ddp.PlayAttacking();
 				break;
 			case 2: //primary
-				//ddWeaponOffset(myside, 0, 0, WOF_KEEPX);
 				if((res == RES_TWOHAND || res == RES_HASESOA) && ddp.CountInv(type) > 1 && mag < 1) { weaponstatus = DDW_RELOADING; ChangeState("ReloadP", myside); }				
 				break;
 			case 3: //alt burstcounter check
@@ -469,7 +468,6 @@ class ddPistol : ddWeapon replaces Pistol
 			#### A 0 A_ChangeSprite;
 			#### A 5 A_WeapAction;
 			#### A 1;
-			//#### A 2;
 			Goto Ready;		
 		UnloadP:
 			#### # 2 A_ChangeSprite;

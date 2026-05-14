@@ -230,7 +230,7 @@ class ddShotgun : ddWeapon replaces Shotgun
 				ReloadWeaponMag(1); ddWeaponFlags &= ~SHT_RSEQ; weaponstatus = DDW_READY; break;			
 			case 4: //unload mag
 				UnloadWeaponMag(); break;			
-			case 5: //reload mag onehanded MOVE DOWN HERE V V V
+			case 5: //reload mag onehanded
 				AddRecoil(0.0, 5, 0.0); ReloadWeaponMag(1); break;
 			case 6: //reload checkpoint (tm)
 				ddWeaponFlags |= SHT_RSEQ;

@@ -110,7 +110,6 @@ extend class ddWeapon
 		if(t.LineTarget)
 		{
 			ddp.A_StartSound("weapons/sawhit", CHAN_WEAPON);
-			//classic mode chainsaw gets stuck in target.
 			ddp.bJustAttacked = true;
 			double anglediff = deltaangle(ddp.angle, t.angleFromSource);
 			if(anglediff < 0.0)
