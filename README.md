@@ -107,7 +107,7 @@ The Tactical Backpack sometimes replaces the Backpack. Along with increasing max
 - Increases damage for Brass Knuckles
 - 80 second time limit
 
-The Berserk power effects now only last for 80 seconds, however little slivers of your undying rage will seep out your victims, allowing you to reclaim you lost time. Each Essense of Hate refills 2-5 seconds of your remaining Berserk time.
+The Berserk power effects now only last for 80 seconds, however little slivers of your undying rage will seep out your victims, allowing you to reclaim you lost time. Each Essence of Hate refills 2-5 seconds of your remaining Berserk time.
 
 # Secret Tricks
 
