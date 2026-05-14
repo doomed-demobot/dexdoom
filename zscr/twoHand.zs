@@ -56,10 +56,11 @@ class twoHanding : ddWeapon
 		{
 			int curWeapAm, curWeapMx;
 			[curWeapAm, curWeapMx] = hude.GetAmount(type);
-			let bz = ddp.FindInventory("PowerBerserk");
+			let bz = PowerBerserk(ddp.FindInventory("PowerBerserk"));
 			let inv = ((ddp.player.cheats & CF_GODMODE) || ddp.FindInventory("PowerInvulnerable"));
 			bool mx = (curWeapAm == curWeapMx);
 			hude.DrawImage(bz ? "HCBRZK" : "HCNORM", (35, -20), hude.DI_SCREEN_LEFT_BOTTOM, bz ? 0.4 : 0.8);
+			if(bz) { hude.Fill(Color(255, 255, 0+int(75*sin(hude.oscilator)), 0), 28, -18, double(40. * (bz.effecttics/2100.)), 5, hude.DI_SCREEN_LEFT_BOTTOM | hude.DI_TEXT_ALIGN_CENTER); }
 			hude.DrawImage(inv ? "HCINVN" : "", (35, -20), hude.DI_SCREEN_LEFT_BOTTOM, 0.9);
 			hude.DrawString(hude.bf, (ddp.Health > -200) ? hude.FormatNumber(ddp.Health) : "REALLY FREAKIN' DEAD", (50, -35), hude.DI_SCREEN_LEFT_BOTTOM | hude.DI_TEXT_ALIGN_CENTER, 0, 0.5, -1, 4, (1.25,1.25));
 			if(ddp.ddWeaponState & DDW_WANNAREPLACE) 

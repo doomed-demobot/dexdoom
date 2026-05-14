@@ -366,7 +366,6 @@ extend class ddWeapon
 		invoker.owner.A_StartSound("weapons/shotgp2", CHAN_WEAPON, CHANF_OVERLAP);	
 	}
 }
-//TODO: make it not explode after running out of speed/bounces
 // #Class ddGrenade : Actor()
 
 class ddGrenade : Actor
@@ -374,10 +373,10 @@ class ddGrenade : Actor
 	bool contact;
 	Default
 	{
-		Radius 11;
+		Radius 8;
 		Height 8;
-		Speed 40;
-		Damage 0;
+		Speed 35;
+		Damage 20;
 		Projectile;
 		-NOGRAVITY;
 		+RANDOMIZE;
@@ -408,7 +407,6 @@ class ddGrenade : Actor
 		{
 			if(contact && bounceMobj.bismonster)
 			{
-				console.printf("contact");
 				let st = FindState("Death") + 1;
 				self.vel = (0, 0, 0);
 				SetState(st);
@@ -430,13 +428,13 @@ class ddGrenade : Actor
 	States
 	{
 		Spawn:
-			GRNA A 1;
+			GRNA ABCDEFGH 2;
 			Loop;
 		Death:
 			GRNA A 30;
 			MISL B 0 { self.bNoGravity = true; }
 			MISL B 0 A_StartSound("weapons/rocklx", CHAN_BODY);
-			MISL B 8 Bright A_Explode;
+			MISL B 8 Bright A_Explode(128, 150);
 			MISL C 6 Bright;
 			MISL D 4 Bright;
 			Stop;

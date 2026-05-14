@@ -160,7 +160,7 @@ class ddShotgun : ddWeapon replaces Shotgun
 				pspi.SetRotation(6);
 				return;
 			case 4: //shotgun reload 3
-				pspi.SetTransformationProperties(2, false, (INTR_TRANS_LINEAR | INTR_SCALE_INVEXPO | INTR_ROTAT_INVEXPO));
+				pspi.SetTransformationProperties(2, true, (INTR_TRANS_LINEAR | INTR_SCALE_INVEXPO | INTR_ROTAT_INVEXPO));
 				pspi.SetTranslations(8, -24);
 				pspi.SetScaling(-10, 0);
 				pspi.SetRotation(-4);
@@ -259,11 +259,11 @@ class ddShotgun : ddWeapon replaces Shotgun
 			#### A 2 A_WeapAction;
 			Goto Ready;	
 		Select:
-			SHTD A 0 A_ChangeSprite;
+			SHTD A 2 A_ChangeSprite;
 			#### # 1;
 			Loop;
 		Deselect:
-			SHTD A 0 A_ChangeSprite;
+			SHTD A 2 A_ChangeSprite;
 			#### # 1;
 			Loop;
 		ReloadA:

@@ -464,7 +464,7 @@ class ddPistol : ddWeapon replaces Pistol
 			#### # 12 A_PistolReload2;
 			#### # 1 A_SetWeapState;
 			PISD A 5 A_DDTransformation;
-			PISD A 10 A_PistolReload3;
+			PISD A 10 A_PistolReload3;	
 		Reload3:
 			#### A 0 A_ChangeSprite;
 			#### A 5 A_WeapAction;

@@ -181,15 +181,15 @@ class ddPlasmaRifle : ddWeapon replaces PlasmaRifle
 		let i = (weaponside) ? ddp.leftInstability : ddp.rightInstability;
 		switch(no)
 		{
-			case 1:
+			case 1: //fire
 				pspi.SetTransformationProperties(3, true, (INTR_TRANS_INVEXPO));
 				pspi.SetTranslations(0, 5);
 				return;
-			case 2:
+			case 2: //reload
 				let pspif = ddp.GetPSpriteInfo(pspi.id + 10, ddp);
-				pspi.SetTransformationProperties(5, false, (INTR_TRANS_INVEXPO));
+				pspi.SetTransformationProperties(6, false, (INTR_TRANS_INVEXPO));
 				pspi.SetTranslations(-5, 8);
-				pspif.SetTransformationProperties(5, false, (INTR_TRANS_INVEXPO));
+				pspif.SetTransformationProperties(6, false, (INTR_TRANS_INVEXPO));
 				pspif.SetTranslations(-5, 8);
 				return;
 			default:

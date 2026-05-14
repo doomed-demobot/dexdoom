@@ -6,9 +6,9 @@ class ddBFG9000 : ddWeapon replaces BFG9000
 	{
 		Height 20;
 		Weapon.SelectionOrder 2800;
-		Weapon.AmmoUse 60;
-		Weapon.AmmoUse2 60;
-		Weapon.AmmoGive 120;
+		Weapon.AmmoUse 50;
+		Weapon.AmmoUse2 50;
+		Weapon.AmmoGive 50;
 		Weapon.AmmoType "Cell";
 		Weapon.AmmoType2 "Cell";
 		ddWeapon.rating 9;
@@ -159,25 +159,27 @@ class ddBFG9000 : ddWeapon replaces BFG9000
 class BFGBalle : BFGBall
 {
 	//adapted from A_BFGSpray() https://github.com/UZDoom/UZDoom/blob/trunk/wadsrc/static/zscript/actors/doom/weaponbfg.zs line:216
-	//BFG spray that projects in a 360 deg field around BFGBalle. Will incorporate horizontal autoaiming, but limit total amount of damage dealt via tracers to 1800-2000
+	//BFG spray that projects in a 360 deg field around BFGBalle. Will incorporate horizontal autoaiming, but limit total amount of damage dealt via tracers to 1800-2400
 	void NewBFGSpray()
 	{
-		int totalTracerDam, tracerDamMax;
-		tracerDamMax = 1800 + random(0,200); //is there a cooler way to do this? idk
+		int totalTracerDam, tracerDamMax, tracersUsed;
+		tracerDamMax = 1800 + random(0,600);
 		FTranslatedLineTarget lt;
 		Actor orig = self;
 		if(!target) { return; }
-		for(int x = 0; x < 360; x++)
+		for(int x = 0; x < 90; x++)
 		{
 			if(totalTracerDam >= tracerDamMax) { break; }
-			orig.AimLineAttack(x, 1024, lt, 32);
+			//alternate quadrants to ensure a big creature doesn't take all the heat
+			int ang = x + (90 * ((x % 4) + 1));
+			orig.AimLineAttack(ang, 1024, lt, 32);
 			if(!lt.linetarget)
 			{				
-				orig.AimLineAttack(x + 5, 1024, lt, 32);
+				orig.AimLineAttack(ang + 5, 1024, lt, 32);
 			}
 			if(!lt.linetarget)
 			{
-				orig.AimLineAttack(x - 5, 1024, lt, 32);				
+				orig.AimLineAttack(ang - 5, 1024, lt, 32);				
 			}
 			if(!lt.linetarget) { continue; }
 			BFGExtra spray = BFGExtra(Spawn("BFGExtra", lt.linetarget.pos + (0, 0, lt.linetarget.Height / 4), ALLOW_REPLACE));
@@ -194,10 +196,12 @@ class BFGBalle : BFGBall
 			}
 			int dmg = lt.linetarget.DamageMobj(orig, target, spraydam, 'BFGSplash', DMG_USEANGLE, lt.angleFromSource);
 			lt.TraceBleed(dmg, orig);
-			console.printf("damaged "..lt.linetarget.GetClassName().." for "..dmg.." damage.");
+			if(ddPlayer(target).dddebug & DBG_WEAPONS) { console.printf("damaged "..lt.linetarget.GetClassName().." for "..dmg.." damage."); }
 			totalTracerDam += dmg;
-			console.printf("total tracer damage at "..totalTracerDam.." up to "..tracerDamMax..".");
+			if(ddPlayer(target).dddebug & DBG_WEAPONS) { console.printf("total tracer damage at "..totalTracerDam.." up to "..tracerDamMax.."."); }
+			tracersUsed++;
 		}
+		if(ddPlayer(target).dddebug & DBG_WEAPONS) { console.printf("NewBFGSpray finished using "..tracersUsed.." tracers and dealing "..totalTracerDam.." damage out of "..tracerDamMax.."."); }
 	}
 	
 	States

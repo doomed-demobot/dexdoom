@@ -160,15 +160,15 @@ class ddChaingun : ddWeapon replaces Chaingun
 				if(ddp.CountInv("Clip") >= 1)
 				{
 					pspi.SetTransformationProperties(3, true, (INTR_TRANS_INVEXPO | INTR_SCALE_INVEXPO | INTR_ROTAT_INVEXPO));
-					pspi.SetTranslations(0, 12);
-					pspi.SetScaling(8,10);				
+					pspi.SetTranslations(random2(3), 12);
+					pspi.SetScaling(4,10);				
 					if(i > 50) 
 					{
 						//if flash state, copy weapons rotation
 						//sets flash rotation by weapon rotation +/- 3
 					if(pspi.id > 15) { int e = pspi.GetRotation(pspi.id - 10, false); 
 						if(e > 0) { e = clamp(e-3, 2, 10); } else { e = clamp(e+3, -10, -2); }
-					pspi.SetRotation(e); }
+					pspi.SetRotation(e); pspi.GetTranslations(pspi.id - 10, true); }
 					else { pspi.SetRotation(random2(7)); }
 					}
 					return;

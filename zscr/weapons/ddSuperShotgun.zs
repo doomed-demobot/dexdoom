@@ -217,6 +217,10 @@ class ddSuperShotgun : ddWeapon replaces SuperShotgun
 				pspi.SetScaling(-5, 0);
 				pspi.SetRotation(-3);
 				return;
+			case 8:
+				pspi.SetTransformationProperties(7, true, (INTR_TRANS_EXPO));
+				pspi.SetTranslations(0, 20);
+				return;
 			default: return;
 		}
 	}
@@ -309,7 +313,7 @@ class ddSuperShotgun : ddWeapon replaces SuperShotgun
 		Reload:
 		ReloadA:
 		ReloadP:
-			#### A 0 A_ChangeSprite;
+			#### A 2 A_ChangeSprite;
 			#### # 5 A_DDTransformation;
 			#### B 7;
 			#### C 8;
@@ -333,11 +337,12 @@ class ddSuperShotgun : ddWeapon replaces SuperShotgun
 			Goto Ready;
 		ReloadOneHanded:
 			ST2R A 1 A_ChangeSprite;
-			#### A 8;
-			#### B 6 A_OpenShotgun2;
-			#### C 8;
-			#### G 8 A_LoadShotgun2;
-			#### B 5;
+			#### A 4;
+			#### B 5 A_OpenShotgun2;
+			#### B 8 A_DDTransformation;
+			#### C 5;
+			#### C 4 A_LoadShotgun2;
+			#### C 3;
 			#### B 5 A_WeapAction;
 			Goto Ready;
 		UnloadP:

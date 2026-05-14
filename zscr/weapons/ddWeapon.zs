@@ -795,7 +795,8 @@ class ddWeapon : Weapon
 			}
 		}
 		if(weap.ReadySound && playUpSound) {
-			if(weap.bReadySndHalf || random() < 128) { ddp.A_StartSound(weap.ReadySound, CHAN_WEAPON); }
+			if(weap.bReadySndHalf && random() < 128) { ddp.A_StartSound(weap.ReadySound, CHAN_WEAPON); }
+			else { ddp.A_StartSound(weap.ReadySound, CHAN_WEAPON); }
 		}
 		psp.x = pspf.x = (ddp.player.readyweapon is "dualWielding" || ddp.lastmode is "dualWielding") ? ((weap.weaponside) ? -65 : 65) : 0;
 		psp.y = pspf.y = 0;
@@ -1097,7 +1098,7 @@ class ddWeapon : Weapon
 			ddp.A_Log("final extraAngle:"..extraangle.."\nfinal extraPitch:"..extrapitch.."\n=======");
 		}
 		//ddp.LineAttack(ang + extraAngle + weap.myInfo.aimOffsetAngle, PLAYERMISSILERANGE, pitch + extraPitch + weap.myInfo.aimOffsetPitch, damage, 'hitscan', pufftype, 0, null, zoff);
-		ddp.LineAttack(ang + extraAngle, PLAYERMISSILERANGE, pitch + extrapitch, damage, 'Hitscan', pufftype, 0, null, zoff);
+		ddp.LineAttack(ang + extraAngle, PLAYERMISSILERANGE, pitch + extrapitch, damage, 'Hitscan', pufftype, LAF_TARGETISSOURCE, null, zoff);
 	}
 	
 	action void A_CheckLeftWeaponMag()
@@ -1281,7 +1282,7 @@ class ddWeapon : Weapon
 		}
 		else 
 		{ 
-			if(cpiece.weaponstatus == DDW_FIRING) { return; }
+			if(cpiece.weaponstatus == DDW_FIRING) { ChangeState("Ready", myside); return; }
 			mode.bmodeready = false;
 			pspl.SetState(cpiece.FindState('Select'));
 			psplf.SetState(null);
@@ -2030,5 +2031,13 @@ class NotAnAmmo : Ammo
 		Spawn:
 			TNT1 A -1;
 			Stop;
+	}
+}
+
+class PulletBuff : BulletPuff replaces BulletPuff
+{
+	Default
+	{
+		+PUFFGETSOWNER;
 	}
 }

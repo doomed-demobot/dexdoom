@@ -187,7 +187,6 @@ class ddStats : BaseStatusBar
 		}
 	}
 	
-	//todo: learn math because this needs math
 	void DrawCrosshair()
 	{
 		let lWeap = dPlay.GetLeftWeapon(dPlay.lwx);
@@ -320,7 +319,7 @@ class ddStats : BaseStatusBar
 		return inp;
 	}
 	
-	//todo: add ability to see offsets + coords of different layers for psprite sides.
+	
 	void DPlayDebug()
 	{
 		let wep = ddWeapon(dPlay.player.ReadyWeapon);

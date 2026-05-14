@@ -1,5 +1,5 @@
 //Default DOOM monsters wrapped for DexDoom stuff
-
+//Most monsters aren't used yet, but i changed their names cause i thought it was funny
 class FormerHuman : Zombieman replaces Zombieman
 {
 	Default
@@ -59,7 +59,7 @@ class Mancubus : Fatso replaces Fatso
 {
 }
 
-class Skelly : Revenant replaces Revenant
+class Skellytan : Revenant replaces Revenant
 {
 }
 

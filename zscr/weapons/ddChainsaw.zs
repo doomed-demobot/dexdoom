@@ -1,6 +1,5 @@
 // #Class : ddChainsaw : ddWeapon replaces Chainsaw()
 //Doom Chainsaw. Unchanged, but cannot be used in dualWielding. No altfire.
-//todo: make fistweapon
 class ddChainsaw : ddFist 
 {
 	Default
@@ -16,7 +15,9 @@ class ddChainsaw : ddFist
 		ddWeapon.SwitchSpeed 0.75;
 		ddWeapon.WeaponType "Chainsaw";
 		+DDWEAPON.TWOHANDER;
-		-DDWEAPON.GOESININV;	
+		-DDWEAPON.GOESININV;
+		-WEAPON.NOALERT;
+		-WEAPON.READYSNDHALF;
 		+DDFIST.ADDME;
 		ddWeapon.WeaponType "Fist";
 		Inventory.PickupMessage "$GOTCHAINSAW";
@@ -39,6 +40,11 @@ class ddChainsaw : ddFist
 		return FindState("Fire");
 	}
 	
+	override State GetRefireState()
+	{
+		return FindState("Fire");
+	}
+	
 	// ##ddChainsaw States()
 	States
 	{
@@ -46,10 +52,10 @@ class ddChainsaw : ddFist
 			SAWG CD 4 A_DDWeaponReady;
 			Loop;
 		Select:
-			SAWG B 1;
+			SAWG CD 4;
 			Loop;
 		Deselect:
-			SAWG B 1;
+			SAWG CD 4;
 			Loop;
 		Altfire:
 		Fire:

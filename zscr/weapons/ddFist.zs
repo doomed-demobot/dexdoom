@@ -151,11 +151,11 @@ class ddFist : ddWeapon replaces Fist
 			Goto Ready;
 		Hook:
 			TNT1 A 1 A_WeapAction;
-			TNT1 A 2;
+			TNT1 A 1;
 			PUNH A 1;
-			PUNH B 2 A_Whoosh;
+			PUNH B 1 A_Whoosh;
 			PUNH CD 2;
-			PUNH E 5 A_FireDDWeapon;
+			PUNH E 4 A_FireDDWeapon;
 			PUNH FGH 2;
 			TNT1 A 2;
 			TNT1 A 2 A_DDRefire;

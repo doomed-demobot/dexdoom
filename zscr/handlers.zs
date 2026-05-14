@@ -27,4 +27,19 @@ class ddHandlers : EventHandler
 			else { p.lastmode = p.lastmode; }
 		}		
 	}
+	
+	override void WorldThingDied(WorldEvent e)
+	{
+		if(e.Thing.bIsMonster)
+		{
+			if(e.Inflictor.target)
+			{
+				if(e.Inflictor.target is "ddPlayer" && e.Inflictor.target.FindInventory("PowerBerserk"))
+				{
+					let eoh = EssenceOfHate(e.Thing.Spawn("EssenceOfHate", e.Thing.pos, false));
+					if(eoh) { eoh.guyWhoSpawnedMe = ddPlayer(e.Inflictor.target); }
+				}
+			}
+		}
+	}
 }
