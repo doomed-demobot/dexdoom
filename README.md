@@ -1,12 +1,10 @@
-# DexDoom Alpha 7.20.24
-DexDoom is a mod for GZDOOM 4.7.x that adds new weapon and inventory systems for dual-wielding weapons in DOOM's arsenal. All weapons and items have also been modified for balance with new mechanics and features that create many useful weapon synergies.
+# DexDoom Alpha 5.14.26
+DexDoom is a mod for GZDOOM/UZDOOM 4.7.x that adds new weapon and inventory systems for dual-wielding weapons in DOOM's arsenal. All weapons and items have also been modified for balance with new mechanics and features that create many useful weapon synergies.
 # Features
 - New weapon handling systems for attacking with either one weapon or two.
 - Weapon inventory system for swapping out left or right weapons. You can even equip weapons from off the ground!
 - New mechanics for all weapons including reloading, unloading, alt-fire modes and dual-wielding restrictions.
 - Special items to improve your inventory and dual-wielding ability.
-- New fist mechanics that includes two new fist weapons with special input combo attacks.
-- Classic Mode to play without new mechanics and restrictions.
 
 Check below for details on all new items and mechanics
 
@@ -69,22 +67,14 @@ The Plasma Rifle's low recoil and high damage output makes it a perfect rapid fi
 power supply needs constant charging, and you'll know you need to recharge once it starts shooting slow.
 
 ## BFG 9000
-- No new mechanics (yet!)
+- New powerful spray function.
 - **Cannot be fired while dual-wielding**
 - Slow draw speed
+- Extra ammo cost
 - Heavy recoil
 
-The **BFG 9000** is still as powerful as it needs to be, dishing out heavy recoil and heavier damage. For obvious reasons (weight) it is impossible to fire this weapon while trying to dual-wield weapons, **so only equip to your right handed weapons as using it in the left is
+The **BFG 9000** has had its power maximized. The cost is now 50 cells, but it now fires tracers in a 360° field around the projectile. For obvious reasons (weight) it is impossible to fire this weapon while trying to dual-wield weapons, **so only equip to your right handed weapons as using it in the left is
 impossible!**
-
-## Chainsaw
-- No new mechanics (!yet)
-- **Cannot be fired while dual-wielding**
-- Fast draw speed
-- Melee weapon
-
-While very vanilla, the Chainsaw remains a reliable fallback option for hordes of zombies or tempting hell nobles. For obvious reasons (incomplete arm technology) it is impossible to use this weapon while trying to dual-wield weapons, **so only equip to you right handed weapons
-as using it in the left is impossible!**
 
 ## Fist weapons
 
@@ -93,42 +83,31 @@ When you have no weapon equipped to a slot, you pull your fists out. Along with 
 ### Brass Knuckles
 - Left hand performs quick jabs
 - Right hand performs slow hooks
-- LP -> RP for a quick jab-hook combo
 - Full 10x berserk bonus damage
 
-The Brass Knuckles comes with new techniques to tenderize demon flesh. With your left hand, you throw out a jab to stun lock opponents. With your right hand, you throw out a jab to smash faces. Follow up a jab with a hook to throw it faster. Your Brass Knuckles get full berserk power when active.
+The Brass Knuckles comes with new techniques to tenderize demon flesh. With your left hand, you throw out a jab to stun lock opponents. With your right hand, you throw out a jab to smash faces. Your Brass Knuckles still get full berserk power when active.
 
-### Power Fists
-- Same attacks for left and right handed attacks
-- LP + RP to swing both fists
-- No berserk bonus
+## Chainsaw
+- No new mechanics (yet!)
+- **Cannot be fired while dual-wielding**
+- Fast draw speed
+- Melee weapon
 
-The experimental Power Fists crush enemies with explosive power, but are very cumbersome to swing. Press both fire buttons to swing both fists. Although they receive no berserk bonus, good footwork can lets you make short work of even large demons.
-
-### Knives
-- Left hand performs slow stab
-- Right hand performs quick slices
-- RP -> RP -> LP quick slice-stab combo
-- 3x berserk bonus damage
-
-While weaker than your Brass Knuckles, the Knives perform well at cutting up zombies and imps. Left fire for a stab attack. Right fire for up to two quick slashes. Follow up a stab with two slashes for a quicker stab.
-
-### Berserk
-- Reduces recoil for weapons
-- Increases damage for Brass Knuckles and Knives
-- 60 second time limit
-
-The Berserk power effects now only last for 60 seconds. Plenty of time to rampage with either gun or fist, your choice.
+While very vanilla, the Chainsaw remains a reliable fallback option for hordes of zombies or tempting hell nobles. For obvious reasons (incomplete arm technology) it is impossible to use this weapon while trying to dual-wield weapons, **so only equip to you right handed weapons
+as using it in the left is impossible!**
 
 # Items
 
 ### Tactical Backpack
 
-The Tactical Backpack sometimes replaces the Backpack. Instead of increasing max ammo capacity, it increases weapon inventory size by 3 and quick slots by 1. Also has a chance to contain spare ammo.
+The Tactical Backpack sometimes replaces the Backpack. Along with increasing max ammo capacity, it increases weapon inventory size by 3 and quick slots by 1. Also provides spare ammo similar to the regular backpack.
 
-### ESOA
+### Berserk
+- Reduces recoil for weapons
+- Increases damage for Brass Knuckles
+- 80 second time limit
 
-The ESOA is a rare upgrade that can replace the BFG 9000. Once equip, you fire both weapons as if you are two-handing them, which includes not having to lower your weapons to reload! It must be charged to work, however, and slower, more powerful weapons use it up the fastest. The ESOA can be charged by picking up Cell ammo for the Plasma Rifle.
+The Berserk power effects now only last for 80 seconds, however little slivers of your undying rage will seep out your victims, allowing you to reclaim you lost time. Each Essense of Hate refills 2-5 seconds of your remaining Berserk time.
 
 # Secret Tricks
 
@@ -137,3 +116,4 @@ The ESOA is a rare upgrade that can replace the BFG 9000. Once equip, you fire b
 - You cannot swing fist weapons while firing, but you can quickly shoot a gun after using them.
 - After lowering your left weapon to reload the right, you can switch wield modes during the reload animation to stay in two-handing mode and start firing without raising the left weapon.
 - Quick swapping can be cancelled by simply reselecting the weapon being lowered.
+- When pickup swapping, hold down the pickup swap button to drop your previous weapon to the ground.
