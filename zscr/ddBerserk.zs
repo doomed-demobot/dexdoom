@@ -6,6 +6,7 @@ class ddBerserk : Berserk replaces Berserk
 		Inventory.PickupMessage "You feel invigorated...";
 		Inventory.PickupSound "weapons/berserkget";
 	}
+		
 	States
 	{
 		Pickup:
@@ -23,6 +24,18 @@ class PowerBerserk : Powerup
 	{
 		Powerup.Duration -80;
 		Powerup.Color "ff 00 00", 0.2;
+	}
+	
+	override bool HandlePickup(Inventory item)
+	{
+		Super.HandlePickup(item);
+		if(item.GetClass() != GetClass()) { return false; }
+		if(effectTics < Powerup(item).effectTics)
+		{
+			effectTics = Powerup(item).effectTics;
+			return true;
+		}
+		return false;
 	}
 	
 	override void DetachFromOwner()
@@ -56,6 +69,7 @@ class EssenceOfHate : Inventory
 		Inventory.Amount 1;
 		Inventory.MaxAmount 1;
 		Inventory.PickupSound "misc/mmmm";
+		Inventory.PickupMessage "Picked up an essence of hate";
 		RenderStyle "Add";
 		Alpha 1.;
 	}

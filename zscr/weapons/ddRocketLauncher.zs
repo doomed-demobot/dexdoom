@@ -145,25 +145,36 @@ class ddRocketLauncher : ddWeapon replaces RocketLauncher
 				pspi.SetScaling(5, -10);
 				return;
 			case 2: //reload start
+				if(ddp.playingFreedoom) { pspi.SetTransformationProperties(0); return; }
 				pspi.SetTransformationProperties(4, false, (INTR_TRANS_INVEXPO));
 				pspi.SetTranslations(0, -6);
 				pspi.SetScaling(0, -10);
 				pspi.SetRotation(-8);
 				return;
-			case 3:
+			case 3:				
 				pspi.SetTransformationProperties(4, true, (INTR_TRANS_INVEXPO));
 				pspi.SetTranslations(0, 6);
 				pspi.SetScaling(0, 10);
 				pspi.SetRotation(8);
 				return;
 			case 4:
-				pspi.SetTransformationProperties(4, false, (INTR_TRANS_INVEXPO));
+				pspi.SetTransformationProperties(4, false, (INTR_TRANS_INVEXPO), nextCase: 5);
+				if(ddp.playingFreedoom) 
+				{
+					pspi.SetTranslations(0, 2);
+					return;
+				}
 				pspi.SetTranslations(2, -2);
 				pspi.SetScaling(0, 0);
 				pspi.SetRotation(0);
 				return;
 			case 5:
 				pspi.SetTransformationProperties(3, false, (INTR_TRANS_INVEXPO));
+				if(ddp.playingFreedoom) 
+				{
+					pspi.SetTranslations(0, -2);
+					return;
+				}
 				pspi.SetTranslations(-2, 2);
 				pspi.SetScaling(0, 0);
 				pspi.SetRotation(0);
@@ -290,7 +301,7 @@ class ddRocketLauncher : ddWeapon replaces RocketLauncher
 			MISG B 4 A_DDTransformation;
 			MISG B 3 A_WeapAction;
 			MISG B 5;
-			MISG B 5 A_DDTransformation;
+			//MISG B 5 A_DDTransformation;
 			MISG B 4 A_WeapAction;
 			MISG B 1;
 		RFinish:

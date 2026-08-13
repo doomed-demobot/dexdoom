@@ -21,9 +21,9 @@ class ddTactPack : BackpackItem
 	override String PickupMessage()
 	{
 		let ddp = ddPlayer(owner);
-		String finalmsg = ((ibuffed) ? self.pickupmsg : "Took some ammo out of the load-bearing backpack.").."\n"..
-		((ibuffed) ? "Left weapon holster increased by 1!!" : "" ).."\n"..
-		((ibuffed) ? "Right weapon holster increased by 1!!" : "" ).."\n"..
+		String finalmsg = ((ibuffed) ? self.pickupmsg : "Took some ammo out of the load-bearing backpack.")..
+		((ibuffed) ? "\nLeft weapon holster increased by 1!!\n" : "" )..
+		((ibuffed) ? "Right weapon holster increased by 1!!\n" : "" )..
 		((ibuffed) ? "Inventory size increased by 2!!" : "" );
 		return finalmsg;
 	}

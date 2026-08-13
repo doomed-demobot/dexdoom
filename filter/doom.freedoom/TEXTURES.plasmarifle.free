@@ -1,0 +1,32 @@
+Sprite PLSGC0, 126, 68
+{
+	Offset -20, -100
+	Patch PLSGB0, 0, 0
+}
+
+Sprite PLSGD0, 126, 68
+{
+	Offset -160, -100
+	Patch PLSGB0, 0, 0
+	{
+		FLIPX
+	}
+}
+
+Sprite PLSRD0, 1, 1
+{
+	Offset 0, 0
+	Patch NADAA0, 0, 0
+}
+
+Sprite PLSRE0, 1, 1
+{
+	Offset 0, 0
+	Patch NADAA0, 0, 0
+}
+
+Sprite PLSRF0, 1, 1
+{
+	Offset 0, 0
+	Patch NADAA0, 0, 0
+}

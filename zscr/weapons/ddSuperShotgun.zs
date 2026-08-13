@@ -99,12 +99,15 @@ class ddSuperShotgun : ddWeapon replaces SuperShotgun
 		{
 			case 0:
 				if(res == RES_TWOHAND) { return "SHT2", ((ddWeaponFlags & SST_RALL) ? 6 : 0 ); }
-				else if(res == RES_DUALWLD) { return ((weaponside) ? "SHT2" : "SH2R"), ((ddWeaponFlags & SST_RALL) ? 6 : 0 ); }
+				else if(res == RES_DUALWLD) { return ((weaponside) ? "SH2L" : "SH2R"), ((ddWeaponFlags & SST_RALL) ? 6 : 0 ); }
 				else { return "TNT1", -1; }
 			case 1: //one hand reload
-				return ((weaponside) ? "SHT2" : "SH2R"), ((ddWeaponFlags & SST_RALL) ? 6 : 0 );
+				if(ddp.playingFreedoom) { return (weaponside) ? "SH2L" : "SH2R", ((ddWeaponFlags & SST_RALL) ? 6 : 0); }
+				else { return ((weaponside) ? "SHT2" : "SH2R"), ((ddWeaponFlags & SST_RALL) ? 6 : 0 ); }
 			case 2: //force sht2
 				return "SHT2", -1;
+			case 3: //sprite for arm
+				return "SARM", ((mag >= 1 || ddp.CountInv("BFS") <= 1) ? 1 : 2);
 			default:
 				return "TNT1", -1;
 		}
@@ -200,16 +203,34 @@ class ddSuperShotgun : ddWeapon replaces SuperShotgun
 				pspi.SetRotation((mag > 1) ? -2 : 2);
 				return;
 			case 5: //reload 1
-				pspi.SetTransformationProperties(14, false, (INTR_TRANS_EXPO | INTR_SCALE_EXPO | INTR_ROTAT_INVEXPO), nextcase: 6);
-				pspi.SetTranslations(0, 0);
-				pspi.SetScaling(-5, 0);
-				pspi.SetRotation(9);
+				if(ddp.playingFreedoom)
+				{
+					pspi.SetTransformationProperties(12, false, (INTR_TRANS_EXPO | INTR_ROTAT_INVEXPO), nextcase: 6);
+					pspi.SetTranslations(20, 0);
+					pspi.SetRotation(14);
+				}
+				else
+				{
+					pspi.SetTransformationProperties(14, false, (INTR_TRANS_EXPO | INTR_SCALE_EXPO | INTR_ROTAT_INVEXPO), nextcase: 6);
+					pspi.SetTranslations(0, 0);
+					pspi.SetScaling(-5, 0);
+					pspi.SetRotation(9);
+				}
 				return;
 			case 6:	//reload 2
-				pspi.SetTransformationProperties(6, false, (INTR_TRANS_EXPO | INTR_SCALE_LINEAR | INTR_ROTAT_EXPO), nextcase: 7);
-				pspi.SetTranslations(0, 20);
-				pspi.SetScaling(10,0);
-				pspi.SetRotation(-6);
+				if(ddp.playingFreedoom)
+				{
+					pspi.SetTransformationProperties(3, false, (INTR_TRANS_INVEXPO | INTR_SCALE_EXPO), nextcase: 9);
+					pspi.SetTranslations(10,0);
+					pspi.SetScaling(-10, 10);
+				}
+				else
+				{
+					pspi.SetTransformationProperties(6, false, (INTR_TRANS_EXPO | INTR_SCALE_LINEAR | INTR_ROTAT_EXPO), nextcase: 7);
+					pspi.SetTranslations(0, 20);
+					pspi.SetScaling(10,0);
+					pspi.SetRotation(-6);
+				}
 				return;
 			case 7:
 				pspi.SetTransformationProperties(2, false, (INTR_TRANS_INVEXPO | INTR_SCALE_INVEXPO | INTR_ROTAT_EXPO));
@@ -220,6 +241,20 @@ class ddSuperShotgun : ddWeapon replaces SuperShotgun
 			case 8:
 				pspi.SetTransformationProperties(7, true, (INTR_TRANS_EXPO));
 				pspi.SetTranslations(0, 20);
+				return;
+			case 9:
+				pspi.SetTransformationProperties(3, false, (INTR_TRANS_INVEXPO | INTR_SCALE_EXPO));
+				pspi.SetTranslations(-20,0);
+				pspi.SetScaling(10, -10);
+				pspi.SetRotation(-14);
+				return;
+			case 10: //arm reload up
+				pspi.SetTransformationProperties(6, false, (INTR_TRANS_INVEXPO));
+				pspi.SetTranslations(20, -30);
+				return;
+			case 11: //arm reload down
+				pspi.SetTransformationProperties(5, false, (INTR_TRANS_INVEXPO));
+				pspi.SetTranslations(0, 45);
 				return;
 			default: return;
 		}
@@ -233,6 +268,7 @@ class ddSuperShotgun : ddWeapon replaces SuperShotgun
 		let cpiece = ddWeapon(me.companionpiece);
 		int myside = (weaponside) ? PSP_LEFTW0 : PSP_RIGHTW0; 
 		int flashside = (weaponside) ? PSP_LEFTWF0 : PSP_RIGHTWF0;
+		PSpriteInfo pspi = ddp.GetPSpriteInfo(((weaponside) ? PSP_LEFTW0 : PSP_RIGHTW0), ddp);
 		let res = ModeCheck();
 		switch(no)
 		{
@@ -268,6 +304,9 @@ class ddSuperShotgun : ddWeapon replaces SuperShotgun
 				break;
 			case 6: //close
 				ddWeaponFlags &= ~SST_RALL;
+				break;
+			case 7: //spawn arm sprite (freedoom only)
+				if(ddp.playingFreedoom) { SetSubSprite(pspi, 8, 50, 0, "ReloadingArm"); }
 				break;
 			default: ddp.A_Log("No action defined for tic "..no); break;
 		}
@@ -321,6 +360,7 @@ class ddSuperShotgun : ddWeapon replaces SuperShotgun
 			#### D 5 A_WeapAction;
 			#### D 1;
 		Reload2:
+			#### A 7 A_WeapAction;
 			#### A 2 A_ChangeSprite;
 			#### D 5;
 			#### E 7;
@@ -346,7 +386,17 @@ class ddSuperShotgun : ddWeapon replaces SuperShotgun
 			#### B 5 A_WeapAction;
 			Goto Ready;
 		UnloadP:
-			Goto Ready;			
+			Goto Ready;
+		ReloadingArm:
+			TNT1 A 8;
+			SARM C 0;
+			#### # 10 A_DDTransformation;
+			SARM C 4;
+			SARM D 5;
+			SARM D 11 A_DDTransformation;
+			SARM D 4;
+			TNT1 A 1;
+			Stop;
 		FlashA:
 		Boom:
 			SH2F A 4 A_DDTransformation;
@@ -365,6 +415,7 @@ class ddSuperShotgun : ddWeapon replaces SuperShotgun
 			Goto FlashDone;
 		Ind:
 			SH2R A 1;
+			SH2L A 1;
 			Stop;
 		Spawn:
 			SGN2 A -1;

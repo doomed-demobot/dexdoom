@@ -189,7 +189,7 @@ class BFGBalle : BFGBall
 			for(int y = 0; y < 15; ++y)
 			{
 				spraydam += random(1,8);
-				if(spraydam > lt.linetarget.health) //if overkilling, chance to stop doing more damage
+				if(spraydam > lt.linetarget.health) //replace with alternative chance to ignore enemy that was already brought to near death.
 				{
 					if(random(35, 128) > 100) { break; }
 				}

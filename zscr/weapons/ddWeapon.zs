@@ -868,6 +868,7 @@ class ddWeapon : Weapon
 		else { weap.AlternativeAttack(); }
 	}
 	
+	//todo: add tic definitions
 	action void A_DDFlash()
 	{
 		let ddp = ddPlayer(self);
@@ -1211,7 +1212,7 @@ class ddWeapon : Weapon
 			{
 				if(ddp.dddebug & DBG_WEAPSEQUENCE) { A_Log("Right weapon mag is empty"); }
 				ddp.player.SetPSprite(PSP_RIGHTW0, rWeap.FindState('Ready'));
-				ddp.player.SetPSprite(PSP_LEFTW0, lWeap.FindState('Ready'));
+				//ddp.player.SetPSprite(PSP_LEFTW0, lWeap.FindState('Ready'));
 				invoker.bModeReady = true;
 				mode.ChangeState('Ready');
 				return;

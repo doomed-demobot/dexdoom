@@ -24,6 +24,7 @@ class ddPlayer : DoomPlayer
 	int instability, instTimer; //instability penalty [dep]
 	PSpriteInfo psinfo;
 	uint8 fakebuttons;
+	bool playingFreedoom; //yes = freedoom, no = id
 	//other
 	ddweapon desire;
 	Vector3 tepos;
@@ -790,7 +791,7 @@ class ddPlayer : DoomPlayer
 			lWeap.size += am;
 			for(int x = 0; x < am; x++)
 			{
-				lWeap.AddItem(ddWeapon(GetFists(1)));
+				lWeap.AddItem(ddWeapon(GetFists()));
 			}
 		}
 		else if(side == CE_RIGHT)
@@ -798,7 +799,7 @@ class ddPlayer : DoomPlayer
 			rWeap.size += am;
 			for(int x = 0; x < am; x++)
 			{
-				rWeap.AddItem(ddWeapon(GetFists(0)));
+				rWeap.AddItem(ddWeapon(GetFists()));
 			}
 		
 		}
@@ -968,7 +969,7 @@ class ddPlayer : DoomPlayer
 		if(side < 0) 
 		{ 
 			if(!ignoreTwoHander && flst.RetItem(fwx).btwohander && 
-			(player.readyweapon is "dualWielding" || lastmode is "dualWielding")) { 
+			(player.readyweapon is "dualWielding" || lastmode is "dualWielding" || player.pendingweapon is "dualWielding")) { 
 				return flst.RetItem(0); 
 			} 			
 			return flst.RetItem(fwx); 
@@ -990,7 +991,7 @@ class ddPlayer : DoomPlayer
 	{ 
 		let lWeap = GetLeftWeapons();
 		if(slot > lWeap.items.size() - 1 || slot < 0) { return null; }
-		if(!ignoreTwoHander && lWeap.RetItem(slot).bTwoHander) { return ddWeapon(GetFists(1)); }
+		if(!ignoreTwoHander && lWeap.RetItem(slot).bTwoHander) { return ddWeapon(GetFists(-1)); }
 		else { return ddWeapon(lWeap.RetItem(slot)); }
 	}
 	
@@ -1000,7 +1001,7 @@ class ddPlayer : DoomPlayer
 		if(slot > rWeap.items.size() - 1 || slot < 0) { return null; }
 		if(!ignoreTwoHander && rWeap.RetItem(slot).bTwoHander &&
 		(player.readyweapon is "dualWielding" || lastmode is "dualWielding")) { 
-			return ddWeapon(GetFists(0)); 
+			return ddWeapon(GetFists(-1)); 
 		}
 		else { return ddWeapon(rWeap.RetItem(slot)); }
 	}
@@ -1328,10 +1329,12 @@ class PSpriteInfo : Thinker
 		{
 			if((iMethod & 12) == INTR_SCALE_EXPO)
 			{
-				psp.scale.x += ( 1. / ( 1 / ( ((scaleDelta.x / 100) + 1)**( 1. / transformationLength ) ) ** (abs(transformationTimer - (transformationLength + 1) ) ) ) ) - 
-						( 1. / ( 1 / ( ((scaleDelta.x / 100) + 1)**( 1. / transformationLength ) ) ** ((abs(transformationTimer - (transformationLength + 1) ) ) - 1) ) );
-				psp.scale.y += ( 1. / ( 1 / ( ((scaleDelta.y / 100) + 1)**( 1. / transformationLength ) ) ** (abs(transformationTimer - (transformationLength + 1) ) ) ) ) - 
-						( 1. / ( 1 / ( ((scaleDelta.y / 100) + 1)**( 1. / transformationLength ) ) ** ((abs(transformationTimer - (transformationLength + 1) ) ) - 1) ) );
+				psp.scale.x += (scaleDelta.x < 0 ? -1 : 1) * 
+						( ( 1. / ( 1 / ( ((abs(scaleDelta.x) / 100.) + 1)**( 1. / transformationLength ) ) ** (abs(transformationTimer - (transformationLength + 1) ) ) ) ) - 
+						( 1. / ( 1 / ( ((abs(scaleDelta.x) / 100.) + 1)**( 1. / transformationLength ) ) ** ((abs(transformationTimer - (transformationLength + 1) ) ) - 1) ) ) );
+				psp.scale.y += (scaleDelta.x < 0 ? -1 : 1) * 
+						( ( 1. / ( 1 / ( ((abs(scaleDelta.y) / 100) + 1)**( 1. / transformationLength ) ) ** (abs(transformationTimer - (transformationLength + 1) ) ) ) ) - 
+						( 1. / ( 1 / ( ((abs(scaleDelta.y) / 100) + 1)**( 1. / transformationLength ) ) ** ((abs(transformationTimer - (transformationLength + 1) ) ) - 1) ) ) );
 			}
 			else if((iMethod & 12) == INTR_SCALE_LINEAR)
 			{
@@ -1340,10 +1343,12 @@ class PSpriteInfo : Thinker
 			}
 			else if((iMethod & 12) == INTR_SCALE_INVEXPO)
 			{
-				psp.scale.x += ( 1. / ( 1 / ( ((scaleDelta.x / 100) + 1)**( 1. / transformationLength ) ) ** ((transformationTimer) ) ) ) - 
-						( 1. / ( 1 / ( ((scaleDelta.x / 100) + 1)**( 1. / transformationLength ) ) ** (((transformationTimer) ) - 1) ) );
-				psp.scale.y += ( 1. / ( 1 / ( ((scaleDelta.y / 100) + 1)**( 1. / transformationLength ) ) ** ((transformationTimer) ) ) ) - 
-						( 1. / ( 1 / ( ((scaleDelta.y / 100) + 1)**( 1. / transformationLength ) ) ** (((transformationTimer) ) - 1) ) );
+				psp.scale.x += (scaleDelta.x < 0 ? -1 : 1) * 
+						( ( 1. / ( 1 / ( ((abs(scaleDelta.x) / 100.) + 1)**( 1. / transformationLength ) ) ** ((transformationTimer) ) ) ) - 
+						( 1. / ( 1 / ( ((abs(scaleDelta.x) / 100.) + 1)**( 1. / transformationLength ) ) ** (((transformationTimer) ) - 1) ) ) );
+				psp.scale.y += (scaleDelta.x < 0 ? -1 : 1) * 
+						( ( 1. / ( 1 / ( ((abs(scaleDelta.y) / 100.) + 1)**( 1. / transformationLength ) ) ** ((transformationTimer) ) ) ) - 
+						( 1. / ( 1 / ( ((abs(scaleDelta.y) / 100.) + 1)**( 1. / transformationLength ) ) ** (((transformationTimer) ) - 1) ) ) );
 			}
 		}
 		if(PSPStatus & PSPS_ROTATING)
@@ -1367,7 +1372,9 @@ class PSpriteInfo : Thinker
 		transformationTimer--;
 	}
 	
-	void SetTransformationProperties(int tLength = 1, bool resetOnTrans = false, int tMethods = 0, double pivotx = 0, double pivoty = 0, bool pivotPercent = false, PSpriteInfo pspiMaster = null, int nextCase = -1)
+	void SetTransformationProperties(int tLength = 1, bool resetOnTrans = false, int tMethods = 0, 
+	double pivotx = 0, double pivoty = 0, bool pivotPercent = false, 
+	PSpriteInfo pspiMaster = null, int nextCase = -1)
 	{
 		if((tMethods & 3) > 0) { iMethod &= ~3; iMethod |= tMethods; }
 		if((tMethods & 12) > 0) { iMethod &= ~12; iMethod |= tMethods; }
@@ -1802,7 +1809,7 @@ class TouchEntity : Actor
 	
 	void TEMove()
 	{
-		if(!owner) { Destroy(); }
+		if(!owner) { Destroy(); return; }
 		SetOrigin(owner.tepos, false);
 		if(owner.dddebug & DBG_INVENTORY) { self.sprite = GetSpriteIndex("PKUPA0"); }
 		else { self.sprite = GetSpriteIndex("TNT1A0"); }

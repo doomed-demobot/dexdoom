@@ -92,7 +92,7 @@ class ddPlasmaRifle : ddWeapon replaces PlasmaRifle
 		if(!ddp) { return "TNT1", -1; }
 		int res = ModeCheck();
 		if(res == RES_TWOHAND) { return "PLSG", 1; }
-		else if(res == RES_DUALWLD) { return "PLSG", 2; }
+		else if(res == RES_DUALWLD) { return "PLSG", ((weaponside) ? 2 : 3); }
 		else { return "TNT1", -1; }
 	}
 	
@@ -188,9 +188,9 @@ class ddPlasmaRifle : ddWeapon replaces PlasmaRifle
 			case 2: //reload
 				let pspif = ddp.GetPSpriteInfo(pspi.id + 10, ddp);
 				pspi.SetTransformationProperties(6, false, (INTR_TRANS_INVEXPO));
-				pspi.SetTranslations(-5, 8);
+				pspi.SetTranslations(((pspi.id == 10) ? -5 : 5), 8);
 				pspif.SetTransformationProperties(6, false, (INTR_TRANS_INVEXPO));
-				pspif.SetTranslations(-5, 8);
+				pspif.SetTranslations(((pspif.id == 20) ? -5 : 5), 8);
 				return;
 			default:
 				return;
@@ -287,6 +287,8 @@ class ddPlasmaRifle : ddWeapon replaces PlasmaRifle
 		ReloadP2:
 			#### # 0 A_ChangeSprite;
 			#### # 0 A_DDFlash;
+			#### # 2;
+			#### # 4 A_WeapAction;
 			#### # 2;
 			#### # 4 A_WeapAction;
 			#### # 2;
@@ -420,6 +422,7 @@ class PlasmaBolt : Actor
 		Gravity 0.69;
 		SeeSound "weapons/pboltlaunch";
 		DeathSound "weapons/bfgx";
+		Obituary "%k's main goal was to blow up %o";
 	}
 	
 	override void PostBeginPlay()

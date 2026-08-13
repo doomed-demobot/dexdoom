@@ -10,6 +10,7 @@ class ddHandlers : EventHandler
 			if(p.lastmode is "twoHanding" || p.player.readyweapon is "twoHanding") { p.InitTwoHanding(); }
 			else if(p.lastmode is "dualWielding" || p.player.readyweapon is "dualWielding") { p.InitDualWielding(); }
 			else { p.lastmode = p.lastmode; }
+			if(Wads.CheckNumForName("playingfree", 0) != -1) { p.playingFreedoom = 1; }
 		}		
 	}
 	override void PlayerRespawned(PlayerEvent e)
@@ -25,6 +26,7 @@ class ddHandlers : EventHandler
 			if(p.lastmode is "twoHanding" || p.player.readyweapon is "twoHanding") { p.InitTwoHanding(); }
 			else if(p.lastmode is "dualWielding" || p.player.readyweapon is "dualWielding") { p.InitDualWielding(); }
 			else { p.lastmode = p.lastmode; }
+			if(Wads.CheckNumForName("playingfree", 0) != -1) { p.playingFreedoom = 1; }
 		}		
 	}
 	

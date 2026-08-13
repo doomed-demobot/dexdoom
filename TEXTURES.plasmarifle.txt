@@ -5,6 +5,12 @@ Sprite "PLSGC0", 83, 61
 	Patch "PLSGA0", 0, 0
 }
 
+Sprite "PLSGD0", 83, 61
+{
+	Offset -123, -114
+	Patch "PLSGA0", 0, 0
+}
+
 Sprite "PLGFB0", 104, 111
 {
 	Offset -152, -57
