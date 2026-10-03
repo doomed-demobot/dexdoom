@@ -129,66 +129,82 @@ class ddShotgun : ddWeapon replaces Shotgun
 	override void SetDDTransformations(int no, PSpriteInfo pspi)
 	{
 		let ddp = ddPlayer(owner);
+		let mode = ModeCheck();
 		if(!ddp) { return; }
 		int i = (weaponside) ? ddp.leftinstability : ddp.rightinstability;
 		switch(no)
 		{
 			case 1: //shotgun fire
-				pspi.SetTransformationProperties(3, true, (INTR_TRANS_EXPO | INTR_SCALE_INVEXPO));
+				if(mode == RES_DUALWLD) { pspi.SetTransformationProperties(3, false, 0, 0, 25, nextcase: 10); }
+				else if(mode == RES_TWOHAND) { pspi.SetTransformationProperties(3, false, 0, 0, 0, nextcase: 10); }
+				else {}
 				//if flash state, copy weapons rotation
 				if(pspi.id > 15) 
 				{
+					if(mode == RES_DUALWLD) { pspi.SetTransformationProperties(3, true, 0, 0, 75, nextcase: 10); }
+					else if(mode == RES_TWOHAND) { pspi.SetTransformationProperties(3, true, 0, 0, 50, nextcase: 10); }
+					else {}
+					pspi.SetPhasing(-1.0, -0.4);
 					pspi.GetTranslations(pspi.id - 10);
-					//pspi.GetRotation(pspi.id - 10);
 				}
 				else 
 				{
 					pspi.SetTranslations(random2(1), 12);
-					//pspi.SetRotation(random2(7));
 				}
 				
-				pspi.SetScaling(0, 20);
+				pspi.SetScaling(30, 50, 0, 1.9);
 				return;
 			case 2: //shotgun reload 1
-				pspi.SetTransformationProperties(2, false, INTR_TRANS_EXPO);
-				pspi.SetTranslations(-10, 4);
+				pspi.SetTransformationProperties(10, false);
+				pspi.SetTranslations(-10, 4, 0, 3.2);
+				pspi.SetScaling(10, 0, 0, 2.3);
 				return;
 			case 3: //shotgun reload 2
-				pspi.SetTransformationProperties(2, false, (INTR_TRANS_INVEXPO | INTR_SCALE_INVEXPO | INTR_ROTAT_LINEAR));
-				pspi.SetTranslations(-1, 16);
-				pspi.SetScaling(10, 0);
-				pspi.SetRotation(6);
+				pspi.SetTransformationProperties(3, false);
+				pspi.SetTranslations(-1, 16, 0, -0.6);
+				pspi.SetScaling(-10, 0, 0, 2.3);
+				pspi.SetRotation(6, 0, 0);
 				return;
 			case 4: //shotgun reload 3
-				pspi.SetTransformationProperties(2, true, (INTR_TRANS_LINEAR | INTR_SCALE_INVEXPO | INTR_ROTAT_INVEXPO));
-				pspi.SetTranslations(8, -24);
-				pspi.SetScaling(-10, 0);
-				pspi.SetRotation(-4);
+				pspi.SetTransformationProperties(2, true);
+				pspi.SetTranslations(8, -24, 0, -0.3);
+				pspi.SetScaling(-10, 0, 0, RAMP_INVEXPONENTIAL);
+				pspi.SetRotation(-4, 0, RAMP_INVEXPONENTIAL);
 				return;
 			case 5: //shotgun 1h reload 1
-				pspi.SetTransformationProperties(5, false, (INTR_TRANS_INVEXPO));
-				pspi.SetTranslations(((weaponside) ? -9 : 9), 16);
+				pspi.SetTransformationProperties(5, false);
+				pspi.SetTranslations(((weaponside) ? -9 : 9), 16, 0, RAMP_INVEXPONENTIAL);
 				return;
 			case 6:
-				pspi.SetTransformationProperties(2, false, (INTR_TRANS_EXPO));
-				pspi.SetTranslations(0, -16);
+				pspi.SetTransformationProperties(2, false);
+				pspi.SetTranslations(0, -16, 0, RAMP_EXPONENTIAL);
 				return;
 			case 7:
-				pspi.SetTransformationProperties(4, false, (INTR_TRANS_INVEXPO));
-				pspi.SetTranslations(0, 8);
+				pspi.SetTransformationProperties(4, false);
+				pspi.SetTranslations(0, 8, 0, RAMP_INVEXPONENTIAL);
 				return;
 			case 8:
-				pspi.SetTransformationProperties(4, false, (INTR_TRANS_INVEXPO));
-				pspi.SetTranslations(0, -6);
+				pspi.SetTransformationProperties(4, false);
+				pspi.SetTranslations(0, -6, 0, RAMP_INVEXPONENTIAL);
 				return;
 			case 9:
-				pspi.SetTransformationProperties(4, true, (INTR_TRANS_EXPO));
-				pspi.SetTranslations(((weaponside) ? 9 : -9), -4);
+				pspi.SetTransformationProperties(4, true);
+				pspi.SetTranslations(((weaponside) ? 9 : -9), -4, 0, RAMP_EXPONENTIAL);
+				return;
+			case 10:
+				pspi.SetTransformationProperties(3, true);
+				pspi.SetScaling(-30, -50, 0, -0.2);
 				return;
 			default: return;
 		}
 	}
 
+	override int, int GetRenderStyleInfo(int no)
+	{
+		if(no == 3) { return (weaponside) ? 20 : 25, STYLE_Translucent; }
+		else { return 99, 0; }
+	}
+	
 	override void DD_WeapAction(int no)
 	{
 		let ddp = ddPlayer(owner);
@@ -197,6 +213,7 @@ class ddShotgun : ddWeapon replaces Shotgun
 		let cpiece = ddWeapon(me.companionpiece);
 		int myside = (weaponside) ? PSP_LEFTW0 : PSP_RIGHTW0; 
 		int flashside = (weaponside) ? PSP_LEFTWF0 : PSP_RIGHTWF0;
+		let pspi = ddp.GetPSpriteInfo((weaponside) ? PSP_LEFTW0 : PSP_RIGHTW0, ddp);
 		let res = ModeCheck();
 		switch(no)
 		{
@@ -204,7 +221,7 @@ class ddShotgun : ddWeapon replaces Shotgun
 				if(mag < 1 && ddp.CountInv("Shell") < 1) { ChangeState("NoAmmo", myside); break; }
 				if(res == RES_DUALWLD) { //lower to reload
 					if(mag < 1) {
-						if(ddWeaponFlags & SHT_RSEQ) { weaponStatus = DDW_RELOADING; ChangeState("Reload2B", myside); }
+						if(ddWeaponFlags & SHT_RSEQ) { ChangeState("Reload2B", myside); weaponStatus = DDW_RELOADING;  }
 						 else { weaponStatus = DDW_RELOADING; ChangeState("ReloadOneHanded", myside); }
 					}
 					else { /*:))))*/ }
@@ -250,6 +267,7 @@ class ddShotgun : ddWeapon replaces Shotgun
 			Loop;
 		Altfire:
 		Fire:
+			#### A 3 A_SetPSpriteRenderStyle;
 			#### A 1 A_WeapAction;
 			#### A 3;
 			#### A 1 A_DDTransformation;
@@ -257,7 +275,7 @@ class ddShotgun : ddWeapon replaces Shotgun
 			#### A 1 A_FireDDWeapon;
 			#### A 6;
 			#### A 2 A_WeapAction;
-			Goto Ready;	
+			Goto Ready;
 		Select:
 			SHTD A 2 A_ChangeSprite;
 			#### # 1;

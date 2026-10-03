@@ -169,6 +169,7 @@ class ddPistol : ddWeapon replaces Pistol
 		burstcounter = 3;
 	}
 
+	//todo: maybe redo for cleanup/readability
 	override void SetDDTransformations(int no, PSpriteInfo pspi)
 	{
 		let ddp = ddPlayer(owner);
@@ -177,27 +178,27 @@ class ddPistol : ddWeapon replaces Pistol
 		switch(no)
 		{
 			case 1: //pistol fire
-				pspi.SetTransformationProperties(6, true, (INTR_TRANS_EXPO | INTR_SCALE_EXPO | INTR_ROTAT_INVEXPO));
-				pspi.SetTranslations(0, 12);
+				pspi.SetTransformationProperties(5, true, 0, 0, 60);
+				pspi.SetTranslations(0, 12, 0, -0.63);
 				//pspi.SetScaling(0, -12);
 				//if flash state, copy weapons rotation
-				if(pspi.id > 15) { pspi.GetRotation(pspi.id - 10); }
+				if(pspi.id > 15) { pspi.SetPhasing(-1.0, 3.6); pspi.GetRotation(pspi.id - 10); }
 				else { pspi.SetRotation(random2(3)*(1 + (i/100.))); }
 				return;
 			case 2: //pistol reload 1
-				pspi.SetTransformationProperties(4, false, (INTR_TRANS_INVEXPO | INTR_SCALE_INVEXPO));
-				pspi.SetTranslations(-4, 16);
-				pspi.SetScaling(10, 0);
+				pspi.SetTransformationProperties(4, false);
+				pspi.SetTranslations(-4, 16, 0, RAMP_INVEXPONENTIAL);
+				pspi.SetScaling(10, 0, 0, RAMP_INVEXPONENTIAL);
 				//pspi.SetRotation(8);				
 				return;
 			case 3: //pistol reload 2
-				pspi.SetTransformationProperties(8, true, (INTR_TRANS_INVEXPO | INTR_SCALE_INVEXPO | INTR_ROTAT_INVEXPO));
-				pspi.SetRotation(-6);
-				pspi.SetScaling(-10,0);
-				pspi.SetTranslations(4, -8);
+				pspi.SetTransformationProperties(8, true);
+				pspi.SetRotation(-6, 0, RAMP_INVEXPONENTIAL);
+				pspi.SetScaling(-10, 0, 0, RAMP_INVEXPONENTIAL);
+				pspi.SetTranslations(4, -8, 0, RAMP_INVEXPONENTIAL);
 				return;
 			case 4: //reload hand up
-				pspi.SetTransformationProperties((owner.FindInventory("PowerBerserk")) ? 2 : 3, false);
+				pspi.SetTransformationProperties((owner.FindInventory("PowerBerserk")) ? 1 : 2, false, nextcase: ((mag < 1) ? 17 : 19));
 				pspi.SetTranslations(0,-20);
 				return;
 			case 5: //pistol slide forward
@@ -205,8 +206,8 @@ class ddPistol : ddWeapon replaces Pistol
 				pspi.SetTranslations(-4, 8);
 				pspi.SetScaling(0, -12);
 			case 6: //pistol 3
-				pspi.SetTransformationProperties(2, true, (INTR_TRANS_EXPO));
-				pspi.SetTranslations(0, -4);
+				pspi.SetTransformationProperties(2, true);
+				pspi.SetTranslations(0, -4, 0, RAMP_INVEXPONENTIAL);
 				return;
 			case 7: //pistol burst fire
 				if(burstcounter > 1) 
@@ -217,7 +218,7 @@ class ddPistol : ddWeapon replaces Pistol
 				}
 				else 
 				{
-					pspi.SetTransformationProperties(3, true, (INTR_TRANS_INVEXPO | INTR_SCALE_INVEXPO));
+					pspi.SetTransformationProperties(3, true);
 					pspi.SetTranslations(0, 8);
 					pspi.SetScaling(0, -20);
 					//if flash state, copy weapons rotation
@@ -226,17 +227,17 @@ class ddPistol : ddWeapon replaces Pistol
 				} 
 				return;
 			case 8: //unload pistol 1
-				pspi.SetTransformationProperties(5, false, (INTR_TRANS_EXPO | INTR_ROTAT_INVEXPO), nextcase: 9);
+				pspi.SetTransformationProperties(5, false, nextcase: 9);
 				pspi.SetTranslations(0, 30);
 				pspi.SetRotation(6);
 				return;
 			case 9: //unload pistol 2
-				pspi.SetTransformationProperties(3, false, (INTR_TRANS_INVEXPO), nextcase: 10);
+				pspi.SetTransformationProperties(3, false, nextcase: 10);
 				pspi.SetTranslations(0, -16);
 				pspi.SetRotation(-6);
 				return;
 			case 10: //unload pistol 3
-				pspi.SetTransformationProperties(5, false, (INTR_TRANS_INVEXPO));
+				pspi.SetTransformationProperties(5, false);
 				pspi.SetTranslations(0, 12);
 				pspi.SetRotation(8);
 				return;
@@ -245,26 +246,43 @@ class ddPistol : ddWeapon replaces Pistol
 				pspi.SetTranslations(-28, 60);
 				return;
 			case 12: //hand slide back up
-				pspi.SetTransformationProperties(5, false, (INTR_TRANS_INVEXPO), nextcase: 13);
+				pspi.SetTransformationProperties(5, false, nextcase: 13);
 				pspi.SetTranslations(50, -80);
 				pspi.SetRotation(-8);
 				return;
 			case 13: //hand slide back down
-				pspi.SetTransformationProperties(3, false, (INTR_TRANS_EXPO));
-				pspi.SetTranslations(0, 64);
+				pspi.SetTransformationProperties(3, false);
+				pspi.SetTranslations(0, 64, 0, RAMP_EXPONENTIAL);
+				pspi.SetScaling(-80, 20, 0, 4.2);
 				return;
 			case 14: //unload pistol 4
-				pspi.SetTransformationProperties(5, false, (INTR_TRANS_INVEXPO));
+				pspi.SetTransformationProperties(5, false);
 				pspi.SetTranslations(0, 24);
 				pspi.SetRotation(8);
 				return;
 			case 15:
-				pspi.SetTransformationProperties(4, false, (INTR_SCALE_INVEXPO), nextcase: 16);
+				pspi.SetTransformationProperties(4, false, nextcase: 16);
 				pspi.SetScaling(-8, 15);
 				return;
 			case 16:
-				pspi.SetTransformationProperties(2, false, (INTR_SCALE_INVEXPO));
+				pspi.SetTransformationProperties(4, false);
 				pspi.SetScaling(8, -15);
+				return;
+			case 17: //wait
+				pspi.SetTransformationProperties((owner.FindInventory("PowerBerserk")) ? 1 : 2, false, nextcase: 18);
+				return;
+			case 18:
+				pspi.SetTransformationProperties((owner.FindInventory("PowerBerserk")) ? 1 : 2, false);
+				pspi.SetTranslations(0, -8, 0, -0.15);
+				pspi.SetScaling(-20, 0, 0, 1.8);
+				return;
+			case 19:
+				pspi.SetTransformationProperties(3, false, nextcase: ((owner.FindInventory("PowerBerserk") ? -1 : 20)));
+				pspi.SetScaling(-20, 40, 0, 2.9);
+				return;
+			case 20:
+				pspi.SetTransformationProperties(1, false);
+				pspi.SetScaling(20, -20, 0, 0.9);
 				return;
 			default:
 				return;			
@@ -355,8 +373,16 @@ class ddPistol : ddWeapon replaces Pistol
 				return (owner.FindInventory("PowerBerserk")) ? 6 : 8;
 			case 2:
 				return (owner.FindInventory("PowerBerserk")) ? 6 : 11;
+			case 3:
+				return (owner.FindInventory("PowerBerserk")) ? 7 : 10;
 			default: return 0;
 		}
+	}
+	
+	override int, int GetRenderStyleInfo(int no)
+	{
+		if(no == 3) { return (weaponside) ? 20 : 25, STYLE_Translucent; }
+		else { return 99, 0; }
 	}
 	
 	action void A_FireDDPistol()
@@ -413,6 +439,7 @@ class ddPistol : ddWeapon replaces Pistol
 			#### # 1 A_DDWeaponReady;
 			Loop;
 		Fire:
+			#### # 3 A_SetPSpriteRenderStyle;
 			#### # 1 A_WeapAction;
 			#### A 1;
 			#### A 1 A_DDTransformation;
@@ -498,12 +525,12 @@ class ddPistol : ddWeapon replaces Pistol
 		HandSlideBack:
 			PIMH A 4;
 			HNDA A 12 A_DDTransformation;
-			HNDA A 12;
+			HNDA A 3 A_SetTicks;
 			TNT1 A -1;
 			Stop;
 		FlashP:
 			PISF # 1 Bright A_DDTransformation;
-			PISF # 1 Bright A_Light2;
+			PISF # 3 Bright A_Light2;
 			Goto FlashDone;
 		FlashA:
 			PISF # 7 Bright A_DDTransformation;

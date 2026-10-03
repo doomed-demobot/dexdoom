@@ -131,8 +131,8 @@ class ddPlasmaRifle : ddWeapon replaces PlasmaRifle
 		
 	override State GetRefireState()
 	{
-		if(!bAltFire) {return Super.GetRefireState(); } 
-		else { if(mag > 0 && charge < 25) { return FindState('Charging'); }
+		if(!bAltFire) { return Super.GetRefireState(); } 
+		else { if(mag > 0 && charge < 25) { return FindState('Altfire'); }
 				else { return FindState('DoNotJump'); }
 		}
 	}
@@ -157,13 +157,12 @@ class ddPlasmaRifle : ddWeapon replaces PlasmaRifle
 	
 	override void primaryattack()
 	{
-		let ddp = ddPlayer(owner);
 		if(owner.CountInv("Cell") > 0 && mag > 0) { mag--; A_FireDDPlasma(); }
 	}
 	
 	override void alternativeattack()
 	{
-		A_FirePlasmaBlast(charge); 
+		A_FireFocusedPlasma(charge);
 		charge = 0;
 	}
 	
@@ -182,15 +181,25 @@ class ddPlasmaRifle : ddWeapon replaces PlasmaRifle
 		switch(no)
 		{
 			case 1: //fire
-				pspi.SetTransformationProperties(3, true, (INTR_TRANS_INVEXPO));
-				pspi.SetTranslations(0, 5);
+				pspi.SetTransformationProperties(3, true);
+				pspi.SetTranslations(0, 5, 0, RAMP_INVEXPONENTIAL);
 				return;
 			case 2: //reload
 				let pspif = ddp.GetPSpriteInfo(pspi.id + 10, ddp);
-				pspi.SetTransformationProperties(6, false, (INTR_TRANS_INVEXPO));
-				pspi.SetTranslations(((pspi.id == 10) ? -5 : 5), 8);
-				pspif.SetTransformationProperties(6, false, (INTR_TRANS_INVEXPO));
-				pspif.SetTranslations(((pspif.id == 20) ? -5 : 5), 8);
+				pspi.SetTransformationProperties(6, false);
+				pspi.SetTranslations(((pspi.id == 10) ? -5 : 5), 8, 0, RAMP_INVEXPONENTIAL);
+				pspif.SetTransformationProperties(6, false);
+				pspif.SetTranslations(((pspif.id == 20) ? -5 : 5), 8, 0, RAMP_INVEXPONENTIAL);
+				return;
+			case 3: //altfire
+				pspi.SetTransformationProperties(3, false, 0, 0, 25, nextcase: 4);
+				pspi.SetTranslations(0, 8, 0, 0.6);
+				pspi.SetScaling(25, 20, 0, 0.8);
+				return;
+			case 4:
+				pspi.SetTransformationProperties(5, true, 0, 0, 25);
+				pspi.SetTranslations(0, 12, 0, 1.2);
+				pspi.SetScaling(-25, -20, 0, 2.3);
 				return;
 			default:
 				return;
@@ -235,7 +244,14 @@ class ddPlasmaRifle : ddWeapon replaces PlasmaRifle
 				if(weaponside) { if(mag < 50 && !(PressingLeftFire())) { ChangeState("ReloadP2", myside); break; } }
 				else { if(mag < 50 && !(PressingRightFire())) { ChangeState("ReloadP2", myside); break; } }
 				break;
-				
+			case 6:
+				if(weaponside) { if(PressingLeftAltFire()) { ChangeState("Charging", myside); break; } }
+				else { if(PressingRightAltFire()) {  ddp.A_StartSound("weapons/flasmacharge", CHAN_WEAPON); ChangeState("Charging", myside); break; } }
+				break;
+			case 7:
+				if(weaponside) { if(PressingLeftAltFire()) { ChangeState("Charging2", myside); break;  } }
+				else { if(PressingRightAltFire()) { charge++; ddp.A_StartSound("weapons/flasmachargelp", CHAN_WEAPON, CHANF_LOOPING); ChangeState("Charging2", myside); break; } }
+				break;				
 			default: ddp.A_Log("No action defined for tic "..no); break;
 		}
 	}
@@ -244,7 +260,7 @@ class ddPlasmaRifle : ddWeapon replaces PlasmaRifle
 	States
 	{
 		NoAmmo:
-			PLSG A 10;
+			PLSG A 0;
 		Ready:
 			PLSG A 1 A_DDWeaponReady;
 			Loop;
@@ -265,22 +281,25 @@ class ddPlasmaRifle : ddWeapon replaces PlasmaRifle
 			Goto Ready;
 		Altfire:
 			PLSG A 1 A_WeapAction;
-			PLSG A 5;
-			PLSG A 0 A_DDFlash;
-			PLSG A 3 A_WeapAction;
-			PLSG A 6;
-			PLSG A 3 A_WeapAction;
-			PLSG A 6;
-			PLSG A 3 A_WeapAction;
-			PLSG A 4;
-			PLSG A 3 A_WeapAction;
-			PLSG A 4;
+			PLSG A 3;
+			//PLSG A 0 A_DDFlash;
+			PLSG A 3 A_DDTransformation;
+			PLSG A 1 A_FireDDWeapon;
+			PLSG A 2;
+			PLSG AAAAAA 1 A_DDHeavyRefire;
+			PLSG A 6 A_WeapAction;
+			PLSG A 3;
+			Goto Ready;
 		Charging:
-			PLSG A 0 A_DDFlash;
-			PLSG A 3 A_WeapAction;
+			PLSG A 1 A_WeapAction;
+			PLSG A 10;
+		Charging2:
 			PLSG A 4;
-			PLSG A 2 A_DDRefire;
-			PLSG A 25 A_FireDDWeapon;
+			PLSG A 7 A_WeapAction;
+			PLSG A 1;
+			PLSG A 3 A_DDTransformation;
+			PLSG A 0 A_FireDDWeapon;
+			PLSG A 10;
 			Goto Ready;
 		ReloadP:
 			#### # 2 A_DDTransformation;
@@ -342,6 +361,33 @@ extend class ddWeapon
 			ddp.SpawnPlayerMissile("PlasmaBall");			
 			ddp.TakeInventory("Cell", 1);
 			AddRecoil(0.5, 0, 1.0);
+			ddp.instability += kick;
+			ddp.instTimer = 25;
+		}
+		else
+		{
+			ddp.A_StartSound("weapons/nofire", CHAN_WEAPON, CHANF_OVERLAP);			
+		}
+	}
+	
+	action void A_FireFocusedPlasma(int charge)
+	{
+		let ddp = ddPlayer(invoker.owner);
+		if(ddp.player == null) { return; }
+		ddWeapon weap = ddWeapon(self);
+		bool pen = (ddp.player.readyweapon is "dualWielding"&&!ddp.CheckESOA(0));
+		int kick = (pen) ? 2 : 1;
+		if(ddp.CountInv("Cell") > 0)
+		{
+			ddp.PlayAttacking2 ();
+			if(charge < 10) { ddp.A_StartSound("weapons/flasmanorm", CHAN_WEAPON); }
+			else { ddp.A_StartSound("weapons/flasmabeeg", CHAN_WEAPON); }
+			Actor mis, mis2;
+			[mis, mis2] = ddp.SpawnPlayerMissile("Flasma");
+			if(mis) { Flasma(mis).power = charge; }
+			else { Flasma(mis2).power = charge; }
+			ddp.TakeInventory("Cell", 2);
+			AddRecoil(3, 4, 3.0);
 			ddp.instability += kick;
 			ddp.instTimer = 25;
 		}
@@ -415,8 +461,8 @@ class PlasmaBolt : Actor
 	Default
 	{
 		Projectile;
-		Radius 10;
-		Height 10;
+		Radius 0.1;
+		Height 0.1;
 		ProjectileKickback 0;
 		Speed 60;
 		Gravity 0.69;
@@ -461,6 +507,86 @@ class PlasmaBolt : Actor
 			BFE1 BC 4 Bright;
 			BFE2 BCD 5 Bright;
 			Stop;
+	}
+}
+
+class Flasma : PlasmaBall2
+{
+	int power, passed;
+	Vector3 whereIDied;
+	Default
+	{
+		Projectile;
+		Radius 0.1;
+		Height 0.1;
+		Speed 4;
+		Damage 10;
+		BounceType "None";
+		BounceFactor 0.;
+		SeeSound "";
+		DeathSound "weapons/bfgx";
+	}
+	
+	override void Tick()
+	{
+		super.tick();
+		if(GetAge() == 2) {  vel = vel.unit() * 200;console.printf(""..vel.length()); }
+	}
+	
+	override int DoSpecialDamage(Actor victim, int damage, Name damagetype)
+	{
+		if(victim)
+		{
+			return damage + clamp(power, 0, 14);
+		}
+		else { return damage; }
+	}
+	
+	override int SpecialMissileHit(Actor victim)
+	{
+		Super.SpecialMissileHit(victim);
+		if(victim)
+		{
+			if(victim == target) { return MHIT_PASS; }
+			if(power < 10) { return MHIT_DEFAULT; }
+			passed++;
+			if(passed < 4) { victim.damagemobj(target, self, damage + clamp(power, 0, 14),'Normal'); return MHIT_PASS; }
+			else { return MHIT_DEFAULT; }
+		}
+		else { return MHIT_DEFAULT; }
+	}
+	
+	action void A_MainGoal()
+	{
+		int damage = 10 * clamp(invoker.power, 0, 14);
+		invoker.RadiusAttack(target, damage, 128, 'none');
+	}
+	
+	States
+	{
+		Spawn:
+			PLS2 A 1 nodelay A_JumpIf(power >= 10, "SpawnBig");
+		SpawnNorm:
+			PLS2 AB 3 Bright;
+			Loop;
+		SpawnBig:
+			FLBG AB 3 Bright;
+			Loop;
+		Death:
+			PLSE C 0 Bright A_JumpIf(power >= 10, "DeathBig");
+			PLSE CDE 2 Bright;
+			//TNT1 A -1;
+			Stop;
+		DeathBig:
+			FLBG ABABAB 2 Bright { scale.x -= 0.1; scale.y -= 0.1; }
+			FLBG A 0 { scale.x = 1.0; scale.y = 1.0; }
+			BFE2 CB 1 Bright;
+			BFE1 A 4 Bright A_MainGoal;
+			BFE1 BC 4 Bright;
+			BFE2 BCD 5 Bright;
+			//TNT1 A -1;
+			Stop;
+			
 	}
 }
 

@@ -140,44 +140,44 @@ class ddRocketLauncher : ddWeapon replaces RocketLauncher
 		switch(no)
 		{
 			case 1:
-				pspi.SetTransformationProperties(4, true, INTR_TRANS_INVEXPO);
-				pspi.SetTranslations(0, 10);
-				pspi.SetScaling(5, -10);
+				pspi.SetTransformationProperties(4, true);
+				pspi.SetTranslations(0, 10, 0, RAMP_INVEXPONENTIAL);
+				pspi.SetScaling(5, -10, 0, RAMP_LINEAR);
 				return;
 			case 2: //reload start
 				if(ddp.playingFreedoom) { pspi.SetTransformationProperties(0); return; }
-				pspi.SetTransformationProperties(4, false, (INTR_TRANS_INVEXPO));
-				pspi.SetTranslations(0, -6);
-				pspi.SetScaling(0, -10);
-				pspi.SetRotation(-8);
+				pspi.SetTransformationProperties(4, false);
+				pspi.SetTranslations(0, -6, 0, RAMP_INVEXPONENTIAL);
+				pspi.SetScaling(0, -10, 0, RAMP_LINEAR);
+				pspi.SetRotation(-8, 0, RAMP_LINEAR);
 				return;
 			case 3:				
-				pspi.SetTransformationProperties(4, true, (INTR_TRANS_INVEXPO));
-				pspi.SetTranslations(0, 6);
-				pspi.SetScaling(0, 10);
-				pspi.SetRotation(8);
+				pspi.SetTransformationProperties(4, true);
+				pspi.SetTranslations(0, 6, 0, RAMP_INVEXPONENTIAL);
+				pspi.SetScaling(0, 10, 0, RAMP_LINEAR);
+				pspi.SetRotation(8, 0, RAMP_LINEAR);
 				return;
 			case 4:
-				pspi.SetTransformationProperties(4, false, (INTR_TRANS_INVEXPO), nextCase: 5);
+				pspi.SetTransformationProperties(4, false, nextCase: 5);
 				if(ddp.playingFreedoom) 
 				{
-					pspi.SetTranslations(0, 2);
+					pspi.SetTranslations(0, 2, 0, RAMP_INVEXPONENTIAL);
 					return;
 				}
-				pspi.SetTranslations(2, -2);
-				pspi.SetScaling(0, 0);
-				pspi.SetRotation(0);
+				pspi.SetTranslations(2, -2, 0, RAMP_INVEXPONENTIAL);
+				pspi.SetScaling(0, 0, 0, RAMP_LINEAR);
+				pspi.SetRotation(0, 0, RAMP_LINEAR);
 				return;
 			case 5:
-				pspi.SetTransformationProperties(3, false, (INTR_TRANS_INVEXPO));
+				pspi.SetTransformationProperties(3, false);
 				if(ddp.playingFreedoom) 
 				{
-					pspi.SetTranslations(0, -2);
+					pspi.SetTranslations(0, -2, 0, RAMP_INVEXPONENTIAL);
 					return;
 				}
-				pspi.SetTranslations(-2, 2);
-				pspi.SetScaling(0, 0);
-				pspi.SetRotation(0);
+				pspi.SetTranslations(-2, 2, 0, RAMP_INVEXPONENTIAL);
+				pspi.SetScaling(0, 0, 0, RAMP_LINEAR);
+				pspi.SetRotation(0, 0, RAMP_LINEAR);
 				return;
 			default: return;
 		}		

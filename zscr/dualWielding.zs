@@ -53,6 +53,10 @@ class dualWielding : ddWeapon
 		else { rightheld = false; }
 		if(PressingZoom()) { zoomheld = true; }
 		else { zoomheld = false; }
+		if(PressingLeftSwitch()) { leftswitchHeld = true; }
+		else { leftswitchHeld = false; }
+		if(PressingRightSwitch()) { rightswitchHeld = true; }
+		else { rightswitchHeld = false; }
 	}
 	
 	override ddWeapon CreateTossable()
@@ -411,7 +415,7 @@ class dualWielding : ddWeapon
 				}
 				else if(A_PressingLeftModeSwitch())
 				{
-					if(ddp.ddWeaponState & DDW_LEFTREADY)
+					if(ddp.ddWeaponState & DDW_LEFTREADY && !invoker.leftswitchHeld)
 					{
 						ddp.altmodeL = !ddp.altmodeL;
 						lw.fireMode = ddp.altModeL;
@@ -460,7 +464,7 @@ class dualWielding : ddWeapon
 				}
 				else if(A_PressingRightModeSwitch())
 				{
-					if(ddp.ddWeaponState & DDW_RIGHTREADY)
+					if(ddp.ddWeaponState & DDW_RIGHTREADY && !invoker.rightswitchHeld)
 					{
 						ddp.altmodeR = !ddp.altmodeR;
 						rw.fireMode = ddp.altModeR;
@@ -646,15 +650,37 @@ class dualWielding : ddWeapon
 		double bsk = (ddp.FindInventory("PowerBerserk")) ? 2.0 : 1.0;
 		double sFactor = ((lw.sFactor + rw.sFactor + 1.0) / 2.0) * bsk;
 		if(ddp.ddWeaponState & DDW_RIGHTISTH && pspr.y < 128)
-		{			
-			pspr.y += 6 * sFactor; psprf.y += 6 * sFactor;
+		{
+			let psps = player.psprites;
+			while(psps)
+			{
+				let fl = player.GetPSprite(psps.id + 10);
+				if(psps.id > 10 && psps.id < 16)
+				{					
+					psps.y += 6 * sFactor; fl.y += 6 * sFactor;
+				}
+				psps = psps.next;
+				if(psps.id > 25) { break; }
+			}
 			if(pspr.y > 128) { pspr.y = 128; psprf.y = 128; }
 		}
 		else
 		{
-			pspr.x -= 2 * sFactor; psprf.x -= 2 * sFactor;
-			pspl.y += 6 * sFactor;
-			psplf.y += 6 * sFactor;
+			let psps = player.psprites;
+			while(psps)
+			{
+				let fl = player.GetPSprite(psps.id + 10);
+				if(psps.id > 5 && psps.id < 11)
+				{
+					psps.y += 6 * sFactor; fl.y += 6 * sFactor;
+				}
+				if(psps.id > 10 && psps.id < 16)
+				{					
+					psps.x -= 2 * sFactor; fl.x -= 2 * sFactor;
+				}
+				psps = psps.next;
+				if(psps.id > 25) { break; }
+			}
 			if(pspl.y < 128) { return; }
 			pspl.y = 128; psplf.y = 128;
 			pspl.x = -64; psplf.x = -64;
@@ -681,6 +707,8 @@ class dualWielding : ddWeapon
 			TNT1 A 1 A_WeaponReady(WRF_FULL);
 			Loop;
 		Select:
+			TNT1 A 1;
+			TNT1 A 0 A_SetAllRenderStyles;
 		RaiseDual:
 			TNT1 A 1 A_RaiseDual;
 			Loop;

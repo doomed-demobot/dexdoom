@@ -929,37 +929,50 @@ class ddPlayer : DoomPlayer
 			double lboby = (BobVal * lBobIntensity * LWBobY * viewBob);
 			double rbobx = (BobVal * rBobIntensity * RWBobX * viewBob);
 			double rboby = (BobVal * rBobIntensity * RWBobY * viewBob);
-			double lx, ly, rx, ry;
-			if(mode.ModeCheck() == RES_DUALWLD)
+			//rightside
+			for(int x = 25; x > 20; x--)
 			{
-				if(ddWeaponState & DDW_LEFTBOBBING)
+				if(mode.ModeCheck() == RES_DUALWLD)
 				{
-					lx = (lbobx * abs(cos(angle))) - (64 + lw.xoffset);
-					ly = lboby * abs(sin(angle));
+					if(ddWeaponState & DDW_RIGHTBOBBING) {
+						player.GetPSprite(x).x = (rbobx * abs(-sin(angle))) + (64 + rw.xoffset);
+						player.GetPSprite(x - 10).x = (rbobx * abs(-sin(angle))) + (64 + rw.xoffset);
+						player.GetPSprite(x).y = rboby * abs(-cos(angle));
+						player.GetPSprite(x - 10).y = rboby * abs(-cos(angle));						
+					}
 				}
-				else { lx = pspl.x; ly = pspl.y; }
-				if(ddWeaponState & DDW_RIGHTBOBBING)
-				{
-					rx = (rbobx * abs(-sin(angle))) + (64 + rw.xoffset);
-					ry = rboby * abs(-cos(angle));
+				else if(mode.ModeCheck() == RES_TWOHAND) 
+				{					
+					if(ddWeaponState & DDW_RIGHTBOBBING) {
+						player.GetPSprite(x).x = rbobx * cos(angle);;
+						player.GetPSprite(x - 10).x = rbobx * cos(angle);;
+						player.GetPSprite(x).y = rboby * abs(sin(angle));
+						player.GetPSprite(x - 10).y = rboby * abs(sin(angle));					
+					}
 				}
-				else { rx = pspr.x; ry = pspr.y; }
+				else {}
 			}
-			else if(mode.ModeCheck() == RES_TWOHAND)
+			//leftside
+			for(int x = 20; x > 15; x--)
 			{
-				lx = -(64 + lw.xoffset); ly = 128;				
-				if(ddWeaponState & DDW_RIGHTBOBBING)
+				if(mode.ModeCheck() == RES_DUALWLD)
 				{
-					rx = rbobx * cos(angle);
-					ry = rboby * abs(sin(angle));
+					if(ddWeaponState & DDW_LEFTBOBBING) { 
+						player.GetPSprite(x).x = (lbobx * abs(cos(angle))) - (64 + lw.xoffset);
+						player.GetPSprite(x - 10).x = (lbobx * abs(cos(angle))) - (64 + lw.xoffset);
+						player.GetPSprite(x).y = lboby * abs(sin(angle));
+						player.GetPSprite(x - 10).y = lboby * abs(sin(angle));						
+					}
 				}
-				else { rx = pspr.x; ry = pspr.y; }
+				else if(mode.ModeCheck() == RES_TWOHAND)
+				{
+					player.GetPSprite(x).x = -(64 + lw.xoffset);
+					player.GetPSprite(x - 10).x = -(64 + lw.xoffset);
+					player.GetPSprite(x).y = 128;
+					player.GetPSprite(x - 10).y = 128;				
+				}
+				else {}
 			}
-			else {}
-			pspl.x = lx; psplf.x = lx;
-			pspl.y = ly; psplf.y = ly;
-			pspr.x = rx; psprf.x = rx;
-			pspr.y = ry; psprf.y = ry;
 		}
 	}
 	
@@ -1213,11 +1226,15 @@ class ddPlayer : DoomPlayer
 	}
 }
 
+const RAMP_LINEAR = 0;
+const RAMP_EXPONENTIAL = -0.7673;
+const RAMP_INVEXPONENTIAL = 2.03;
+//deprecated, use equivalent scales
 enum IntepolationMethods{
 
-	INTR_TRANS_LINEAR = 1,
-	INTR_TRANS_EXPO = 2,
-	INTR_TRANS_INVEXPO = 3,
+	INTR_TRANS_LINEAR = 1, //r = 0.
+	INTR_TRANS_EXPO = 2, //r = -0.7673
+	INTR_TRANS_INVEXPO = 3, //r = 2.03
 	INTR_SCALE_LINEAR = 4,
 	INTR_SCALE_EXPO = 8,
 	INTR_SCALE_INVEXPO = 12,
@@ -1237,6 +1254,7 @@ enum PSPStatus{
 	PSPS_TRANSLATING = 1<<0,
 	PSPS_SCALING = 1<<1,
 	PSPS_ROTATING = 1<<2,
+	PSPS_PHASING = 1<<3,
 };
 
 class PSpriteInfo : Thinker
@@ -1249,8 +1267,10 @@ class PSpriteInfo : Thinker
 	DDWeapon Provider; //DDWeapon that owns/provides the states tracked by this PSpriteInfo
 	Vector2 translTarget;
 	Vector2 transDelta, scaleDelta, rotDelta;
+	float transRamp, scaleRamp, rotRamp, alphaRamp; //adjusts curve in transformation clamp -0.9 <= x <= 10
 	Vector2 scaleTarget; //hold percentage i.e. target x = 1 means target x = 1% = 0.01;
 	double rotTarget;
+	double alphaTarget; //0.0 - 1.0
 	int transformationLength;
 	int transformationTimer; //same as transformationLength, but gets decremented in DoTransformations.
 	int16 transFlags;
@@ -1301,77 +1321,32 @@ class PSpriteInfo : Thinker
 		}
 		if(PSPStatus & PSPS_TRANSLATING)
 		{
-			if((iMethod & 3) == INTR_TRANS_EXPO)
-			{
-				psp.x += (transDelta.x < 0 ? -1 : 1) * 
-					( ( 1. / ( 1 / ( (abs(transDelta.x) + 1)**( 1. / transformationLength ) ) ** (abs(transformationTimer - (transformationLength + 1) ) ) ) ) - 
-					( 1. / ( 1 / ( (abs(transDelta.x) + 1)**( 1. / transformationLength ) ) ** ((abs(transformationTimer - (transformationLength + 1) ) ) - 1) ) ) );
-				psp.y += (transDelta.y < 0 ? -1 : 1) * 
-					( ( 1. / ( 1 / ( (abs(transDelta.y) + 1)**( 1. / transformationLength ) ) ** (abs(transformationTimer - (transformationLength + 1) ) ) ) ) - 
-					( 1. / ( 1 / ( (abs(transDelta.y) + 1)**( 1. / transformationLength ) ) ** ((abs(transformationTimer - (transformationLength + 1) ) ) - 1) ) ) );
-			}
-			else if((iMethod & 3) == INTR_TRANS_LINEAR)
-			{
-				psp.x += double(transDelta.x) / transformationLength;
-				psp.y += double(transDelta.y) / transformationLength;
-			}
-			else if((iMethod & 3) == INTR_TRANS_INVEXPO)
-			{
-				psp.x += (transDelta.x < 0 ? -1 : 1) * 
-					( ( 1. / ( 1 / ( (abs(transDelta.x) + 1)**( 1. / transformationLength ) ) ** ((transformationTimer) ) ) ) - 
-					( 1. / ( 1 / ( (abs(transDelta.x) + 1)**( 1. / transformationLength ) ) ** (transformationTimer - 1) ) ) );
-				psp.y += (transDelta.y < 0 ? -1 : 1) * 
-					( ( 1. / ( 1 / ( (abs(transDelta.y) + 1)**( 1. / transformationLength ) ) ** ((transformationTimer) ) ) ) - 
-					( 1. / ( 1 / ( (abs(transDelta.y) + 1)**( 1. / transformationLength ) ) ** (transformationTimer - 1) ) ) );
-			}
+			psp.x += ( ( (double(transDelta.x) / transformationLength) * ( transformationTimer ) ) / (1. + ( transRamp * ( double(transformationLength - ( transformationTimer ) ) / transformationLength ) ) ) -
+			( (double(transDelta.x) / transformationLength) * ( transformationTimer - 1 ) ) / (1. + ( transRamp * ( double(transformationLength - ( transformationTimer - 1) ) / transformationLength ) ) ) ) ;
+			psp.y += ( ( (double(transDelta.y) / transformationLength) * ( transformationTimer ) ) / (1. + ( transRamp * ( double(transformationLength - ( transformationTimer ) ) / transformationLength ) ) ) -
+			( (double(transDelta.y) / transformationLength) * ( transformationTimer - 1 ) ) / (1. + ( transRamp * ( double(transformationLength - ( transformationTimer - 1) ) / transformationLength ) ) ) );
 		}
 		if(PSPSTatus & PSPS_SCALING)
 		{
-			if((iMethod & 12) == INTR_SCALE_EXPO)
-			{
-				psp.scale.x += (scaleDelta.x < 0 ? -1 : 1) * 
-						( ( 1. / ( 1 / ( ((abs(scaleDelta.x) / 100.) + 1)**( 1. / transformationLength ) ) ** (abs(transformationTimer - (transformationLength + 1) ) ) ) ) - 
-						( 1. / ( 1 / ( ((abs(scaleDelta.x) / 100.) + 1)**( 1. / transformationLength ) ) ** ((abs(transformationTimer - (transformationLength + 1) ) ) - 1) ) ) );
-				psp.scale.y += (scaleDelta.x < 0 ? -1 : 1) * 
-						( ( 1. / ( 1 / ( ((abs(scaleDelta.y) / 100) + 1)**( 1. / transformationLength ) ) ** (abs(transformationTimer - (transformationLength + 1) ) ) ) ) - 
-						( 1. / ( 1 / ( ((abs(scaleDelta.y) / 100) + 1)**( 1. / transformationLength ) ) ** ((abs(transformationTimer - (transformationLength + 1) ) ) - 1) ) ) );
-			}
-			else if((iMethod & 12) == INTR_SCALE_LINEAR)
-			{
-				psp.scale.x += double(scaleDelta.x / 100) / transformationLength;
-				psp.scale.y += double(scaleDelta.y / 100) / transformationLength;
-			}
-			else if((iMethod & 12) == INTR_SCALE_INVEXPO)
-			{
-				psp.scale.x += (scaleDelta.x < 0 ? -1 : 1) * 
-						( ( 1. / ( 1 / ( ((abs(scaleDelta.x) / 100.) + 1)**( 1. / transformationLength ) ) ** ((transformationTimer) ) ) ) - 
-						( 1. / ( 1 / ( ((abs(scaleDelta.x) / 100.) + 1)**( 1. / transformationLength ) ) ** (((transformationTimer) ) - 1) ) ) );
-				psp.scale.y += (scaleDelta.x < 0 ? -1 : 1) * 
-						( ( 1. / ( 1 / ( ((abs(scaleDelta.y) / 100.) + 1)**( 1. / transformationLength ) ) ** ((transformationTimer) ) ) ) - 
-						( 1. / ( 1 / ( ((abs(scaleDelta.y) / 100.) + 1)**( 1. / transformationLength ) ) ** (((transformationTimer) ) - 1) ) ) );
-			}
+			psp.scale.x += ( ( (double(scaleDelta.x / 100) / transformationLength) * ( transformationTimer ) ) / (1. + ( transRamp * ( double(transformationLength - ( transformationTimer ) ) / transformationLength ) ) ) -
+			( (double(scaleDelta.x / 100) / transformationLength) * ( transformationTimer - 1 ) ) / (1. + ( transRamp * ( double(transformationLength - ( transformationTimer - 1) ) / transformationLength ) ) ) ) ;
+			psp.scale.y += ( ( (double(scaleDelta.y / 100) / transformationLength) * ( transformationTimer ) ) / (1. + ( transRamp * ( double(transformationLength - ( transformationTimer ) ) / transformationLength ) ) ) -
+			( (double(scaleDelta.y / 100) / transformationLength) * ( transformationTimer - 1 ) ) / (1. + ( transRamp * ( double(transformationLength - ( transformationTimer - 1) ) / transformationLength ) ) ) );
 		}
 		if(PSPStatus & PSPS_ROTATING)
 		{
-			if((iMethod & 48) == INTR_ROTAT_EXPO)
-			{
-				psp.rotation += (rotTarget < 0 ? -1 : 1) * ( ( 1. / ( 1 / ( (abs(rotTarget) + 1)**( 1. / transformationLength ) ) ** ((transformationTimer) ) ) ) - 
-						( 1. / ( 1 / ( (abs(rotTarget) + 1)**( 1. / transformationLength ) ) ** (((transformationTimer) ) - 1) ) ) );
-			}
-			else if((iMethod & 48) == INTR_ROTAT_LINEAR)
-			{
-				psp.rotation += double(rotTarget) / transformationLength;
-			}
-			else if((iMethod & 48) == INTR_ROTAT_INVEXPO)
-			{
-				psp.rotation += (rotTarget < 0 ? -1 : 1) * ( ( 1. / ( 1 / ( (abs(rotTarget) + 1)**( 1. / transformationLength ) ) ** ((transformationTimer) ) ) ) - 
-						( 1. / ( 1 / ( (abs(rotTarget) + 1)**( 1. / transformationLength ) ) ** (((transformationTimer) ) - 1) ) ) );
-			}
-		
+			psp.rotation += ( ( (double(rotTarget) / transformationLength) * ( transformationTimer ) ) / (1. + ( transRamp * ( double(transformationLength - ( transformationTimer ) ) / transformationLength ) ) ) -
+			( (double(rotTarget) / transformationLength) * ( transformationTimer - 1 ) ) / (1. + ( transRamp * ( double(transformationLength - ( transformationTimer - 1) ) / transformationLength ) ) ) ) ;
+		}
+		if(PSPStatus & PSPS_PHASING)
+		{
+			psp.alpha += ( ( (double(alphaTarget) / transformationLength) * ( transformationTimer ) ) / (1. + ( alphaRamp * ( double(transformationLength - ( transformationTimer ) ) / transformationLength ) ) ) -
+			( (double(alphaTarget) / transformationLength) * ( transformationTimer - 1 ) ) / (1. + ( alphaRamp * ( double(transformationLength - ( transformationTimer - 1) ) / transformationLength ) ) ) ) ;
+			psp.alpha = clamp(psp.alpha, 0.0, 1.0);
 		}
 		transformationTimer--;
 	}
-	
+	//tmethods deprecated
 	void SetTransformationProperties(int tLength = 1, bool resetOnTrans = false, int tMethods = 0, 
 	double pivotx = 0, double pivoty = 0, bool pivotPercent = false, 
 	PSpriteInfo pspiMaster = null, int nextCase = -1)
@@ -1409,7 +1384,7 @@ class PSpriteInfo : Thinker
 		}
 	}
 	
-	void SetTranslations(int xtar, int ytar, int translFlags = 0)
+	void SetTranslations(int xtar, int ytar, int translFlags = 0, float transR = 0.0)
 	{
 		let psp = owner.player.FindPSprite(id);
 		if(!psp) { return; }
@@ -1425,55 +1400,58 @@ class PSpriteInfo : Thinker
 		{
 			transDelta.x = xtar; transDelta.y = ytar;
 		}
-		translTarget.x = transDelta.x; translTarget.y = transDelta.y;
+		translTarget.x = transDelta.x; translTarget.y = transDelta.y; transRamp = transR;
 		PSPStatus |= PSPS_TRANSLATING;
 	}
 	
 	//get translations from other PSpriteInfo. if apply = true, set own translations to retrieved values and return nothing.
-	int, int GetTranslations(int pid, bool apply = true)
+	int, int, float GetTranslations(int pid, bool apply = true)
 	{
-		if(pid == 0) { return 0, 0; }
+		if(pid == 0) { return 0, 0, 0.; }
 		let pspi = ddPlayer(owner).GetPSpriteInfo(pid, owner);
-		if(!pspi) { return 0, 0; }
+		if(!pspi) { return 0, 0, 0.; }
 		if(!apply)
 		{
-			return pspi.transDelta.x, pspi.transDelta.y;
+			return pspi.transDelta.x, pspi.transDelta.y, pspi.transRamp;
 		}
 		else
 		{
 			self.transDelta.x = pspi.transDelta.x; self.transDelta.y = pspi.transDelta.y;
 			self.translTarget.x = pspi.translTarget.x; self.translTarget.y = pspi.translTarget.y;
+			self.transRamp = pspi.transRamp;
 			self.PSPStatus |= PSPS_TRANSLATING;
-			return 0, 0;
+			return 0, 0, 0.;
 		}
 	}
 	
-	void SetScaling(int xtar, int ytar, int scaleFlags = 0)
+	void SetScaling(int xtar, int ytar, int scaleFlags = 0, float scaleR = 0.0)
 	{
 		scaleTarget.x = xtar; scaleTarget.y = ytar;
 		scaleDelta.x = xtar; scaleDelta.y = ytar;
+		scaleRamp = scaleR;
 		PSPStatus |= PSPS_SCALING;
 	}
 	
-	int, int GetScaling(int pid, bool apply = true)
+	int, int, float GetScaling(int pid, bool apply = true)
 	{
-		if(pid == 0) { return 0, 0; }
+		if(pid == 0) { return 0, 0, 0.; }
 		let pspi = ddPlayer(owner).GetPSpriteInfo(pid, owner);
-		if(!pspi) { return 0, 0; }
+		if(!pspi) { return 0, 0, 0.; }
 		if(!apply)
 		{
-			return pspi.scaleDelta.x, pspi.scaleDelta.y;
+			return pspi.scaleDelta.x, pspi.scaleDelta.y, pspi.scaleRamp;
 		}
 		else
 		{
 			self.scaleDelta.x = pspi.scaleDelta.x; self.scaleDelta.y = pspi.scaleDelta.y;
 			self.scaleTarget.x = pspi.scaleTarget.x; self.scaleTarget.y = pspi.scaleTarget.y;
+			self.scaleRamp = pspi.scaleRamp;
 			self.PSPStatus |= PSPS_SCALING;
-			return 0, 0;
+			return 0, 0, 0.;
 		}
 	}
 	
-	void SetRotation(int rtar, int rotFlags = 0)
+	void SetRotation(int rtar, int rotFlags = 0, float rotR = 0.0)
 	{
 		let psp = owner.player.FindPSprite(id);
 		if(!psp) { return; }
@@ -1485,24 +1463,34 @@ class PSpriteInfo : Thinker
 		{
 			rotTarget = rtar;
 		}
+		rotRamp = rotR;
 		PSPStatus |= PSPS_ROTATING;
 	}
 	
-	int GetRotation(int pid, bool apply = true)
+	int, float GetRotation(int pid, bool apply = true)
 	{
-		if(pid == 0) { return 0; }
+		if(pid == 0) { return 0, 0.; }
 		let pspi = ddPlayer(owner).GetPSpriteInfo(pid, owner);
-		if(!pspi) { return 0; }
+		if(!pspi) { return 0, 0.; }
 		if(!apply)
 		{
-			return pspi.rotTarget;
+			return pspi.rotTarget, pspi.rotRamp;
 		}
 		else
 		{
 			self.rotTarget = pspi.rotTarget;
+			self.rotRamp = pspi.rotRamp;
 			self.PSPStatus |= PSPS_ROTATING;
-			return 0;
+			return 0, 0.;
 		}
+	}
+	
+	void SetPhasing(double atar, float phaR = 0.0)
+	{
+		let psp = owner.player.FindPSprite(id);
+		if(!psp) { return; }
+		alphaTarget = atar; alphaRamp = phaR;
+		PSPStatus |= PSPS_PHASING;
 	}
 	
 	void ResetTransformations(bool resetPSprite = true)
@@ -1523,6 +1511,7 @@ class PSpriteInfo : Thinker
 		{
 			psp.halign = pspa_center;
 			psp.valign = pspa_center;
+			psp.alpha = 1.;
 			psp.scale.x = 1.; psp.scale.y = 1.;
 			psp.rotation = 0;
 			if(((psp.id >= PSP_LEFTW4) && (psp.id <= PSP_LEFTW0)) || ((psp.id >= PSP_LEFTWF4) && (psp.id <= PSP_LEFTWF0))) {

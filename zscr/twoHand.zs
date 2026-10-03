@@ -39,6 +39,10 @@ class twoHanding : ddWeapon
 		else { rightheld = false; }
 		if(PressingZoom()) { zoomheld = true; }
 		else { zoomheld = false; }
+		if(PressingLeftSwitch()) { leftswitchHeld = true; }
+		else { leftswitchHeld = false; }
+		if(PressingRightSwitch()) { rightswitchHeld = true; }
+		else { rightswitchHeld = false; }
 	}
 	
 	override void HUDA(ddStats hude)
@@ -214,7 +218,7 @@ class twoHanding : ddWeapon
 			}
 			else if(A_PressingRightModeSwitch())
 			{
-				if(ddp.ddWeaponState & DDW_RIGHTREADY)
+				if(ddp.ddWeaponState & DDW_RIGHTREADY && !invoker.rightswitchHeld)
 				{
 					ddp.altmodeR = !ddp.altmodeR;
 					weap.fireMode = ddp.altModeR;
@@ -379,14 +383,36 @@ class twoHanding : ddWeapon
 		double sFactor = ((lw.sFactor + rw.sFactor + 1) / 2.0) * bsk;
 		if(ddp.ddWeaponState & DDW_RIGHTISTH && pspr.y < 128)
 		{
-			pspr.y += 6 * sFactor; psprf.y += 6 * sFactor;
+			let psps = player.psprites;
+			while(psps)
+			{
+				let fl = player.GetPSprite(psps.id + 10);
+				if(psps.id > 10 && psps.id < 16)
+				{					
+					psps.y += 6 * sFactor; fl.y += 6 * sFactor;
+				}
+				psps = psps.next;
+				if(psps.id > 25) { break; }
+			}
 			if(pspr.y > 128) { pspr.y = 128; psprf.y = 128; }
 		}
 		else
 		{	
-			pspr.x += 2 * sFactor; psprf.x += 2 * sFactor;
-			pspl.y -= 6 * sFactor;
-			psplf.y -= 6 * sFactor;
+			let psps = player.psprites;
+			while(psps)
+			{
+				let fl = player.GetPSprite(psps.id + 10);
+				if(psps.id > 5 && psps.id < 11)
+				{
+					psps.y -= 6 * sFactor; fl.y -= 6 * sFactor;
+				}
+				if(psps.id > 10 && psps.id < 16)
+				{					
+					psps.x += 2 * sFactor; fl.x += 2 * sFactor;
+				}
+				psps = psps.next;
+				if(psps.id > 25) { break; }
+			}
 			if(pspl.y > 0) { return; }
 			let rw = ddp.GetRightWeapon(ddp.rwx);
 			player.setpsprite(PSP_RIGHTW0, rw.GetUpState());
@@ -446,6 +472,8 @@ class twoHanding : ddWeapon
 			TNT1 A 1 A_WeaponReady(WRF_FULL);
 			Loop;
 		Select:
+			TNT1 A 1;
+			TNT1 A 0 A_SetAllRenderStyles;
 		RaiseSingle:
 			TNT1 A 1 A_RaiseSingle;
 			Loop;

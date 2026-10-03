@@ -41,7 +41,7 @@ class ddWeapon : Weapon
 	//owner cvars
 	bool debuggin, wolfen, swapc, altModeL, altModeR;
 	//weapon stuff
-	bool leftheld, rightheld, zoomheld;
+	bool leftheld, rightheld, zoomheld, leftswitchHeld, rightswitchHeld;
 	ddWeapon companionpiece; 
 	Name weaponType; //general classification for some weapon relations
 	int weaponside;
@@ -168,7 +168,7 @@ class ddWeapon : Weapon
 		return;
 	}
 	
-	protected PSpriteInfo SetSubSprite(PSpriteInfo &pspi, int ix, int iy, int pSpriteID = 0, StateLabel iState = null)
+	protected PSpriteInfo SetSubSprite(PSpriteInfo &pspi, int ix, int iy, int pSpriteID = 0, StateLabel iState = null, float iAlpha = 1., bool usePSPIcoord = false)
 	{
 		let ddp = ddPlayer(owner);
 		if(!ddp) { return null; }
@@ -196,7 +196,9 @@ class ddWeapon : Weapon
 		newInfo.superInfo = pspi;
 		newInfo.ResetTransformations();
 		newPSP.firstTic = true;
-		newPSP.x = ix; newPSP.y = iy;
+		if(usePSPIcoord) { newPSP.x = ddp.player.FindPSprite(pspi.id).x; newPSP.y = ddp.player.FindPSprite(pspi.id).y; }
+		else { newPSP.x = ix; newPSP.y = iy; }
+		newPSP.alpha = iAlpha;
 		if(iState != null)
 		{ newPSP.SetState(FindState(iState)); }
 		return newInfo;
@@ -236,6 +238,47 @@ class ddWeapon : Weapon
 			}
 		}
 		
+	}
+	
+	//returns id of used psprite and desired style
+	virtual int, int GetRenderStyleInfo(int no)
+	{
+		return 0, 0;
+	}
+	
+	//must be called from weapon state. uses GetRenderStyleInfo and tic definitions.
+	action void A_SetPSpriteRenderStyle()
+	{		
+		let ddp = ddPlayer(self);
+		if(!ddp) { return; }
+		ddWeapon weap = ddWeapon(invoker);
+		if(stateinfo)
+		{
+			if(weap.GetSideFromStateInfo(stateinfo.mPSPIndex) == CE_LEFT) {
+				weap = ddp.GetLeftWeapon(ddp.lwx);
+			}
+			else if(weap.GetSideFromStateInfo(stateinfo.mPSPIndex) == CE_RIGHT){
+				weap = ddp.GetRightWeapon(ddp.rwx);
+			}
+			else {  }
+		}
+		int no = ddp.player.GetPSprite(stateinfo.mPSPIndex).tics;
+		 ddp.player.GetPSprite(stateinfo.mPSPIndex).tics = 0;
+		int id, rstyle; [id, rstyle] = weap.GetRenderStyleInfo(no);
+		A_OverlayFlags(id, PSPF_ALPHA | PSPF_RENDERSTYLE, true);
+		A_OverlayRenderstyle(id, rstyle);
+	}
+	
+	//set translucency renderstyle to all reserved ids
+	protected action void A_SetAllRenderStyles()
+	{
+		let ddp = ddPlayer(self);
+		if(!ddp) { return; }
+		for(int x = 6; x < 26; x++)
+		{
+			A_OverlayFlags(x, PSPF_ALPHA | PSPF_RENDERSTYLE, true);
+			A_OverlayRenderStyle(x, STYLE_Translucent);
+		}
 	}
 	
 	ddWeapon CreateDDCopy()
@@ -423,6 +466,7 @@ class ddWeapon : Weapon
 	
 	action bool A_PressingLeftModeSwitch()
 	{
+		if(!player) { return false; }
 		let i = invoker;
 		i.GetCVars();
 		if(i.wolfen && !i.swapc) { return (player.cmd.buttons & BT_LEFTFIRE); }
@@ -431,6 +475,7 @@ class ddWeapon : Weapon
 	}
 	action bool A_PressingRightModeSwitch()
 	{
+		if(!player) { return false; }
 		let i = invoker;
 		i.GetCVars();
 		if(i.wolfen && !i.swapc) { return (player.cmd.buttons & BT_LEFTALT); }
@@ -490,8 +535,8 @@ class ddWeapon : Weapon
 	}		
 	bool PressingFireButton() { return (PressingRightFire() || PressingRightAltFire() || PressingLeftFire() ||  PressingLeftAltFire()); }
 	
-	action bool PressingRightSwitch() { let own = ddPlayer(invoker.owner); return (own.player.cmd.buttons & BT_RIGHTSWITCH); }
-	action bool PressingLeftSwitch() { let own = ddPlayer(invoker.owner); return (own.player.cmd.buttons & BT_LEFTSWITCH); }
+	bool PressingRightSwitch() { let own = ddPlayer(owner); return (own.player.cmd.buttons & BT_RIGHTSWITCH); }
+	bool PressingLeftSwitch() { let own = ddPlayer(owner); return (own.player.cmd.buttons & BT_LEFTSWITCH); }
 	action bool PressingReload() { let own = ddPlayer(invoker.owner); return (own.player.cmd.buttons & BT_RELOAD); }
 	bool PressingZoom() { let own = ddPlayer(owner); return (own.player.cmd.buttons & BT_ZOOM); }
 	// ##goto weapon getters()	
@@ -540,7 +585,7 @@ class ddWeapon : Weapon
 		return FindState('DoNotJump');
 	}
 	
-	virtual int GetTicks(int no)
+	virtual int GetTicks(int no, int pspID = -1)
 	{
 		console.printf("No tics defined for tic no "..no);
 		return 0;
@@ -652,12 +697,12 @@ class ddWeapon : Weapon
 			if(weap.GetSideFromStateInfo(stateinfo.mPSPIndex) == CE_LEFT) {
 				if(ddp.ddWeaponState & DDW_NOLEFTSPRITECHANGE) { return; } 
 				weap = ddp.GetLeftWeapon(ddp.lwx);
-				psp = ddp.player.FindPSprite(PSP_LEFTW0);
+				psp = ddp.player.FindPSprite(pid);
 			}
 			else if(weap.GetSideFromStateInfo(stateinfo.mPSPIndex) == CE_RIGHT){
 				if(ddp.ddWeaponState & DDW_NORIGHTSPRITECHANGE) { return; }
 				weap = ddp.GetRightWeapon(ddp.rwx);
-				psp = ddp.player.FindPSprite(PSP_RIGHTW0);
+				psp = ddp.player.FindPSprite(pid);
 			}
 			else { return; }
 		}
@@ -982,7 +1027,7 @@ class ddWeapon : Weapon
 		else { return; }
 		psp = ddp.player.GetPSprite(stateinfo.mPSPIndex);
 		
-		int ticks = weap.GetTicks(psp.Tics);
+		int ticks = weap.GetTicks(psp.Tics, stateinfo.mPSPIndex);
 		psp.Tics = ticks;
 		if(ddp.dddebug & DBG_WEAPSEQUENCE && ddp.dddebug & DBG_VERBOSE) { A_Log((stateinfo.mPSPIndex == PSP_LEFTW0) ? "Left " : "Right ".."weapon state set to "..ticks.." tics"); }		
 	}

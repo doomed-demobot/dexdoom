@@ -181,80 +181,90 @@ class ddSuperShotgun : ddWeapon replaces SuperShotgun
 		switch(no)
 		{
 			case 1:
-				pspi.SetTransformationProperties(4, true, (INTR_TRANS_INVEXPO | INTR_SCALE_INVEXPO));
-				pspi.SetTranslations(0, 9);
-				pspi.SetScaling(12, 30);
+				pspi.SetTransformationProperties(3, false, 0, pivoty: 60, nextcase: 12);
+				pspi.SetTranslations(0, 24, 0, -0.2);
+				pspi.SetScaling(12, 30, 0, -0.2);
+				return;
+			case 12:
+				pspi.SetTransformationProperties(2, false, pivoty: 60);
+				pspi.SetTranslations(0, -24, 0, 0.2);
+				pspi.SetScaling(-12, -30, 0, 0.2);
 				return;
 			case 2:
-				pspi.SetTransformationProperties(3, true, (INTR_TRANS_INVEXPO | INTR_SCALE_INVEXPO | INTR_ROTAT_EXPO));
-				pspi.SetTranslations(0, 3);
-				pspi.SetScaling(5, 15);
-				pspi.SetRotation((mag > 1) ? -2 : 2);
+				pspi.SetTransformationProperties(3, true);
+				pspi.SetTranslations(0, 3, 0, RAMP_INVEXPONENTIAL);
+				pspi.SetScaling(5, 15, 0, RAMP_INVEXPONENTIAL);
+				pspi.SetRotation((mag > 1) ? -2 : 2, 0, RAMP_EXPONENTIAL);
 				return;
 			case 3: //flash
-				pspi.SetTransformationProperties(4, true, (INTR_TRANS_INVEXPO | INTR_SCALE_INVEXPO), 0, 30);
-				pspi.SetTranslations(0, 9);
-				pspi.SetScaling(12, 30);
+				pspi.SetTransformationProperties(3, false, pivoty: ((ddp.playingFreedoom) ? 135 : 100), nextcase: 13);
+				pspi.SetTranslations(0, 24, 0, -0.2);
+				pspi.SetScaling(12, 30, 0, -0.2);
+				return;
+			case 13:
+				pspi.SetTransformationProperties(2, false, pivoty:  ((ddp.playingFreedoom) ? 135 : 100));
+				pspi.SetTranslations(0, -24, 0, 0.2);
+				pspi.SetScaling(-12, -30, 0, -0.2);
 				return;
 			case 4: //flash alt
-				pspi.SetTransformationProperties(3, true, (INTR_TRANS_INVEXPO | INTR_SCALE_INVEXPO | INTR_ROTAT_EXPO), 0, 30);
-				pspi.SetTranslations(0, 3);
-				pspi.SetScaling(5, 15);
-				pspi.SetRotation((mag > 1) ? -2 : 2);
+				pspi.SetTransformationProperties(3, true, 0, 0, 30);
+				pspi.SetTranslations(0, 3, 0, RAMP_INVEXPONENTIAL);
+				pspi.SetScaling(5, 15, 0, RAMP_INVEXPONENTIAL);
+				pspi.SetRotation((mag > 1) ? -2 : 2, 0, RAMP_INVEXPONENTIAL);
 				return;
 			case 5: //reload 1
 				if(ddp.playingFreedoom)
 				{
-					pspi.SetTransformationProperties(12, false, (INTR_TRANS_EXPO | INTR_ROTAT_INVEXPO), nextcase: 6);
-					pspi.SetTranslations(20, 0);
-					pspi.SetRotation(14);
+					pspi.SetTransformationProperties(12, false, 0, nextcase: 6);
+					pspi.SetTranslations(20, 0, 0, 3.2);
+					pspi.SetRotation(14, 0, RAMP_INVEXPONENTIAL);
 				}
 				else
 				{
-					pspi.SetTransformationProperties(14, false, (INTR_TRANS_EXPO | INTR_SCALE_EXPO | INTR_ROTAT_INVEXPO), nextcase: 6);
-					pspi.SetTranslations(0, 0);
-					pspi.SetScaling(-5, 0);
-					pspi.SetRotation(9);
+					pspi.SetTransformationProperties(14, false, 0, nextcase: 6);
+					pspi.SetTranslations(0, 0, 0, RAMP_EXPONENTIAL);
+					pspi.SetScaling(-5, 0, 0, RAMP_EXPONENTIAL);
+					pspi.SetRotation(9, 0, RAMP_INVEXPONENTIAL);
 				}
 				return;
 			case 6:	//reload 2
 				if(ddp.playingFreedoom)
 				{
-					pspi.SetTransformationProperties(3, false, (INTR_TRANS_INVEXPO | INTR_SCALE_EXPO), nextcase: 9);
-					pspi.SetTranslations(10,0);
-					pspi.SetScaling(-10, 10);
+					pspi.SetTransformationProperties(3, false, 0, nextcase: 9);
+					pspi.SetTranslations(10, 0, 0, 1.2);
+					pspi.SetScaling(-10, 10, 0, RAMP_EXPONENTIAL);
 				}
 				else
 				{
-					pspi.SetTransformationProperties(6, false, (INTR_TRANS_EXPO | INTR_SCALE_LINEAR | INTR_ROTAT_EXPO), nextcase: 7);
-					pspi.SetTranslations(0, 20);
-					pspi.SetScaling(10,0);
-					pspi.SetRotation(-6);
+					pspi.SetTransformationProperties(6, false, 0, nextcase: 7);
+					pspi.SetTranslations(0, 20, 0, RAMP_EXPONENTIAL);
+					pspi.SetScaling(10, 0, 0, RAMP_LINEAR);
+					pspi.SetRotation(-6, 0, RAMP_EXPONENTIAL);
 				}
 				return;
 			case 7:
-				pspi.SetTransformationProperties(2, false, (INTR_TRANS_INVEXPO | INTR_SCALE_INVEXPO | INTR_ROTAT_EXPO));
-				pspi.SetTranslations(0, -20);
-				pspi.SetScaling(-5, 0);
-				pspi.SetRotation(-3);
+				pspi.SetTransformationProperties(2, false);
+				pspi.SetTranslations(0, -20, 0, RAMP_INVEXPONENTIAL);
+				pspi.SetScaling(-5, 0, 0, RAMP_INVEXPONENTIAL);
+				pspi.SetRotation(-3, 0, RAMP_EXPONENTIAL);
 				return;
 			case 8:
-				pspi.SetTransformationProperties(7, true, (INTR_TRANS_EXPO));
-				pspi.SetTranslations(0, 20);
+				pspi.SetTransformationProperties(7, true);
+				pspi.SetTranslations(0, 20, 0, RAMP_EXPONENTIAL);
 				return;
 			case 9:
-				pspi.SetTransformationProperties(3, false, (INTR_TRANS_INVEXPO | INTR_SCALE_EXPO));
-				pspi.SetTranslations(-20,0);
-				pspi.SetScaling(10, -10);
-				pspi.SetRotation(-14);
+				pspi.SetTransformationProperties(3, false);
+				pspi.SetTranslations(-20, 0, 0, -0.33);
+				pspi.SetScaling(10, -10, 0, RAMP_EXPONENTIAL);
+				pspi.SetRotation(-14, 0, RAMP_LINEAR);
 				return;
 			case 10: //arm reload up
-				pspi.SetTransformationProperties(6, false, (INTR_TRANS_INVEXPO));
-				pspi.SetTranslations(20, -30);
+				pspi.SetTransformationProperties(6, false);
+				pspi.SetTranslations(20, -30, 0, RAMP_INVEXPONENTIAL);
 				return;
 			case 11: //arm reload down
-				pspi.SetTransformationProperties(5, false, (INTR_TRANS_INVEXPO));
-				pspi.SetTranslations(0, 45);
+				pspi.SetTransformationProperties(5, false);
+				pspi.SetTranslations(0, 45, 0, RAMP_INVEXPONENTIAL);
 				return;
 			default: return;
 		}
@@ -318,7 +328,7 @@ class ddSuperShotgun : ddWeapon replaces SuperShotgun
 	States
 	{
 		NoAmmo:
-			#### A 10;
+			#### A 0;
 		Ready:
 			SH2D A 0 A_ChangeSprite;
 			#### # 1 A_DDWeaponReady;
@@ -410,7 +420,7 @@ class ddSuperShotgun : ddWeapon replaces SuperShotgun
 			Goto FlashDone;
 		FlashP:
 			SHT2 A 3 A_DDTransformation;
-			SHT2 I 4 Bright A_Light1;
+			SHT2 I 2 Bright A_Light1;
 			SHT2 J 3 Bright A_Light2;
 			Goto FlashDone;
 		Ind:

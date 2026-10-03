@@ -34,7 +34,7 @@ class ddHandlers : EventHandler
 	{
 		if(e.Thing.bIsMonster)
 		{
-			if(e.Inflictor.target)
+			if(e.Inflictor)
 			{
 				if(e.Inflictor.target is "ddPlayer" && e.Inflictor.target.FindInventory("PowerBerserk"))
 				{

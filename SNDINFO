@@ -30,6 +30,11 @@ weapons/grenade "dsgrena"
 weapons/grenadeb "dsgrenb" $volume weapons/grenadeb 0.6
 weapons/rocketload "dsrkld" $volume weapons/rocketload 0.3
 weapons/pboltlaunch "dsboltln" 
+weapons/flasmanorm "dsflasma"
+weapons/flasmabeeg "dsflasbg"
+weapons/flasmacharge	"dsflchrg"
+weapons/flasmachargelp	"dsflchrl"
+weapons/flasmachargeen	"dsflchre"
 $limit weapons/pboltlaunch 0
 $limit weapons/plasma 0
 $limit weapons/plasma 0

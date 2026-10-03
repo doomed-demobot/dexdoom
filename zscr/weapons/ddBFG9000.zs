@@ -91,22 +91,22 @@ class ddBFG9000 : ddWeapon replaces BFG9000
 		switch(no)
 		{
 			case 0: //fire 1
-				pspi.SetTransformationProperties(5, true, (INTR_TRANS_INVEXPO));
-				pspi.SetTranslations(0, 10);
-				pspi.SetScaling(30, 40);
+				pspi.SetTransformationProperties(5, true);
+				pspi.SetTranslations(0, 10, 0, RAMP_INVEXPONENTIAL);
+				pspi.SetScaling(30, 40, 0, RAMP_LINEAR);
 				return;
 			case 1: //fire loop
-				pspi.SetTransformationProperties(1, false, (INTR_TRANS_INVEXPO), nextcase:1);
-				pspi.SetTranslations(clamp(random(-3, 3), -3 ,3), clamp(random(-2, 2), -2, 2));
+				pspi.SetTransformationProperties(1, false, nextcase:1);
+				pspi.SetTranslations(clamp(random(-3, 3), -3 ,3), clamp(random(-2, 2), -2, 2), 0, RAMP_INVEXPONENTIAL);
 				return;
 			case 2: //flash 1
-				pspi.SetTransformationProperties(5, true, (INTR_TRANS_INVEXPO), 0., 0.4, true, ddp.GetPSpriteInfo(((weaponside) ? PSP_LEFTW0 : PSP_RIGHTW0), ddp));
+				pspi.SetTransformationProperties(5, true, 0, 0., 0.4, true, ddp.GetPSpriteInfo(((weaponside) ? PSP_LEFTW0 : PSP_RIGHTW0), ddp));
 				pspi.GetTranslations(pspi.superInfo.ID);
-				pspi.SetScaling(20, 0);
+				pspi.SetScaling(20, 0, RAMP_LINEAR);
 				return;
 			case 3: 
-				pspi.SetTransformationProperties(1, true, (INTR_TRANS_INVEXPO));
-				pspi.SetTranslations(0, 0, TFL_TRANS_ORIGIN);
+				pspi.SetTransformationProperties(1, true);
+				pspi.SetTranslations(0, 0, TFL_TRANS_ORIGIN, RAMP_INVEXPONENTIAL);
 				return;
 			default:
 				return;
